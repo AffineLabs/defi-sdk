@@ -5,10 +5,12 @@
   "repository": "https://github.com/Multiplyr/dhaka-frontend.git",
   "author": "larryob <tosin@multiplyr.ai>",
   "license": "MIT",
-  "type": "module",
   "dependencies": {
     "@biconomy/mexa": "^2.0.21",
     "ethers": "^5.5.1",
     "magic-sdk": "^6.2.0"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.1"
   }
 }
