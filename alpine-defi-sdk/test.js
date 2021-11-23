@@ -1,5 +1,4 @@
 import { ethers, providers } from "ethers";
-import { Magic } from "magic-sdk";
 import { Account } from "./Account.js";
 
 const main = async () => {
@@ -8,37 +7,35 @@ const main = async () => {
   //   "https://kovan.infura.io/v3/6a4677f9b8014a239fb68742f752fb62"
   // );
 
-  const vaultAbi = [{ "inputs": [{ "internalType": "address", "name": "alpUsdcAddress_", "type": "address" }], "stateMutability": "nonpayable", "type": "constructor" }, { "inputs": [], "name": "alpUsdcAddress", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "user", "type": "address" }], "name": "balanceOf", "outputs": [{ "internalType": "uint256", "name": "usdc", "type": "uint256" }, { "internalType": "uint256", "name": "alpine", "type": "uint256" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "user", "type": "address" }, { "internalType": "uint256", "name": "amountUsdc", "type": "uint256" }], "name": "deposit", "outputs": [], "stateMutability": "nonpayable", "type": "function" }, { "inputs": [], "name": "usdcAddress", "outputs": [{ "internalType": "address", "name": "", "type": "address" }], "stateMutability": "view", "type": "function" }, { "inputs": [{ "internalType": "address", "name": "user", "type": "address" }, { "internalType": "uint256", "name": "amountAlpUsdc", "type": "uint256" }], "name": "withdraw", "outputs": [], "stateMutability": "nonpayable", "type": "function" }];
-  const vaultAddr = "0x0355b41edb7a29169dfee31c60597835867ba4a7"
-  const alpAccount = new Account("adib@multiplyr.ai");
-  await alpAccount.login();
-  // let a = alpAccount.getAddress();
-  // console.log(a);
-  // let balance = await alpAccount.getVaultBalance(vaultAddr, vaultAbi);
+  // const email = "adib@multiplyr.ai";
+  // const alpAccount = new Account();
+  // await alpAccount.connect(email);
+  // const contracts = await alpAccount.getAllContracts();
+  // // 0x3F91193d3080778fa66BC5cda19Be1f149049Ef9
+  // let addr = await alpAccount.getUserAddress();
+  // console.log({ addr: addr });
+
+  // let balance = await alpAccount.getUserBalance(contracts.usdcContract);
   // console.log({ balance });
-  // let balance = await alpAccount.approveTransaction(vaultAddr, "5");
-  // let response = await alpAccount.buyToken(vaultAddr, vaultAbi, "5");
+  // let response = await alpAccount.approveTransfer(contracts.vaultContract, "5");
   // console.log({ response });
-  // 
-  let balance = await alpAccount.getVaultBalance(vaultAddr, vaultAbi);
-  console.log({ balance });
+  // // response = await alpAccount.deposit(contracts.vaultContract, "5");
+  // console.log({ response });
+  // balance = await alpAccount.getUserBalance(contracts.vaultContract);
+  // console.log({ balance });
 
-  // response = await alpAccount.sellToken(vaultAddr, vaultAbi, "2");
+  // // response = await alpAccount.withdraw(contracts.vaultContract, "60");
   // console.log({ response });
 
-
-  // magic.preload();
-
-  // await magic.user.logout();
-  // const login = await magic.user.isLoggedIn();
-  // console.log("user login status: " + login);
-  // const provider = 
-  // const signer = provider.getSigner();
-  // const metadata = await magic.user.getMetadata();
-  // console.log({ signer });
-  // const { email, publicAddress } = metadata;
-  // console.log("public address 2nd method: " + publicAddress);
-
+  // // response = await alpAccount.withdraw(contracts.vaultContract, "6");
+  // console.log({ response });
+  // let etherscanProvider = new ethers.providers.EtherscanProvider(network = 'kovan');
+  // let address = "0x3F91193d3080778fa66BC5cda19Be1f149049Ef9";
+  // etherscanProvider.getHistory(address).then((history) => {
+  //   history.forEach((tx) => {
+  //     console.log(tx);
+  //   })
+  // });
 };
 
 main()

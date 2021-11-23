@@ -1,46 +1,41 @@
 import { Magic, RPCError } from "magic-sdk";
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
+import * as usdcJson from "./smart_contracts/usdc.json"
+import * as vaultJson from "./smart_contracts/dummyvault.json"
 
 export class Account {
-    constructor(email) {
+    constructor() {
         /**
          * Creates an alpine account object
-         * @param {ethers.providers} web3Provider a web3 provider
-         * @param {string} email user email address
          */
-        this.magic = new Magic(process.env.MAGIC_API_KEY, { network: 'kovan' });
-        this.email = email;
-
-        // biconomy integration
-        // the api key is not secret and meant to be used in the frontend
-        // this.provider = new Biconomy(
-        //   new ethers.providers.Web3Provider(web3Provider),
-        //   {
-        //     apiKey: "CTGkNtqm8.bce042dc-0ed2-4845-869a-4d178f2465b0",
-        //     debug: true,
-        //   }
-        // );
+        // the api key is public
+        this.magic = new Magic("pk_test_4BC74945EEEA1A8A", { network: 'kovan' });
+        this.connected = false;
     }
 
-    async login() {
+    async connect(email) {
+        /**
+         * connect the user account to magic's sdk. In particular,
+         * login with with magic, get provider, signer and set up
+         * the smart contracts.
+         * @param {String} email user's email address
+         */
         if (!(await this.isLoggedIn())) {
-            try {
-                await this.magic.auth.loginWithMagicLink({ email: this.email });
-            } catch (err) {
-                console.log(err);
-                return { loginStatus: 0 };
-            }
+            await this.magic.auth.loginWithMagicLink({ email: email });
         }
-        // now the user is logged in
+        // case: the user is logged in
         this.provider = new ethers.providers.Web3Provider(this.magic.rpcProvider);
         this.signer = this.provider.getSigner();
-        // this.signer = new ethers.Wallet.fromMnemonic(seed).connect(web3Provider);
-        this.userAddress = (await this.magic.user.getMetadata()).publicAddress;
+        this.userAddress = await this.signer.getAddress();
+
         // circle usdc smart contract
-        const usdcAddress = "0xe22da380ee6B445bb8273C81944ADEB6E8450422";
-        const usdcAbi = [{ "inputs": [{ "internalType": "string", "name": "name", "type": "string" }, { "internalType": "string", "name": "symbol", "type": "string" }, { "internalType": "uint8", "name": "decimals", "type": "uint8" }], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "src", "type": "address" }, { "indexed": true, "internalType": "address", "name": "dst", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amt", "type": "uint256" }], "name": "Approval", "type": "event" }, { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "src", "type": "address" }, { "indexed": true, "internalType": "address", "name": "dst", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amt", "type": "uint256" }], "name": "Transfer", "type": "event" }, { "constant": true, "inputs": [{ "internalType": "address", "name": "src", "type": "address" }, { "internalType": "address", "name": "dst", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "amt", "type": "uint256" }], "name": "approve", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [{ "internalType": "address", "name": "whom", "type": "address" }], "name": "balanceOf", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "uint256", "name": "amt", "type": "uint256" }], "name": "burn", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "decimals", "outputs": [{ "internalType": "uint8", "name": "", "type": "uint8" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "amt", "type": "uint256" }], "name": "mint", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "name", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "symbol", "outputs": [{ "internalType": "string", "name": "", "type": "string" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": true, "inputs": [], "name": "totalSupply", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "amt", "type": "uint256" }], "name": "transfer", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "internalType": "address", "name": "src", "type": "address" }, { "internalType": "address", "name": "dst", "type": "address" }, { "internalType": "uint256", "name": "amt", "type": "uint256" }], "name": "transferFrom", "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }];
-        this.usdcContract = new ethers.Contract(usdcAddress, usdcAbi, this.signer);
+        this.usdcContract = new ethers.Contract(
+            usdcJson.address, usdcJson.abi, this.signer);
+        // dummy alpine vault contract
+        this.vaultContract = new ethers.Contract(
+            vaultJson.address, vaultJson.abi, this.signer);
+        this.connected = true;
     }
 
     async isLoggedIn() {
@@ -48,12 +43,47 @@ export class Account {
         return status
     }
 
-    getAddress() {
+    async getUserAddress() {
         /**
          * get user's public address
          * @returns {string} user's public address
          */
+        if (!(await this.isLoggedIn())) {
+            throw new Error("Aborted. The user is not logged in.");
+        }
+        if (!this.connected) {
+            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
+        }
         return this.userAddress;
+    }
+
+    async getAllContracts() {
+        /**
+         * get all contracts. The usdc is a circle contract that
+         * holds usdc. This can be used with the `getUserBalance()`
+         * function to check for idle cash in user's wallet. The
+         * vault is a dummy alpine vault smart contract.
+         */
+        if (!(await this.isLoggedIn())) {
+            throw "Aborted. The user is not logged in.";
+        }
+        if (!this.connected) {
+            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
+        }
+        return {
+            usdcContract: this.usdcContract,
+            vaultContract: this.vaultContract
+        }
+    }
+
+    _isTrustedContract(contract) {
+        /**
+         * check that the given contract is a trusted contract.
+         * @param {ethers.Contract} contract the contract to test
+         * @returns {boolean} whether the contract is trusted
+         */
+        return (contract.address === this.usdcContract.address)
+            || (contract.address === this.vaultContract.address);
     }
 
     _toMicroUnit(amount) {
@@ -72,28 +102,6 @@ export class Account {
          * @returns {string} equivalent amount in unit.
          */
         return String(ethers.utils.formatUnits(amount, 6));
-    }
-
-    async _balanceOf(contract) {
-        /**
-         * call balanceOf on a smart contract for the current user
-         * @param {ethers.Contract} contract an ethers smart contract object
-         * @returns {Object} balance the balance object
-         * @returns {boolean} balance.status boolean status indicating whether 
-         *   the blockchain call was successful.
-         * @returns {Object} balance.response the blockchain raw response object.
-         * @returns {string} balance.details if status is 0, returns the details of the failure.
-         */
-        try {
-            const balance = await contract.balanceOf(this.userAddress);
-            return { status: 1, response: balance };
-        } catch (e) {
-            console.log(e);
-            return {
-                status: 0,
-                details: "failed to call balanceOf on contract " + contract.address
-            }
-        }
     }
 
     async _deposit(contract, amount) {
@@ -162,121 +170,117 @@ export class Account {
         }
     }
 
-    async _allowance(vaultAddress) {
-        /**
-         * check user's usdc allowance for a smart contract. 
-         * @param {string} vaultAddress the contract address to check allowance for.
-         * @returns {Object} returns the status of the blockchain 
-         *     call with raw blockchain response. For failed calls, returns details.
-         */
-        try {
-            const amount = await this.usdcContract.allowance(this.userAddress, vaultAddress);
-            return { status: 1, response: amount };
-        }
-        catch (e) {
-            console.log(e);
-            return {
-                status: 0,
-                details: "failed to call allowance on contract " + this.usdcContract.address
-            };
-        }
-    }
-
-    async getVaultBalance(vaultAddress, vaultAbi) {
+    async getUserBalance(contract) {
         /**
          * gets user's current balance at the vault.
-         * @param {string} vaultAddress the address of the vault.
-         * @param {Array} vaultAbi application binary interface of the vault.
+         * @param {ethers.Contract} contract a known smart contract.
          * @returns {Object} user balance as both usdc and token denominated values.
          */
-        const vaultContract = new ethers.Contract(vaultAddress, vaultAbi, this.signer);
-        const balance = await this._balanceOf(vaultContract);
-        if (balance.status === 1) {
-            const [balanceMUSDC, balanceMToken] = balance.response;
-            // the returned amounts are in micro units 
-            // need to divide them by 10^6 to convert to usdc and alpTokens
+        if (!(await this.isLoggedIn())) {
+            throw new Error("Aborted. The user is not logged in.");
+        }
+        if (!this.connected) {
+            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
+        }
+        if (!this._isTrustedContract(contract)) {
+            throw new Error("Aborted. Unknown contract: " + contract.address);
+        }
+        // the returned amounts are in micro units 
+        // need to divide them by 10^6 to convert to usdc and alpTokens
+        const balance = await contract.balanceOf(this.userAddress);
+
+        // contract returns only usdc balance
+        if (contract.address === this.usdcContract.address) {
+            return { balanceUSDC: this._toUnit(balance) };
+        }
+        else {
+            const [balanceMUSDC, balanceMToken] = balance;
             const balanceToken = this._toUnit(balanceMToken);
             return {
-                status: 1,
                 balanceUSDC: balanceToken, // the price of each alpToken is 1 for now
                 balanceToken: balanceToken
             };
         }
-        return {
-            status: 0,
-            details: "failed to call balanceOf() on smart contract."
-        };
     }
 
-    async getUSDCBalance() {
+    async approveTransfer(contract, amountUSDC) {
         /**
-         * gets current usdc balance at user's wallet.
-         * @returns {String} user balance as both usdc and token denominated values.
+         * approve to transfer amountUSDC from user's wallet to contract
+         * @param {ethers.Contract} contract the contract to transfer to
+         * @param {String} amountUSDC amount in usdc to approve
+         * @returns {boolean} status of the approval
          */
-        const balance = await this._balanceOf(this.usdcContract);
-        if (balance.status === 1) {
-            // the returned amount is in micro usdc 
-            // need to divide by 10^6 to convert to usdc
-            return { status: 1, balanceUSDC: this._toUnit(balance.response) };
+        if (!(await this.isLoggedIn())) {
+            throw new Error("Aborted. The user is not logged in.");
         }
-        return {
-            status: 0,
-            details: "failed to call balanceOf() on smart contract."
-        };
-    }
-
-    async approveTransaction(vaultAddress, amountUSDC) {
-        /**
-         * approve to spend amountUSDC from user's wallet
-         */
+        if (!this.connected) {
+            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
+        }
+        if (!this._isTrustedContract(contract)) {
+            throw new Error("Aborted. Unknown contract: " + contract.address);
+        }
         // convert to micro usdc
         const amount = this._toMicroUnit(amountUSDC);
-        // get current wallet balance in micro usdc
-        const balance = await this._balanceOf(this.usdcContract);
-        if (balance.status === 0) { return balance; }
-        // wallet balance < amount requested to approve
-        if (balance.response.lt(amount)) {
-            return {
-                status: 0,
-                details: "Insufficient balance at user wallet. Balance: "
-                    + this._toUnit(balance.response)
-                    + ", Requested to spend: " + this._toUnit(amount)
-            };
-        }
-
-        const allowance = await this._allowance(vaultAddress);
-        if (allowance.status === 0) { return allowance; }
-        // allowed amount < requested amount for approval
-        if (allowance.response.lt(amount)) {
-            const response = await this._approve(vaultAddress, amount)
-            return {
-                status: response.status,
-                details: "allowance in user wallet was insufficient. called approve() on smart contract."
-            }
-        }
-        return { status: 1, details: "allowance in user wallet was sufficient" }
+        const allowance = await this.usdcContract.allowance(
+            this.userAddress, contract.address);
+        // allowance < requested amount for approval
+        if (allowance.lt(amount)) {
+            const response = await this._approve(contract.address, amount)
+            return response;
+        } else return { status: 1, details: "Transfer has been approved already." }
     }
 
-    async buyToken(vaultAddress, vaultAbi, amountUSDC) {
-        const vaultContract = new ethers.Contract(vaultAddress, vaultAbi, this.signer);
-        const amount = this._toMicroUnit(amountUSDC);
-        const balance = await this._balanceOf(this.usdcContract);
-        if (balance.status === 0) {
-            return balance;
+    async deposit(vault, amountUSDC) {
+        /**
+         * deposit usdc to a vault
+         * @param {ethers.Contract} vault the vault to deposit usdc to
+         * @param {String} amountUSDC amount in usdc
+         * @returns {Object} the confirmation from the blockchain
+         */
+        if (!(await this.isLoggedIn())) {
+            throw "Aborted. The user is not logged in."
         }
-        if (balance.response.lt(amount)) {
+        if (!this.connected) {
+            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
+        }
+        if (!this._isTrustedContract(vault)) {
+            throw new Error("Aborted. Unknown contract: " + contract.address);
+        }
+        const amount = this._toMicroUnit(amountUSDC);
+        const balance = await this.usdcContract.balanceOf(this.userAddress);
+        if (balance.lt(amount)) {
             return { status: 0, details: "Insuffient balance at user wallet." }
         }
-        const deposit = await this._deposit(vaultContract, amount);
+        // check if user has sufficient allowance
+        const allowance = await this.usdcContract.allowance(
+            this.userAddress, vault.address);
+        if (allowance.lt(amount)) {
+            return {
+                status: 0, details: "Insufficient allowance. Allowance: " +
+                    this._toUnit(allowance) + ", Required: " + amountUSDC
+            }
+        }
+        const deposit = await this._deposit(vault, amount);
         return deposit;
     }
-    async sellToken(vaultAddress, vaultAbi, amountUSDC) {
-        const vaultContract = new ethers.Contract(vaultAddress, vaultAbi, this.signer);
-        const amount = this._toMicroUnit(amountUSDC);
-        const balance = await this.getVaultBalance(vaultAddress, vaultAbi);
-        if (balance.status === 0) {
-            return balance;
+    async withdraw(vault, amountUSDC) {
+        /**
+         * withdraw usdc from a vault
+         * @param {ethers.Contract} vault the vault to withdraw usdc from
+         * @param {String} amountUSDC amount in usdc
+         * @returns {Object} the confirmation from the blockchain
+         */
+        if (!(await this.isLoggedIn())) {
+            throw new Error("Aborted. The user is not logged in.");
         }
+        if (!this.connected) {
+            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
+        }
+        if (!this._isTrustedContract(vault)) {
+            throw new Error("Aborted. Unknown contract: " + contract.address);
+        }
+        const amount = this._toMicroUnit(amountUSDC);
+        const balance = await this.getUserBalance(vault);
         const balanceMUSDC = this._toMicroUnit(balance.balanceUSDC);
         if (balanceMUSDC.lt(amount)) {
             return {
@@ -286,7 +290,7 @@ export class Account {
                     " Requested to withdraw: " + this._toUnit(amount)
             }
         }
-        const withdraw = await this._withdraw(vaultContract, amount);
+        const withdraw = await this._withdraw(vault, amount);
         return withdraw;
     }
 }
