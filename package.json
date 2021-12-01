@@ -1,8 +1,8 @@
 {
-  "name": "dhaka-frontend",
+  "name": "alpine-defi-sdk",
   "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/Multiplyr/dhaka-frontend.git",
+  "main": "src/index.js",
+  "repository": "https://github.com/Multiplyr/defi-sdk.git",
   "author": "larryob <tosin@multiplyr.ai>",
   "license": "MIT",
   "dependencies": {
@@ -10,8 +10,14 @@
     "ethers": "^5.5.1",
     "magic-sdk": "^6.2.0"
   },
+  "scripts": {
+    "lint": "yarn run eslint src/"
+  },
   "devDependencies": {
     "abi-decoder": "^2.4.0",
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "15.0.0",
+    "eslint-plugin-import": "^2.25.2",
     "parcel": "^2.0.1"
   }
 }

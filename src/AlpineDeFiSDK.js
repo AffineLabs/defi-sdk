@@ -11,24 +11,6 @@ export class AlpineDeFiSDK {
         this.abiDecoder = require('abi-decoder'); // NodeJS
         this.abiDecoder.addABI(vaultJson.abi);
         this.abiDecoder.addABI(usdcJson.abi);
-
-        this.usdcContract = new ethers.Contract(
-            usdcJson.address, usdcJson.abi, this.provider);
-        this.vaultContract = new ethers.Contract(
-            vaultJson.address, vaultJson.abi, this.provider);
-    }
-
-    getAllContracts() {
-        /**
-         * get all contracts. The usdc is a circle contract that
-         * holds usdc. This can be used with the `getUserBalance()`
-         * function to check for idle cash in user's wallet. The
-         * vault is a dummy alpine vault smart contract.
-         */
-        return {
-            usdcContract: this.usdcContract,
-            vaultContract: this.vaultContract
-        }
     }
 
     async parseTransaction(tx, receipt) {

@@ -66,10 +66,10 @@ export class Account {
         /**
          * check that the given contract is a trusted contract.
          * @param {ethers.Contract} contract the contract to test
-         * @returns {boolean} whether the contract is trusted
+         * @returns {boolean} whether the contract can be trusted
          */
-        return (contract.address === usdcJson.address)
-            || (contract.address === vaultJson.address);
+        return (contract.address.toLowerCase() === usdcJson.address.toLowerCase())
+            || (contract.address.toLowerCase() === vaultJson.address.toLowerCase());
     }
 
     _toMicroUnit(amount) {
@@ -226,4 +226,5 @@ export class Account {
         const withdraw = await this._withdraw(contract, amount);
         return withdraw;
     }
+
 }

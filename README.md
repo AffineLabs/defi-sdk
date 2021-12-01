@@ -1,5 +1,6 @@
 # Alpine DeFi SDK
 
+<<<<<<< HEAD
 ## Installation
 ```
 yarn install
@@ -70,3 +71,14 @@ console.log({ balance });
 ## Next Steps
 1. A method to get transaction history for the user.
 2. Parse the raw output from the write functions (`deposit`, `withdraw`, `approveTransfer`). 
+=======
+To play with the sdk run `yarn parcel index.html`. Open the url provided by parcel and open your browser's console.
+
+## Linting
+
+`yarn lint`
+
+## Improvements
+
+- [ ] Use [karma](https://karma-runner.github.io/latest/intro/configuration.html) or [mocha](https://mochajs.org/#running-mocha-in-the-browser) for testing.
+>>>>>>> 7eaa7c84dc4403678da608ad3f3629fd1de73989
