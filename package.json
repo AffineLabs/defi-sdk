@@ -11,6 +11,7 @@
     "magic-sdk": "^6.2.0"
   },
   "devDependencies": {
+    "abi-decoder": "^2.4.0",
     "parcel": "^2.0.1"
   }
 }

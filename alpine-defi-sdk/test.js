@@ -1,41 +1,46 @@
 import { ethers, providers } from "ethers";
 import { Account } from "./Account.js";
+import { AlpineDeFiSDK } from "./AlpineDeFiSDK.js";
+import * as usdcJson from "./smart_contracts/usdc.json"
+import * as vaultJson from "./smart_contracts/dummyvault.json"
 
 const main = async () => {
-  // const seed = process.env.MV0_SEED;
-  // const provider = new ethers.providers.StaticJsonRpcProvider(
-  //   "https://kovan.infura.io/v3/6a4677f9b8014a239fb68742f752fb62"
-  // );
-
-  // const email = "adib@multiplyr.ai";
-  // const alpAccount = new Account();
-  // await alpAccount.connect(email);
-  // const contracts = await alpAccount.getAllContracts();
-  // // 0x3F91193d3080778fa66BC5cda19Be1f149049Ef9
-  // let addr = await alpAccount.getUserAddress();
-  // console.log({ addr: addr });
+  const alpsdk = new AlpineDeFiSDK();
+  const contracts = alpsdk.getAllContracts();
+  const email = "adib@multiplyr.ai";
+  const alpAccount = new Account();
+  await alpAccount.connect(email);
+  // 0x3F91193d3080778fa66BC5cda19Be1f149049Ef9
+  let addr = await alpAccount.getUserAddress();
+  console.log({ addr: addr });
 
   // let balance = await alpAccount.getUserBalance(contracts.usdcContract);
-  // console.log({ balance });
+  // console.log({ getUserBalance: balance });
   // let response = await alpAccount.approveTransfer(contracts.vaultContract, "5");
-  // console.log({ response });
-  // // response = await alpAccount.deposit(contracts.vaultContract, "5");
-  // console.log({ response });
+  // console.log({ approveTransfer: response });
+
+  // response = await alpAccount.deposit(contracts.vaultContract, "5");
+  // console.log({ deposit: response });
+
   // balance = await alpAccount.getUserBalance(contracts.vaultContract);
-  // console.log({ balance });
+  // console.log({ getUserBalance: balance });
 
   // // response = await alpAccount.withdraw(contracts.vaultContract, "60");
-  // console.log({ response });
+  // // console.log({ response });
 
-  // // response = await alpAccount.withdraw(contracts.vaultContract, "6");
-  // console.log({ response });
-  // let etherscanProvider = new ethers.providers.EtherscanProvider(network = 'kovan');
+  // response = await alpAccount.withdraw(contracts.vaultContract, "5");
+  // console.log({ withdraw: response });
+
   // let address = "0x3F91193d3080778fa66BC5cda19Be1f149049Ef9";
-  // etherscanProvider.getHistory(address).then((history) => {
-  //   history.forEach((tx) => {
-  //     console.log(tx);
-  //   })
+  // 
+  // console.log({ vault: vaultJson.address });
+  // history.forEach(async (tx) => {
+  //   const out = await alpsdk.parseTransaction(tx);
+  //   console.log(out);
   // });
+  const his = await alpsdk.getTransactionHistory(addr);
+  console.log(his);
+
 };
 
 main()

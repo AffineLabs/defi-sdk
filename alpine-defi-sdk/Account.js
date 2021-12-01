@@ -1,6 +1,7 @@
 import { Magic, RPCError } from "magic-sdk";
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
+import { AlpineDeFiSDK } from "./AlpineDeFiSDK.js";
 import * as usdcJson from "./smart_contracts/usdc.json"
 import * as vaultJson from "./smart_contracts/dummyvault.json"
 
@@ -11,6 +12,7 @@ export class Account {
          */
         // the api key is public
         this.magic = new Magic("pk_test_4BC74945EEEA1A8A", { network: 'kovan' });
+        this.alpsdk = new AlpineDeFiSDK();
         this.connected = false;
     }
 
@@ -28,13 +30,9 @@ export class Account {
         this.provider = new ethers.providers.Web3Provider(this.magic.rpcProvider);
         this.signer = this.provider.getSigner();
         this.userAddress = await this.signer.getAddress();
-
-        // circle usdc smart contract
         this.usdcContract = new ethers.Contract(
             usdcJson.address, usdcJson.abi, this.signer);
-        // dummy alpine vault contract
-        this.vaultContract = new ethers.Contract(
-            vaultJson.address, vaultJson.abi, this.signer);
+
         this.connected = true;
     }
 
@@ -43,37 +41,25 @@ export class Account {
         return status
     }
 
-    async getUserAddress() {
-        /**
-         * get user's public address
-         * @returns {string} user's public address
-         */
+    async verifyInput(contract) {
         if (!(await this.isLoggedIn())) {
             throw new Error("Aborted. The user is not logged in.");
         }
         if (!this.connected) {
             throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
         }
-        return this.userAddress;
+        if (contract !== undefined && !this._isTrustedContract(contract)) {
+            throw new Error("Aborted. Unknown contract: " + contract.address);
+        }
     }
 
-    async getAllContracts() {
+    async getUserAddress() {
         /**
-         * get all contracts. The usdc is a circle contract that
-         * holds usdc. This can be used with the `getUserBalance()`
-         * function to check for idle cash in user's wallet. The
-         * vault is a dummy alpine vault smart contract.
+         * get user's public address
+         * @returns {string} user's public address
          */
-        if (!(await this.isLoggedIn())) {
-            throw "Aborted. The user is not logged in.";
-        }
-        if (!this.connected) {
-            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
-        }
-        return {
-            usdcContract: this.usdcContract,
-            vaultContract: this.vaultContract
-        }
+        await this.verifyInput();
+        return this.userAddress;
     }
 
     _isTrustedContract(contract) {
@@ -82,8 +68,8 @@ export class Account {
          * @param {ethers.Contract} contract the contract to test
          * @returns {boolean} whether the contract is trusted
          */
-        return (contract.address === this.usdcContract.address)
-            || (contract.address === this.vaultContract.address);
+        return (contract.address === usdcJson.address)
+            || (contract.address === vaultJson.address);
     }
 
     _toMicroUnit(amount) {
@@ -112,17 +98,12 @@ export class Account {
          * @returns {blockchainResponse} returns the status of the blockchain 
          *     call with raw blockchain response. For failed calls, returns details.
          */
-        try {
-            const tx = await contract.deposit(this.userAddress, amount);
-            const receipt = await tx.wait();
-            return { status: 1, response: receipt };
-        } catch (e) {
-            console.log(e);
-            return {
-                status: 0,
-                details: "failed to call deposit on contract " + contract.address
-            }
-        }
+        const contractWithSigner = contract.connect(this.signer);
+        const tx = await contractWithSigner.deposit(this.userAddress, amount);
+        const receipt = await tx.wait();
+        console.log(tx);
+        console.log(receipt);
+        return this.alpsdk.parseTransaction(tx, receipt);
     }
 
     async _withdraw(contract, amount) {
@@ -134,40 +115,24 @@ export class Account {
          *     call with raw blockchain response. For failed calls, returns details.
          */
 
-        try {
-            const tx = await contract.withdraw(this.userAddress, amount);
-            const receipt = await tx.wait();
-            return { status: 1, response: receipt };
-        } catch (e) {
-            console.log(e);
-            return {
-                status: 0,
-                details: "failed to call withdraw on contract " + contract.address
-            }
-        }
+        const contractWithSigner = contract.connect(this.signer);
+        const tx = await contractWithSigner.withdraw(this.userAddress, amount);
+        const receipt = await tx.wait();
+        return this.alpsdk.parseTransaction(tx, receipt);
     }
 
-    async _approve(vaultAddress, amount) {
+    async _approve(contractAddress, amount) {
         /**
-         * call approve with amount on the usdc contract for the given vault address.
-         * @param {string} vaultAddress the receipient contract address
+         * call approve with amount on the usdc contract for the given contract address.
+         * @param {string} contractAddress the receipient contract address
          * @param {ethers.BigNumber} amount the amount to approve
          * @returns {Object} returns the status of the blockchain 
          *     call with raw blockchain response. For failed calls, returns details.
          */
 
-        try {
-            const tx = await this.usdcContract.approve(vaultAddress, amount);
-            const receipt = await tx.wait();
-            return { status: 1, response: receipt };
-        }
-        catch (e) {
-            console.log(e);
-            return {
-                status: 0,
-                details: "failed to call approve on contract " + this.usdcContract.address
-            };
-        }
+        const tx = await this.usdcContract.approve(contractAddress, amount);
+        const receipt = await tx.wait();
+        return this.alpsdk.parseTransaction(tx, receipt);
     }
 
     async getUserBalance(contract) {
@@ -176,21 +141,13 @@ export class Account {
          * @param {ethers.Contract} contract a known smart contract.
          * @returns {Object} user balance as both usdc and token denominated values.
          */
-        if (!(await this.isLoggedIn())) {
-            throw new Error("Aborted. The user is not logged in.");
-        }
-        if (!this.connected) {
-            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
-        }
-        if (!this._isTrustedContract(contract)) {
-            throw new Error("Aborted. Unknown contract: " + contract.address);
-        }
+        await this.verifyInput(contract);
         // the returned amounts are in micro units 
         // need to divide them by 10^6 to convert to usdc and alpTokens
         const balance = await contract.balanceOf(this.userAddress);
 
         // contract returns only usdc balance
-        if (contract.address === this.usdcContract.address) {
+        if (contract.address === usdcJson.address) {
             return { balanceUSDC: this._toUnit(balance) };
         }
         else {
@@ -210,15 +167,7 @@ export class Account {
          * @param {String} amountUSDC amount in usdc to approve
          * @returns {boolean} status of the approval
          */
-        if (!(await this.isLoggedIn())) {
-            throw new Error("Aborted. The user is not logged in.");
-        }
-        if (!this.connected) {
-            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
-        }
-        if (!this._isTrustedContract(contract)) {
-            throw new Error("Aborted. Unknown contract: " + contract.address);
-        }
+        await this.verifyInput(contract);
         // convert to micro usdc
         const amount = this._toMicroUnit(amountUSDC);
         const allowance = await this.usdcContract.allowance(
@@ -230,22 +179,14 @@ export class Account {
         } else return { status: 1, details: "Transfer has been approved already." }
     }
 
-    async deposit(vault, amountUSDC) {
+    async deposit(contract, amountUSDC) {
         /**
          * deposit usdc to a vault
-         * @param {ethers.Contract} vault the vault to deposit usdc to
+         * @param {ethers.Contract} contract the vault to deposit usdc to
          * @param {String} amountUSDC amount in usdc
          * @returns {Object} the confirmation from the blockchain
          */
-        if (!(await this.isLoggedIn())) {
-            throw "Aborted. The user is not logged in."
-        }
-        if (!this.connected) {
-            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
-        }
-        if (!this._isTrustedContract(vault)) {
-            throw new Error("Aborted. Unknown contract: " + contract.address);
-        }
+        await this.verifyInput(contract);
         const amount = this._toMicroUnit(amountUSDC);
         const balance = await this.usdcContract.balanceOf(this.userAddress);
         if (balance.lt(amount)) {
@@ -253,34 +194,26 @@ export class Account {
         }
         // check if user has sufficient allowance
         const allowance = await this.usdcContract.allowance(
-            this.userAddress, vault.address);
+            this.userAddress, contract.address);
         if (allowance.lt(amount)) {
             return {
                 status: 0, details: "Insufficient allowance. Allowance: " +
                     this._toUnit(allowance) + ", Required: " + amountUSDC
             }
         }
-        const deposit = await this._deposit(vault, amount);
+        const deposit = await this._deposit(contract, amount);
         return deposit;
     }
-    async withdraw(vault, amountUSDC) {
+    async withdraw(contract, amountUSDC) {
         /**
          * withdraw usdc from a vault
-         * @param {ethers.Contract} vault the vault to withdraw usdc from
+         * @param {ethers.Contract} contract the vault to withdraw usdc from
          * @param {String} amountUSDC amount in usdc
          * @returns {Object} the confirmation from the blockchain
          */
-        if (!(await this.isLoggedIn())) {
-            throw new Error("Aborted. The user is not logged in.");
-        }
-        if (!this.connected) {
-            throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
-        }
-        if (!this._isTrustedContract(vault)) {
-            throw new Error("Aborted. Unknown contract: " + contract.address);
-        }
+        await this.verifyInput(contract);
         const amount = this._toMicroUnit(amountUSDC);
-        const balance = await this.getUserBalance(vault);
+        const balance = await this.getUserBalance(contract);
         const balanceMUSDC = this._toMicroUnit(balance.balanceUSDC);
         if (balanceMUSDC.lt(amount)) {
             return {
@@ -290,7 +223,7 @@ export class Account {
                     " Requested to withdraw: " + this._toUnit(amount)
             }
         }
-        const withdraw = await this._withdraw(vault, amount);
+        const withdraw = await this._withdraw(contract, amount);
         return withdraw;
     }
 }
