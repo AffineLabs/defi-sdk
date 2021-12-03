@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>Alpine DeFi SDK</h1>
+<h2>Installation</h2>
+<pre class="prettyprint source"><code>yarn install
+</code></pre>
+<p>To play with the sdk, run <code>yarn parcel index.html</code>. Open the url provided by parcel and open your browser's console.</p>
+<h2>Getting Started</h2>
+<pre class="prettyprint source"><code>const alpAccount = new Account();
+await alpAccount.connect(&quot;email&quot;);
+let addr = await alpAccount.getUserAddress();
+console.log({ addr: addr });
+</code></pre>
+<p>Then check the email address provided for the magic link. Once logged in, check the console for your public address. <strong>You'll need ethereum and usdc in this address to execute transactions.</strong> You have two options:</p>
+<ol>
+<li>Either get the eth and the usdc from the links provided in dj-multiplyr.</li>
+<li>Share the above address in <code>dj-multiplyr</code> and request some tokens from Adib.</li>
+</ol>
+<h3>Connect and Disconnect</h3>
+<pre class="prettyprint source"><code>await alpAccount.connect()
+</code></pre>
+<p>connects the user to Magic's provider.</p>
+<pre class="prettyprint source"><code>await alpAccount.disconnect()
+</code></pre>
+<p>disconnects the user from the Magic's provider.</p>
+<pre class="prettyprint source"><code>await alpAccount.isConnected()
+</code></pre>
+<p>checks if the user is connected.</p>
+<h2>Checking Balance</h2>
+<p>The SDK will only interact with trusted smart contracts, namely, the
+Circle USDC smart contract, and Alpine Vault Contracts. In MV1, these contracts
+can be directly accessed in the code like this:</p>
+<pre class="prettyprint source"><code>\\ first call connect() like above
+const contracts = await alpAccount.getAllContracts();
+</code></pre>
+<p>Then check balance like this:</p>
+<pre class="prettyprint source"><code>let balance = await alpAccount.getUserBalance(contracts.vaultContract);
+console.log({ balance });
+</code></pre>
+<p>For the vault contract(s), this function returns the user's balance in both token denominated value and usdc denominated value.</p>
+<h3>Getting the Idle Cash</h3>
+<pre class="prettyprint source"><code>let balance = await alpAccount.getUserBalance(contracts.usdcContract);
+console.log({ balance });
+</code></pre>
+<p>For the usdc contract, this function returns user balance only in usdc denominated
+value. This is the idle cash.</p>
+<h2>Deposit</h2>
+<p>Depositing funds is a two step process:</p>
+<ol>
+<li>Approve funds to transfer from user's wallet to the vault.</li>
+<li>Deposit the funds in the vault.</li>
+</ol>
+<pre class="prettyprint source"><code>// call connect() like before
+const contracts = await alpAccount.getAllContracts();
+let approve = await alpAccount.approveTransfer(contracts.vaultContract, &quot;5&quot;);
+console.log({ approve });
+let deposit = await alpAccount.deposit(contracts.vaultContract, &quot;5&quot;);
+console.log({ deposit });
+let balance = await alpAccount.getUserBalance(contracts.vaultContract);
+console.log({ balance });
+</code></pre>
+<h2>Withdraw</h2>
+<pre class="prettyprint source"><code>// call connect() like before
+const contracts = await alpAccount.getAllContracts();
+let withdraw = await alpAccount.withdraw(contracts.vaultContract, &quot;4&quot;);
+console.log({ withdraw });
+let balance = await alpAccount.getUserBalance(contracts.vaultContract);
+console.log({ balance });
+</code></pre>
+<h2>Get Transaction History</h2>
+<pre class="prettyprint source"><code>// call connect() like before
+const txHistory = await alpAccount.getTransactionHistory();
+txHistory.forEach((tx) => {console.log(tx);});
+</code></pre>
+<h2>Documentation</h2>
+<pre class="prettyprint source"><code>jsdoc src/ -R README.md -d docs
+</code></pre>
+<p>then see the <code>docs</code> folder.</p>
+<h2>TODOs</h2>
+<ul>
+<li>Use <a href="https://karma-runner.github.io/latest/intro/configuration.html">karma</a> or <a href="https://mochajs.org/#running-mocha-in-the-browser">mocha</a> for testing.</li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="typedefs.html">typedefs</a></li></ul><h3>Classes</h3><ul><li><a href="Account.html">Account</a></li><li><a href="AlpineDeFiSDK.html">AlpineDeFiSDK</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Thu Dec 02 2021 21:08:29 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

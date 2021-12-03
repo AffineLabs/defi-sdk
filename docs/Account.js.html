@@ -1,4 +1,32 @@
-// @ts-check
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Account.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Account.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>// @ts-check
 import { Magic } from "magic-sdk";
 import { ethers } from "ethers";
 import * as abiDecoder from "abi-decoder";
@@ -60,7 +88,7 @@ class Account {
 
   /**
    * check if a user is connected to the magic provider
-   * @returns {Promise<boolean>} whether the user is connected to the magic provider
+   * @returns {Promise&lt;boolean>} whether the user is connected to the magic provider
    */
   async isConnected() {
     const status = await this.magic.user.isLoggedIn();
@@ -70,7 +98,7 @@ class Account {
   /**
    * check if a user is connected to the magic provider
    * @deprecated Use `isConnected` instead
-   * @returns {Promise<boolean>} whether the user is connected to the magic provider
+   * @returns {Promise&lt;boolean>} whether the user is connected to the magic provider
    */
   async isLoggedIn() {
     const status = await this.magic.user.isLoggedIn();
@@ -79,7 +107,7 @@ class Account {
 
   /**
    * get user's public address
-   * @returns {Promise<String>} user's public address
+   * @returns {Promise&lt;String>} user's public address
    */
   async getUserAddress() {
     await this._checkInvariants();
@@ -88,7 +116,7 @@ class Account {
 
   /**
    * get transaction history of the user with alpine smart contracts
-   * @returns {Promise<TxnReceipt[]>} an array of parsed transaction history
+   * @returns {Promise&lt;TxnReceipt[]>} an array of parsed transaction history
    * of the user
    */
   async getTransactionHistory() {
@@ -112,7 +140,7 @@ class Account {
   /**
    * gets user's current balance at the vault.
    * @param {ethers.Contract} contract a known smart contract.
-   * @returns {Promise<UserBalance>} user balance as both usdc
+   * @returns {Promise&lt;UserBalance>} user balance as both usdc
    * and token denominated values.
    */
   async getUserBalance(contract) {
@@ -138,7 +166,7 @@ class Account {
    * approve to transfer amountUSDC from user's wallet to contract
    * @param {ethers.Contract} contract the contract to transfer to
    * @param {String} amountUSDC amount in usdc to approve
-   * @returns {Promise<TxnReceipt>} a receipt from the blockchain
+   * @returns {Promise&lt;TxnReceipt>} a receipt from the blockchain
    */
   async approveTransfer(contract, amountUSDC) {
     await this._checkInvariants(contract);
@@ -152,13 +180,13 @@ class Account {
    * deposit usdc to a vault
    * @param {ethers.Contract} contract the vault to deposit usdc to
    * @param {String} amountUSDC amount in usdc
-   * @returns {Promise<TxnReceipt>} a receipt from the blockchain
+   * @returns {Promise&lt;TxnReceipt>} a receipt from the blockchain
    */
   async deposit(contract, amountUSDC) {
     await this._checkInvariants(contract);
     const amount = this._toMicroUnit(amountUSDC);
     const walletBalance = await this.usdcContract.balanceOf(this.userAddress);
-    // wallet balance < amount to deposit
+    // wallet balance &lt; amount to deposit
     if (walletBalance.lt(amount)) {
       throw new Error(
         `Insuffient balance at user wallet. Balance: ${this._toUnit(
@@ -171,7 +199,7 @@ class Account {
       this.userAddress,
       contract.address
     );
-    // allowance < amount
+    // allowance &lt; amount
     if (allowance.lt(amount)) {
       throw new Error(
         `Insufficient allowance. Allowance: ${this._toUnit(
@@ -187,7 +215,7 @@ class Account {
    * withdraw usdc from a vault
    * @param {ethers.Contract} contract the vault to withdraw usdc from
    * @param {String} amountUSDC amount in usdc
-   * @returns {Promise<TxnReceipt>} a receipt from the blockchain
+   * @returns {Promise&lt;TxnReceipt>} a receipt from the blockchain
    */
   async withdraw(contract, amountUSDC) {
     await this._checkInvariants(contract);
@@ -195,7 +223,7 @@ class Account {
     const balance = await this.getUserBalance(contract);
     const balanceMUSDC = this._toMicroUnit(balance.balanceUSDC);
 
-    // balance at vault < amount requested to withdraw
+    // balance at vault &lt; amount requested to withdraw
     if (balanceMUSDC.lt(amount)) {
       throw new Error(
         `${"Insuffient balance at user's vault account." + " Balance: "}${
@@ -222,7 +250,7 @@ class Account {
         "Aborted. Account is not connected to magic. Call connect() first."
       );
     }
-    if (contract !== null && !this._isTrustedContract(contract)) {
+    if (contract !== null &amp;&amp; !this._isTrustedContract(contract)) {
       throw new Error(`Aborted. Unknown contract: ${contract.address}`);
     }
   }
@@ -284,7 +312,7 @@ class Account {
    * call deposit with amount on a smart contract for the current user.
    * @param {ethers.Contract} contract an ethers smart contract object
    * @param {ethers.BigNumber} amount the amount to deposit
-   * @returns {Promise<TxnReceipt>} returns a transaction receipt from
+   * @returns {Promise&lt;TxnReceipt>} returns a transaction receipt from
    * the blockchain
    */
   async _deposit(contract, amount) {
@@ -298,7 +326,7 @@ class Account {
    * call withdraw with amount on a smart contract for the current user.
    * @param {ethers.Contract} contract an ethers smart contract object
    * @param {ethers.BigNumber} amount the amount to withdraw
-   * @returns {Promise<TxnReceipt>} returns a transaction receipt from
+   * @returns {Promise&lt;TxnReceipt>} returns a transaction receipt from
    * the blockchain
    */
   async _withdraw(contract, amount) {
@@ -312,7 +340,7 @@ class Account {
    * call approve with amount on the usdc contract for the given contract address.
    * @param {string} contractAddress the receipient contract address
    * @param {ethers.BigNumber} amount the amount to approve
-   * @returns {Promise<TxnReceipt>} returns a transaction receipt from
+   * @returns {Promise&lt;TxnReceipt>} returns a transaction receipt from
    * the blockchain
    */
   async _approve(contractAddress, amount) {
@@ -322,3 +350,26 @@ class Account {
   }
 }
 export { Account };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="typedefs.html">typedefs</a></li></ul><h3>Classes</h3><ul><li><a href="Account.html">Account</a></li><li><a href="AlpineDeFiSDK.html">AlpineDeFiSDK</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Thu Dec 02 2021 21:08:29 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
