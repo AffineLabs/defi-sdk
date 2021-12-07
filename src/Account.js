@@ -19,7 +19,7 @@ class Account {
   constructor(network = "kovan") {
     // the api key is public
     // @ts-ignore
-    this.magic = new Magic("pk_test_4BC74945EEEA1A8A", { network: network });
+    this.magic = new Magic("pk_test_4BC74945EEEA1A8A", { network });
     this.etherscanProvider = new ethers.providers.EtherscanProvider(network);
     abiDecoder.addABI(vaultJson.abi);
     abiDecoder.addABI(usdcJson.abi);
