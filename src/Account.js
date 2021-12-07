@@ -41,11 +41,7 @@ class Account {
     this.provider = new ethers.providers.Web3Provider(this.magic.rpcProvider);
     this.signer = this.provider.getSigner();
     this.userAddress = await this.signer.getAddress();
-    this.usdcContract = new ethers.Contract(
-      usdcJson.address,
-      usdcJson.abi,
-      this.signer
-    );
+    this.usdcContract = new ethers.Contract(usdcJson.address, usdcJson.abi, this.signer);
     this.connected = true;
   }
 
@@ -162,21 +158,18 @@ class Account {
     if (walletBalance.lt(amount)) {
       throw new Error(
         `Insuffient balance at user wallet. Balance: ${this._toUnit(
-          walletBalance
-        )}, Requested to deposit: ${amountUSDC}`
+          walletBalance,
+        )}, Requested to deposit: ${amountUSDC}`,
       );
     }
     // check if user has sufficient allowance
-    const allowance = await this.usdcContract.allowance(
-      this.userAddress,
-      contract.address
-    );
+    const allowance = await this.usdcContract.allowance(this.userAddress, contract.address);
     // allowance < amount
     if (allowance.lt(amount)) {
       throw new Error(
         `Insufficient allowance. Allowance: ${this._toUnit(
-          allowance
-        )}, Required: ${amountUSDC}${+". Call approveTransfer() to increase the allowance."}`
+          allowance,
+        )}, Required: ${amountUSDC}${+". Call approveTransfer() to increase the allowance."}`,
       );
     }
     const deposit = await this._deposit(contract, amount);
@@ -198,9 +191,8 @@ class Account {
     // balance at vault < amount requested to withdraw
     if (balanceMUSDC.lt(amount)) {
       throw new Error(
-        `${"Insuffient balance at user's vault account." + " Balance: "}${
-          balance.balanceUSDC
-        },` + ` Requested to withdraw: ${this._toUnit(amount)}`
+        `${"Insuffient balance at user's vault account." + " Balance: "}${balance.balanceUSDC},` +
+          ` Requested to withdraw: ${this._toUnit(amount)}`,
       );
     }
     const withdraw = await this._withdraw(contract, amount);
@@ -218,9 +210,7 @@ class Account {
       throw new Error("Aborted. The user is not logged in.");
     }
     if (!this.connected) {
-      throw new Error(
-        "Aborted. Account is not connected to magic. Call connect() first."
-      );
+      throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
     }
     if (contract !== null && !this._isTrustedContract(contract)) {
       throw new Error(`Aborted. Unknown contract: ${contract.address}`);
@@ -241,9 +231,7 @@ class Account {
       amountUSDC: String(ethers.utils.formatUnits(amount, 6)),
       timestamp: tx.timestamp,
       gasPrice: String(ethers.utils.formatEther(tx.gasPrice)),
-      txnFee: String(
-        ethers.utils.formatEther(tx.gasPrice.mul(receipt.gasUsed))
-      ),
+      txnFee: String(ethers.utils.formatEther(tx.gasPrice.mul(receipt.gasUsed))),
       contract: tx.to,
       txnHash: tx.hash,
       blockNumber: receipt.blockNumber,

@@ -18,6 +18,7 @@
     "eslint": "^8.2.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "^2.25.2",
-    "parcel": "^2.0.1"
+    "parcel": "^2.0.1",
+    "prettier": "2.5.1"
   }
 }

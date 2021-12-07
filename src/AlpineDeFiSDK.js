@@ -14,18 +14,10 @@ class AlpineDeFiSDK {
    */
   constructor() {
     this.provider = new ethers.providers.StaticJsonRpcProvider(
-      "https://kovan.infura.io/v3/6a4677f9b8014a239fb68742f752fb62"
+      "https://kovan.infura.io/v3/6a4677f9b8014a239fb68742f752fb62",
     );
-    this.usdcContract = new ethers.Contract(
-      usdcJson.address,
-      usdcJson.abi,
-      this.provider
-    );
-    this.vaultContract = new ethers.Contract(
-      vaultJson.address,
-      vaultJson.abi,
-      this.provider
-    );
+    this.usdcContract = new ethers.Contract(usdcJson.address, usdcJson.abi, this.provider);
+    this.vaultContract = new ethers.Contract(vaultJson.address, vaultJson.abi, this.provider);
   }
 
   /**

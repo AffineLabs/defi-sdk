@@ -39,11 +39,11 @@ const main = async () => {
 
   // let address = "0x3F91193d3080778fa66BC5cda19Be1f149049Ef9";
   const txHistory = await alpAccount.getTransactionHistory();
-  txHistory.forEach((tx) => {
+  txHistory.forEach(tx => {
     console.log(tx);
   });
 };
 
 main()
-  .then((res) => console.log(res))
-  .catch((err) => console.log({ err }));
+  .then(res => console.log(res))
+  .catch(err => console.log({ err }));
