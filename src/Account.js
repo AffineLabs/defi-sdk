@@ -22,7 +22,7 @@ class Account {
   constructor(network = "kovan") {
     // the api key is public
     // @ts-ignore
-    this.magic = new Magic("pk_test_4BC74945EEEA1A8A", { network: network });
+    this.magic = new Magic("pk_test_4BC74945EEEA1A8A", { network });
     this.etherscanProvider = new ethers.providers.EtherscanProvider(network);
     abiDecoder.addABI(vaultJson.abi);
     abiDecoder.addABI(usdcJson.abi);
@@ -44,11 +44,7 @@ class Account {
     this.provider = new ethers.providers.Web3Provider(this.magic.rpcProvider);
     this.signer = this.provider.getSigner();
     this.userAddress = await this.signer.getAddress();
-    this.usdcContract = new ethers.Contract(
-      usdcJson.address,
-      usdcJson.abi,
-      this.signer
-    );
+    this.usdcContract = new ethers.Contract(usdcJson.address, usdcJson.abi, this.signer);
     this.connected = true;
   }
 
@@ -119,19 +115,16 @@ class Account {
     await this._checkInvariants(contract.address);
     // the returned amounts are in micro units
     // need to divide them by 10^6 to convert to usdc and alpTokens
-    const balance = await contract.balanceOf(this.userAddress);
-
-    // contract returns only usdc balance
     if (contract.address === usdcJson.address) {
+      const balance = await contract.balanceOf(this.userAddress);
       return { balanceUSDC: this._toUnit(balance) };
+    } else{
+      const [balanceMUSDC, balanceMToken] = await contract.balance(this.userAddress);
+      return {
+        balanceUSDC: this._toUnit(balanceMUSDC),
+        balanceToken: this._toUnit(balanceMToken)
+      };
     }
-
-    const [, balanceMToken] = balance;
-    const balanceToken = this._toUnit(balanceMToken);
-    return {
-      balanceUSDC: balanceToken, // the price of each alpToken is 1 for now
-      balanceToken,
-    };
   }
 
   /**
@@ -174,10 +167,7 @@ class Account {
       );
     }
     // check if user has sufficient allowance
-    const allowance = await this.usdcContract.allowance(
-      this.userAddress,
-      contract.address
-    );
+    const allowance = await this.usdcContract.allowance(this.userAddress, contract.address);
     // allowance < amount
     if (allowance.lt(amount)) {
       throw new Error(
@@ -257,9 +247,7 @@ class Account {
       throw new Error("Aborted. The user is not logged in.");
     }
     if (!this.connected) {
-      throw new Error(
-        "Aborted. Account is not connected to magic. Call connect() first."
-      );
+      throw new Error("Aborted. Account is not connected to magic. Call connect() first.");
     }
     // verify that address is a valid ethereum address
     if (address !== null) {

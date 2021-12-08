@@ -138,3 +138,7 @@ dist
 # Parcel
 
 .parcel-cache
+
+# Mac Stuff
+
+.DS_Store
