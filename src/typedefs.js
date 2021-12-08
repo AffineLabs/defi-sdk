@@ -1,11 +1,9 @@
 /**
- * @namespace typedefs
- */
-
-/**
  * @typedef {Object} AlpineContracts
- * @property {ethers.Contract} usdcContract circle usdc contract
- * @property {ethers.Contract} vaultContract a dummy vault contract
+ * @property {ethers.Contract} usdc Circle USDC contract
+ * @property {ethers.Contract} alpSave Alpine Save strategy contract
+ * @property {ethers.Contract} alpBal Alpine Balanced strategy contract
+ * @property {ethers.Contract} alpAggr Alpine Aggressive strategy contract
  */
 
 /**
@@ -14,7 +12,7 @@
  * @property {String} amountUSDC amount in the transaction in usdc denominated value
  * @property {number} timestamp timestamp of the transaction
  * @property {String} gasPrice gas price in eth
- * @property {String} txnFee transaction fee in eth
+ * @property {String} txnCost transaction cost in eth
  * @property {String} contract the address of the contract
  * @property {String} txnHash transaction hash
  * @property {number} blockNumber block number

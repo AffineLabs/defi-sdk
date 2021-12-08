@@ -12,21 +12,7 @@ class AlpineDeFiSDK {
   /**
    * creates an instance of the `AlpineDeFiSDK` class
    */
-  constructor() {
-    this.provider = new ethers.providers.StaticJsonRpcProvider(
-      "https://kovan.infura.io/v3/6a4677f9b8014a239fb68742f752fb62"
-    );
-    this.usdcContract = new ethers.Contract(
-      usdcJson.address,
-      usdcJson.abi,
-      this.provider
-    );
-    this.vaultContract = new ethers.Contract(
-      vaultJson.address,
-      vaultJson.abi,
-      this.provider
-    );
-  }
+  constructor() {}
 
   /**
    * get all supported contracts in the alpine protocol
@@ -34,10 +20,25 @@ class AlpineDeFiSDK {
    * `usdcContract` and `vaultContract`.
    */
 
-  getAllContracts() {
+  static getAllContracts() {
+    const provider = new ethers.providers.StaticJsonRpcProvider(
+      "https://kovan.infura.io/v3/6a4677f9b8014a239fb68742f752fb62"
+    );
+    const usdcContract = new ethers.Contract(
+      usdcJson.address,
+      usdcJson.abi,
+      provider
+    );
+    const vaultContract = new ethers.Contract(
+      vaultJson.address,
+      vaultJson.abi,
+      provider
+    );
     return {
-      usdcContract: this.usdcContract,
-      vaultContract: this.vaultContract,
+      usdc: usdcContract,
+      alpSave: vaultContract,
+      alpBal: vaultContract,
+      alpAggr: vaultContract,
     };
   }
 }

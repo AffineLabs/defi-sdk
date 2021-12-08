@@ -150,7 +150,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line19">line 19</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -206,7 +206,7 @@
     
 
     
-    <h4 class="name" id="_approve"><span class="type-signature">(async) </span>_approve<span class="signature">(contractAddress, amount)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    <h4 class="name" id="_call"><span class="type-signature">(async) </span>_call<span class="signature">(contract, method, args)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
     
 
     
@@ -214,7 +214,7 @@
 
 
 <div class="description">
-    call approve with amount on the usdc contract for the given contract address.
+    call a smart contract method with arguments
 </div>
 
 
@@ -250,13 +250,13 @@
 
         <tr>
             
-                <td class="name"><code>contractAddress</code></td>
+                <td class="name"><code>contract</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">ethers.Contract</span>
 
 
             
@@ -266,20 +266,20 @@
 
             
 
-            <td class="description last">the receipient contract address</td>
+            <td class="description last">smart contract</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>amount</code></td>
+                <td class="name"><code>method</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">ethers.BigNumber</span>
+<span class="param-type">String</span>
 
 
             
@@ -289,7 +289,30 @@
 
             
 
-            <td class="description last">the amount to approve</td>
+            <td class="description last">the method name</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the arguments to the method</td>
         </tr>
 
     
@@ -330,7 +353,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line318">line 318</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line279">line 279</a>
     </li></ul></dd>
     
 
@@ -359,7 +382,7 @@
 
         
 <div class="param-desc">
-    returns a transaction receipt from
+    a transaction receipt from
 the blockchain
 </div>
 
@@ -389,7 +412,7 @@ the blockchain
     
 
     
-    <h4 class="name" id="_checkInvariants"><span class="type-signature">(async) </span>_checkInvariants<span class="signature">(contract)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="_checkInvariants"><span class="type-signature">(async) </span>_checkInvariants<span class="signature">(address)</span><span class="type-signature"></span></h4>
     
 
     
@@ -435,13 +458,13 @@ the blockchain
 
         <tr>
             
-                <td class="name"><code>contract</code></td>
+                <td class="name"><code>address</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">ethers.Contract</span>
+<span class="param-type">String</span>
 
 
             
@@ -498,7 +521,7 @@ the blockchain
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line216">line 216</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line255">line 255</a>
     </li></ul></dd>
     
 
@@ -534,7 +557,7 @@ the blockchain
     
 
     
-    <h4 class="name" id="_deposit"><span class="type-signature">(async) </span>_deposit<span class="signature">(contract, amount)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    <h4 class="name" id="_isAlpineContract"><span class="type-signature"></span>_isAlpineContract<span class="signature">(address)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
     
 
     
@@ -542,7 +565,7 @@ the blockchain
 
 
 <div class="description">
-    call deposit with amount on a smart contract for the current user.
+    check if the contract address is a valid alpine contract address
 </div>
 
 
@@ -578,13 +601,13 @@ the blockchain
 
         <tr>
             
-                <td class="name"><code>contract</code></td>
+                <td class="name"><code>address</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">ethers.Contract</span>
+<span class="param-type">String</span>
 
 
             
@@ -594,30 +617,7 @@ the blockchain
 
             
 
-            <td class="description last">an ethers smart contract object</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>amount</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ethers.BigNumber</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">the amount to deposit</td>
+            <td class="description last"></td>
         </tr>
 
     
@@ -658,7 +658,7 @@ the blockchain
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line290">line 290</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line346">line 346</a>
     </li></ul></dd>
     
 
@@ -687,167 +687,7 @@ the blockchain
 
         
 <div class="param-desc">
-    returns a transaction receipt from
-the blockchain
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="_isTrustedContract"><span class="type-signature"></span>_isTrustedContract<span class="signature">(contract)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    check that the given contract is a trusted contract.
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>contract</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ethers.Contract</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">the contract to test</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line258">line 258</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    whether the contract can be trusted
+    whether the contract address is an alpine contract address
 </div>
 
 
@@ -882,6 +722,10 @@ the blockchain
     
 
 
+
+<div class="description">
+    parse blockchain response for a transaction
+</div>
 
 
 
@@ -955,7 +799,7 @@ the blockchain
 
             
 
-            <td class="description last">transaction receipt
+            <td class="description last">transaction block
 parse a transaction if its sent to an alpine contract</td>
         </tr>
 
@@ -997,7 +841,7 @@ parse a transaction if its sent to an alpine contract</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line236">line 236</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line299">line 299</a>
     </li></ul></dd>
     
 
@@ -1156,7 +1000,7 @@ parse a transaction if its sent to an alpine contract</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line270">line 270</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line328">line 328</a>
     </li></ul></dd>
     
 
@@ -1315,7 +1159,7 @@ parse a transaction if its sent to an alpine contract</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line279">line 279</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line337">line 337</a>
     </li></ul></dd>
     
 
@@ -1373,7 +1217,7 @@ parse a transaction if its sent to an alpine contract</td>
     
 
     
-    <h4 class="name" id="_withdraw"><span class="type-signature">(async) </span>_withdraw<span class="signature">(contract, amount)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    <h4 class="name" id="approve"><span class="type-signature">(async) </span>approve<span class="signature">(to, amountUSDC)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
     
 
     
@@ -1381,7 +1225,8 @@ parse a transaction if its sent to an alpine contract</td>
 
 
 <div class="description">
-    call withdraw with amount on a smart contract for the current user.
+    approve outgoing transaction with another wallet or smart contract for
+the specified amount
 </div>
 
 
@@ -1417,13 +1262,13 @@ parse a transaction if its sent to an alpine contract</td>
 
         <tr>
             
-                <td class="name"><code>contract</code></td>
+                <td class="name"><code>to</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">ethers.Contract</span>
+<span class="param-type">String</span>
 
 
             
@@ -1433,20 +1278,20 @@ parse a transaction if its sent to an alpine contract</td>
 
             
 
-            <td class="description last">an ethers smart contract object</td>
+            <td class="description last">the receipient address</td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>amount</code></td>
+                <td class="name"><code>amountUSDC</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">ethers.BigNumber</span>
+<span class="param-type">String</span>
 
 
             
@@ -1456,7 +1301,7 @@ parse a transaction if its sent to an alpine contract</td>
 
             
 
-            <td class="description last">the amount to withdraw</td>
+            <td class="description last">transaction amount in usdc</td>
         </tr>
 
     
@@ -1497,7 +1342,7 @@ parse a transaction if its sent to an alpine contract</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line304">line 304</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line144">line 144</a>
     </li></ul></dd>
     
 
@@ -1526,8 +1371,7 @@ parse a transaction if its sent to an alpine contract</td>
 
         
 <div class="param-desc">
-    returns a transaction receipt from
-the blockchain
+    a transaction receipt from the blockchain
 </div>
 
 
@@ -1556,7 +1400,7 @@ the blockchain
     
 
     
-    <h4 class="name" id="approveTransfer"><span class="type-signature">(async) </span>approveTransfer<span class="signature">(contract, amountUSDC)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    <h4 class="name" id="buyToken"><span class="type-signature">(async) </span>buyToken<span class="signature">(contract, amountUSDC)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
     
 
     
@@ -1564,7 +1408,7 @@ the blockchain
 
 
 <div class="description">
-    approve to transfer amountUSDC from user's wallet to contract
+    deposit usdc to a vault, and get alp tokens in return
 </div>
 
 
@@ -1616,7 +1460,7 @@ the blockchain
 
             
 
-            <td class="description last">the contract to transfer to</td>
+            <td class="description last">the vault to deposit usdc to</td>
         </tr>
 
     
@@ -1639,7 +1483,7 @@ the blockchain
 
             
 
-            <td class="description last">amount in usdc to approve</td>
+            <td class="description last">amount in usdc</td>
         </tr>
 
     
@@ -1680,7 +1524,7 @@ the blockchain
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line143">line 143</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line161">line 161</a>
     </li></ul></dd>
     
 
@@ -1709,7 +1553,7 @@ the blockchain
 
         
 <div class="param-desc">
-    a receipt from the blockchain
+    a transaction receipt from the blockchain
 </div>
 
 
@@ -1841,7 +1685,7 @@ the smart contracts.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line35">line 35</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line38">line 38</a>
     </li></ul></dd>
     
 
@@ -1866,188 +1710,6 @@ the smart contracts.
 
 
 
-
-
-
-
-
-        
-            
-
-    
-
-    
-    <h4 class="name" id="deposit"><span class="type-signature">(async) </span>deposit<span class="signature">(contract, amountUSDC)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
-    
-
-    
-
-
-
-<div class="description">
-    deposit usdc to a vault
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>contract</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">ethers.Contract</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">the vault to deposit usdc to</td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>amountUSDC</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">amount in usdc</td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line157">line 157</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    a receipt from the blockchain
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>></span>
-
-
-    </dd>
-</dl>
-
-    
 
 
 
@@ -2067,7 +1729,7 @@ the smart contracts.
 
 
 <div class="description">
-    disconnect a user from magic provider
+    disconnect a user from the magic provider
 </div>
 
 
@@ -2111,7 +1773,7 @@ the smart contracts.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line55">line 55</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line58">line 58</a>
     </li></ul></dd>
     
 
@@ -2199,7 +1861,7 @@ the smart contracts.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line94">line 94</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line97">line 97</a>
     </li></ul></dd>
     
 
@@ -2266,7 +1928,7 @@ of the user
 
 
 <div class="description">
-    get user's public address
+    get the user's public address
 </div>
 
 
@@ -2310,7 +1972,7 @@ of the user
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line84">line 84</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line87">line 87</a>
     </li></ul></dd>
     
 
@@ -2580,7 +2242,7 @@ and token denominated values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line65">line 65</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line68">line 68</a>
     </li></ul></dd>
     
 
@@ -2692,7 +2354,7 @@ and token denominated values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line75">line 75</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line78">line 78</a>
     </li></ul></dd>
     
 
@@ -2750,7 +2412,7 @@ and token denominated values.
     
 
     
-    <h4 class="name" id="withdraw"><span class="type-signature">(async) </span>withdraw<span class="signature">(contract, amountUSDC)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    <h4 class="name" id="sellToken"><span class="type-signature">(async) </span>sellToken<span class="signature">(contract, amountUSDC, to)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
     
 
     
@@ -2758,7 +2420,7 @@ and token denominated values.
 
 
 <div class="description">
-    withdraw usdc from a vault
+    sell alp token and withdraw usdc from a vault (to user's wallet by default)
 </div>
 
 
@@ -2837,6 +2499,29 @@ and token denominated values.
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>to</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">receipient address</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -2874,7 +2559,7 @@ and token denominated values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line192">line 192</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line203">line 203</a>
     </li></ul></dd>
     
 
@@ -2903,7 +2588,189 @@ and token denominated values.
 
         
 <div class="param-desc">
-    a receipt from the blockchain
+    a transaction receipt from the blockchain
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="transfer"><span class="type-signature">(async) </span>transfer<span class="signature">(to, amountUSDC)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    transfer usdc from user's wallet to another wallet
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>to</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">receipient address</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>amountUSDC</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">amount in usdc</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line231">line 231</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    a transaction receipt from the blockchain
 </div>
 
 
@@ -2942,13 +2809,13 @@ and token denominated values.
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="typedefs.html">typedefs</a></li></ul><h3>Classes</h3><ul><li><a href="Account.html">Account</a></li><li><a href="AlpineDeFiSDK.html">AlpineDeFiSDK</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Account.html">Account</a></li><li><a href="AlpineDeFiSDK.html">AlpineDeFiSDK</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Thu Dec 02 2021 21:08:29 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Dec 07 2021 19:14:06 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

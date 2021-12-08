@@ -50,13 +50,13 @@ can be directly accessed in the code like this:
 
 ```
 \\ first call connect() like above
-const contracts = await alpAccount.getAllContracts();
+const contracts = AlpineDeFiSDK.getAllContracts();
 ```
 
 Then check balance like this:
 
 ```
-let balance = await alpAccount.getUserBalance(contracts.vaultContract);
+let balance = await alpAccount.getUserBalance(contracts.alpSave);
 console.log({ balance });
 ```
 
@@ -65,39 +65,57 @@ For the vault contract(s), this function returns the user's balance in both toke
 ### Getting the Idle Cash
 
 ```
-let balance = await alpAccount.getUserBalance(contracts.usdcContract);
+let balance = await alpAccount.getUserBalance(contracts.usdc);
 console.log({ balance });
 ```
 
 For the usdc contract, this function returns user balance only in usdc denominated
 value. This is the idle cash.
 
-## Deposit
+## Buy Tokens
 
-Depositing funds is a two step process:
+Buying alp tokens is a two step process:
 
 1. Approve funds to transfer from user's wallet to the vault.
-2. Deposit the funds in the vault.
+2. Buy tokens from the vault.
 
 ```
 // call connect() like before
-const contracts = await alpAccount.getAllContracts();
-let approve = await alpAccount.approveTransfer(contracts.vaultContract, "5");
+const contracts = AlpineDeFiSDK.getAllContracts();
+let approve = await alpAccount.approve(contracts.alpSave, "5");
 console.log({ approve });
-let deposit = await alpAccount.deposit(contracts.vaultContract, "5");
-console.log({ deposit });
-let balance = await alpAccount.getUserBalance(contracts.vaultContract);
+let receipt = await alpAccount.buyToken(contracts.alpSave, "5");
+console.log({ receipt });
+let balance = await alpAccount.getUserBalance(contracts.alpSave);
 console.log({ balance });
 ```
 
-## Withdraw
+**Note: the transaction cost (`txnCost` in `receipt`) and `gasPrice` are in ETH denominated values, not USDC.**
+
+## Sell Tokens
 
 ```
 // call connect() like before
-const contracts = await alpAccount.getAllContracts();
-let withdraw = await alpAccount.withdraw(contracts.vaultContract, "4");
-console.log({ withdraw });
-let balance = await alpAccount.getUserBalance(contracts.vaultContract);
+const contracts = AlpineDeFiSDK.getAllContracts();
+let receipt = await alpAccount.sellToken(contracts.alpSave, "4");
+console.log({ receipt });
+let balance = await alpAccount.getUserBalance(contracts.alpSave);
+console.log({ balance });
+```
+
+the `to` parameter can be set to withdraw to a different wallet.
+
+## Transfer
+
+The following code transfers usdc from the user's wallet to another wallet
+
+```
+// call connect() like before
+const contracts = AlpineDeFiSDK.getAllContracts();
+const otherAddress = "0x3F91193d3080778fa66BC5cda19Be1f149049Ef9";
+let receipt = await alpAccount.transfer(otherAddress, "4");
+console.log({ receipt });
+let balance = await alpAccount.getUserBalance(contracts.usdc);
 console.log({ balance });
 ```
 
