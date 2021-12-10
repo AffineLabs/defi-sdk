@@ -5,6 +5,7 @@ import * as abiDecoder from "abi-decoder";
 import * as usdcJson from "./smart_contracts/usdc.json";
 import * as vaultJson from "./smart_contracts/dummyvault.json";
 import * as typedefs from "./typedefs.js";
+import { AlpineDeFiSDK } from "./AlpineDeFiSDK";
 
 /**
  * @typedef {typedefs.TxnReceipt} TxnReceipt
@@ -95,10 +96,13 @@ class Account {
     const txHistory = await this.etherscanProvider.getHistory(this.userAddress);
     const parsedTxHistory = [];
     for (const tx of txHistory) {
-      // filter by transactions that were sent to alpine contracts
-      if (this._isAlpineContract(tx.to)) {
+      const ticker = this._getContractTicker(tx.to);
+      // filter by outgoing transactions that were sent to alpine contracts
+      if (ticker !== "unknown") {
         const receipt = await this.provider.getTransactionReceipt(tx.hash);
         const parsedTx = this._parseTransaction(tx, receipt);
+        parsedTx["ticker"] = ticker;
+        parsedTx["status"] = 1;
         parsedTxHistory.push(parsedTx);
       }
     }
@@ -119,9 +123,9 @@ class Account {
       const balance = await contract.balanceOf(this.userAddress);
       return { balanceUSDC: this._toUnit(balance) };
     } else{
-      const [balanceMUSDC, balanceMToken] = await contract.balance(this.userAddress);
+      const [balanceMUSDC, balanceMToken] = await contract.balanceOf(this.userAddress);
       return {
-        balanceUSDC: this._toUnit(balanceMUSDC),
+        balanceUSDC: this._toUnit(balanceMToken),
         balanceToken: this._toUnit(balanceMToken)
       };
     }
@@ -132,16 +136,18 @@ class Account {
    * the specified amount
    * @param {String} to the receipient address
    * @param {String} amountUSDC transaction amount in usdc
-   * @returns {Promise<TxnReceipt>} a transaction receipt from the blockchain
+   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
+   * gas cost in eth
+   * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
-  async approve(to, amountUSDC) {
+  async approve(to, amountUSDC, dryrun=false) {
     await this._checkInvariants(to);
     // convert to micro usdc
     const amount = this._toMicroUnit(amountUSDC);
     if (amount.isNegative()) {
       throw new Error("amount cannot be negative.");
     }
-    const response = this._call(this.usdcContract, "approve", [to, amount]);
+    const response = this._call(this.usdcContract, "approve", [to, amount], dryrun);
     return response;
   }
 
@@ -149,9 +155,11 @@ class Account {
    * deposit usdc to a vault, and get alp tokens in return
    * @param {ethers.Contract} contract the vault to deposit usdc to
    * @param {String} amountUSDC amount in usdc
-   * @returns {Promise<TxnReceipt>} a transaction receipt from the blockchain
+   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
+   * gas cost in eth
+   * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
-  async buyToken(contract, amountUSDC) {
+  async buyToken(contract, amountUSDC, dryrun=false) {
     await this._checkInvariants(contract.address);
     const amount = this._toMicroUnit(amountUSDC);
     if (amount.isNegative()) {
@@ -176,11 +184,11 @@ class Account {
         )}, Required: ${amountUSDC}${+". Call approve() to increase the allowance."}`
       );
     }
-    const buyReceipt = await this._call(contract, "deposit", [
+    const receipt = await this._call(contract, "deposit", [
       this.userAddress,
       amount,
-    ]);
-    return buyReceipt;
+    ], dryrun);
+    return receipt;
   }
 
   /**
@@ -188,9 +196,11 @@ class Account {
    * @param {ethers.Contract} contract the vault to withdraw usdc from
    * @param {String} amountUSDC amount in usdc
    * @param {String} to receipient address
-   * @returns {Promise<TxnReceipt>} a transaction receipt from the blockchain
+  * @param {boolean} dryrun If set to true, will do a dry run and return estimated
+   * gas cost in eth
+   * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
-  async sellToken(contract, amountUSDC, to = this.userAddress) {
+  async sellToken(contract, amountUSDC, to = this.userAddress, dryrun=false) {
     await this._checkInvariants(contract.address);
     const amount = this._toMicroUnit(amountUSDC);
     if (amount.isNegative()) {
@@ -208,7 +218,7 @@ class Account {
         }${balance},` + ` Requested to sell: ${this._toUnit(amount)}`
       );
     }
-    const sellReceipt = this._call(contract, "withdraw", [to, amount]);
+    const sellReceipt = this._call(contract, "withdraw", [to, amount], dryrun);
     return sellReceipt;
   }
 
@@ -216,9 +226,11 @@ class Account {
    * transfer usdc from user's wallet to another wallet
    * @param {String} to receipient address
    * @param {String} amountUSDC amount in usdc
-   * @returns {Promise<TxnReceipt>} a transaction receipt from the blockchain
+   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
+   * gas cost in eth
+   * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
-  async transfer(to, amountUSDC) {
+  async transfer(to, amountUSDC, dryrun=false) {
     await this._checkInvariants(to);
     const amount = this._toMicroUnit(amountUSDC);
     const balance = this._toMicroUnit(
@@ -232,7 +244,7 @@ class Account {
           ` Requested to transfer: ${this._toUnit(amount)}`
       );
     }
-    const receipt = this._call(this.usdcContract, "transfer", [to, amount]);
+    const receipt = this._call(this.usdcContract, "transfer", [to, amount], dryrun);
     return receipt;
   }
 
@@ -261,20 +273,27 @@ class Account {
    * @param {ethers.Contract} contract smart contract
    * @param {String} method the method name
    * @param {Array} args the arguments to the method
-   * @returns {Promise<TxnReceipt>} a transaction receipt from
-   * the blockchain
+   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
+   * gas cost in eth
+   * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
-  async _call(contract, method, args) {
+  async _call(contract, method, args, dryrun) {
     // connect the smart contract with this user's signer
     const signer = contract.connect(this.signer);
-    // call the smart contract method using javascript's apply() fn
-    const tx = await signer[method].apply(null, args);
-    const receipt = await tx.wait();
-    // tx's timestamp could be empty, so get it from the block
-    tx.timestamp = (
-      await this.provider.getBlock(receipt.blockNumber)
-    ).timestamp;
-    return this._parseTransaction(tx, receipt);
+    // do a dryrun and return estimated cost
+    if(dryrun){
+      // call the smart contract method using javascript's apply() fn
+      const gasEstimate = await signer.estimateGas[method].apply(null, args);
+      return ethers.utils.formatEther(gasEstimate);
+    } else{
+      const tx = await signer[method].apply(null, args);
+      const receipt = await tx.wait();
+      // tx's timestamp could be empty, so get it from the block
+      tx.timestamp = (
+        await this.provider.getBlock(receipt.blockNumber)
+      ).timestamp;
+      return this._parseTransaction(tx, receipt);
+    }
   }
 
   /**
@@ -302,7 +321,7 @@ class Account {
       txnCost: String(
         ethers.utils.formatEther(tx.gasPrice.mul(receipt.cumulativeGasUsed))
       ),
-      contract: tx.to,
+      contractAddress: tx.to,
       txnHash: tx.hash,
       blockNumber: receipt.blockNumber,
     };
@@ -327,15 +346,18 @@ class Account {
   }
 
   /**
-   * check if the contract address is a valid alpine contract address
+   * find ticker for alpine and usdc contract addresses
    * @param {String} address
-   * @returns {boolean} whether the contract address is an alpine contract address
+   * @returns {String} contract ticker for alpine and usdc 
+   * contracts, and unknown otherwise
    */
-  _isAlpineContract(address) {
-    return (
-      address.toLowerCase() === vaultJson.address.toLowerCase() ||
-      address.toLowerCase() === usdcJson.address.toLowerCase()
-    );
+  _getContractTicker(address) {
+    switch(address.toLowerCase()){
+      case vaultJson.address.toLowerCase(): return "alpSave";
+      case usdcJson.address.toLowerCase(): return "usdc";
+      default:
+        return "unknown";
+    }
   }
 }
 export { Account };

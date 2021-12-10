@@ -150,7 +150,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line22">line 22</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line23">line 23</a>
     </li></ul></dd>
     
 
@@ -206,7 +206,7 @@
     
 
     
-    <h4 class="name" id="_call"><span class="type-signature">(async) </span>_call<span class="signature">(contract, method, args)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    <h4 class="name" id="_call"><span class="type-signature">(async) </span>_call<span class="signature">(contract, method, args, dryrun)</span><span class="type-signature"> &rarr; {Promise.&lt;(<a href="global.html#TxnReceipt">TxnReceipt</a>|String)>}</span></h4>
     
 
     
@@ -316,6 +316,30 @@
         </tr>
 
     
+
+        <tr>
+            
+                <td class="name"><code>dryrun</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">If set to true, will do a dry run and return estimated
+gas cost in eth</td>
+        </tr>
+
+    
     </tbody>
 </table>
 
@@ -353,7 +377,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line267">line 267</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line280">line 280</a>
     </li></ul></dd>
     
 
@@ -382,8 +406,7 @@
 
         
 <div class="param-desc">
-    a transaction receipt from
-the blockchain
+    a transaction receipt from the blockchain
 </div>
 
 
@@ -394,7 +417,7 @@ the blockchain
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>></span>
+<span class="param-type">Promise.&lt;(<a href="global.html#TxnReceipt">TxnReceipt</a>|String)></span>
 
 
     </dd>
@@ -521,7 +544,7 @@ the blockchain
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line245">line 245</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line257">line 257</a>
     </li></ul></dd>
     
 
@@ -557,7 +580,7 @@ the blockchain
     
 
     
-    <h4 class="name" id="_isAlpineContract"><span class="type-signature"></span>_isAlpineContract<span class="signature">(address)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id="_getContractTicker"><span class="type-signature"></span>_getContractTicker<span class="signature">(address)</span><span class="type-signature"> &rarr; {String}</span></h4>
     
 
     
@@ -565,7 +588,7 @@ the blockchain
 
 
 <div class="description">
-    check if the contract address is a valid alpine contract address
+    find ticker for alpine and usdc contract addresses
 </div>
 
 
@@ -658,7 +681,7 @@ the blockchain
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line334">line 334</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line354">line 354</a>
     </li></ul></dd>
     
 
@@ -687,7 +710,8 @@ the blockchain
 
         
 <div class="param-desc">
-    whether the contract address is an alpine contract address
+    contract ticker for alpine and usdc 
+contracts, and unknown otherwise
 </div>
 
 
@@ -698,7 +722,7 @@ the blockchain
     </dt>
     <dd>
         
-<span class="param-type">boolean</span>
+<span class="param-type">String</span>
 
 
     </dd>
@@ -841,7 +865,7 @@ parse a transaction if its sent to an alpine contract</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line287">line 287</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line306">line 306</a>
     </li></ul></dd>
     
 
@@ -1000,7 +1024,7 @@ parse a transaction if its sent to an alpine contract</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line316">line 316</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line335">line 335</a>
     </li></ul></dd>
     
 
@@ -1159,7 +1183,7 @@ parse a transaction if its sent to an alpine contract</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line325">line 325</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line344">line 344</a>
     </li></ul></dd>
     
 
@@ -1217,7 +1241,7 @@ parse a transaction if its sent to an alpine contract</td>
     
 
     
-    <h4 class="name" id="approve"><span class="type-signature">(async) </span>approve<span class="signature">(to, amountUSDC)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    <h4 class="name" id="approve"><span class="type-signature">(async) </span>approve<span class="signature">(to, amountUSDC, dryrun)</span><span class="type-signature"> &rarr; {Promise.&lt;(<a href="global.html#TxnReceipt">TxnReceipt</a>|String)>}</span></h4>
     
 
     
@@ -1252,6 +1276,8 @@ the specified amount
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -1277,6 +1303,10 @@ the specified amount
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">the receipient address</td>
         </tr>
@@ -1300,8 +1330,42 @@ the specified amount
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">transaction amount in usdc</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dryrun</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">If set to true, will do a dry run and return estimated
+gas cost in eth</td>
         </tr>
 
     
@@ -1342,7 +1406,7 @@ the specified amount
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line137">line 137</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line143">line 143</a>
     </li></ul></dd>
     
 
@@ -1382,7 +1446,7 @@ the specified amount
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>></span>
+<span class="param-type">Promise.&lt;(<a href="global.html#TxnReceipt">TxnReceipt</a>|String)></span>
 
 
     </dd>
@@ -1400,7 +1464,7 @@ the specified amount
     
 
     
-    <h4 class="name" id="buyToken"><span class="type-signature">(async) </span>buyToken<span class="signature">(contract, amountUSDC)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    <h4 class="name" id="buyToken"><span class="type-signature">(async) </span>buyToken<span class="signature">(contract, amountUSDC, dryrun)</span><span class="type-signature"> &rarr; {Promise.&lt;(<a href="global.html#TxnReceipt">TxnReceipt</a>|String)>}</span></h4>
     
 
     
@@ -1434,6 +1498,8 @@ the specified amount
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -1459,6 +1525,10 @@ the specified amount
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">the vault to deposit usdc to</td>
         </tr>
@@ -1482,8 +1552,42 @@ the specified amount
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">amount in usdc</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dryrun</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">If set to true, will do a dry run and return estimated
+gas cost in eth</td>
         </tr>
 
     
@@ -1524,7 +1628,7 @@ the specified amount
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line154">line 154</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line162">line 162</a>
     </li></ul></dd>
     
 
@@ -1564,7 +1668,7 @@ the specified amount
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>></span>
+<span class="param-type">Promise.&lt;(<a href="global.html#TxnReceipt">TxnReceipt</a>|String)></span>
 
 
     </dd>
@@ -1685,7 +1789,7 @@ the smart contracts.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line38">line 38</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line39">line 39</a>
     </li></ul></dd>
     
 
@@ -1773,7 +1877,7 @@ the smart contracts.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line54">line 54</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line55">line 55</a>
     </li></ul></dd>
     
 
@@ -1861,7 +1965,7 @@ the smart contracts.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line93">line 93</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -1972,7 +2076,7 @@ of the user
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line83">line 83</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line84">line 84</a>
     </li></ul></dd>
     
 
@@ -2131,7 +2235,7 @@ of the user
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line114">line 114</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line118">line 118</a>
     </li></ul></dd>
     
 
@@ -2242,7 +2346,7 @@ and token denominated values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line64">line 64</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line65">line 65</a>
     </li></ul></dd>
     
 
@@ -2354,7 +2458,7 @@ and token denominated values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line74">line 74</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line75">line 75</a>
     </li></ul></dd>
     
 
@@ -2412,7 +2516,7 @@ and token denominated values.
     
 
     
-    <h4 class="name" id="sellToken"><span class="type-signature">(async) </span>sellToken<span class="signature">(contract, amountUSDC, to)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    <h4 class="name" id="sellToken"><span class="type-signature">(async) </span>sellToken<span class="signature">(contract, amountUSDC, to, dryrun)</span><span class="type-signature"> &rarr; {Promise.&lt;(<a href="global.html#TxnReceipt">TxnReceipt</a>|String)>}</span></h4>
     
 
     
@@ -2446,6 +2550,8 @@ and token denominated values.
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -2471,6 +2577,10 @@ and token denominated values.
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">the vault to withdraw usdc from</td>
         </tr>
@@ -2493,6 +2603,10 @@ and token denominated values.
 
             
 
+            
+                <td class="default">
+                
+                </td>
             
 
             <td class="description last">amount in usdc</td>
@@ -2517,8 +2631,42 @@ and token denominated values.
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">receipient address</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dryrun</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">If set to true, will do a dry run and return estimated
+gas cost in eth</td>
         </tr>
 
     
@@ -2559,7 +2707,7 @@ and token denominated values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line193">line 193</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line203">line 203</a>
     </li></ul></dd>
     
 
@@ -2599,7 +2747,7 @@ and token denominated values.
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>></span>
+<span class="param-type">Promise.&lt;(<a href="global.html#TxnReceipt">TxnReceipt</a>|String)></span>
 
 
     </dd>
@@ -2617,7 +2765,7 @@ and token denominated values.
     
 
     
-    <h4 class="name" id="transfer"><span class="type-signature">(async) </span>transfer<span class="signature">(to, amountUSDC)</span><span class="type-signature"> &rarr; {Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>>}</span></h4>
+    <h4 class="name" id="transfer"><span class="type-signature">(async) </span>transfer<span class="signature">(to, amountUSDC, dryrun)</span><span class="type-signature"> &rarr; {Promise.&lt;(<a href="global.html#TxnReceipt">TxnReceipt</a>|String)>}</span></h4>
     
 
     
@@ -2651,6 +2799,8 @@ and token denominated values.
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -2676,6 +2826,10 @@ and token denominated values.
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">receipient address</td>
         </tr>
@@ -2699,8 +2853,42 @@ and token denominated values.
             
 
             
+                <td class="default">
+                
+                </td>
+            
 
             <td class="description last">amount in usdc</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>dryrun</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">If set to true, will do a dry run and return estimated
+gas cost in eth</td>
         </tr>
 
     
@@ -2741,7 +2929,7 @@ and token denominated values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line221">line 221</a>
+        <a href="Account.js.html">Account.js</a>, <a href="Account.js.html#line233">line 233</a>
     </li></ul></dd>
     
 
@@ -2781,7 +2969,7 @@ and token denominated values.
     </dt>
     <dd>
         
-<span class="param-type">Promise.&lt;<a href="global.html#TxnReceipt">TxnReceipt</a>></span>
+<span class="param-type">Promise.&lt;(<a href="global.html#TxnReceipt">TxnReceipt</a>|String)></span>
 
 
     </dd>
@@ -2815,7 +3003,7 @@ and token denominated values.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Tue Dec 07 2021 19:40:10 GMT-0500 (Eastern Standard Time)
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Thu Dec 09 2021 23:05:45 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

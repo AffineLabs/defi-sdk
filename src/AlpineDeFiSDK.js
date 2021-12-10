@@ -41,6 +41,19 @@ class AlpineDeFiSDK {
       alpAggr: vaultContract,
     };
   }
+
+  /**
+   * get the current best estimate for gas price
+   * @returns {Promise<String>} the best estimate for gas price in eth
+   */
+  static async getGasPrice(){
+    const provider = new ethers.providers.StaticJsonRpcProvider(
+      "https://kovan.infura.io/v3/6a4677f9b8014a239fb68742f752fb62"
+    );
+    const gas = await provider.getGasPrice(); // gas price in wei
+    // return gas price in ether
+    return ethers.utils.formatEther(gas);
+  }
 }
 
 export { AlpineDeFiSDK };

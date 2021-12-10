@@ -21,20 +21,23 @@ const main = async () => {
   let balance = await alpAccount.getUserBalance(contracts.usdc);
   console.log({ getUserBalance: balance });
 
-  let response = await alpAccount.approve(contracts.alpSave.address, "5");
+  let response = await alpAccount.approve(contracts.alpSave.address, "5", true);
+  console.log({ approveEstimate: response });
+
+  response = await alpAccount.approve(contracts.alpSave.address, "5");
   console.log({ approve: response });
 
-  response = await alpAccount.buyToken(contracts.alpSave, "5");
-  console.log({ buyToken: response });
+  // response = await alpAccount.buyToken(contracts.alpSave, "5");
+  // console.log({ buyToken: response });
 
-  balance = await alpAccount.getUserBalance(contracts.alpSave);
-  console.log({ getUserBalance: balance });
+  // balance = await alpAccount.getUserBalance(contracts.alpSave);
+  // console.log({ getUserBalance: balance });
 
-  response = await alpAccount.sellToken(contracts.alpSave, "5");
-  console.log({ sellToken: response });
+  // response = await alpAccount.sellToken(contracts.alpSave, "5");
+  // console.log({ sellToken: response });
 
-  balance = await alpAccount.getUserBalance(contracts.usdc);
-  console.log({ getUserBalance: balance });
+  // balance = await alpAccount.getUserBalance(contracts.usdc);
+  // console.log({ getUserBalance: balance });
 
   // const withdraw = await alpAccount.withdraw(
   //   "0x2458B4DDCA1a688E3E19dE91E0d0068fDd278EC3",
@@ -42,11 +45,13 @@ const main = async () => {
   // );
   // console.log({ withdraw: withdraw });
 
-  // let address = "0x3F91193d3080778fa66BC5cda19Be1f149049Ef9";
-  const txHistory = await alpAccount.getTransactionHistory();
-  txHistory.forEach(tx => {
-    console.log(tx);
-  });
+  // const txHistory = await alpAccount.getTransactionHistory();
+  // txHistory.forEach(tx => {
+  //   console.log(tx);
+  // });
+  const gas = await AlpineDeFiSDK.getGasPrice();
+  console.log({getGasPrice : gas});
+  console.log("done");
 };
 
 main()

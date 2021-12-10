@@ -13,7 +13,7 @@
  * @property {number} timestamp timestamp of the transaction
  * @property {String} gasPrice gas price in eth
  * @property {String} txnCost transaction cost in eth
- * @property {String} contract the address of the contract
+ * @property {String} contractAddress the address of the contract
  * @property {String} txnHash transaction hash
  * @property {number} blockNumber block number
  */
