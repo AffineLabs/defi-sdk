@@ -23,9 +23,9 @@ class Account {
      * @param {String} network the name of the network. The default is kovan.
      */
     constructor (network = "kovan") {
-        this.network = network;
         // the api key is public
-        this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
+        // TODO @tosin: replace this API key with pk_live_1EF4B8FEB56F7AA4
+        this.magic = new Magic("pk_test_4BC74945EEEA1A8A", {
             // @ts-ignore
             network: network
         });
@@ -140,7 +140,7 @@ class Account {
                 balanceUSDC: this._toUnit(balance),
             };
         } else {
-            const tokenPrice = await alpsdk.getTokenPrice(contract, this.network);
+            const tokenPrice = await alpsdk.getTokenPrice(contract);
             return {
                 balanceUSDC: this._toUnit(balance.mul(tokenPrice)),
                 balanceToken: this._toUnit(balance),
@@ -161,8 +161,8 @@ class Account {
         await this._checkInvariants(to);
         // convert to micro usdc
         const amount = this._toMicroUnit(amountUSDC);
-        if (amount.isNegative()) {
-            throw new Error("amount cannot be negative.");
+        if (amount.isNegative() || amount.isZero()) {
+            throw new Error("amount must be positive.");
         }
         const usdcContract = this.contracts.usdc.connect(this.signer);
         const response = this._blockchainCall(
@@ -185,8 +185,8 @@ class Account {
     async buyToken(contract, amountUSDC, dryrun = false) {
         await this._checkInvariants(contract.address);
         const amount = this._toMicroUnit(amountUSDC);
-        if (amount.isNegative()) {
-            throw new Error("amount cannot be negative.");
+        if (amount.isNegative() || amount.isZero()) {
+            throw new Error("amount must be positive.");
         }
         const walletBalance = await this.contracts.usdc.balanceOf(this.userAddress);
         // wallet balance < amount to buy
@@ -231,17 +231,18 @@ class Account {
     async sellToken(contract, amountTokens, to = this.userAddress, dryrun = false) {
         await this._checkInvariants(contract.address);
         const amount = this._toMicroUnit(amountTokens);
-        if (amount.isNegative()) {
-            throw new Error("amount cannot be negative.");
+        if (amount.isNegative() || amount.isZero()) {
+            throw new Error("amount must be positive.");
         }
         const balance = this._toMicroUnit((await this.getUserBalance(contract)).balanceToken);
 
         // balance at vault < amount requested to sell
         if (balance.lt(amount)) {
+            const ticker = await contract.symbol();
             throw new Error(
-                "Insuffient balance at user's vault account." +
-                ` Balance: ${balance},` +
-                ` Requested to sell: ${this._toUnit(amount)}`,
+                "Insufficient token balance. " +
+                `Balance: ${this._toUnit(balance)} ${ticker},` +
+                `Requested to sell: ${this._toUnit(amount)} ${ticker},`,
             );
         }
         const sellReceipt = this._blockchainCall(
@@ -264,6 +265,11 @@ class Account {
     async transfer(to, amountUSDC, dryrun = false) {
         await this._checkInvariants(to);
         const amount = this._toMicroUnit(amountUSDC);
+
+        if (amount.isNegative() || amount.isZero()) {
+            throw new Error("amount must be positive.");
+        }
+
         const balance = this._toMicroUnit(
             (await this.getUserBalance(this.contracts.usdc)).balanceUSDC
         );
@@ -271,7 +277,8 @@ class Account {
         // balance at wallet < amount requested to transfer
         if (balance.lt(amount)) {
             throw new Error(
-                `Insuffient balance at user's wallet. Balance: ${balance}, ` +
+                "Insuffient balance at user's wallet. " +
+                `Balance: ${this._toUnit(balance)}, ` +
                 `Requested to transfer: ${this._toUnit(amount)}`,
             );
         }

@@ -48,20 +48,20 @@ class AlpineDeFiSDK {
   }
 
   /**
-   * get current usdc price of an alpine token 
+   * Get current usdc price of an alpine token. If there's 0 token in circulation
+   * returns null.
    * @param {ethers.Contract} contract an alpine contract
-   * @param {String} network blockchain network, default is kovan
    * @returns {Promise<ethers.BigNumber>} current token price
    */
-  static async getTokenPrice(contract, network = "kovan") {
+  static async getTokenPrice(contract) {
     // total value in micro usdc locked in the contract
     const tvlUSDC = await contract.globalTVL();
     // number of circulating micro tokens
     const numTokens = await contract.totalSupply();
-    if (numTokens.gt(ethers.BigNumber.from(0))) {
-      return tvlUSDC.div(numTokens);
+    if (numTokens.isZero()) {
+      return null;
     } else {
-      return ethers.BigNumber.from(0);
+      return tvlUSDC.div(numTokens);
     }
   }
 }

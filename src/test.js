@@ -1,5 +1,4 @@
 // @ts-check
-import { ethers, providers } from "ethers";
 import { Account } from "./Account.js";
 import { AlpineDeFiSDK } from "./AlpineDeFiSDK.js";
 
@@ -16,26 +15,47 @@ const main = async () => {
   const addr = await alpAccount.getUserAddress();
   console.log({ getUserAddress: addr });
 
-  let balance = await alpAccount.getUserBalance(contracts.alpSave);
-  console.log({ balance });
+  // let balance = await alpAccount.getUserBalance(contracts.usdc);
+  // console.log({ usdc: balance });
 
-  let response = await alpAccount.approve(contracts.alpSave.address, "5", true);
-  console.log({ approveEstimate: response });
+  // let response = await alpAccount.approve(contracts.alpSave.address, "5", true);
+  // console.log({ approveEstimate: response });
 
-  response = await alpAccount.approve(contracts.alpBal.address, "10");
-  console.log({ approve: response });
+  // let response = await alpAccount.approve(contracts.alpSave.address, "10");
+  // console.log({ alpSave: response });
 
-  response = await alpAccount.buyToken(contracts.alpBal, "6");
-  console.log({ buyToken: response });
+  // response = await alpAccount.buyToken(contracts.alpSave, "6");
+  // console.log({ alpSave: response });
 
-  balance = await alpAccount.getUserBalance(contracts.alpBal);
-  console.log({ getUserBalance: balance });
+  // balance = await alpAccount.getUserBalance(contracts.alpSave);
+  // console.log({ alpSave: balance });
 
-  response = await alpAccount.sellToken(contracts.alpBal, "4");
-  console.log({ sellToken: response });
 
-  balance = await alpAccount.getUserBalance(contracts.usdc);
-  console.log({ getUserBalance: balance });
+  // response = await alpAccount.approve(contracts.alpBal.address, "10");
+  // console.log({ alpBal: response });
+
+  // response = await alpAccount.buyToken(contracts.alpBal, "6");
+  // console.log({ alpBal: response });
+
+  // balance = await alpAccount.getUserBalance(contracts.alpBal);
+  // console.log({ alpBal: balance });
+
+
+  // response = await alpAccount.approve(contracts.alpAggr.address, "10");
+  // console.log({ alpAggr: response });
+
+  // response = await alpAccount.buyToken(contracts.alpAggr, "6");
+  // console.log({ alpAggr: response });
+
+  // balance = await alpAccount.getUserBalance(contracts.alpAggr);
+  // console.log({ alpAggr: balance });
+
+
+  let response = await alpAccount.sellToken(contracts.alpAggr, "30");
+  console.log({ AlpAggr: response });
+
+  let balance = await alpAccount.getUserBalance(contracts.usdc);
+  console.log({ usdc: balance });
 
   console.log("exiting");
 
