@@ -1,5 +1,15 @@
 # Alpine DeFi SDK
 
+## Changelog
+### v 1.0.0
+- Replaced the testnet API key due to a [recent Magic policy change](https://magic.crisp.help/en/article/sunsetting-test-api-keys-1v4ygo9/?bust=1639162551089). This effectively means the previous magic wallets will be inaccessible once this version is installed.
+- Replaced `amountUSDC` parameter in `sellToken` with `amountTokens`. This is necessary because the underlying smart contract call accepts the amount of tokens as the parameter and this is how the function calls are recorded in the blockchain. 
+- Updated the `estimateGas` function. The estimates are better than before, but are still wildly inaccurate.
+- Added a function `getTokenPrice`.
+- Deployed 3 different vaults with token prices $1, $2 and $3 respectively.
+- Updated `getUserBalance` so that the usdc balance is actually computed from token price.
+- Fixed minor formatting bugs in error messages.
+
 ## Installation
 
 ```
