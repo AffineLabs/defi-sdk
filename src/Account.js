@@ -96,7 +96,6 @@ class Account {
      */
     async getUserAddress() {
         await this._checkInvariants();
-        console.log("getting user address");
         return this.userAddress;
     }
 
@@ -134,10 +133,10 @@ class Account {
         // the returned amounts are in micro units
         // need to divide them by 10^6 to convert to usdc and alpTokens
         const balance = await contract.balanceOf(this.userAddress);
-
-        if (contract.address.toLowerCase() === this.contracts.usdc.address.toLowerCase()) {
+        if (contract.address == this.contracts.usdc.address) {
             return {
                 balanceUSDC: this._toUnit(balance),
+                balanceToken: this._toUnit(balance),
             };
         } else {
             const tokenPrice = await alpsdk.getTokenPrice(contract);
@@ -204,10 +203,12 @@ class Account {
         );
         // allowance < amount
         if (allowance.lt(amount)) {
+            const ticker = await contract.symbol();
             throw new Error(
                 `Insufficient allowance. Allowance: ${this._toUnit(
                     allowance,
-                )}, Required: ${amountUSDC}. Call approve() to increase the allowance.`,
+                )} ${ticker}, Required: ${amountUSDC} ${ticker}. ` +
+                "Call approve() to increase the allowance.",
             );
         }
         const receipt = await this._blockchainCall(
