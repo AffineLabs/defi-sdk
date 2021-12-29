@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>Alpine DeFi SDK</h1>
+<h2>Changelog</h2>
+<h3>v 1.0.0</h3>
+<ul>
+<li>Replaced <code>amountUSDC</code> parameter in <code>sellToken</code> with <code>amountTokens</code>. This is necessary because the underlying smart contract call accepts the amount of tokens as the parameter and this is how the function calls are recorded in the blockchain.</li>
+<li>Similarly, replaced <code>amountUSDC</code> in <code>TxnReceipt</code> by <code>amount</code>. This amount is in USDC for <code>buy</code>, and in alpToken for <code>sell</code>.</li>
+<li>Updated the <code>estimateGas</code> function. The estimates are better than before, but are still wildly inaccurate.</li>
+<li>Added a function <code>getTokenPrice</code>.</li>
+<li>Deployed 3 different vaults with token prices $1, $2 and $3 respectively.</li>
+<li>Updated <code>getUserBalance</code> so that the usdc equivalent vault balance is computed from the vault token price.</li>
+<li>Fixed minor formatting bugs in the error messages.</li>
+</ul>
+<p><strong>TODO</strong></p>
+<ul>
+<li>(<strong>Tosin</strong>) Replace the testnet API key due to a <a href="https://magic.crisp.help/en/article/sunsetting-test-api-keys-1v4ygo9/?bust=1639162551089">recent Magic policy change</a>. This effectively means the previous magic wallets will be inaccessible starting from Jan 13.</li>
+<li>(<strong>Adib</strong>) Use <a href="https://karma-runner.github.io/latest/intro/configuration.html">karma</a> or <a href="https://mochajs.org/#running-mocha-in-the-browser">mocha</a> for testing.</li>
+</ul>
+<h2>Installation</h2>
+<pre class="prettyprint source"><code>yarn install
+</code></pre>
+<p>To play with the sdk, run <code>yarn parcel index.html</code>. Open the url provided by parcel and open your browser's console.</p>
+<h2>Getting Started</h2>
+<pre class="prettyprint source"><code>const alpAccount = new Account();
+await alpAccount.connect(&quot;email&quot;);
+let addr = await alpAccount.getUserAddress();
+console.log({ addr: addr });
+</code></pre>
+<p>Then check the email address provided for the magic link. Once logged in, check the console for your public address. <strong>You'll need ethereum and usdc in this address to execute transactions.</strong> You have two options:</p>
+<ol>
+<li>Either get the eth and the usdc from the links provided in dj-multiplyr.</li>
+<li>Share the above address in <code>dj-multiplyr</code> and request some tokens from Adib.</li>
+</ol>
+<h3>Connect and Disconnect</h3>
+<pre class="prettyprint source"><code>await alpAccount.connect()
+</code></pre>
+<p>connects the user to Magic's provider.</p>
+<pre class="prettyprint source"><code>await alpAccount.disconnect()
+</code></pre>
+<p>disconnects the user from the Magic's provider.</p>
+<pre class="prettyprint source"><code>await alpAccount.isConnected()
+</code></pre>
+<p>checks if the user is connected.</p>
+<h2>Checking Balance</h2>
+<p>The SDK will only interact with trusted smart contracts, namely, the
+Circle USDC smart contract, and Alpine Vault Contracts. In MV1, these contracts
+can be directly accessed in the code like this:</p>
+<pre class="prettyprint source"><code>\\ first call connect() like above
+const contracts = AlpineDeFiSDK.getAllContracts();
+</code></pre>
+<p>Then check balance like this:</p>
+<pre class="prettyprint source"><code>let balance = await alpAccount.getUserBalance(contracts.alpSave);
+console.log({ balance });
+</code></pre>
+<p>For the vault contract(s), this function returns the user's balance in both token denominated value and usdc denominated value.</p>
+<h3>Getting the Idle Cash</h3>
+<pre class="prettyprint source"><code>let balance = await alpAccount.getUserBalance(contracts.usdc);
+console.log({ balance });
+</code></pre>
+<p>For the usdc contract, this function returns user balance only in usdc denominated
+value. This is the idle cash.</p>
+<h2>Get Token Price</h2>
+<pre class="prettyprint source"><code>const contracts = AlpineDeFiSDK.getAllContracts();
+const alpAggrPrice = await AlpineDeFiSDK.getTokenPrice(contracts.alpAggr);
+console.log({alpAggrPrice});
+</code></pre>
+<p>This returns the price of 1 <code>alpAggr</code> token in USDC denominated values.</p>
+<h2>Buy Tokens</h2>
+<p>Buying alp tokens is a two step process:</p>
+<ol>
+<li>Approve funds to transfer from user's wallet to the vault.</li>
+<li>Buy tokens from the vault.</li>
+</ol>
+<pre class="prettyprint source"><code>// call connect() like before
+const contracts = AlpineDeFiSDK.getAllContracts();
+let approve = await alpAccount.approve(contracts.alpBal, &quot;6&quot;);
+console.log({ approve });
+let receipt = await alpAccount.buyToken(contracts.alpBal, &quot;6&quot;);
+console.log({ receipt });
+let balance = await alpAccount.getUserBalance(contracts.alpBal);
+console.log({ balance });
+</code></pre>
+<p><strong>Note: the transaction cost (<code>txnCost</code> in <code>receipt</code>) and <code>gasPrice</code> are in ETH denominated values, not USDC.</strong></p>
+<h2>Sell Tokens</h2>
+<pre class="prettyprint source"><code>// call connect() like before
+const contracts = AlpineDeFiSDK.getAllContracts();
+// make sure you own 2 alpBal tokens
+let receipt = await alpAccount.sellToken(contracts.alpBal, &quot;2&quot;);
+console.log({ receipt });
+let balance = await alpAccount.getUserBalance(contracts.alpBal);
+console.log({ balance });
+</code></pre>
+<p>the <code>to</code> parameter can be set to withdraw to a different wallet.</p>
+<h2>Transfer</h2>
+<p>The following code transfers usdc from the user's wallet to another wallet</p>
+<pre class="prettyprint source"><code>// call connect() like before
+const contracts = AlpineDeFiSDK.getAllContracts();
+const otherAddress = &quot;0x3F91193d3080778fa66BC5cda19Be1f149049Ef9&quot;;
+let receipt = await alpAccount.transfer(otherAddress, &quot;4&quot;);
+console.log({ receipt });
+let balance = await alpAccount.getUserBalance(contracts.usdc);
+console.log({ balance });
+</code></pre>
+<h2>Get Transaction History</h2>
+<pre class="prettyprint source"><code>// call connect() like before
+const txHistory = await alpAccount.getTransactionHistory();
+txHistory.forEach((tx) => {console.log(tx);});
+</code></pre>
+<h2>Documentation</h2>
+<pre class="prettyprint source"><code>jsdoc src/ -R README.md -d docs
+</code></pre>
+<p>then see the <code>docs</code> folder.</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Account.html">Account</a></li><li><a href="AlpineDeFiSDK.html">AlpineDeFiSDK</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Thu Dec 23 2021 16:17:04 GMT-0500 (Eastern Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
