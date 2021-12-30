@@ -24,7 +24,9 @@ class AlpineDeFiSDK {
    */
 
   static getAllContracts(network = "kovan") {
-    const provider = ethers.providers.getDefaultProvider(network);
+    const provider = new ethers.providers.StaticJsonRpcProvider(
+      `https://${network}.infura.io/v3/6a4677f9b8014a239fb68742f752fb62`
+    );
     return {
       usdc: new ethers.Contract(usdcJson.address, usdcJson.abi, provider),
       alpSave: new ethers.Contract(alpSave.address, alpSave.abi, provider),
@@ -51,7 +53,7 @@ class AlpineDeFiSDK {
    * Get current usdc price of an alpine token. If there's 0 token in circulation
    * returns null.
    * @param {ethers.Contract} contract an alpine contract
-   * @returns {Promise<ethers.BigNumber>} current token price
+   * @returns {Promise<String>} current token price
    */
   static async getTokenPrice(contract) {
     // total value in micro usdc locked in the contract
@@ -61,7 +63,8 @@ class AlpineDeFiSDK {
     if (numTokens.isZero()) {
       return null;
     } else {
-      return tvlUSDC.div(numTokens);
+      const price = tvlUSDC.div(numTokens);
+      return price.toString();
     }
   }
 }

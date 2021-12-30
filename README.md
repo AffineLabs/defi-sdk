@@ -2,10 +2,9 @@
 
 ## Changelog
 ### v 1.0.0
-- Replaced `amountUSDC` parameter in `sellToken` with `amountTokens`. This is necessary because the underlying smart contract call accepts the amount of tokens as the parameter and this is how the function calls are recorded in the blockchain. 
-- Similarly, replaced `amountUSDC` in `TxnReceipt` by `amount`. This amount is in USDC for `buy`, and in alpToken for `sell`.
+- Replaced `amountUSDC` in `TxnReceipt` by `amount`. This amount is in USDC for `buy`, and in alpToken for `sell`. This is necessary because the underlying smart contract call accepts the amount of tokens as the parameter and this is how the function calls are recorded in the blockchain.
 - Updated the `estimateGas` function. The estimates are better than before, but are still wildly inaccurate.
-- Added a function `getTokenPrice`.
+- Added a function `getTokenPrice` in `AlpineDeFiSDK` class.
 - Deployed 3 different vaults with token prices $1, $2 and $3 respectively.
 - Updated `getUserBalance` so that the usdc equivalent vault balance is computed from the vault token price.
 - Fixed minor formatting bugs in the error messages.

@@ -139,7 +139,7 @@ class Account {
                 balanceToken: this._toUnit(balance),
             };
         } else {
-            const tokenPrice = await alpsdk.getTokenPrice(contract);
+            const tokenPrice = ethers.BigNumber.from(await alpsdk.getTokenPrice(contract));
             return {
                 balanceUSDC: this._toUnit(balance.mul(tokenPrice)),
                 balanceToken: this._toUnit(balance),
@@ -223,15 +223,16 @@ class Account {
     /**
      * sell alp token and withdraw usdc from a vault (to user's wallet by default)
      * @param {ethers.Contract} contract the vault to withdraw usdc from
-     * @param {String} amountTokens amount in tokens to sell
+     * @param {String} amountUSDC amount in usdc to sell
      * @param {String} to receipient address
      * @param {boolean} dryrun If set to true, will do a dry run and return estimated
      * gas cost in eth
      * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
      */
-    async sellToken(contract, amountTokens, to = this.userAddress, dryrun = false) {
+    async sellToken(contract, amountUSDC, to = this.userAddress, dryrun = false) {
         await this._checkInvariants(contract.address);
-        const amount = this._toMicroUnit(amountTokens);
+        const tokenPrice = ethers.BigNumber.from(await alpsdk.getTokenPrice(contract));
+        const amount = this._toMicroUnit(amountUSDC).div(tokenPrice);
         if (amount.isNegative() || amount.isZero()) {
             throw new Error("amount must be positive.");
         }
@@ -249,7 +250,7 @@ class Account {
         const sellReceipt = this._blockchainCall(
             contract,
             "withdraw",
-            [to, amountTokens],
+            [to, amount],
             dryrun
         );
         return sellReceipt;

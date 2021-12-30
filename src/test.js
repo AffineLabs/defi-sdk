@@ -37,6 +37,9 @@ const main = async () => {
   response = await alpAccount.buyToken(contracts.alpBal, "6");
   console.log({ alpBal: response });
 
+  response = await alpAccount.sellToken(contracts.alpBal, "5");
+  console.log({ alpBal: response });
+
   balance = await alpAccount.getUserBalance(contracts.alpBal);
   console.log({ alpBal: balance });
 
@@ -50,7 +53,7 @@ const main = async () => {
   balance = await alpAccount.getUserBalance(contracts.alpAggr);
   console.log({ alpAggr: balance });
 
-  response = await alpAccount.sellToken(contracts.alpAggr, "30");
+  response = await alpAccount.sellToken(contracts.alpAggr, "3");
   console.log({ AlpAggr: response });
 
   balance = await alpAccount.getUserBalance(contracts.usdc);
