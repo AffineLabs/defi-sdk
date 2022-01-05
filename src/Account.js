@@ -24,7 +24,7 @@ class Account {
      */
     constructor (network = "kovan") {
         // the api key is public
-        // TODO @tosin: replace this API key with pk_live_1EF4B8FEB56F7AA4
+        // TODO @tosin: replace pk_test_4BC74945EEEA1A8A with pk_live_1EF4B8FEB56F7AA4 
         this.magic = new Magic("pk_test_4BC74945EEEA1A8A", {
             // @ts-ignore
             network: network
@@ -113,7 +113,7 @@ class Account {
             // filter by outgoing transactions that were sent to alpine contracts
             if (ticker !== "unknown") {
                 const receipt = await this.provider.getTransactionReceipt(tx.hash);
-                const parsedTx = this._parseTransaction(tx, receipt);
+                const parsedTx = await this._parseTransaction(tx, receipt);
                 parsedTx.ticker = ticker;
                 parsedTx.status = true;
                 parsedTxHistory.push(parsedTx);
@@ -207,7 +207,7 @@ class Account {
             throw new Error(
                 `Insufficient allowance. Allowance: ${this._toUnit(
                     allowance,
-                )} ${ticker}, Required: ${amountUSDC} ${ticker}. ` +
+                )} USDC, Required: ${amountUSDC} USDC. ` +
                 "Call approve() to increase the allowance.",
             );
         }
@@ -297,7 +297,7 @@ class Account {
      * @param {String} address
      */
     async _checkInvariants(address = null) {
-        if (!await this.isConnected() || !this.connected) {
+        if (!this.connected || !this.isConnected()) {
             throw new Error(
                 "Aborted. Account is not connected to magic. Call connect() first."
             );
@@ -333,7 +333,7 @@ class Account {
             const receipt = await tx.wait();
             // tx's timestamp could be empty, so get it from the block
             tx.timestamp = (await this.provider.getBlock(receipt.blockNumber)).timestamp;
-            return this._parseTransaction(tx, receipt);
+            return await this._parseTransaction(tx, receipt);
         }
     }
 
@@ -342,11 +342,18 @@ class Account {
      * @param {ethers.providers.TransactionResponse} tx transaction response
      * @param {ethers.providers.TransactionReceipt} receipt transaction block
      * parse a transaction if its sent to an alpine contract
-     * @returns {TxnReceipt} the parsed receipt of the transaction
+     * @returns {Promise<TxnReceipt>} the parsed receipt of the transaction
      */
-    _parseTransaction(tx, receipt) {
+    async _parseTransaction(tx, receipt) {
         const method = abiDecoder.decodeMethod(tx.data);
         let amount = ethers.BigNumber.from(method.params[1].value);
+        // for withdraw method of the smart contract, amount is in tokens, so
+        // convert that to usdc    
+        if (method.name === "withdraw") {
+            const contract = this.contracts[this._getContractTicker(tx.to)];
+            const tokenPrice = ethers.BigNumber.from(await alpsdk.getTokenPrice(contract));
+            amount = amount.mul(tokenPrice);
+        }
         // convert smart contract method names to app's method names
         const methodDict = {
             deposit: "buy",
@@ -354,6 +361,7 @@ class Account {
             transfer: "transfer",
             approve: "approve",
         };
+
         return {
             method: methodDict[method.name],
             amount: String(ethers.utils.formatUnits(amount, 6)),
