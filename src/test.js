@@ -14,6 +14,7 @@ const main = async () => {
   // // @ts-ignore
   // const provider = new ethers.providers.Web3Provider(magic.rpcProvider);
   // const signer = provider.getSigner();
+  // console.log(await signer.getAddress());
   // // const usdcContract = new ethers.Contract(usdcJson.address, usdcJson.abi, signer);
   // // const amount = ethers.utils.parseUnits("5", 6); // usdc 5
   // // const mycontractAddr = "0x27C6274cd1A3FAbe09d2011AA6AC1c70675726fA";
@@ -39,30 +40,33 @@ const main = async () => {
 
   let response;
 
-  // let response = await alpAccount.approve(contracts.alpSave.address, "5", true);
-  // console.log({ approveEstimate: response });
+  response = await alpAccount.approve(contracts.alpSave.address, "5", true);
+  console.log({ approveEstimate: response });
 
-  // response = await alpAccount.approve(contracts.alpSave.address, "10");
-  // console.log({ alpSave: response });
+  response = await alpAccount.approve(contracts.alpSave.address, "10");
+  console.log({ alpSave: response });
 
-  // response = await alpAccount.buyToken(contracts.alpSave, "6");
-  // console.log({ alpSave: response });
+  response = await alpAccount.buyToken(contracts.alpSave, "6");
+  console.log({ alpSave: response });
 
-  // balance = await alpAccount.getUserBalance(contracts.alpSave);
-  // console.log({ alpSave: balance });
+  balance = await alpAccount.getUserBalance(contracts.alpSave);
+  console.log({ alpSave: balance });
+
+  response = await alpAccount.sellToken(contracts.alpSave, "6");
+  console.log({ alpSave: response });
 
 
-  // response = await alpAccount.approve(contracts.alpBal.address, "6");
-  // console.log({ alpBal: response });
+  response = await alpAccount.approve(contracts.alpBal.address, "6");
+  console.log({ alpBal: response });
 
-  // response = await alpAccount.buyToken(contracts.alpBal, "6");
-  // console.log({ alpBal: response });
+  response = await alpAccount.buyToken(contracts.alpBal, "6");
+  console.log({ alpBal: response });
 
-  // response = await alpAccount.sellToken(contracts.alpBal, "6");
-  // console.log({ alpBal: response });
+  response = await alpAccount.sellToken(contracts.alpBal, "6");
+  console.log({ alpBal: response });
 
-  // balance = await alpAccount.getUserBalance(contracts.alpBal);
-  // console.log({ alpBal: balance });
+  balance = await alpAccount.getUserBalance(contracts.alpBal);
+  console.log({ alpBal: balance });
 
 
   response = await alpAccount.approve(contracts.alpAggr.address, "6");
