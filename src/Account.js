@@ -24,7 +24,6 @@ class Account {
      */
     constructor (network = "kovan") {
         // the api key is public
-        // TODO @tosin: replace pk_test_4BC74945EEEA1A8A with pk_live_1EF4B8FEB56F7AA4 
         this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
             // @ts-ignore
             network: network
