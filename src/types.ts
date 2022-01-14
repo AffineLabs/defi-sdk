@@ -1,10 +1,11 @@
-/**
- * @typedef {Object} AlpineContracts
- * @property {ethers.Contract} usdc Circle USDC contract
- * @property {ethers.Contract} alpSave Alpine Save strategy contract
- * @property {ethers.Contract} alpBal Alpine Balanced strategy contract
- * @property {ethers.Contract} alpAggr Alpine Aggressive strategy contract
- */
+import { Contract } from "@ethersproject/contracts";
+
+export type AlpineContracts = {
+  usdc: Contract; // Circle USDC contract
+  alpSave: Contract; // Alpine Save strategy contract
+  alpBal: Contract; // Alpine Balanced strategy contract
+  alpAggr: Contract; // Alpine Aggressive strategy contract
+};
 
 /**
  * @typedef {Object} TxnReceipt

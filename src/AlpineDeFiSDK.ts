@@ -1,29 +1,25 @@
-// @ts-check
 import { ethers } from "ethers";
-import * as usdcJson from "./smart_contracts/usdc.json";
-import * as alpSave from "./smart_contracts/alpSave.json";
-import * as alpBal from "./smart_contracts/alpBal.json";
-import * as alpAggr from "./smart_contracts/alpAggr.json";
-import * as typedefs from "./typedefs.js";
+import { Contract } from "@ethersproject/contracts";
+import usdcJson from "./smart_contracts/usdc.json";
+import alpSave from "./smart_contracts/alpSave.json";
+import alpBal from "./smart_contracts/alpBal.json";
+import alpAggr from "./smart_contracts/alpAggr.json";
+import { AlpineContracts } from "./types.js";
 
-/**
- * @typedef {typedefs.AlpineContracts} AlpineContracts
- */
-
-class AlpineDeFiSDK {
+export class AlpineDeFiSDK {
   /**
    * creates an instance of the `AlpineDeFiSDK` class
    */
-  constructor () { }
+  constructor() {}
 
   /**
    * get all supported contracts in the alpine protocol
-   * @param {String} network blockchain network, default is kovan
-   * @returns {AlpineContracts} an object with all alpine contracts. Currently has
+   * @param network blockchain network, default is kovan
+   * @returns an object with all alpine contracts. Currently has
    * `usdc`, `alpSave`, `alpBal` and `alpAggr`.
    */
 
-  static getAllContracts(network = "kovan") {
+  static getAllContracts(network: string = "kovan"): AlpineContracts {
     const provider = new ethers.providers.StaticJsonRpcProvider(
       `https://${network}.infura.io/v3/6a4677f9b8014a239fb68742f752fb62`
     );
@@ -37,10 +33,10 @@ class AlpineDeFiSDK {
 
   /**
    * get the current best estimate for gas price
-   * @param {String} network blockchain network, default is kovan
-   * @returns {Promise<String>} the best estimate for gas price in eth
+   * @param network blockchain network, default is kovan
+   * @returns the best estimate for gas price in eth
    */
-  static async getGasPrice(network = "kovan") {
+  static async getGasPrice(network: string = "kovan"): Promise<string> {
     const provider = new ethers.providers.StaticJsonRpcProvider(
       `https://${network}.infura.io/v3/6a4677f9b8014a239fb68742f752fb62`
     );
@@ -52,10 +48,10 @@ class AlpineDeFiSDK {
   /**
    * Get current usdc price of an alpine token. If there's 0 token in circulation
    * returns null.
-   * @param {ethers.Contract} contract an alpine contract
-   * @returns {Promise<String>} current token price
+   * @param contract an alpine contract
+   * @returns current token price
    */
-  static async getTokenPrice(contract) {
+  static async getTokenPrice(contract: Contract): Promise<String | null> {
     // total value in micro usdc locked in the contract
     const tvlUSDC = await contract.globalTVL();
     // number of circulating micro tokens
@@ -68,5 +64,3 @@ class AlpineDeFiSDK {
     }
   }
 }
-
-export { AlpineDeFiSDK };
