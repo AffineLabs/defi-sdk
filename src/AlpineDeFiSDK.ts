@@ -4,7 +4,7 @@ import usdcJson from "./smart_contracts/usdc.json";
 import alpSave from "./smart_contracts/alpSave.json";
 import alpBal from "./smart_contracts/alpBal.json";
 import alpAggr from "./smart_contracts/alpAggr.json";
-import { AlpineContracts } from "./types.js";
+import { AlpineContracts } from "./types";
 
 export class AlpineDeFiSDK {
   /**
