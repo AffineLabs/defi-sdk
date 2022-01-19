@@ -3,11 +3,10 @@ import { Magic } from "magic-sdk";
 import { ethers } from "ethers";
 import * as abiDecoder from "abi-decoder";
 import * as typedefs from "./typedefs.js";
-import * as usdcJson from "./smart_contracts/usdc.json";
-import * as alpSave from "./smart_contracts/alpSave.json";
-import * as alpBal from "./smart_contracts/alpBal.json";
-import * as alpAggr from "./smart_contracts/alpAggr.json";
-import { AlpineDeFiSDK as alpsdk } from "./AlpineDeFiSDK.js";
+
+import * as USDC from "./smart_contracts/usdc.json";
+import * as ALPSAVE from "./smart_contracts/alpSave.json";
+
 
 /**
 * @typedef {typedefs.TxnReceipt} TxnReceipt
@@ -17,27 +16,37 @@ import { AlpineDeFiSDK as alpsdk } from "./AlpineDeFiSDK.js";
 * @typedef {typedefs.UserBalance} UserBalance
 */
 
+/**
+ * @typedef {typedefs.AlpineContracts} AlpineContracts
+ */
+
 class Account {
     /**
      * Creates an alpine account object
-     * @param {String} network the name of the network. The default is kovan.
+     * @param {String} network the name of the network. Supports `mainnet` and `kovan` and `mumbai`
      */
     constructor (network = "kovan") {
         // the api key is public
-        this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
-            // @ts-ignore
-            network: network
-        });
-        this.etherscanProvider = new ethers.providers.EtherscanProvider(
-            network,
-            "XPRXXVT4ADKQF69MMIX6TH7MW1IVJ936BR"
-        );
-        this.contracts = alpsdk.getAllContracts(network);
-        // add each contract's abi to the abi decoder
-        abiDecoder.addABI(usdcJson.abi);
-        abiDecoder.addABI(alpSave.abi);
-        abiDecoder.addABI(alpBal.abi);
-        abiDecoder.addABI(alpAggr.abi);
+        if (network.toLowerCase() === "mumbai") {
+            const customNodeOptions = {
+                rpcUrl: "https://rpc-mumbai.matic.today",
+                chainId: 80001,
+            };
+            // live: pk_live_1EF4B8FEB56F7AA4 , test: pk_test_4BC74945EEEA1A8A
+            this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
+                // @ts-ignore
+                network: customNodeOptions
+            });
+            this.magic.network = "matic";
+        }
+        else {
+            this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
+                // @ts-ignore
+                network: network
+            });
+        }
+
+        this.polygonscanApiKey = "7DHSDECZBDA4VHMEGHNK1T6CXIAUEVRAP2";
         this.connected = false;
     }
 
@@ -58,6 +67,10 @@ class Account {
         this.provider = new ethers.providers.Web3Provider(this.magic.rpcProvider);
         this.signer = this.provider.getSigner();
         this.userAddress = await this.signer.getAddress();
+        this.contracts = this.getAllContracts();
+        // add each contract's abi to the abi decoder
+        abiDecoder.addABI(USDC.abi);
+        abiDecoder.addABI(ALPSAVE.abi);
         this.connected = true;
     }
 
@@ -99,25 +112,85 @@ class Account {
     }
 
     /**
+    * get all supported contracts in the alpine protocol
+    * @returns {AlpineContracts} an object with all alpine contracts. Currently has
+    * `usdc`, `alpSave`.
+    */
+
+    getAllContracts() {
+        return {
+            usdc: new ethers.Contract(USDC.address, USDC.abi, this.provider),
+            alpSave: new ethers.Contract(ALPSAVE.address, ALPSAVE.abi, this.provider),
+            // alpBal: new ethers.Contract(alpBal.address, alpBal.abi, this.provider),
+            // alpAggr: new ethers.Contract(alpAggr.address, alpAggr.abi, this.provider),
+        };
+    }
+
+    /**
+     * get the current best estimate for gas price
+     * @returns {Promise<String>} the best estimate for gas price in eth
+     */
+    async getGasPrice() {
+        const gasPrice = await this.provider.getGasPrice(); // gas price in wei
+        // return gas price in ether
+        return ethers.utils.formatEther(gasPrice);
+    }
+
+    /**
+     * Get current usdc price of an alpine token. If there's 0 token in circulation
+     * returns null.
+     * @param {ethers.Contract} contract an alpine contract
+     * @returns {Promise<String>} current token price
+     */
+    async getTokenPrice(contract) {
+        // total value in micro usdc locked in the contract
+        const tvlUSDC = await contract.globalTVL();
+        // number of circulating micro tokens
+        const numTokens = await contract.totalSupply();
+        if (numTokens.isZero()) {
+            return null;
+        } else {
+            const price = tvlUSDC.div(numTokens);
+            return price.toString();
+        }
+    }
+
+    /**
      * get transaction history of the user with alpine smart contracts
-     * @returns {Promise<TxnReceipt[]>} an array of parsed transaction history
+     * @param {Number} page the page number
+     * @param {Number} offset number of transanctions in the page
+     * @param {String} sort `asc` or `desc`; sorts the transactions in ascending or decensing order
+     *                      default is `desc`.
+     * @returns {Promise<Response>} test
+     **/
+    /* // @returns {Promise<TxnReceipt[]>} an array of parsed transaction history
      * of the user
      */
-    async getTransactionHistory() {
+    async getTransactionHistory(page, offset, sort = 'desc') {
+        const polygonscanUrl = "https://api-testnet.polygonscan.com/api?module=account&action=txlist"
+            + `&address=${this.userAddress}`
+            + "&startblock=0&endblock=99999999"
+            + `&page=${page}&offset=${offset}&sort=${sort}`
+            + `&apikey=${this.polygonscanApiKey}`;
+
         await this._checkInvariants();
-        const txHistory = await this.etherscanProvider.getHistory(this.userAddress);
+        const txHistory = (await fetch(polygonscanUrl)).json();
         const parsedTxHistory = [];
-        for (const tx of txHistory) {
+        for (const tx in txHistory) {
+            //@ts-ignore
             const ticker = this._getContractTicker(tx.to);
             // filter by outgoing transactions that were sent to alpine contracts
             if (ticker !== "unknown") {
+                //@ts-ignore
                 const receipt = await this.provider.getTransactionReceipt(tx.hash);
+                //@ts-ignore
                 const parsedTx = await this._parseTransaction(tx, receipt);
                 parsedTx.ticker = ticker;
                 parsedTx.status = true;
                 parsedTxHistory.push(parsedTx);
             }
         }
+        //@ts-ignore
         return parsedTxHistory;
     }
 
@@ -138,9 +211,13 @@ class Account {
                 balanceToken: this._toUnit(balance),
             };
         } else {
-            const tokenPrice = ethers.BigNumber.from(await alpsdk.getTokenPrice(contract));
+            let tokenPrice = await this.getTokenPrice(contract);
+            // no token in circulation, so assume the price is 0
+            if (tokenPrice == null) {
+                tokenPrice = "0";
+            }
             return {
-                balanceUSDC: this._toUnit(balance.mul(tokenPrice)),
+                balanceUSDC: this._toUnit(balance.mul(ethers.BigNumber.from(tokenPrice))),
                 balanceToken: this._toUnit(balance),
             };
         }
@@ -230,7 +307,7 @@ class Account {
      */
     async sellToken(contract, amountUSDC, to = this.userAddress, dryrun = false) {
         await this._checkInvariants(contract.address);
-        const tokenPrice = ethers.BigNumber.from(await alpsdk.getTokenPrice(contract));
+        const tokenPrice = ethers.BigNumber.from(await this.getTokenPrice(contract));
         const amount = this._toMicroUnit(amountUSDC).div(tokenPrice);
         if (amount.isNegative() || amount.isZero()) {
             throw new Error("amount must be positive.");
@@ -350,7 +427,7 @@ class Account {
         // convert that to usdc    
         if (method.name === "withdraw") {
             const contract = this.contracts[this._getContractTicker(tx.to)];
-            const tokenPrice = ethers.BigNumber.from(await alpsdk.getTokenPrice(contract));
+            const tokenPrice = ethers.BigNumber.from(await this.getTokenPrice(contract));
             amount = amount.mul(tokenPrice);
         }
         // convert smart contract method names to app's method names
@@ -404,10 +481,10 @@ class Account {
         switch (address.toLowerCase()) {
             case this.contracts.alpSave.address.toLowerCase():
                 return "alpSave";
-            case this.contracts.alpBal.address.toLowerCase():
-                return "alpBal";
-            case this.contracts.alpAggr.address.toLowerCase():
-                return "alpAggr";
+            // case this.contracts.alpBal.address.toLowerCase():
+            //     return "alpBal";
+            // case this.contracts.alpAggr.address.toLowerCase():
+            //     return "alpAggr";
             case this.contracts.usdc.address.toLowerCase():
                 return "usdc";
             default:
