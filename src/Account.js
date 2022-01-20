@@ -103,15 +103,18 @@ class Account {
 
     /**
      * check if a user is connected to the magic provider
+     * @param {("magic"|"metamask")} walletType type of user's wallet, default is DEFAULT_WALLET
      * @returns {Promise<boolean>} whether the user is connected to the magic provider
      */
-     async isConnected(walletType = "magic") {
+     async isConnected(walletType = DEFAULT_WALLET) {
         if(walletType === "magic"){
             return await this.magic.user.isLoggedIn();
         } else if(walletType === "metamask"){
             // @ts-ignore
             return this.ethereum.isConnected() && await this.requestMetamaskAccount();
         }
+
+        return false;
     }
 
     /**
