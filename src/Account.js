@@ -27,7 +27,7 @@ import axios from "axios";
 class Account {
     /**
      * Creates an alpine account object
-     * @param {String} network the name of the network.  Supports `mainnet` and `kovan` and `mumbai`
+     * @param {String} network the name of the network. Supports `mainnet` and `kovan` and `mumbai`
      * @param {("magic"|"metamask")} walletType type of user's wallet, default is DEFAULT_WALLET
      */
     constructor (network = "kovan", walletType = DEFAULT_WALLET) {
@@ -66,9 +66,11 @@ class Account {
      * @param {("magic"|"metamask")} walletType type of user's wallet, default is DEFAULT_WALLET
      */
     async connect(email, walletType = DEFAULT_WALLET) {
-        if(walletType) this.walletType = walletType;
+        if(walletType){
+            if(!this.walletType) this.walletType = walletType;
 
-        this._checkIfMetamaskAvailable();
+            if(walletType === "metamask") this._checkIfMetamaskAvailable();
+        }
 
         const _isConnected = await this.isConnected(walletType);
 
