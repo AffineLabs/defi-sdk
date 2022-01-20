@@ -104,7 +104,7 @@ class Account {
     /**
      * check if a user is connected to the magic provider
      * @param {("magic"|"metamask")} walletType type of user's wallet, default is DEFAULT_WALLET
-     * @returns {Promise<boolean>} whether the user is connected to the magic provider
+     * @returns {Promise<boolean>} whether the user is connected to the provider
      */
      async isConnected(walletType = DEFAULT_WALLET) {
         if(walletType === "magic"){
