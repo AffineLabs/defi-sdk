@@ -176,7 +176,8 @@ class Account {
         await this._checkInvariants();
         const txHistory = (await fetch(polygonscanUrl)).json();
         const parsedTxHistory = [];
-        for (const tx in txHistory) {
+        // @ts-ignore
+        for (const tx in txHistory.result) {
             //@ts-ignore
             const ticker = this._getContractTicker(tx.to);
             // filter by outgoing transactions that were sent to alpine contracts
