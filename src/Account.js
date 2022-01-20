@@ -8,6 +8,7 @@ import * as alpSave from "./smart_contracts/alpSave.json";
 import * as alpBal from "./smart_contracts/alpBal.json";
 import * as alpAggr from "./smart_contracts/alpAggr.json";
 import { AlpineDeFiSDK as alpsdk } from "./AlpineDeFiSDK.js";
+import detectEthereumProvider from '@metamask/detect-provider';
 
 /**
 * @typedef {typedefs.TxnReceipt} TxnReceipt
@@ -17,12 +18,17 @@ import { AlpineDeFiSDK as alpsdk } from "./AlpineDeFiSDK.js";
 * @typedef {typedefs.UserBalance} UserBalance
 */
 
+const DEFAULT_WALLET = "magic";
+
 class Account {
     /**
      * Creates an alpine account object
      * @param {String} network the name of the network. The default is kovan.
+     * @param {("magic"|"metamask")} walletType type of user's wallet, default is DEFAULT_WALLET
      */
-    constructor (network = "kovan") {
+    constructor (network = "kovan", walletType = DEFAULT_WALLET) {
+        this.ethereum = typeof window !== "undefined" ? window.ethereum : undefined
+
         // the api key is public
         this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
             // @ts-ignore
@@ -39,6 +45,7 @@ class Account {
         abiDecoder.addABI(alpBal.abi);
         abiDecoder.addABI(alpAggr.abi);
         this.connected = false;
+        this.walletType = walletType;
     }
 
     /**
@@ -46,16 +53,24 @@ class Account {
      * login with with magic, get provider, signer and set up
      * the smart contracts.
      * @param {String} email user's email address
+     * @param {("magic"|"metamask")} walletType type of user's wallet, default is DEFAULT_WALLET
      */
-    async connect(email) {
-        if (!await this.isConnected()) {
+    async connect(email, walletType = DEFAULT_WALLET) {
+        if(walletType) this.walletType = walletType;
+
+        this._checkIfMetamaskAvailable();
+
+        const _isConnected = await this.isConnected(walletType);
+
+        if (!_isConnected && walletType === "magic") {
+            // connect to magic
             await this.magic.auth.loginWithMagicLink({
                 email
             });
         }
         // case: the user is logged in
         // @ts-ignore
-        this.provider = new ethers.providers.Web3Provider(this.magic.rpcProvider);
+        this.provider = new ethers.providers.Web3Provider(walletType === "magic" ? this.magic.rpcProvider : this.ethereum);
         this.signer = this.provider.getSigner();
         this.userAddress = await this.signer.getAddress();
         this.connected = true;
@@ -74,9 +89,38 @@ class Account {
      * check if a user is connected to the magic provider
      * @returns {Promise<boolean>} whether the user is connected to the magic provider
      */
-    async isConnected() {
-        const status = await this.magic.user.isLoggedIn();
-        return status;
+     async isConnected(walletType = "magic") {
+        if(walletType === "magic"){
+            return await this.magic.user.isLoggedIn();
+        } else if(walletType === "metamask"){
+            // @ts-ignore
+            return this.ethereum.isConnected() && await this.requestMetamaskAccount();
+        }
+    }
+
+    /**
+     * @returns {Promise<Boolean>} returns false if user is not connected
+     */
+    async requestMetamaskAccount() {
+        return new Promise((resolve, reject) => {
+            // @ts-ignore
+            this.ethereum.request({ method: 'eth_requestAccounts' })
+                .then(accounts => {
+                    if (accounts.length) resolve(true)
+                    else {
+                        console.error("No accounts found! Connect to MetaMask");
+                        reject(false);
+                    }
+                })
+                .catch(err => {
+                    if (err.code === 4001) {
+                        console.error("User rejected the connection request!!", err);
+                    } else {
+                        console.error("Please connect to MetaMask.", err);
+                    }
+                    reject(false);
+                });
+        })
     }
 
     /**
@@ -296,9 +340,9 @@ class Account {
      * @param {String} address
      */
     async _checkInvariants(address = null) {
-        if (!this.connected || !this.isConnected()) {
+        if (!this.connected || !this.isConnected(this.walletType)) {
             throw new Error(
-                "Aborted. Account is not connected to magic. Call connect() first."
+                `Aborted. Account is not connected to ${this.walletType}. Call connect() first.`
             );
         }
         // verify that address is a valid ethereum address
@@ -306,6 +350,27 @@ class Account {
             // will throw an error if the address is invalid
             ethers.utils.getAddress(address);
         }
+    }
+
+    /**
+     * checks if walletType is "metamask" and window.ethereum is avaiable;
+     * if available, sets to this.ethereum
+     */
+    async _checkIfMetamaskAvailable() {
+        if (!this.ethereum || typeof window === undefined || typeof window.ethereum === undefined) {
+            throw new Error("MetaMask is unavailable!!")
+        }
+
+        const provider = await detectEthereumProvider();
+
+        // If the provider returned by detectEthereumProvider is not the same as
+        // window.ethereum, something is overwriting it, perhaps another wallet.
+        // for more - https://docs.metamask.io/guide/ethereum-provider.html#using-the-provider
+        if (provider !== window.ethereum) {
+            throw new Error('User might have multiple wallets installed');
+        }
+
+        this.ethereum = window.ethereum;
     }
 
     /**
