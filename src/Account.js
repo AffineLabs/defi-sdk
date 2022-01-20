@@ -6,6 +6,7 @@ import * as typedefs from "./typedefs.js";
 
 import * as USDC from "./smart_contracts/usdc.json";
 import * as ALPSAVE from "./smart_contracts/alpSave.json";
+import axios from "axios";
 
 
 /**
@@ -167,14 +168,21 @@ class Account {
      * of the user
      */
     async getTransactionHistory(page, offset, sort = 'desc') {
-        const polygonscanUrl = "https://api-testnet.polygonscan.com/api?module=account&action=txlist"
-            + `&address=${this.userAddress}`
-            + "&startblock=0&endblock=99999999"
-            + `&page=${page}&offset=${offset}&sort=${sort}`
-            + `&apikey=${this.polygonscanApiKey}`;
+        const polygonscanUrl =
+            'https://api-testnet.polygonscan.com/api?module=account&action=txlist' +
+            `&address=${this.userAddress}` +
+            '&startblock=0&endblock=99999999' +
+            `&page=${page}&offset=${offset}&sort=${sort}` +
+            `&apikey=${this.polygonscanApiKey}`;
 
         await this._checkInvariants();
-        const txHistory = (await fetch(polygonscanUrl)).json();
+        const txHistory = await axios.request({
+            url: polygonscanUrl,
+            method: 'get',
+        });
+
+        console.log(txHistory);
+
         const parsedTxHistory = [];
         // @ts-ignore
         for (const tx in txHistory.result) {
