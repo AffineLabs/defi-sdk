@@ -1,13 +1,13 @@
 // @ts-check
 import { Magic } from "magic-sdk";
 import { ethers } from "ethers";
+import axios from "axios";
 import * as abiDecoder from "abi-decoder";
 import * as typedefs from "./typedefs.js";
 import detectEthereumProvider from '@metamask/detect-provider';
 
 import * as USDC from "./smart_contracts/usdc.json";
 import * as ALPSAVE from "./smart_contracts/alpSave.json";
-import axios from "axios";
 
 
 /**
@@ -36,7 +36,7 @@ class Account {
         // the api key is public
         if (network.toLowerCase() === "mumbai") {
             const customNodeOptions = {
-                rpcUrl: "https://rpc-mumbai.matic.today",
+                rpcUrl: "https://polygon-mumbai.g.alchemy.com/v2/TeRjoE-o4Y1bws12B3OFtAr8pywW-23w",
                 chainId: 80001,
             };
             // live: pk_live_1EF4B8FEB56F7AA4 , test: pk_test_4BC74945EEEA1A8A
@@ -217,34 +217,38 @@ class Account {
      * of the user
      */
     async getTransactionHistory(page, offset, sort = 'desc') {
-        const polygonscanUrl =
-            'https://api-testnet.polygonscan.com/api?module=account&action=txlist' +
-            `&address=${this.userAddress}` +
-            '&startblock=0&endblock=99999999' +
-            `&page=${page}&offset=${offset}&sort=${sort}` +
-            `&apikey=${this.polygonscanApiKey}`;
+        const polygonscanUrl = "https://api-testnet.polygonscan.com/api?module=account&action=txlist"
+            + `&address=${this.userAddress}`
+            + "&startblock=0&endblock=99999999"
+            + `&page=${page}&offset=${offset}&sort=${sort}`
+            + `&apikey=${this.polygonscanApiKey}`;
 
         await this._checkInvariants();
         const txHistory = await axios.request({
             url: polygonscanUrl,
             method: 'get',
-        });
-
-        console.log(txHistory);
-
+        }).then(res => res.data.result);
         const parsedTxHistory = [];
         // @ts-ignore
-        for (const tx in txHistory.result) {
+        for (const tx of txHistory) {
             //@ts-ignore
             const ticker = this._getContractTicker(tx.to);
             // filter by outgoing transactions that were sent to alpine contracts
             if (ticker !== "unknown") {
-                //@ts-ignore
-                const receipt = await this.provider.getTransactionReceipt(tx.hash);
-                //@ts-ignore
-                const parsedTx = await this._parseTransaction(tx, receipt);
-                parsedTx.ticker = ticker;
-                parsedTx.status = true;
+                // fake TransactionResponse contructed from polygonscan data
+                const fakeTx = {
+                    //@ts-ignore
+                    to: tx.to, //@ts-ignore
+                    data: tx.input, //@ts-ignore
+                    timestamp: Number(tx.timeStamp), //@ts-ignore
+                    hash: tx.hash, //@ts-ignore
+                    gasPrice: ethers.BigNumber.from(tx.gasPrice),
+                };
+                const fakeReceipt = { //@ts-ignore
+                    cumulativeGasUsed: tx.cumulativeGasUsed, //@ts-ignore
+                    blockNumber: Number(tx.blockNumber)
+                };
+                const parsedTx = await this._parseTransaction(fakeTx, fakeReceipt);
                 parsedTxHistory.push(parsedTx);
             }
         }
@@ -494,8 +498,8 @@ class Account {
 
     /**
      * parse blockchain response for a transaction
-     * @param {ethers.providers.TransactionResponse} tx transaction response
-     * @param {ethers.providers.TransactionReceipt} receipt transaction block
+     * @param {ethers.providers.TransactionResponse | object} tx transaction response
+     * @param {ethers.providers.TransactionReceipt | object} receipt transaction block
      * parse a transaction if its sent to an alpine contract
      * @returns {Promise<TxnReceipt>} the parsed receipt of the transaction
      */
