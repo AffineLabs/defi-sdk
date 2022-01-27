@@ -1,10 +1,18 @@
 import { Magic } from "magic-sdk";
 import { EthNetworkName } from "@magic-sdk/types";
 import { ethers } from "ethers";
-import { Signer } from "@ethersproject/abstract-signer";
+import {
+  TransactionResponse,
+  TransactionReceipt,
+} from "@ethersproject/abstract-provider";
+
+import axios from "axios";
 import * as abiDecoder from "abi-decoder";
-import * as typedefs from "./types.js";
-import { AlpineDeFiSDK as alpsdk } from "./AlpineDeFiSDK.js";
+import { Signer } from "@ethersproject/abstract-signer";
+
+import { AlpineContracts } from "./types";
+import USDC from "./smart_contracts/usdc.json";
+import ALPSAVE from "./smart_contracts/alpSave.json";
 
 export interface TxnReceipt {
   method: string;
@@ -24,31 +32,56 @@ export interface UserBalance {
   balanceUSDC: string;
 }
 
-export class Account {
+//docs.polygonscan.com/api-endpoints/accounts#get-a-list-of-normal-transactions-by-address
+interface PolygonScanAPIResponse {
+  blockNumber: string;
+  blockHash: string;
+  timeStamp: string;
+  hash: string;
+  nonce: string;
+  transactionIndex: string;
+  from: string;
+  to: string;
+  value: string;
+  gas: string;
+  gasPrice: string;
+  input: string;
+  contractAddress: string;
+  cumulativeGasUsed: string;
+  txreceipt_status: string;
+  gasUsed: string;
+  confirmations: string;
+}
+
+class Account {
   magic: Magic;
-  etherscanProvider: ethers.providers.EtherscanProvider;
-  contracts: typedefs.AlpineContracts;
+  contracts: AlpineContracts;
   connected: boolean;
   signer: Signer;
   provider: ethers.providers.Web3Provider;
+  polygonscanApiKey: string;
   userAddress: string;
-
   /**
    * Creates an alpine account object
-   * @param {String} network the name of the network. The default is kovan.
+   * @param network the name of the network. Supports `mainnet` and `kovan` and `mumbai`
    */
   constructor(network: EthNetworkName = "kovan") {
     // the api key is public
-    this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", { network });
-    this.etherscanProvider = new ethers.providers.EtherscanProvider(
-      network,
-      "XPRXXVT4ADKQF69MMIX6TH7MW1IVJ936BR"
-    );
-    this.contracts = alpsdk.getAllContracts(network);
-    // add each contract's abi to the abi decoder
-    Object.values(this.contracts).map((contract) =>
-      abiDecoder.addABI(contract.abi)
-    );
+    if (network.toLowerCase() === "mumbai") {
+      const customNodeOptions = {
+        rpcUrl:
+          "https://polygon-mumbai.g.alchemy.com/v2/TeRjoE-o4Y1bws12B3OFtAr8pywW-23w",
+        chainId: 80001,
+      };
+      this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
+        network: customNodeOptions,
+      });
+      this.magic.network = "matic"; // TODO: why is this needed?
+    } else {
+      this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", { network });
+    }
+
+    this.polygonscanApiKey = "7DHSDECZBDA4VHMEGHNK1T6CXIAUEVRAP2";
     this.connected = false;
   }
 
@@ -60,16 +93,20 @@ export class Account {
    */
   async connect(email: string) {
     if (!(await this.isConnected())) {
-      await this.magic.auth.loginWithMagicLink({
-        email,
-      });
+      await this.magic.auth.loginWithMagicLink({ email });
     }
-    // case: the user is logged in
+
     this.provider = new ethers.providers.Web3Provider(
       this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider
     );
     this.signer = this.provider.getSigner();
     this.userAddress = await this.signer.getAddress();
+    this.contracts = this.getAllContracts();
+
+    // add each contract's abi to the abi decoder
+    Object.values(this.contracts).map((contract) =>
+      abiDecoder.addABI(contract.abi)
+    );
     this.connected = true;
   }
 
@@ -111,25 +148,99 @@ export class Account {
   }
 
   /**
+   * get all supported contracts in the alpine protocol
+   * @returns {AlpineContracts} an object with all alpine contracts. Currently has
+   * `usdc`, `alpSave`.
+   */
+
+  getAllContracts(): AlpineContracts {
+    return {
+      usdc: new ethers.Contract(USDC.address, USDC.abi, this.provider),
+      alpSave: new ethers.Contract(ALPSAVE.address, ALPSAVE.abi, this.provider),
+    };
+  }
+
+  /**
+   * get the current best estimate for gas price
+   * @returns {Promise<String>} the best estimate for gas price in eth
+   */
+  async getGasPrice(): Promise<string> {
+    const gasPrice = await this.provider.getGasPrice(); // gas price in wei
+    // return gas price in ether
+    return ethers.utils.formatEther(gasPrice);
+  }
+
+  /**
+   * Get current usdc price of an alpine token. If there's 0 token in circulation
+   * returns null.
+   * @param {ethers.Contract} contract an alpine contract
+   * @returns {Promise<String>} current token price
+   */
+  async getTokenPrice(contract: ethers.Contract): Promise<string> {
+    // total value in micro usdc locked in the contract
+    const tvlUSDC = await contract.globalTVL();
+    // number of circulating micro tokens
+    const numTokens = await contract.totalSupply();
+    if (numTokens.isZero()) {
+      return null;
+    } else {
+      const price = tvlUSDC.div(numTokens);
+      return price.toString();
+    }
+  }
+
+  /**
    * get transaction history of the user with alpine smart contracts
-   * @returns {Promise<TxnReceipt[]>} an array of parsed transaction history
+   * @param {Number} page the page number
+   * @param {Number} offset number of transanctions in the page
+   * @param {String} sort `asc` or `desc`; sorts the transactions in ascending or decensing order
+   *                      default is `desc`.
+   * @returns {Promise<Array<TxnReceipt>>} An array of user transaction receipts
+   **/
+  /* // @returns {Promise<TxnReceipt[]>} an array of parsed transaction history
    * of the user
    */
-  async getTransactionHistory(): Promise<TxnReceipt[]> {
+  async getTransactionHistory(
+    page: number,
+    offset: number,
+    sort: string = "desc"
+  ): Promise<Array<TxnReceipt>> {
+    const polygonscanUrl =
+      "https://api-testnet.polygonscan.com/api?module=account&action=txlist" +
+      `&address=${this.userAddress}` +
+      "&startblock=0&endblock=99999999" +
+      `&page=${page}&offset=${offset}&sort=${sort}` +
+      `&apikey=${this.polygonscanApiKey}`;
+
     await this._checkInvariants();
-    const txHistory = await this.etherscanProvider.getHistory(this.userAddress);
-    const parsedTxHistory = [];
-    for (const tx of txHistory) {
-      const ticker = this._getContractTicker(tx.to || "");
+
+    let data = [] as Array<PolygonScanAPIResponse>;
+    data = (await axios.get(polygonscanUrl)).data;
+    const parsedTxHistory: Array<TxnReceipt> = [];
+
+    for (const tx of data) {
+      const ticker = this._getContractTicker(tx.to);
       // filter by outgoing transactions that were sent to alpine contracts
-      if (ticker !== "unknown") {
-        const receipt = await this.provider.getTransactionReceipt(tx.hash);
-        const parsedTx = await this._parseTransaction(tx, receipt);
-        parsedTx.ticker = ticker;
-        parsedTx.status = true;
-        parsedTxHistory.push(parsedTx);
-      }
+      if (ticker === "unknown") continue;
+
+      // fake TransactionResponse constructed from polygonscan data
+      const fakeTx = {
+        to: tx.to,
+        data: tx.input,
+        timestamp: Number(tx.timeStamp),
+        hash: tx.hash,
+        gasPrice: ethers.BigNumber.from(tx.gasPrice),
+      } as TransactionResponse;
+
+      const fakeReceipt = {
+        gasUsed: tx.gasUsed,
+        blockNumber: Number(tx.blockNumber),
+      } as unknown as TransactionReceipt;
+
+      const parsedTx = await this._parseTransaction(fakeTx, fakeReceipt);
+      parsedTxHistory.push(parsedTx);
     }
+
     return parsedTxHistory;
   }
 
@@ -150,11 +261,15 @@ export class Account {
         balanceToken: this._toUnit(balance),
       };
     } else {
-      const tokenPrice = ethers.BigNumber.from(
-        await alpsdk.getTokenPrice(contract)
-      );
+      let tokenPrice = await this.getTokenPrice(contract);
+      // no token in circulation, so assume the price is 0
+      if (tokenPrice == null) {
+        tokenPrice = "0";
+      }
       return {
-        balanceUSDC: this._toUnit(balance.mul(tokenPrice)),
+        balanceUSDC: this._toUnit(
+          balance.mul(ethers.BigNumber.from(tokenPrice))
+        ),
         balanceToken: this._toUnit(balance),
       };
     }
@@ -258,7 +373,7 @@ export class Account {
   ): Promise<TxnReceipt | string> {
     await this._checkInvariants(contract.address);
     const tokenPrice = ethers.BigNumber.from(
-      await alpsdk.getTokenPrice(contract)
+      await this.getTokenPrice(contract)
     );
     const amount = this._toMicroUnit(amountUSDC).div(tokenPrice);
     if (amount.isNegative() || amount.isZero()) {
@@ -334,7 +449,7 @@ export class Account {
    * check the class invariants
    * @param {String} address
    */
-  async _checkInvariants(address: string = "") {
+  async _checkInvariants(address: string = null) {
     if (!this.connected || !this.isConnected()) {
       throw new Error(
         "Aborted. Account is not connected to magic. Call connect() first."
@@ -383,14 +498,14 @@ export class Account {
 
   /**
    * parse blockchain response for a transaction
-   * @param {ethers.providers.TransactionResponse} tx transaction response
-   * @param {ethers.providers.TransactionReceipt} receipt transaction block
+   * @param {TransactionResponse} tx transaction response
+   * @param {TransactionReceipt} receipt transaction block
    * parse a transaction if its sent to an alpine contract
    * @returns {Promise<TxnReceipt>} the parsed receipt of the transaction
    */
   async _parseTransaction(
-    tx: ethers.providers.TransactionResponse,
-    receipt: ethers.providers.TransactionReceipt
+    tx: TransactionResponse,
+    receipt: TransactionReceipt
   ): Promise<TxnReceipt> {
     const method = abiDecoder.decodeMethod(tx.data);
     let amount = ethers.BigNumber.from(method.params[1].value);
@@ -399,7 +514,7 @@ export class Account {
     if (method.name === "withdraw") {
       const contract = this.contracts[this._getContractTicker(tx.to)];
       const tokenPrice = ethers.BigNumber.from(
-        await alpsdk.getTokenPrice(contract)
+        await this.getTokenPrice(contract)
       );
       amount = amount.mul(tokenPrice);
     }
@@ -417,17 +532,13 @@ export class Account {
       timestamp: tx.timestamp,
       gasPrice: String(ethers.utils.formatEther(tx.gasPrice)),
       txnCost: String(
-        ethers.utils.formatEther(
-          (tx.gasPrice || ethers.BigNumber.from(0)).mul(
-            receipt.cumulativeGasUsed
-          )
-        )
+        ethers.utils.formatEther(tx.gasPrice.mul(receipt.gasUsed))
       ),
-      contractAddress: tx.to || "",
+      contractAddress: tx.to,
       txnHash: tx.hash,
       blockNumber: receipt.blockNumber,
       status: true,
-      ticker: this._getContractTicker(tx.to || ""),
+      ticker: this._getContractTicker(tx.to),
     };
   }
 
@@ -459,10 +570,6 @@ export class Account {
     switch (address.toLowerCase()) {
       case this.contracts.alpSave.address.toLowerCase():
         return "alpSave";
-      case this.contracts.alpBal.address.toLowerCase():
-        return "alpBal";
-      case this.contracts.alpAggr.address.toLowerCase():
-        return "alpAggr";
       case this.contracts.usdc.address.toLowerCase():
         return "usdc";
       default:
@@ -470,3 +577,4 @@ export class Account {
     }
   }
 }
+export { Account };
