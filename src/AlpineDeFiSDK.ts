@@ -26,8 +26,6 @@ export class AlpineDeFiSDK {
     return {
       usdc: new ethers.Contract(usdcJson.address, usdcJson.abi, provider),
       alpSave: new ethers.Contract(alpSave.address, alpSave.abi, provider),
-      alpBal: new ethers.Contract(alpBal.address, alpBal.abi, provider),
-      alpAggr: new ethers.Contract(alpAggr.address, alpAggr.abi, provider),
     };
   }
 

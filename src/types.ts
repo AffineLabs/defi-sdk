@@ -3,8 +3,6 @@ import { Contract } from "@ethersproject/contracts";
 export type AlpineContracts = {
   usdc: Contract; // Circle USDC contract
   alpSave: Contract; // Alpine Save strategy contract
-  alpBal: Contract; // Alpine Balanced strategy contract
-  alpAggr: Contract; // Alpine Aggressive strategy contract
 };
 
 /**
