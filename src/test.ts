@@ -24,9 +24,7 @@
 //   .then(res => console.log(res))
 //   .catch(err => console.log({ err }));
 
-
-// @ts-check
-import { Account } from "./Account.js";
+import { Account } from "./Account";
 
 import { Magic } from "magic-sdk";
 import { ethers } from "ethers";
@@ -34,7 +32,7 @@ import { ethers } from "ethers";
 import * as usdcJson from "./smart_contracts/usdc.json";
 
 const main = async () => {
-  const email = "adib@multiplyr.ai";
+  const email = "tosin@multiplyr.ai";
   console.log("Alpine DeFi SDK");
   const alpAccount = new Account("mumbai");
   await alpAccount.connect(email);
@@ -74,7 +72,6 @@ const main = async () => {
   response = await alpAccount.getTransactionHistory(0, 10);
   console.log({ response });
 
-
   // response = await alpAccount.approve(contracts.alpBal.address, "6");
   // console.log({ alpBal: response });
 
@@ -86,7 +83,6 @@ const main = async () => {
 
   // balance = await alpAccount.getUserBalance(contracts.alpBal);
   // console.log({ alpBal: balance });
-
 
   // response = await alpAccount.approve(contracts.alpAggr.address, "6");
   // console.log({ alpAggr: response });
@@ -111,5 +107,5 @@ const main = async () => {
 };
 
 main();
-  // .then(res => console.log(res))
-  // .catch(err => console.log({ err }));
+// .then(res => console.log(res))
+// .catch(err => console.log({ err }));

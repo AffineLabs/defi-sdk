@@ -7,7 +7,6 @@ import {
 } from "@ethersproject/abstract-provider";
 
 import axios from "axios";
-import * as abiDecoder from "abi-decoder";
 import { Signer } from "@ethersproject/abstract-signer";
 
 import { AlpineContracts } from "./types";
@@ -104,11 +103,6 @@ class Account {
     this.signer = this.provider.getSigner();
     this.userAddress = await this.signer.getAddress();
     this.contracts = this.getAllContracts();
-
-    // add each contract's abi to the abi decoder
-    Object.values(this.contracts).map((contract) =>
-      abiDecoder.addABI(contract.abi)
-    );
     this.connected = true;
   }
 
@@ -217,8 +211,10 @@ class Account {
     await this._checkInvariants();
 
     let data = [] as Array<PolygonScanAPIResponse>;
-    data = (await axios.get(polygonscanUrl)).data;
+    data = (await axios.get(polygonscanUrl)).data.result;
     const parsedTxHistory: Array<TxnReceipt> = [];
+
+    console.log("In parse transaction history....", data);
 
     for (const tx of data) {
       const ticker = this._getContractTicker(tx.to);
@@ -471,14 +467,14 @@ class Account {
    * @param {Array} args the arguments to the method
    * @param {boolean} dryrun If set to true, will do a dry run and return estimated
    * gas cost in eth
-   * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
+   * @returns {Promise<String>} a transaction receipt from the blockchain
    */
   async _blockchainCall(
     contract: ethers.Contract,
     method: string,
     args: Array<any>,
     dryrun: boolean
-  ): Promise<TxnReceipt | string> {
+  ): Promise<string> {
     // connect the smart contract with this user's signer
     contract = contract.connect(this.signer);
     // do a dryrun and return estimated cost
@@ -494,7 +490,7 @@ class Account {
       tx.timestamp = (
         await this.provider.getBlock(receipt.blockNumber)
       ).timestamp;
-      return await this._parseTransaction(tx, receipt);
+      return "success";
     }
   }
 
@@ -509,12 +505,22 @@ class Account {
     tx: TransactionResponse,
     receipt: TransactionReceipt
   ): Promise<TxnReceipt> {
-    const method = abiDecoder.decodeMethod(tx.data);
-    let amount = ethers.BigNumber.from(method.params[1].value);
+    const contract = this.contracts[this._getContractTicker(tx.to)];
+    const { data, value } = tx;
+    const txDescription = contract.interface.parseTransaction({ data, value });
+    console.log({ txDescription });
+    const { name } = txDescription;
+
+    // Deposit/withdraw use amountToken while transfer/approve use amount
+    // TODO: use abi from s3 bucket
+    let amount =
+      txDescription.args.amountToken ||
+      txDescription.args.amount ||
+      txDescription.args.amt;
+    amount = ethers.BigNumber.from(amount);
     // for withdraw method of the smart contract, amount is in tokens, so
     // convert that to usdc
-    if (method.name === "withdraw") {
-      const contract = this.contracts[this._getContractTicker(tx.to)];
+    if (name === "withdraw") {
       const tokenPrice = ethers.BigNumber.from(
         await this.getTokenPrice(contract)
       );
@@ -529,7 +535,7 @@ class Account {
     };
 
     return {
-      method: methodDict[method.name],
+      method: methodDict[txDescription.name],
       amount: String(ethers.utils.formatUnits(amount, 6)),
       timestamp: tx.timestamp,
       gasPrice: String(ethers.utils.formatEther(tx.gasPrice)),

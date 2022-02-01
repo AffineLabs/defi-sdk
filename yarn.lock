@@ -1391,7 +1391,7 @@ abab@^2.0.0:
   resolved "https://registry.npmjs.org/abab/-/abab-2.0.5.tgz"
   integrity sha512-9IK9EadsbHo6jLWIpxpR6pL0sazTXV6+SQv25ZB+F7Bj9mJNaOc4nCRabwd5M/JwmUa8idz6Eci6eKfJryPs6Q==
 
-abi-decoder@^2.2.2, abi-decoder@^2.4.0:
+abi-decoder@^2.2.2:
   version "2.4.0"
   resolved "https://registry.npmjs.org/abi-decoder/-/abi-decoder-2.4.0.tgz"
   integrity sha512-TOLU2q1HgYOjs1GKGtVzaqrYkar6I2fT9a80rzx6/9EJ/5crb4nCGuro0grZayixem93T7omrajYmLiMkYDLDA==
