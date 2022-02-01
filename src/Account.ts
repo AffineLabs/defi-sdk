@@ -65,7 +65,7 @@ class Account {
    * Creates an alpine account object
    * @param network the name of the network. Supports `mainnet` and `kovan` and `mumbai`
    */
-  constructor(network: EthNetworkName = "kovan") {
+  constructor(network: EthNetworkName | string = "kovan") {
     // the api key is public
     if (network.toLowerCase() === "mumbai") {
       const customNodeOptions = {
@@ -78,7 +78,9 @@ class Account {
       });
       this.magic.network = "matic"; // TODO: why is this needed?
     } else {
-      this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", { network });
+      this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
+        network: network as EthNetworkName,
+      });
     }
 
     this.polygonscanApiKey = "7DHSDECZBDA4VHMEGHNK1T6CXIAUEVRAP2";
