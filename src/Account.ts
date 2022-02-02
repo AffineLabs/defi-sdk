@@ -1,5 +1,6 @@
 import { Magic } from "magic-sdk";
 import { EthNetworkName } from "@magic-sdk/types";
+import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
 import {
   TransactionResponse,
@@ -270,15 +271,14 @@ class Account {
    * the specified amount
    * @param {String} to the receipient address
    * @param {String} amountUSDC transaction amount in usdc
-   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
-   * gas cost in eth
+   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
   async approve(
     to: string,
     amountUSDC: string,
-    dryrun: boolean = false
-  ): Promise<TxnReceipt | string> {
+    gas: boolean = true
+  ): Promise<string> {
     await this._checkInvariants(to);
     // convert to micro usdc
     const amount = this._toMicroUnit(amountUSDC);
@@ -290,7 +290,7 @@ class Account {
       usdcContract,
       "approve",
       [to, amount],
-      dryrun
+      gas
     );
     return response;
   }
@@ -299,15 +299,14 @@ class Account {
    * deposit usdc to a vault, and get alp tokens in return
    * @param {ethers.Contract} contract the vault to deposit usdc to
    * @param {String} amountUSDC amount in usdc
-   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
-   * gas cost in eth
+   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
   async buyToken(
     contract: ethers.Contract,
     amountUSDC: string,
-    dryrun: boolean = false
-  ): Promise<TxnReceipt | string> {
+    gas: boolean = true
+  ): Promise<string> {
     await this._checkInvariants(contract.address);
     const amount = this._toMicroUnit(amountUSDC);
     if (amount.isNegative() || amount.isZero()) {
@@ -341,7 +340,7 @@ class Account {
       contract,
       "deposit",
       [amount],
-      dryrun
+      gas
     );
     return receipt;
   }
@@ -350,17 +349,14 @@ class Account {
    * sell alp token and withdraw usdc from a vault (to user's wallet by default)
    * @param {ethers.Contract} contract the vault to withdraw usdc from
    * @param {String} amountUSDC amount in usdc to sell
-   * @param {String} to receipient address
-   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
-   * gas cost in eth
+   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
   async sellToken(
     contract: ethers.Contract,
     amountUSDC: string,
-    to: string = this.userAddress,
-    dryrun: boolean = false
-  ): Promise<TxnReceipt | string> {
+    gas: boolean = true
+  ): Promise<string> {
     await this._checkInvariants(contract.address);
     const tokenPrice = ethers.BigNumber.from(
       await this.getTokenPrice(contract)
@@ -386,7 +382,7 @@ class Account {
       contract,
       "withdraw",
       [amount],
-      dryrun
+      gas
     );
     return sellReceipt;
   }
@@ -395,15 +391,10 @@ class Account {
    * transfer usdc from user's wallet to another wallet
    * @param {String} to receipient address
    * @param {String} amountUSDC amount in usdc
-   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
-   * gas cost in eth
-   * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
+   *  * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
+   * @returns {Promise<string>} a transaction receipt from the blockchain
    */
-  async transfer(
-    to: string,
-    amountUSDC: string,
-    dryrun: boolean = false
-  ): Promise<TxnReceipt | string> {
+  async transfer(to: string, amountUSDC: string): Promise<string> {
     await this._checkInvariants(to);
     const amount = this._toMicroUnit(amountUSDC);
 
@@ -428,7 +419,7 @@ class Account {
       usdcContract,
       "transfer",
       [to, amount],
-      dryrun
+      true
     );
     return receipt;
   }
@@ -457,33 +448,69 @@ class Account {
    * @param {ethers.Contract} contract smart contract
    * @param {String} method the method name
    * @param {Array} args the arguments to the method
-   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
-   * gas cost in eth
+   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    * @returns {Promise<String>} a transaction receipt from the blockchain
    */
   async _blockchainCall(
     contract: ethers.Contract,
     method: string,
     args: Array<any>,
-    dryrun: boolean
+    gas: boolean
   ): Promise<string> {
     // connect the smart contract with this user's signer
     contract = contract.connect(this.signer);
-    // do a dryrun and return estimated cost
-    if (dryrun) {
-      // call the smart contract method using javascript's apply() fn
-      const gasEstimate = await contract.estimateGas[method].apply(null, args);
-      const gasPrice = await this.provider.getGasPrice();
-      return ethers.utils.formatEther(gasEstimate.mul(gasPrice));
-    } else {
-      const tx = await contract[method].apply(null, args);
-      const receipt = await tx.wait();
-      // tx's timestamp could be empty, so get it from the block
-      tx.timestamp = (
-        await this.provider.getBlock(receipt.blockNumber)
-      ).timestamp;
-      return "success";
+
+    if (!gas) {
+      contract = this.contracts.relayer.connect(this.signer);
+      console.log({ contract });
+
+      // connect with signer here?????
+      const biconomyRaw = new Biconomy(this.provider, {
+        apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
+        debug: true,
+        strictMode: true,
+      });
+      const biconomy = new ethers.providers.Web3Provider(biconomyRaw);
+      console.log({ biconomy });
+
+      console.log({ method }, args);
+      // const { data } = await contract.populateTransaction[method](...args);
+      const { data } = await contract.populateTransaction.deposit(args[0]);
+      console.log({ data });
+      const txParams = {
+        data,
+        to: this.contracts.relayer.address,
+        from: this.userAddress,
+        signatureType: "EIP712_SIGN",
+      };
+      console.log({ txParams });
+
+      // Biconomy team note: Ethers does not allow providing custom options while sending transaction
+      // See comment from CTO of biconomy: https://github.com/ethers-io/ethers.js/discussions/1313#discussioncomment-399944
+      // Also See https://ethereumbuilders.gitbooks.io/guide/content/en/ethereum_json_rpc.html#eth_sendtransaction
+      // Signature type is not an expected field in the object passed into the array
+      // Biconomy reads this field and passes on your transaction
+      try {
+        const tx = await biconomy.send("eth_sendTransaction", [txParams]);
+        console.log(`Transaction hash ${tx}`);
+
+        // Wait for tx to be mined
+        // biconomy.once(tx, (transaction) => {
+        //   console.log(transaction);
+        //   return "success";
+        // });
+      } catch (err) {
+        console.error("send err: ", err);
+      }
     }
+
+    const tx = await contract[method].apply(null, args);
+    const receipt = await tx.wait();
+    // tx's timestamp could be empty, so get it from the block
+    tx.timestamp = (
+      await this.provider.getBlock(receipt.blockNumber)
+    ).timestamp;
+    return "success";
   }
 
   /**
@@ -502,8 +529,7 @@ class Account {
     const txDescription = contract.interface.parseTransaction({ data, value });
     const { name } = txDescription;
 
-    // Deposit uses "amountToken", withdraw uses "shares" while transfer/approve use "amount"
-    // TODO: use abi from s3 bucket
+    // Deposit uses "amountToken", withdraw uses "shares", while transfer/approve use "amount"
     let amount =
       txDescription.args.amountToken ||
       txDescription.args.amount ||

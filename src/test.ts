@@ -49,14 +49,11 @@ const main = async () => {
 
   let response;
 
-  // response = await alpAccount.approve(contracts.alpSave.address, "5", true);
-  // console.log({ approveEstimate: response });
-
-  // response = await alpAccount.approve(contracts.alpSave.address, "5");
+  // response = await alpAccount.approve(contracts.alpSave.address, "100000");
   // console.log({ alpSave: response });
 
-  // response = await alpAccount.buyToken(contracts.alpSave, "5");
-  // console.log({ alpSave: response });
+  response = await alpAccount.buyToken(contracts.alpSave, "5", false);
+  console.log({ alpSave: response });
 
   // response = await alpAccount.sellToken(contracts.alpSave, "5");
   // console.log({ alpSave: response });
@@ -64,7 +61,7 @@ const main = async () => {
   response = await alpAccount.getTransactionHistory(0, 10);
   console.log({ response });
 
-  console.log("gas...", alpAccount.getGasPrice());
+  console.log("gas...", await alpAccount.getGasPrice());
   console.log("exiting");
 };
 

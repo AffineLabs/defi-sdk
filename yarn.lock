@@ -212,10 +212,10 @@
     "@babel/helper-validator-identifier" "^7.15.7"
     to-fast-properties "^2.0.0"
 
-"@biconomy/mexa@^2.0.21":
-  version "2.0.24"
-  resolved "https://registry.npmjs.org/@biconomy/mexa/-/mexa-2.0.24.tgz"
-  integrity sha512-gPlpqUYMJ/I/n45U8H5hoftjlP8BxdggRm20dVAwpEs1XnuupSYd70QNgYN1aTpisqA16wtLiR2p5eiAR+Q/Ug==
+"@biconomy/mexa@^2.0.26":
+  version "2.0.26"
+  resolved "https://registry.yarnpkg.com/@biconomy/mexa/-/mexa-2.0.26.tgz#76dde2c5264c79c8e29115e7a20b0b742f6f28f6"
+  integrity sha512-y6zwUKclgLlNmFHI0Rc1yq/rBfHV0X6d0s9v9MNji92YjXw7IM94jeZDL8PLb9MCgQ++9QGe9UKEABMbA/rQAw==
   dependencies:
     "@babel/core" "^7.12.13"
     "@babel/runtime" "^7.12.13"
