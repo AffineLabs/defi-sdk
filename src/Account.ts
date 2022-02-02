@@ -433,6 +433,14 @@ class Account {
     return receipt;
   }
 
+  /**
+   * Mint USDC token to a wallet
+   * @param {String} to receipient address
+   * @param {String} amountUSDC amount in usdc
+   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
+   * gas cost in eth
+   * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
+   */
   async mintUSDCTokens(
     to: string,
     amountUSDC: string,
