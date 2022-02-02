@@ -10,8 +10,7 @@ import axios from "axios";
 import { Signer } from "@ethersproject/abstract-signer";
 
 import { AlpineContracts } from "./types";
-import USDC from "./smart_contracts/usdc.json";
-import ALPSAVE from "./smart_contracts/alpSave.json";
+import { AlpineDeFiSDK } from ".";
 
 export interface TxnReceipt {
   method: string;
@@ -102,7 +101,7 @@ class Account {
     );
     this.signer = this.provider.getSigner();
     this.userAddress = await this.signer.getAddress();
-    this.contracts = this.getAllContracts();
+    this.contracts = await this.getAllContracts();
     this.connected = true;
   }
 
@@ -149,11 +148,8 @@ class Account {
    * `usdc`, `alpSave`.
    */
 
-  getAllContracts(): AlpineContracts {
-    return {
-      usdc: new ethers.Contract(USDC.address, USDC.abi, this.provider),
-      alpSave: new ethers.Contract(ALPSAVE.address, ALPSAVE.abi, this.provider),
-    };
+  async getAllContracts(): Promise<AlpineContracts> {
+    return AlpineDeFiSDK.getAllContracts(this.provider);
   }
 
   /**
@@ -161,9 +157,7 @@ class Account {
    * @returns {Promise<String>} the best estimate for gas price in eth
    */
   async getGasPrice(): Promise<string> {
-    const gasPrice = await this.provider.getGasPrice(); // gas price in wei
-    // return gas price in ether
-    return ethers.utils.formatEther(gasPrice);
+    return AlpineDeFiSDK.getGasPrice(this.provider);
   }
 
   /**
@@ -178,7 +172,7 @@ class Account {
     // number of circulating micro tokens
     const numTokens = await contract.totalSupply();
     if (numTokens.isZero()) {
-      return null;
+      return "0";
     } else {
       const price = tvlUSDC.div(numTokens);
       return price.toString();
@@ -213,8 +207,6 @@ class Account {
     let data = [] as Array<PolygonScanAPIResponse>;
     data = (await axios.get(polygonscanUrl)).data.result;
     const parsedTxHistory: Array<TxnReceipt> = [];
-
-    console.log("In parse transaction history....", data);
 
     for (const tx of data) {
       const ticker = this._getContractTicker(tx.to);
@@ -348,7 +340,7 @@ class Account {
     const receipt = await this._blockchainCall(
       contract,
       "deposit",
-      [this.userAddress, amount],
+      [amount],
       dryrun
     );
     return receipt;
@@ -393,7 +385,7 @@ class Account {
     const sellReceipt = this._blockchainCall(
       contract,
       "withdraw",
-      [to, amount],
+      [amount],
       dryrun
     );
     return sellReceipt;
@@ -508,15 +500,14 @@ class Account {
     const contract = this.contracts[this._getContractTicker(tx.to)];
     const { data, value } = tx;
     const txDescription = contract.interface.parseTransaction({ data, value });
-    console.log({ txDescription });
     const { name } = txDescription;
 
-    // Deposit/withdraw use amountToken while transfer/approve use amount
+    // Deposit uses "amountToken", withdraw uses "shares" while transfer/approve use "amount"
     // TODO: use abi from s3 bucket
     let amount =
       txDescription.args.amountToken ||
       txDescription.args.amount ||
-      txDescription.args.amt;
+      txDescription.args.shares;
     amount = ethers.BigNumber.from(amount);
     // for withdraw method of the smart contract, amount is in tokens, so
     // convert that to usdc

@@ -1,9 +1,6 @@
+import axios from "axios";
 import { ethers } from "ethers";
 import { Contract } from "@ethersproject/contracts";
-import usdcJson from "./smart_contracts/usdc.json";
-import alpSave from "./smart_contracts/alpSave.json";
-import alpBal from "./smart_contracts/alpBal.json";
-import alpAggr from "./smart_contracts/alpAggr.json";
 import { AlpineContracts } from "./types";
 
 export class AlpineDeFiSDK {
@@ -19,13 +16,31 @@ export class AlpineDeFiSDK {
    * `usdc`, `alpSave`, `alpBal` and `alpAggr`.
    */
 
-  static getAllContracts(network: string = "kovan"): AlpineContracts {
-    const provider = new ethers.providers.StaticJsonRpcProvider(
-      `https://${network}.infura.io/v3/6a4677f9b8014a239fb68742f752fb62`
-    );
+  static async getAllContracts(
+    provider: ethers.providers.JsonRpcProvider
+  ): Promise<AlpineContracts> {
+    const usdcABI = (
+      await axios.get(
+        "https://sc-abis.s3.us-east-2.amazonaws.com/v/abi/ERC20.json"
+      )
+    ).data;
+    const alpSaveABI = (
+      await axios.get(
+        "https://sc-abis.s3.us-east-2.amazonaws.com/v/abi/L2Vault.json"
+      )
+    ).data;
+
+    const addressData = (
+      await axios.get(
+        "https://sc-abis.s3.us-east-2.amazonaws.com/v/addressbook.json"
+      )
+    ).data;
+    // Hardcoding USDC address on mumbai for now. TODO: add to addressbook
+    const usdcAddr = "0x5fD6A096A23E95692E37Ec7583011863a63214AA";
+    const alpSaveAddr = addressData["polygonMumbai Alpine Save"];
     return {
-      usdc: new ethers.Contract(usdcJson.address, usdcJson.abi, provider),
-      alpSave: new ethers.Contract(alpSave.address, alpSave.abi, provider),
+      usdc: new ethers.Contract(usdcAddr, usdcABI, provider),
+      alpSave: new ethers.Contract(alpSaveAddr, alpSaveABI, provider),
     };
   }
 
@@ -34,10 +49,9 @@ export class AlpineDeFiSDK {
    * @param network blockchain network, default is kovan
    * @returns the best estimate for gas price in eth
    */
-  static async getGasPrice(network: string = "kovan"): Promise<string> {
-    const provider = new ethers.providers.StaticJsonRpcProvider(
-      `https://${network}.infura.io/v3/6a4677f9b8014a239fb68742f752fb62`
-    );
+  static async getGasPrice(
+    provider: ethers.providers.JsonRpcProvider
+  ): Promise<string> {
     const gas = await provider.getGasPrice(); // gas price in wei
     // return gas price in ether
     return ethers.utils.formatEther(gas);
