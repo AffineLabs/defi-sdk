@@ -21,7 +21,7 @@ export class AlpineDeFiSDK {
   ): Promise<AlpineContracts> {
     const usdcABI = (
       await axios.get(
-        "https://sc-abis.s3.us-east-2.amazonaws.com/v/abi/ERC20.json"
+        "https://sc-abis.s3.us-east-2.amazonaws.com/v/abi/MintableToken.json"
       )
     ).data;
     const alpSaveABI = (

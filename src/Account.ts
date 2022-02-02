@@ -433,6 +433,28 @@ class Account {
     return receipt;
   }
 
+  async mintUSDCTokens(
+    to: string,
+    amountUSDC: string,
+    dryrun: boolean = false
+  ): Promise<TxnReceipt | string> {
+    await this._checkInvariants(to);
+    const amount = this._toMicroUnit(amountUSDC);
+
+    if (amount.isNegative() || amount.isZero()) {
+      throw new Error("amount must be positive.");
+    }
+
+    const usdcContract = this.contracts.usdc.connect(this.signer);
+    const receipt = this._blockchainCall(
+      usdcContract,
+      "mint",
+      [to, amount],
+      dryrun
+    );
+    return receipt;
+  }
+
   // private methods
 
   /**
