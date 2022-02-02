@@ -19,28 +19,24 @@ export class AlpineDeFiSDK {
   static async getAllContracts(
     provider: ethers.providers.JsonRpcProvider
   ): Promise<AlpineContracts> {
-    const usdcABI = (
-      await axios.get(
-        "https://sc-abis.s3.us-east-2.amazonaws.com/v/abi/ERC20.json"
-      )
-    ).data;
-    const alpSaveABI = (
-      await axios.get(
-        "https://sc-abis.s3.us-east-2.amazonaws.com/v/abi/L2Vault.json"
-      )
-    ).data;
+    const s3Root = "https://sc-abis.s3.us-east-2.amazonaws.com/v0.0.4-biconomy";
+    const usdcABI = (await axios.get(`${s3Root}/abi/ERC20.json`)).data;
+    const alpSaveABI = (await axios.get(`${s3Root}/abi/L2Vault.json`)).data;
+    const relayerABI = (await axios.get(`${s3Root}/abi/Relayer.json`)).data;
 
-    const addressData = (
-      await axios.get(
-        "https://sc-abis.s3.us-east-2.amazonaws.com/v/addressbook.json"
-      )
-    ).data;
+    const addressData = (await axios.get(`${s3Root}/addressbook.json`)).data;
+
     // Hardcoding USDC address on mumbai for now. TODO: add to addressbook
     const usdcAddr = "0x5fD6A096A23E95692E37Ec7583011863a63214AA";
     const alpSaveAddr = addressData["polygonMumbai Alpine Save"];
     return {
       usdc: new ethers.Contract(usdcAddr, usdcABI, provider),
       alpSave: new ethers.Contract(alpSaveAddr, alpSaveABI, provider),
+      relayer: new ethers.Contract(
+        addressData["polygonMumbai Relayer"],
+        relayerABI,
+        provider
+      ),
     };
   }
 
