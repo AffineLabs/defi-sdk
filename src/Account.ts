@@ -58,6 +58,7 @@ class Account {
   connected: boolean;
   signer: Signer;
   provider: ethers.providers.Web3Provider;
+  biconomy: ethers.providers.Web3Provider;
   polygonscanApiKey: string;
   userAddress: string;
   /**
@@ -102,8 +103,27 @@ class Account {
     );
     this.signer = this.provider.getSigner();
     this.userAddress = await this.signer.getAddress();
+
+    const biconomyRaw = new Biconomy(this.provider, {
+      apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
+      debug: true,
+      strictMode: true,
+    });
+
     this.contracts = await this.getAllContracts();
     this.connected = true;
+
+    return new Promise((resolve, reject) => {
+      biconomyRaw
+        .onEvent(biconomyRaw.READY, () => {
+          // Initialize your dapp here like getting user accounts etc
+          this.biconomy = new ethers.providers.Web3Provider(biconomyRaw);
+          resolve(null);
+        })
+        .onEvent(biconomyRaw.ERROR, (error, message) => {
+          reject(message);
+        });
+    });
   }
 
   /**
@@ -282,9 +302,7 @@ class Account {
     await this._checkInvariants(to);
     // convert to micro usdc
     const amount = this._toMicroUnit(amountUSDC);
-    if (amount.isNegative() || amount.isZero()) {
-      throw new Error("amount must be positive.");
-    }
+
     const usdcContract = this.contracts.usdc.connect(this.signer);
     const response = this._blockchainCall(
       usdcContract,
@@ -321,14 +339,15 @@ class Account {
         )}, Requested to buy: ${amountUSDC}`
       );
     }
+
     // check if user has sufficient allowance
     const allowance = await this.contracts.usdc.allowance(
       this.userAddress,
       contract.address
     );
+
     // allowance < amount
     if (allowance.lt(amount)) {
-      const ticker = await contract.symbol();
       throw new Error(
         `Insufficient allowance. Allowance: ${this._toUnit(
           allowance
@@ -361,7 +380,8 @@ class Account {
     const tokenPrice = ethers.BigNumber.from(
       await this.getTokenPrice(contract)
     );
-    const amount = this._toMicroUnit(amountUSDC).div(tokenPrice);
+    // const amount = this._toMicroUnit(amountUSDC).div(tokenPrice);
+    const amount = ethers.BigNumber.from(1);
     if (amount.isNegative() || amount.isZero()) {
       throw new Error("amount must be positive.");
     }
@@ -464,18 +484,12 @@ class Account {
       contract = this.contracts.relayer.connect(this.signer);
       console.log({ contract });
 
-      // connect with signer here?????
-      const biconomyRaw = new Biconomy(this.provider, {
-        apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
-        debug: true,
-        strictMode: true,
-      });
-      const biconomy = new ethers.providers.Web3Provider(biconomyRaw);
+      const biconomy = this.biconomy;
       console.log({ biconomy });
 
       console.log({ method }, args);
-      // const { data } = await contract.populateTransaction[method](...args);
-      const { data } = await contract.populateTransaction.deposit(args[0]);
+      const { data } = await contract.populateTransaction[method](...args);
+
       console.log({ data });
       const txParams = {
         data,
@@ -493,6 +507,7 @@ class Account {
       try {
         const tx = await biconomy.send("eth_sendTransaction", [txParams]);
         console.log(`Transaction hash ${tx}`);
+        return tx;
 
         // Wait for tx to be mined
         // biconomy.once(tx, (transaction) => {
@@ -501,6 +516,7 @@ class Account {
         // });
       } catch (err) {
         console.error("send err: ", err);
+        return err;
       }
     }
 
