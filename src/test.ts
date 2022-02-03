@@ -1,29 +1,3 @@
-// import { Magic } from "magic-sdk"; // v7
-// import { ethers } from "ethers";
-// const main = async () => {
-//   const email = "adib@multiplyr.ai";
-//   const customNodeOptions = {
-//     rpcUrl: 'https://rpc-mumbai.matic.today',
-//     chainId: 80001,
-//   };
-
-//   // Setting network to Matic
-//   const magicMatic = new Magic("pk_live_1EF4B8FEB56F7AA4", { network: customNodeOptions });
-//   magicMatic.network = 'matic';
-//   await magicMatic.auth.loginWithMagicLink({ email });
-//   const provider = new ethers.providers.Web3Provider(magicMatic.rpcProvider);
-//   const signer = provider.getSigner();
-//   userAddress = await signer.getAddress();
-
-//   console.log(userAddress);
-//   console.log("exiting");
-
-// };
-
-// main()
-//   .then(res => console.log(res))
-//   .catch(err => console.log({ err }));
-
 import { Account } from "./Account";
 
 import { Magic } from "magic-sdk";
@@ -49,22 +23,18 @@ const main = async () => {
 
   let response;
 
-  // response = await alpAccount.approve(contracts.alpSave.address, "5", true);
-  // console.log({ approveEstimate: response });
+  // response = await alpAccount.approve(contracts.alpSave.address, "10000000");
 
-  // response = await alpAccount.approve(contracts.alpSave.address, "5");
-  // console.log({ alpSave: response });
+  response = await alpAccount.buyToken(contracts.alpSave, "5", false);
+  console.log({ alpSave: response });
 
-  // response = await alpAccount.buyToken(contracts.alpSave, "5");
-  // console.log({ alpSave: response });
-
-  // response = await alpAccount.sellToken(contracts.alpSave, "5");
+  // response = await alpAccount.sellToken(contracts.alpSave, "5", false);
   // console.log({ alpSave: response });
 
   response = await alpAccount.getTransactionHistory(0, 10);
   console.log({ response });
 
-  console.log("gas...", alpAccount.getGasPrice());
+  console.log("gas...", await alpAccount.getGasPrice());
   console.log("exiting");
 };
 
