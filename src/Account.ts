@@ -452,7 +452,7 @@ class Account {
    * Mint USDC token to a wallet
    * @param {String} to receipient address
    * @param {String} amountUSDC amount in usdc
-   * @param gas If set to true, the user pays gas. If false, we do a transaction via biconomy
+   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
   async mintUSDCTokens(
