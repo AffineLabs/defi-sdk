@@ -411,10 +411,14 @@ class Account {
    * transfer usdc from user's wallet to another wallet
    * @param {String} to receipient address
    * @param {String} amountUSDC amount in usdc
-   *  * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
+   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    * @returns {Promise<string>} a transaction receipt from the blockchain
    */
-  async transfer(to: string, amountUSDC: string): Promise<string> {
+  async transfer(
+    to: string, 
+    amountUSDC: string, 
+    gas: boolean = true
+  ): Promise<string> {
     await this._checkInvariants(to);
     const amount = this._toMicroUnit(amountUSDC);
 
@@ -439,7 +443,7 @@ class Account {
       usdcContract,
       "transfer",
       [to, amount],
-      true
+      gas
     );
     return receipt;
   }
@@ -448,14 +452,13 @@ class Account {
    * Mint USDC token to a wallet
    * @param {String} to receipient address
    * @param {String} amountUSDC amount in usdc
-   * @param {boolean} dryrun If set to true, will do a dry run and return estimated
-   * gas cost in eth
+   * @param gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
   async mintUSDCTokens(
     to: string,
     amountUSDC: string,
-    dryrun: boolean = false
+    gas: boolean = true
   ): Promise<TxnReceipt | string> {
     await this._checkInvariants(to);
     const amount = this._toMicroUnit(amountUSDC);
@@ -469,7 +472,7 @@ class Account {
       usdcContract,
       "mint",
       [to, amount],
-      dryrun
+      gas
     );
     return receipt;
   }
