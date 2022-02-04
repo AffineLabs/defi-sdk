@@ -21,7 +21,7 @@ export class AlpineDeFiSDK {
   ): Promise<AlpineContracts> {
     const s3Root =
       "https://sc-abis.s3.us-east-2.amazonaws.com/v0.0.4-biconomy.2";
-    const usdcABI = (await axios.get(`${s3Root}/abi/ERC20.json`)).data;
+    const usdcABI = (await axios.get(`${s3Root}/abi/MintableToken.json`)).data;
     const alpSaveABI = (await axios.get(`${s3Root}/abi/L2Vault.json`)).data;
     const relayerABI = (await axios.get(`${s3Root}/abi/Relayer.json`)).data;
 

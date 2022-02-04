@@ -411,10 +411,14 @@ class Account {
    * transfer usdc from user's wallet to another wallet
    * @param {String} to receipient address
    * @param {String} amountUSDC amount in usdc
-   *  * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
+   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    * @returns {Promise<string>} a transaction receipt from the blockchain
    */
-  async transfer(to: string, amountUSDC: string): Promise<string> {
+  async transfer(
+    to: string, 
+    amountUSDC: string, 
+    gas: boolean = true
+  ): Promise<string> {
     await this._checkInvariants(to);
     const amount = this._toMicroUnit(amountUSDC);
 
@@ -439,7 +443,36 @@ class Account {
       usdcContract,
       "transfer",
       [to, amount],
-      true
+      gas
+    );
+    return receipt;
+  }
+
+  /**
+   * Mint USDC token to a wallet
+   * @param {String} to receipient address
+   * @param {String} amountUSDC amount in usdc
+   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
+   * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
+   */
+  async mintUSDCTokens(
+    to: string,
+    amountUSDC: string,
+    gas: boolean = true
+  ): Promise<TxnReceipt | string> {
+    await this._checkInvariants(to);
+    const amount = this._toMicroUnit(amountUSDC);
+
+    if (amount.isNegative() || amount.isZero()) {
+      throw new Error("amount must be positive.");
+    }
+
+    const usdcContract = this.contracts.usdc.connect(this.signer);
+    const receipt = this._blockchainCall(
+      usdcContract,
+      "mint",
+      [to, amount],
+      gas
     );
     return receipt;
   }
