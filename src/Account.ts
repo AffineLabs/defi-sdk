@@ -9,6 +9,7 @@ import {
 
 import axios from "axios";
 import { Signer } from "@ethersproject/abstract-signer";
+import detectEthereumProvider from "@metamask/detect-provider";
 
 import { AlpineContracts } from "./types";
 import { AlpineDeFiSDK } from ".";
@@ -52,15 +53,18 @@ interface PolygonScanAPIResponse {
   confirmations: string;
 }
 
+const DEFAULT_WALLET = "magic";
+
 class Account {
   magic: Magic;
   contracts: AlpineContracts;
-  connected: boolean;
   signer: Signer;
   provider: ethers.providers.Web3Provider;
   biconomy: ethers.providers.Web3Provider;
   polygonscanApiKey: string;
   userAddress: string;
+  walletType: string;
+
   /**
    * Creates an alpine account object
    * @param network the name of the network. Supports `mainnet` and `kovan` and `mumbai`
@@ -84,23 +88,36 @@ class Account {
     }
 
     this.polygonscanApiKey = "7DHSDECZBDA4VHMEGHNK1T6CXIAUEVRAP2";
-    this.connected = false;
   }
-
   /**
    * connect the user account to magic's sdk. In particular,
    * login with with magic, get provider, signer and set up
    * the smart contracts.
-   * @param {String} email user's email address
+   * @param email user's email address
+   * @param walletType The type of wallet (metamask or magic)
    */
-  async connect(email: string) {
-    if (!(await this.isConnected())) {
+  async connect(email: string, walletType: string = DEFAULT_WALLET) {
+    if (await this.isConnected()) return;
+
+    this.walletType = walletType;
+    if (walletType === "magic") {
       await this.magic.auth.loginWithMagicLink({ email });
+    } else if (walletType === "metamask") {
+      await this._checkIfMetamaskAvailable();
+      // we know that window.ethereum exists here
+      const metamaskProvider = new ethers.providers.Web3Provider(
+        window.ethereum
+      );
+      // MetaMask requires requesting permission to connect users accounts
+      await metamaskProvider.send("eth_requestAccounts", []);
     }
 
-    this.provider = new ethers.providers.Web3Provider(
-      this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider
-    );
+    const rawProvider =
+      walletType === "magic"
+        ? (this.magic
+            .rpcProvider as unknown as ethers.providers.ExternalProvider)
+        : window.ethereum;
+    this.provider = new ethers.providers.Web3Provider(rawProvider);
     this.signer = this.provider.getSigner();
     this.userAddress = await this.signer.getAddress();
 
@@ -111,7 +128,6 @@ class Account {
     });
 
     this.contracts = await this.getAllContracts();
-    this.connected = true;
 
     return new Promise((resolve, reject) => {
       biconomyRaw
@@ -127,39 +143,57 @@ class Account {
   }
 
   /**
-   * disconnect a user from the magic provider
+   * Disconnect a user from the magic provider
    */
   async disconnect() {
-    await this.magic.user.logout();
-    this.signer = null;
-    this.connected = false;
+    // Nothing to disconnect in the metamask case (we just clear the previous userAddress)
+    if (this.walletType === "magic") await this.magic.user.logout();
+    this.signer = undefined;
+    this.userAddress = undefined;
   }
 
   /**
-   * check if a user is connected to the magic provider
-   * @returns {Promise<boolean>} whether the user is connected to the magic provider
+   * Check if a user is connected to the magic provider
+   * @returns Whether the user is connected to the magic provider
    */
   async isConnected(): Promise<boolean> {
-    const status = await this.magic.user.isLoggedIn();
-    return status;
+    // We set the user address to undefined when disconnecting
+    // Also if the user refreshes the page then all of the state set in the constructor is wiped away
+    return this.userAddress !== undefined;
+  }
+
+  /**
+   * This function throws if the window.ethereum object cannot be found
+   */
+  async _checkIfMetamaskAvailable() {
+    if (typeof window === undefined || typeof window.ethereum === undefined) {
+      throw new Error("MetaMask is unavailable!!");
+    }
+
+    const provider = await detectEthereumProvider();
+
+    // If the provider returned by detectEthereumProvider is not the same as
+    // window.ethereum, something is overwriting it, perhaps another wallet.
+    // for more - https://docs.metamask.io/guide/ethereum-provider.html#using-the-provider
+    if (provider !== window.ethereum) {
+      throw new Error("User might have multiple wallets installed");
+    }
   }
 
   /**
    * check if a user is connected to the magic provider
    * @deprecated Use `isConnected` instead
-   * @returns {Promise<boolean>} whether the user is connected to the magic provider
+   * @returns whether the user is connected to the magic provider
    */
   async isLoggedIn(): Promise<boolean> {
-    const status = await this.magic.user.isLoggedIn();
-    return status;
+    return this.isConnected();
   }
 
   /**
    * get the user's public address
-   * @returns {Promise<String>} user's public address
+   * @returns user's public address
    */
   async getUserAddress(): Promise<string> {
-    await this._checkInvariants();
     return this.userAddress;
   }
 
@@ -223,8 +257,6 @@ class Account {
       `&page=${page}&offset=${offset}&sort=${sort}` +
       `&apikey=${this.polygonscanApiKey}`;
 
-    await this._checkInvariants();
-
     let data = [] as Array<PolygonScanAPIResponse>;
     data = (await axios.get(polygonscanUrl)).data.result;
     const parsedTxHistory: Array<TxnReceipt> = [];
@@ -262,7 +294,6 @@ class Account {
    * and token denominated values.
    */
   async getUserBalance(contract: ethers.Contract): Promise<UserBalance> {
-    await this._checkInvariants(contract.address);
     // the returned amounts are in micro units
     // need to divide them by 10^6 to convert to usdc and alpTokens
     const balance = await contract.balanceOf(this.userAddress);
@@ -299,7 +330,6 @@ class Account {
     amountUSDC: string,
     gas: boolean = true
   ): Promise<string> {
-    await this._checkInvariants(to);
     // convert to micro usdc
     const amount = this._toMicroUnit(amountUSDC);
 
@@ -325,7 +355,6 @@ class Account {
     amountUSDC: string,
     gas: boolean = true
   ): Promise<string> {
-    await this._checkInvariants(contract.address);
     const amount = this._toMicroUnit(amountUSDC);
     if (amount.isNegative() || amount.isZero()) {
       throw new Error("amount must be positive.");
@@ -376,7 +405,6 @@ class Account {
     amountUSDC: string,
     gas: boolean = true
   ): Promise<string> {
-    await this._checkInvariants(contract.address);
     const tokenPrice = ethers.BigNumber.from(
       await this.getTokenPrice(contract)
     );
@@ -415,11 +443,10 @@ class Account {
    * @returns {Promise<string>} a transaction receipt from the blockchain
    */
   async transfer(
-    to: string, 
-    amountUSDC: string, 
+    to: string,
+    amountUSDC: string,
     gas: boolean = true
   ): Promise<string> {
-    await this._checkInvariants(to);
     const amount = this._toMicroUnit(amountUSDC);
 
     if (amount.isNegative() || amount.isZero()) {
@@ -460,7 +487,6 @@ class Account {
     amountUSDC: string,
     gas: boolean = true
   ): Promise<TxnReceipt | string> {
-    await this._checkInvariants(to);
     const amount = this._toMicroUnit(amountUSDC);
 
     if (amount.isNegative() || amount.isZero()) {
@@ -478,23 +504,6 @@ class Account {
   }
 
   // private methods
-
-  /**
-   * check the class invariants
-   * @param {String} address
-   */
-  async _checkInvariants(address: string = null) {
-    if (!this.connected || !this.isConnected()) {
-      throw new Error(
-        "Aborted. Account is not connected to magic. Call connect() first."
-      );
-    }
-    // verify that address is a valid ethereum address
-    if (address !== null) {
-      // will throw an error if the address is invalid
-      ethers.utils.getAddress(address);
-    }
-  }
 
   /**
    * call a smart contract method with arguments

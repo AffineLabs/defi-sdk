@@ -11,7 +11,6 @@ const main = async () => {
 
   const contracts = await alpAccount.getAllContracts();
 
-  // 0xEd370B1ad6edEc14E043Beb9D03A8329a399Dc2e
   const addr = await alpAccount.getUserAddress();
   console.log({ getUserAddress: addr });
 
@@ -25,8 +24,8 @@ const main = async () => {
 
   // response = await alpAccount.approve(contracts.alpSave.address, "10000000");
 
-  response = await alpAccount.buyToken(contracts.alpSave, "5", false);
-  console.log({ alpSave: response });
+  // response = await alpAccount.buyToken(contracts.alpSave, "5", false);
+  // console.log({ alpSave: response });
 
   // response = await alpAccount.sellToken(contracts.alpSave, "5", false);
   // console.log({ alpSave: response });
