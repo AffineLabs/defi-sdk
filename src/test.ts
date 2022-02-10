@@ -7,7 +7,7 @@ const main = async () => {
   const email = "tosin@multiplyr.ai";
   console.log("Alpine DeFi SDK");
   const alpAccount = new Account("mumbai");
-  await alpAccount.connect(email);
+  await alpAccount.connect(email, "metamask");
 
   const contracts = await alpAccount.getAllContracts();
 
@@ -27,7 +27,7 @@ const main = async () => {
   // response = await alpAccount.buyToken(contracts.alpSave, "5", false);
   // console.log({ alpSave: response });
 
-  // response = await alpAccount.sellToken(contracts.alpSave, "5", false);
+  // response = await alpAccount.sellToken(contracts.alpSave, "5", true);
   // console.log({ alpSave: response });
 
   response = await alpAccount.getTransactionHistory(0, 10);

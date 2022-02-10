@@ -409,10 +409,8 @@ class Account {
       await this.getTokenPrice(contract)
     );
     // const amount = this._toMicroUnit(amountUSDC).div(tokenPrice);
-    const amount = ethers.BigNumber.from(1);
-    if (amount.isNegative() || amount.isZero()) {
-      throw new Error("amount must be positive.");
-    }
+    const amount = this._toMicroUnit(amountUSDC);
+
     const balance = this._toMicroUnit(
       (await this.getUserBalance(contract)).balanceToken
     );
