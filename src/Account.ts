@@ -408,7 +408,6 @@ class Account {
     const tokenPrice = ethers.BigNumber.from(
       await this.getTokenPrice(contract)
     );
-    // const amount = this._toMicroUnit(amountUSDC).div(tokenPrice);
     const amount = this._toMicroUnit(amountUSDC);
 
     const balance = this._toMicroUnit(
