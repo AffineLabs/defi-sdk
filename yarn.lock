@@ -10,6 +10,9 @@ __metadata:
   resolution: "@alpine-ramp/alpine-defi-sdk@workspace:."
   dependencies:
     "@biconomy/mexa": ^2.0.26
+    "@ethersproject/abstract-provider": ^5.5.1
+    "@ethersproject/abstract-signer": ^5.5.0
+    "@magic-sdk/types": ^7.0.0
     "@metamask/detect-provider": ^1.2.0
     axios: ^0.25.0
     eslint: ^8.2.0
@@ -387,7 +390,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/abstract-provider@npm:5.5.1, @ethersproject/abstract-provider@npm:^5.5.0":
+"@ethersproject/abstract-provider@npm:5.5.1, @ethersproject/abstract-provider@npm:^5.5.0, @ethersproject/abstract-provider@npm:^5.5.1":
   version: 5.5.1
   resolution: "@ethersproject/abstract-provider@npm:5.5.1"
   dependencies:
@@ -829,6 +832,13 @@ __metadata:
   version: 6.0.0
   resolution: "@magic-sdk/types@npm:6.0.0"
   checksum: 022adc57e6b968ef9cda7b54f675632ee935d79c2f385ef3fe01726624d042b4f78d2b419d3c33f90fc7308110efb7a24f358ecdc3c7aa55592137fe92169a56
+  languageName: node
+  linkType: hard
+
+"@magic-sdk/types@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@magic-sdk/types@npm:7.0.0"
+  checksum: 73a50dcad2ddd7b2fca5e513c1ef465d527497ba3d0b15963d94d2bde918c9f7a53999b22601cbda5121a4543d9d5700dbf94fd654a011e4aa8f52d12eb0ffb1
   languageName: node
   linkType: hard
 

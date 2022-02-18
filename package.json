@@ -8,6 +8,9 @@
   "license": "MIT",
   "dependencies": {
     "@biconomy/mexa": "^2.0.26",
+    "@ethersproject/abstract-provider": "^5.5.1",
+    "@ethersproject/abstract-signer": "^5.5.0",
+    "@magic-sdk/types": "^7.0.0",
     "@metamask/detect-provider": "^1.2.0",
     "axios": "^0.25.0",
     "ethers": "^5.5.1",

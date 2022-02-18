@@ -1,7 +1,7 @@
-import { Contract } from "@ethersproject/contracts";
+import { ethers } from "ethers";
 
 export type AlpineContracts = {
-  [key: string]: Contract;
+  [key: string]: ethers.Contract;
 };
 
 /**

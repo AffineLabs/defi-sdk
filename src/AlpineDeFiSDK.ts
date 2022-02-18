@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ethers } from "ethers";
-import { Contract } from "@ethersproject/contracts";
+
 import { AlpineContracts } from "./types";
 
 export class AlpineDeFiSDK {
@@ -54,7 +54,9 @@ export class AlpineDeFiSDK {
    * @param contract an alpine contract
    * @returns current token price
    */
-  static async getTokenPrice(contract: Contract): Promise<String | null> {
+  static async getTokenPrice(
+    contract: ethers.Contract
+  ): Promise<String | null> {
     // total value in micro usdc locked in the contract
     const tvlUSDC = await contract.globalTVL();
     // number of circulating micro tokens
