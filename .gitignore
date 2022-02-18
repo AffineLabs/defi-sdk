@@ -142,3 +142,13 @@ dist
 # Mac Stuff
 
 .DS_Store
+
+# Yarn (Zero install setup)
+
+.yarn/\*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
