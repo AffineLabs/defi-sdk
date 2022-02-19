@@ -9,18 +9,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@alpine-ramp/alpine-defi-sdk@workspace:."
   dependencies:
-    "@biconomy/mexa": ^2.0.26
-    "@ethersproject/abstract-provider": ^5.5.1
-    "@ethersproject/abstract-signer": ^5.5.0
-    "@magic-sdk/types": ^7.0.0
-    "@metamask/detect-provider": ^1.2.0
-    axios: ^0.25.0
     eslint: ^8.2.0
     eslint-config-airbnb-base: 15.0.0
     eslint-plugin-import: ^2.25.2
-    ethers: ^5.5.1
-    magic-sdk: ^7.0.0
-    node-fetch: ^3.1.1
     parcel: ^2.2.1
     prettier: 2.5.1
     typescript: ^4.5.4
@@ -2611,6 +2602,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"core@1.0.0, core@workspace:src/core":
+  version: 0.0.0-use.local
+  resolution: "core@workspace:src/core"
+  dependencies:
+    "@ethersproject/abstract-provider": ^5.5.1
+    "@ethersproject/abstract-signer": ^5.5.0
+    axios: ^0.25.0
+    ethers: ^5.5.1
+  languageName: unknown
+  linkType: soft
+
 "cosmiconfig@npm:^7.0.1":
   version: 7.0.1
   resolution: "cosmiconfig@npm:7.0.1"
@@ -2852,13 +2854,6 @@ __metadata:
     es5-ext: ^0.10.50
     type: ^1.0.1
   checksum: 49ca0639c7b822db670de93d4fbce44b4aa072cd848c76292c9978a8cd0fff1028763020ff4b0f147bd77bfe29b4c7f82e0f71ade76b2a06100543cdfd948d19
-  languageName: node
-  linkType: hard
-
-"data-uri-to-buffer@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "data-uri-to-buffer@npm:4.0.0"
-  checksum: a010653869abe8bb51259432894ac62c52bf79ad761d418d94396f48c346f2ae739c46b254e8bb5987bded8a653d467db1968db3a69bab1d33aa5567baa5cfc7
   languageName: node
   linkType: hard
 
@@ -3775,15 +3770,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fetch-blob@npm:^3.1.2, fetch-blob@npm:^3.1.3":
-  version: 3.1.3
-  resolution: "fetch-blob@npm:3.1.3"
-  dependencies:
-    web-streams-polyfill: ^3.0.3
-  checksum: 7be20e9c9a936601c280ef3cfed1968dbcfb35e31564b9bdc807b48de73587cd358b7c3965a3f03483f5268dc373ae8526608947750f22eb214e20c94efab9c1
-  languageName: node
-  linkType: hard
-
 "file-entry-cache@npm:^6.0.1":
   version: 6.0.1
   resolution: "file-entry-cache@npm:6.0.1"
@@ -3870,12 +3856,12 @@ __metadata:
   linkType: hard
 
 "follow-redirects@npm:^1.14.7":
-  version: 1.14.7
-  resolution: "follow-redirects@npm:1.14.7"
+  version: 1.14.9
+  resolution: "follow-redirects@npm:1.14.9"
   peerDependenciesMeta:
     debug:
       optional: true
-  checksum: f6d03e5e30877431065bca0d1b2e3db93949eb799d368a5c07ea8a4b71205f0349a3f8f0191bf13a07c93885522834dca1dc8e527dc99a772c6911fba24edc5f
+  checksum: f5982e0eb481818642492d3ca35a86989c98af1128b8e1a62911a3410621bc15d2b079e8170b35b19d3bdee770b73ed431a257ed86195af773771145baa57845
   languageName: node
   linkType: hard
 
@@ -3893,14 +3879,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"formdata-polyfill@npm:^4.0.10":
-  version: 4.0.10
-  resolution: "formdata-polyfill@npm:4.0.10"
+"frontend@workspace:src/frontend":
+  version: 0.0.0-use.local
+  resolution: "frontend@workspace:src/frontend"
   dependencies:
-    fetch-blob: ^3.1.2
-  checksum: 82a34df292afadd82b43d4a740ce387bc08541e0a534358425193017bf9fb3567875dc5f69564984b1da979979b70703aa73dee715a17b6c229752ae736dd9db
-  languageName: node
-  linkType: hard
+    "@biconomy/mexa": ^2.0.26
+    "@magic-sdk/types": ^7.0.0
+    "@metamask/detect-provider": ^1.2.0
+    core: 1.0.0
+    ethers: ^5.5.1
+    magic-sdk: ^7.0.0
+  languageName: unknown
+  linkType: soft
 
 "fs-minipass@npm:^2.0.0":
   version: 2.1.0
@@ -5328,17 +5318,6 @@ __metadata:
   version: 2.6.1
   resolution: "node-fetch@npm:2.6.1"
   checksum: 91075bedd57879117e310fbcc36983ad5d699e522edb1ebcdc4ee5294c982843982652925c3532729fdc86b2d64a8a827797a745f332040d91823c8752ee4d7c
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "node-fetch@npm:3.1.1"
-  dependencies:
-    data-uri-to-buffer: ^4.0.0
-    fetch-blob: ^3.1.3
-    formdata-polyfill: ^4.0.10
-  checksum: 2e03f9a309a0a3e20758045e5eea5f1a0961be236f01cf9caecfd2224a1388a59a5c7fa3809d16f76cce1b5b7411a61db146fd265b7af5a6c9e5920a18eeef63
   languageName: node
   linkType: hard
 
@@ -7363,13 +7342,6 @@ __metadata:
   version: 1.2.1
   resolution: "weak-lru-cache@npm:1.2.1"
   checksum: 2e26bd78bc97a4d3fec63e3185c3cee92bbfd4ae2fc41c7eb129f83b990339ecb47baa09423eecba26626af878ba872d5916421a4343efdfa4e514145dc45438
-  languageName: node
-  linkType: hard
-
-"web-streams-polyfill@npm:^3.0.3":
-  version: 3.2.0
-  resolution: "web-streams-polyfill@npm:3.2.0"
-  checksum: e23ad0649392fa0159dbfc6bb27474c308c3f332d9078cfef3c06c154165bef18732c5814126147c6c712f604216ddc950c171c854e3821f020e0d2d721a5958
   languageName: node
   linkType: hard
 

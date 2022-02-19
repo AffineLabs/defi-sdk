@@ -12,7 +12,7 @@ import { Signer } from "@ethersproject/abstract-signer";
 import detectEthereumProvider from "@metamask/detect-provider";
 
 import { AlpineContracts } from "./types";
-import { AlpineDeFiSDK } from ".";
+import { AlpineDeFiSDK } from "core";
 
 export interface TxnReceipt {
   method: string;
