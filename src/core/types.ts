@@ -4,23 +4,40 @@ export type AlpineContracts = {
   [key: string]: ethers.Contract;
 };
 
-/**
- * @typedef {Object} TxnReceipt
- * @property {String} method  transaction method name (deposit, withdraw or approve)
- * @property {String} amount amount in the transaction
- * @property {number} timestamp timestamp of the transaction
- * @property {String} gasPrice gas price in eth
- * @property {String} txnCost transaction cost in eth
- * @property {String} contractAddress the address of the contract
- * @property {String} txnHash transaction hash
- * @property {number} blockNumber block number
- * @property {boolean} status transaction status
- * @property {String} ticker vault ticker
- */
+export interface TxnReceipt {
+  method: string;
+  amount: string;
+  timestamp: number;
+  gasPrice: string;
+  txnCost: string;
+  contractAddress: string;
+  txnHash: string;
+  blockNumber: number;
+  ticker: string;
+  status: boolean;
+}
 
-/**
- * @typedef {Object} UserBalance
- * @property {String} balanceUSDC amount in usdc denominated value
- * @property {String} [balanceToken] amount in token denominated value
- */
-export default {};
+//docs.polygonscan.com/api-endpoints/accounts#get-a-list-of-normal-transactions-by-address
+export interface PolygonScanAPIResponse {
+  blockNumber: string;
+  blockHash: string;
+  timeStamp: string;
+  hash: string;
+  nonce: string;
+  transactionIndex: string;
+  from: string;
+  to: string;
+  value: string;
+  gas: string;
+  gasPrice: string;
+  input: string;
+  contractAddress: string;
+  cumulativeGasUsed: string;
+  txreceipt_status: string;
+  gasUsed: string;
+  confirmations: string;
+}
+
+export interface UserBalance {
+  balanceUSDC: string;
+}

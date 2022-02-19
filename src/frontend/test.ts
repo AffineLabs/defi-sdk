@@ -1,4 +1,4 @@
-import { Account } from "./Account.ts";
+import { Account } from "./Account";
 
 import { Magic } from "magic-sdk";
 import { ethers } from "ethers";
