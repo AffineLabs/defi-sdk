@@ -57,7 +57,7 @@ class Account {
    * @param walletType The type of wallet (metamask or magic)
    */
   async connect(email: string, walletType: string = DEFAULT_WALLET) {
-    if (await this.isConnected()) return;
+    if (await this.isConnected(walletType)) return;
 
     this.walletType = walletType;
     if (walletType === "magic") {
@@ -110,16 +110,22 @@ class Account {
     if (this.walletType === "magic") await this.magic.user.logout();
     this.signer = undefined;
     this.userAddress = undefined;
+    this.walletType = undefined;
   }
 
   /**
    * Check if a user is connected to the magic provider
    * @returns Whether the user is connected to the magic provider
    */
-  async isConnected(): Promise<boolean> {
+  async isConnected(walletType: string = DEFAULT_WALLET): Promise<boolean> {
     // We set the user address to undefined when disconnecting
     // Also if the user refreshes the page then all of the state set in the constructor is wiped away
-    return this.userAddress !== undefined;
+    // wallet type needs to be matched also
+    return (
+      this.userAddress !== undefined &&
+      this.walletType !== undefined &&
+      this.walletType === walletType
+    );
   }
 
   /**
@@ -246,9 +252,9 @@ class Account {
 
   /**
    * Transfer usdc from user's wallet to another wallet
-   * @param {String} to receipient address
-   * @param {String} amountUSDC amount in usdc
-   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
+   * @param  to receipient address
+   * @param amountUSDC amount in usdc
+   * @param gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
   async transfer(to: string, amountUSDC: string, gas: boolean = true) {
     const biconomy = gas ? undefined : this.biconomy;
