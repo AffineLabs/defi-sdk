@@ -13,8 +13,6 @@ import detectEthereumProvider from "@metamask/detect-provider";
 
 import { AlpineDeFiSDK, AlpineContracts, types } from "core";
 
-
-
 const DEFAULT_WALLET = "magic";
 
 class Account {
@@ -186,11 +184,18 @@ class Account {
    * @returns An array of user transaction receipts
    **/
   async getTransactionHistory(
-  page: number,
-  offset: number,
-  sort: string = "desc"
+    page: number,
+    offset: number,
+    sort: string = "desc"
   ): Promise<Array<types.TxnReceipt>> {
-    return AlpineDeFiSDK.getTransactionHistory(this.provider, this.userAddress, this.polygonscanApiKey, page, offset, sort);
+    return AlpineDeFiSDK.getTransactionHistory(
+      this.provider,
+      this.userAddress,
+      this.polygonscanApiKey,
+      page,
+      offset,
+      sort
+    );
   }
 
   /**
@@ -200,7 +205,7 @@ class Account {
    * and token denominated values.
    */
   async getUserBalance(contract: ethers.Contract): Promise<types.UserBalance> {
- return AlpineDeFiSDK.getUserBalance(this.userAddress, contract);
+    return AlpineDeFiSDK.getUserBalance(this.userAddress, contract);
   }
 
   /**
@@ -210,13 +215,9 @@ class Account {
    * @param {String} amountUSDC transaction amount in usdc
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
-  async approve(
-    to: string,
-    amountUSDC: string,
-    gas: boolean = true
-  ) {
+  async approve(to: string, amountUSDC: string, gas: boolean = true) {
     const biconomy = gas ? undefined : this.biconomy;
-   return  AlpineDeFiSDK.approve(this.signer, biconomy, to, amountUSDC);
+    return AlpineDeFiSDK.approve(this.signer, biconomy, to, amountUSDC);
   }
 
   /**
@@ -234,55 +235,30 @@ class Account {
     return AlpineDeFiSDK.buyToken(contract, this.signer, biconomy, amountUSDC);
   }
 
-
   async sellToken(
     contract: ethers.Contract,
     amountUSDC: string,
     gas: boolean = true
   ) {
-
     const biconomy = gas ? undefined : this.biconomy;
     return AlpineDeFiSDK.sellToken(contract, this.signer, biconomy, amountUSDC);
-   
   }
 
   /**
-   * transfer usdc from user's wallet to another wallet
+   * Transfer usdc from user's wallet to another wallet
    * @param {String} to receipient address
    * @param {String} amountUSDC amount in usdc
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
-  async transfer(
-    to: string,
-    amountUSDC: string,
-    gas: boolean = true
-  ) {
-    const amount = this._addDecimals(amountUSDC);
-
-    if (amount.isNegative() || amount.isZero()) {
-      throw new Error("amount must be positive.");
-    }
-
-    const balance = this._addDecimals(
-      (await this.getUserBalance(this.contracts.usdc)).balanceUSDC
+  async transfer(to: string, amountUSDC: string, gas: boolean = true) {
+    const biconomy = gas ? undefined : this.biconomy;
+    return AlpineDeFiSDK.transfer(
+      this.contracts.usdc,
+      this.signer,
+      biconomy,
+      to,
+      amountUSDC
     );
-
-    // balance at wallet < amount requested to transfer
-    if (balance.lt(amount)) {
-      throw new Error(
-        "Insuffient balance at user's wallet. " +
-          `Balance: ${this._removeDecimals(balance)}, ` +
-          `Requested to transfer: ${this._removeDecimals(amount)}`
-      );
-    }
-    const usdcContract = this.contracts.usdc.connect(this.signer);
-    const receipt = this._blockchainCall(
-      usdcContract,
-      "transfer",
-      [to, amount],
-      gas
-    );
-    return receipt;
   }
 
   /**
@@ -292,28 +268,16 @@ class Account {
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
    */
-  async mintUSDCTokens(
-    to: string,
-    amountUSDC: string,
-    gas: boolean = true
-  )  {
-    const amount = this._addDecimals(amountUSDC);
-
-    if (amount.isNegative() || amount.isZero()) {
-      throw new Error("amount must be positive.");
-    }
-
-    const usdcContract = this.contracts.usdc.connect(this.signer);
-    const receipt = this._blockchainCall(
-      usdcContract,
-      "mint",
-      [to, amount],
-      gas
+  async mintUSDCTokens(to: string, amountUSDC: string, gas: boolean = true) {
+    const biconomy = gas ? undefined : this.biconomy;
+    return AlpineDeFiSDK.mintUSDC(
+      this.contracts.usdc,
+      this.signer,
+      biconomy,
+      to,
+      amountUSDC
     );
-
   }
+}
 
-
-
- 
 export { Account };

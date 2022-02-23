@@ -22,7 +22,17 @@ const main = async () => {
 
   let response;
 
-  // response = await alpAccount.approve(contracts.alpSave.address, "10000000");
+  response = await alpAccount.approve(
+    contracts.alpSave.address,
+    "1000000000000000000"
+  );
+  console.log("approved");
+
+  // response = await alpAccount.transfer(
+  //   "0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D",
+  //   "1"
+  // );
+  // console.log({ transfer: response });
 
   // response = await alpAccount.buyToken(contracts.alpSave, "5", false);
   // console.log({ alpSave: response });

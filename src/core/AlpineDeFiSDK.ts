@@ -335,7 +335,13 @@ export async function approve(
 
   const contracts = await getAllContracts(signer.provider as JsonRpcProvider);
   const usdcContract = contracts.usdc.connect(signer);
-  _blockchainCall(usdcContract, signer, "approve", [to, amount], biconomy);
+  return _blockchainCall(
+    usdcContract,
+    signer,
+    "approve",
+    [to, amount],
+    biconomy
+  );
 }
 
 /**
@@ -381,7 +387,7 @@ export async function buyToken(
         "Call approve() to increase the allowance."
     );
   }
-  await _blockchainCall(contract, signer, "deposit", [amount], biconomy);
+  return _blockchainCall(contract, signer, "deposit", [amount], biconomy);
 }
 
 /**
@@ -412,5 +418,64 @@ export async function sellToken(
         `Requested to sell: ${_removeDecimals(amount)} ${ticker},`
     );
   }
-  _blockchainCall(contract, signer, "withdraw", [amount], biconomy);
+  return _blockchainCall(contract, signer, "withdraw", [amount], biconomy);
+}
+
+/**
+ * transfer usdc from user's wallet to another wallet
+ * @param {String} to receipient address
+ * @param {String} amountUSDC amount in usdc
+ * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
+ */
+export async function transfer(
+  contract: ethers.Contract,
+  signer: ethers.Signer,
+  biconomy: ethers.providers.Web3Provider | undefined,
+  to: string,
+  amountUSDC: string
+) {
+  const usdcContract = contract.connect(signer);
+  const amount = _addDecimals(amountUSDC);
+
+  if (amount.isNegative() || amount.isZero()) {
+    throw new Error("amount must be positive.");
+  }
+
+  const balance = _addDecimals(
+    (await getUserBalance(await signer.getAddress(), usdcContract)).balanceUSDC
+  );
+
+  // balance at wallet < amount requested to transfer
+  if (balance.lt(amount)) {
+    throw new Error(
+      "Insuffient balance at user's wallet. " +
+        `Balance: ${_removeDecimals(balance)}, ` +
+        `Requested to transfer: ${_removeDecimals(amount)}`
+    );
+  }
+
+  return _blockchainCall(
+    usdcContract,
+    signer,
+    "transfer",
+    [to, amount],
+    biconomy
+  );
+}
+
+export async function mintUSDC(
+  contract: ethers.Contract,
+  signer: ethers.Signer,
+  biconomy: ethers.providers.Web3Provider | undefined,
+  to: string,
+  amountUSDC: string,
+  gas: boolean = true
+) {
+  const usdc = contract.connect(signer);
+  const amount = _addDecimals(amountUSDC);
+
+  if (amount.isNegative() || amount.isZero()) {
+    throw new Error("amount must be positive.");
+  }
+  return _blockchainCall(usdc, signer, "mint", [to, amount], biconomy);
 }
