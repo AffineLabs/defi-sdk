@@ -1,5 +1,4 @@
-import { Account } from "./Account";
-import { AlpineDeFiSDK } from "./AlpineDeFiSDK";
-import { AlpineContracts } from "./types";
+import { Account } from "./frontend";
+import { AlpineDeFiSDK, AlpineContracts } from "./core";
 
 export { Account, AlpineDeFiSDK, AlpineContracts };
