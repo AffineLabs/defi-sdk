@@ -150,6 +150,7 @@ class Account {
     if (this.walletType === "magic") await this.magic.user.logout();
     this.signer = undefined;
     this.userAddress = undefined;
+    this.walletType = undefined;
   }
 
   /**
