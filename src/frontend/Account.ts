@@ -11,7 +11,7 @@ import axios from "axios";
 import { Signer } from "@ethersproject/abstract-signer";
 import detectEthereumProvider from "@metamask/detect-provider";
 
-import { AlpineDeFiSDK, AlpineContracts, types } from "core";
+import { AlpineDeFiSDK, AlpineContracts, types } from "../core";
 
 const DEFAULT_WALLET = "magic";
 
