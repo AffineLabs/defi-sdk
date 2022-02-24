@@ -22,7 +22,7 @@ export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider
 ): Promise<AlpineContracts> {
   const s3Root = "https://sc-abis.s3.us-east-2.amazonaws.com/v0.0.5-book.1";
-  const usdcABI = (await axios.get(`${s3Root}/abi/ERC20.json`)).data;
+  const usdcABI = (await axios.get(`${s3Root}/abi/MintableToken.json`)).data;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
   const alpSave = allData["polygonMumbai Alpine Save"];
