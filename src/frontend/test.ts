@@ -22,11 +22,17 @@ const main = async () => {
 
   let response;
 
-  response = await alpAccount.approve(
-    contracts.alpSave.address,
-    "1000000000000000000"
-  );
-  console.log("approved");
+  // response = await alpAccount.approve(
+  //   contracts.alpSave.address,
+  //   "1000000000000000000"
+  // );
+  // console.log("approved");
+
+  // await alpAccount.mintUSDCTokens(
+  //   "0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D",
+  //   "55",
+  //   false
+  // );
 
   // response = await alpAccount.transfer(
   //   "0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D",
