@@ -5,8 +5,8 @@ name: SDK PR Workflow
 on:
   # Triggers the workflow on PR
   pull_request:
-    types: [push, opened, synchronize, reopened]
-    branches: [master]
+    types: [opened, synchronize, reopened]
+    branches: [main]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
