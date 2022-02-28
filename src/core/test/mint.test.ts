@@ -12,9 +12,6 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(
   testProvider
 );
 
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 it("Mint some usdc", async () => {
   const blockNum = await testProvider.getBlockNumber();
   console.log({ blockNum });
