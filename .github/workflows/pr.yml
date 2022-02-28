@@ -1,0 +1,33 @@
+name: SDK PR Workflow
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on PR
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  sanity-check:
+    name: PR Sanity Check
+    runs-on: ubuntu-latest
+    env:
+      MNEMONIC: ${{ secrets.MNEMONIC }}
+      POLYGON_ALCHEMY_URL: https://polygon-mumbai.g.alchemy.com/v2/${{ secrets.ALCHEMY_POLYGON_KEY }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Use Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+
+      - name: Install yarn dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Build and run tests.
+        run: cd src/core &&  yarn fork-test
