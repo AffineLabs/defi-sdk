@@ -24,6 +24,7 @@ class Account {
   polygonscanApiKey: string;
   userAddress: string;
   walletType: string;
+  addressbookVersion: string;
 
   /**
    * Creates an alpine account object
@@ -48,6 +49,7 @@ class Account {
     }
 
     this.polygonscanApiKey = "7DHSDECZBDA4VHMEGHNK1T6CXIAUEVRAP2";
+    this.addressbookVersion = addressbookVersion;
   }
   /**
    * connect the user account to magic's sdk. In particular,
@@ -169,8 +171,8 @@ class Account {
    * `usdc`, `alpSave`.
    */
 
-  async getAllContracts(addressbookVersion: string): Promise<AlpineContracts> {
-    return AlpineDeFiSDK.getAllContracts(this.provider, addressbookVersion);
+  async getAllContracts(): Promise<AlpineContracts> {
+    return AlpineDeFiSDK.getAllContracts(this.provider, this.addressbookVersion);
   }
 
   /**
