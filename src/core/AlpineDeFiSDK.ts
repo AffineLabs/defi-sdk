@@ -21,12 +21,12 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider
 ): Promise<AlpineContracts> {
-  const s3Root = "https://sc-abis.s3.us-east-2.amazonaws.com/v0.0.5-book.1";
+  const s3Root = "https://sc-abis.s3.us-east-2.amazonaws.com/latest";
   const usdcABI = (await axios.get(`${s3Root}/abi/MintableToken.json`)).data;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
-  const alpSave = allData["polygonMumbai Alpine Save"];
-  const relayer = allData["polygonMumbai Relayer"];
+  const alpSave = allData["PolygonAlpSave"];
+  const relayer = allData["PolygonRelayer"];
 
   // Hardcoding USDC address on mumbai for now. TODO: add to addressbook
   const usdcAddr = "0x5fD6A096A23E95692E37Ec7583011863a63214AA";
