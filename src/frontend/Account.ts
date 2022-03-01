@@ -29,7 +29,7 @@ class Account {
    * Creates an alpine account object
    * @param network the name of the network. Supports `mainnet` and `kovan` and `mumbai`
    */
-  constructor(network: EthNetworkName | string = "kovan") {
+  constructor(network: EthNetworkName | string = "kovan", addressbookVersion = "latest") {
     // the api key is public
     if (network.toLowerCase() === "mumbai") {
       const customNodeOptions = {
@@ -169,8 +169,8 @@ class Account {
    * `usdc`, `alpSave`.
    */
 
-  async getAllContracts(): Promise<AlpineContracts> {
-    return AlpineDeFiSDK.getAllContracts(this.provider);
+  async getAllContracts(addressbookVersion: string): Promise<AlpineContracts> {
+    return AlpineDeFiSDK.getAllContracts(this.provider, addressbookVersion);
   }
 
   /**
