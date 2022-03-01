@@ -20,7 +20,7 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 
 export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider,
-  addressbookVersion: string,
+  addressbookVersion: string = "latest",
 ): Promise<AlpineContracts> {
   const s3Root = `https://sc-abis.s3.us-east-2.amazonaws.com/${addressbookVersion}`;
   const usdcABI = (await axios.get(`${s3Root}/abi/MintableToken.json`)).data;
