@@ -201,7 +201,7 @@ class Account {
    * @param {String} amountUSDC transaction amount in usdc
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
-  async approve(to: string, amountUSDC: string) {
+  async approve(to: productActions.AlpineProduct, amountUSDC: string) {
     return AlpineDeFiSDK.approve(to, amountUSDC);
   }
 
