@@ -22,10 +22,8 @@ export async function portfolioUpdate(
     )) as string;
     const [target, txData] = txDataAndTarget.split(":");
     encodedCalls.push([target, txData]);
-    console.log({ target, txData });
   }
 
-  console.log({ encodedCalls });
   // TODO: Get transaction data for sell
   // Do a multicall right here
   const Call = "(address,bytes)";
@@ -36,7 +34,7 @@ export async function portfolioUpdate(
     SIGNER
   );
 
-  await multiCall.aggregate(encodedCalls, { gasLimit: 10e6 });
+  await multiCall.aggregate(encodedCalls);
 }
 
 // TODO: move this function to a new file

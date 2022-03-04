@@ -23,11 +23,11 @@ describe("Portfolio transactions", async () => {
   });
   it("Buy Portfolio", async () => {
     console.log("APPROVING....");
-    await approve(wallet, undefined, CONTRACTS.alpSave.address, "100000");
-    await approve(wallet, undefined, CONTRACTS.alpLarge.address, "100000");
-    await portfolioUpdate({ alpSave: 10, alpLarge: 10 }, {});
+    await approve(wallet, undefined, CONTRACTS.alpSave.address, "100000000");
+    await approve(wallet, undefined, CONTRACTS.alpLarge.address, "100000000");
+    await portfolioUpdate({ alpSave: 10 }, {});
     const res = await CONTRACTS.alpSave.balanceOf(wallet.address);
-    console.log("my number of shares...", res);
+    console.log("alpSave...", res);
     const res2 = await CONTRACTS.alpLarge.balanceOf(wallet.address);
     console.log("alpLarge shares: ", res2);
   });
