@@ -1,7 +1,8 @@
 import { ethers } from "ethers";
 
+type ContractName = "usdc" | "alpLarge" | "relayer" | "alpSave";
 export type AlpineContracts = {
-  [key: string]: ethers.Contract;
+  [key in ContractName]: ethers.Contract;
 };
 
 export interface TxnReceipt {

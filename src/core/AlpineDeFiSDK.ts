@@ -1,41 +1,15 @@
 import axios from "axios";
 import { ethers } from "ethers";
 
-import {
-  AlpineContracts,
-  TxnReceipt,
-  PolygonScanAPIResponse,
-  UserBalance,
-} from "./types";
+import { TxnReceipt, PolygonScanAPIResponse, UserBalance } from "./types";
 import {
   TransactionResponse,
   TransactionReceipt,
 } from "@ethersproject/abstract-provider";
 import { JsonRpcProvider } from "@ethersproject/providers";
-/**
- * Fet all supported contracts in the alpine protocol
- * @returns an object with all alpine contracts. Currently has
- * `usdc`, `alpSave`, `alpBal` and `alpAggr`.
- */
 
-export async function getAllContracts(
-  provider: ethers.providers.JsonRpcProvider
-): Promise<AlpineContracts> {
-  const s3Root = "https://sc-abis.s3.us-east-2.amazonaws.com/latest";
-  const usdcABI = (await axios.get(`${s3Root}/abi/MintableToken.json`)).data;
-  const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
-
-  const alpSave = allData["PolygonAlpSave"];
-  const relayer = allData["PolygonRelayer"];
-
-  // Hardcoding USDC address on mumbai for now. TODO: add to addressbook
-  const usdcAddr = "0x5fD6A096A23E95692E37Ec7583011863a63214AA";
-  return {
-    usdc: new ethers.Contract(usdcAddr, usdcABI, provider),
-    alpSave: new ethers.Contract(alpSave.address, alpSave.abi, provider),
-    relayer: new ethers.Contract(relayer.address, relayer.abi, provider),
-  };
-}
+import { CONTRACTS, SIGNER, BICONOMY } from "./cache";
+import { AlpineProduct } from "./portfolio";
 
 /**
  * get the current best estimate for gas price
@@ -100,7 +74,7 @@ export async function getTransactionHistory(
   const parsedTxHistory: Array<TxnReceipt> = [];
 
   for (const tx of data) {
-    const ticker = await _getContractTicker(provider, tx.to);
+    const ticker = await _getContractTicker(tx.to || "");
     // filter by outgoing transactions that were sent to alpine contracts
     if (ticker === "unknown") continue;
 
@@ -131,18 +105,11 @@ export async function getTransactionHistory(
  * @returns contract ticker for alpine and usdc
  * contracts, and unknown otherwise
  */
-async function _getContractTicker(
-  provider: ethers.providers.JsonRpcProvider,
-  address: string,
-  contracts?: AlpineContracts
-): Promise<string> {
-  if (contracts === undefined) {
-    contracts = await getAllContracts(provider);
-  }
+async function _getContractTicker(address: string): Promise<string> {
   switch (address.toLowerCase()) {
-    case contracts.alpSave.address.toLowerCase():
+    case CONTRACTS.alpSave.address.toLowerCase():
       return "alpSave";
-    case contracts.usdc.address.toLowerCase():
+    case CONTRACTS.usdc.address.toLowerCase():
       return "usdc";
     default:
       return "unknown";
@@ -159,12 +126,13 @@ async function _getContractTicker(
 async function _parseTransaction(
   provider: ethers.providers.JsonRpcProvider,
   tx: TransactionResponse,
-  receipt: TransactionReceipt,
-  contracts?: AlpineContracts
+  receipt: TransactionReceipt
 ): Promise<TxnReceipt> {
-  if (contracts === undefined) contracts = await getAllContracts(provider);
-  const ticker = await _getContractTicker(provider, tx.to || "", contracts);
-  const contract = contracts[ticker];
+  const ticker = (await _getContractTicker(tx.to || "")) as AlpineProduct;
+
+  const contract = CONTRACTS[ticker];
+
+  // get contract
   const { data, value } = tx;
   const txDescription = contract.interface.parseTransaction({ data, value });
   const { name } = txDescription;
@@ -200,7 +168,7 @@ async function _parseTransaction(
     txnHash: tx.hash,
     blockNumber: receipt.blockNumber,
     status: true,
-    ticker: await _getContractTicker(provider, tx.to || ""),
+    ticker: await _getContractTicker(tx.to || ""),
   };
 }
 
@@ -217,12 +185,7 @@ export async function getUserBalance(
   // the returned amounts are in micro units
   // need to divide them by 10^6 to convert to usdc and alpTokens
   const balance = await contract.balanceOf(userAddress);
-  if (
-    (await _getContractTicker(
-      contract.provider as ethers.providers.JsonRpcProvider,
-      contract.address
-    )) === "usdc"
-  ) {
+  if ((await _getContractTicker(contract.address)) === "usdc") {
     return {
       balanceUSDC: _removeDecimals(balance),
     };
@@ -263,7 +226,7 @@ function _removeDecimals(amount: ethers.BigNumber): string {
  * @param {ethers.Contract} contract smart contract
  * @param {String} method the method name
  * @param {Array} args the arguments to the method
- * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
+ * @param biconomy If defined, the transaction will be sent via biconomy
  * @returns {Promise<String>} a transaction receipt from the blockchain
  */
 async function _blockchainCall(
@@ -271,14 +234,18 @@ async function _blockchainCall(
   signer: ethers.Signer,
   method: string,
   args: Array<any>,
-  biconomy?: ethers.providers.Web3Provider
-) {
+  biconomy?: ethers.providers.Web3Provider,
+  getData?: boolean
+): Promise<string | undefined> {
   contract = contract.connect(signer);
 
+  if (getData) {
+    const { data } = await contract.populateTransaction[method](...args);
+    return data;
+  }
+
   if (biconomy) {
-    const contracts = await getAllContracts(
-      contract.provider as JsonRpcProvider
-    );
+    const contracts = CONTRACTS;
     contract = contracts.relayer.connect(signer);
     console.log({ contract });
 
@@ -333,7 +300,7 @@ export async function approve(
   // convert to micro usdc
   const amount = _addDecimals(amountUSDC);
 
-  const contracts = await getAllContracts(signer.provider as JsonRpcProvider);
+  const contracts = CONTRACTS;
   const usdcContract = contracts.usdc.connect(signer);
   return _blockchainCall(
     usdcContract,
@@ -346,19 +313,17 @@ export async function approve(
 
 /**
  * Deposit usdc to a vault, and get alp tokens in return
- * @param {ethers.Contract} contract the vault to deposit usdc to
  * @param {String} amountUSDC amount in usdc
  * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
  */
-export async function buyToken(
-  contract: ethers.Contract,
-  signer: ethers.Signer,
-  biconomy: ethers.providers.Web3Provider | undefined,
-  amountUSDC: string
+export async function buyUSDCShares(
+  amountUSDC: number,
+  getData: boolean = false
 ) {
-  const contracts = await getAllContracts(signer.provider as JsonRpcProvider);
-  const userAddress = await signer.getAddress();
-  const amount = _addDecimals(amountUSDC);
+  const contracts = CONTRACTS;
+  const { usdc } = contracts;
+  const userAddress = await SIGNER.getAddress();
+  const amount = _addDecimals(amountUSDC.toString());
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
@@ -375,7 +340,7 @@ export async function buyToken(
   // check if user has sufficient allowance
   const allowance = await contracts.usdc.allowance(
     userAddress,
-    contract.address
+    contracts.alpSave.address
   );
 
   // allowance < amount
@@ -387,7 +352,14 @@ export async function buyToken(
         "Call approve() to increase the allowance."
     );
   }
-  return _blockchainCall(contract, signer, "deposit", [amount], biconomy);
+  return _blockchainCall(
+    contracts.alpSave,
+    SIGNER,
+    "deposit",
+    [amount],
+    BICONOMY,
+    getData
+  );
 }
 
 /**
@@ -468,14 +440,28 @@ export async function mintUSDC(
   signer: ethers.Signer,
   biconomy: ethers.providers.Web3Provider | undefined,
   to: string,
-  amountUSDC: string,
-  gas: boolean = true
+  amountUSDC: number
 ) {
   const usdc = contract.connect(signer);
-  const amount = _addDecimals(amountUSDC);
+  const amount = _addDecimals(amountUSDC.toString());
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
   return _blockchainCall(usdc, signer, "mint", [to, amount], biconomy);
+}
+
+export async function buyBtCEthShares(
+  amount: number,
+  getData: boolean = false
+) {
+  const { alpLarge } = CONTRACTS;
+  return _blockchainCall(
+    alpLarge,
+    SIGNER,
+    "deposit",
+    [_addDecimals(amount.toString())],
+    BICONOMY,
+    getData
+  );
 }
