@@ -25,13 +25,7 @@ it("Mint some usdc", async () => {
     wallet.address
   );
   const oneUSDC = ethers.BigNumber.from(10).pow(6);
-  await AlpineDeFiSDK.mintUSDC(
-    contracts.usdc,
-    wallet,
-    undefined,
-    wallet.address,
-    1
-  );
+  await AlpineDeFiSDK.mintUSDC(wallet.address, 1);
   const afterBal = await contracts.usdc.balanceOf(wallet.address);
   expect(afterBal).to.equal(beforeBal.add(oneUSDC));
 });

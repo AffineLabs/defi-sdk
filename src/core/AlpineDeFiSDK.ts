@@ -240,8 +240,8 @@ async function _blockchainCall(
   contract = contract.connect(signer);
 
   if (getData) {
-    const { data } = await contract.populateTransaction[method](...args);
-    return data;
+    const callData = await contract.interface.encodeFunctionData(method, args);
+    return `${contract.address}:${callData}`;
   }
 
   if (biconomy) {
@@ -435,20 +435,14 @@ export async function transfer(
   );
 }
 
-export async function mintUSDC(
-  contract: ethers.Contract,
-  signer: ethers.Signer,
-  biconomy: ethers.providers.Web3Provider | undefined,
-  to: string,
-  amountUSDC: number
-) {
-  const usdc = contract.connect(signer);
+export async function mintUSDC(to: string, amountUSDC: number) {
+  const { usdc } = CONTRACTS;
   const amount = _addDecimals(amountUSDC.toString());
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
-  return _blockchainCall(usdc, signer, "mint", [to, amount], biconomy);
+  return _blockchainCall(usdc, SIGNER, "mint", [to, amount], BICONOMY);
 }
 
 export async function buyBtCEthShares(
