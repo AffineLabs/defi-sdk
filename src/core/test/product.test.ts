@@ -4,9 +4,9 @@ import { solidity } from "ethereum-waffle";
 chai.use(solidity);
 const { expect } = chai;
 
-import { buyProduct } from "../portfolio";
-import { AlpineDeFiSDK, init } from "..";
-import { CONTRACTS } from "../cache";
+import { buyProduct } from "../product";
+import { AlpineDeFiSDK } from "..";
+import { CONTRACTS, init } from "../cache";
 import { approve } from "../AlpineDeFiSDK";
 
 const testProvider = new ethers.providers.JsonRpcProvider(
@@ -23,7 +23,7 @@ describe("Buy products", async () => {
   });
   it("Buy some alpSave", async () => {
     console.log("APPROVING....");
-    await approve(wallet, undefined, CONTRACTS.alpSave.address, "100000");
+    await approve(CONTRACTS.alpSave.address, "100000");
     await buyProduct("alpSave", 10);
     const res = await CONTRACTS.alpSave.balanceOf(wallet.address);
     console.log("my number of shares...", res);

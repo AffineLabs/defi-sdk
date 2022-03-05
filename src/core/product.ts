@@ -12,9 +12,9 @@ export async function buyProduct(
 ) {
   if (product == "alpSave") {
     // buy alpSave
-    return sdk.buyUSDCShares(amount, getData);
+    return sdk.buyUsdcShares(amount);
   }
   if (product == "alpLarge") {
-    return sdk.buyBtCEthShares(amount, getData);
+    return sdk.buyBtCEthShares(amount);
   }
 }

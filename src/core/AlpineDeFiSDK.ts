@@ -144,7 +144,7 @@ async function _parseTransaction(
   // for withdraw method of the smart contract, amount is in tokens, so
   // convert that to usdc
   if (name === "withdraw") {
-    const tokenPrice = ethers.BigNumber.from(await getTokenPrice(contract));
+    const tokenPrice = ethers.BigNumber.from(await getTokenPrice(ticker));
     amount = amount.mul(tokenPrice);
   }
   // convert smart contract method names to app's method names
@@ -183,12 +183,13 @@ export async function getUserBalance(
   // the returned amounts are in micro units
   // need to divide them by 10^6 to convert to usdc and alpTokens
   const balance = await contract.balanceOf(userAddress);
-  if ((await _getContractTicker(contract.address)) === "usdc") {
+  const ticker = await _getContractTicker(contract.address);
+  if (ticker === "usdc") {
     return {
       balanceUSDC: _removeDecimals(balance),
     };
   } else {
-    let tokenPrice = await getTokenPrice(contract);
+    let tokenPrice = await getTokenPrice(ticker as AlpineProduct);
     // no token in circulation, so assume the price is 0
     if (tokenPrice == null) {
       tokenPrice = "0";
@@ -291,10 +292,7 @@ export async function approve(to: string, amountUSDC: string) {
  * @param {String} amountUSDC amount in usdc
  * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
  */
-export async function buyUsdcShares(
-  amountUSDC: number,
-  getData: boolean = false
-) {
+export async function buyUsdcShares(amountUSDC: number) {
   const contracts = CONTRACTS;
   const { usdc, alpSave } = contracts;
   const userAddress = await SIGNER.getAddress();
