@@ -8,7 +8,7 @@
     "ethers": "^5.5.4"
   },
   "scripts": {
-    "test": "mocha -r ts-node/register 'test/**/*.test.ts' --timeout 5000",
+    "test": "mocha -r ts-node/register 'test/**/*.test.ts' --timeout 10000",
     "fork-test": "ts-node fork.ts"
   },
   "devDependencies": {

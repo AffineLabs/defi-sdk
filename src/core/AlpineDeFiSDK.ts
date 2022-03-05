@@ -378,3 +378,10 @@ export async function buyBtCEthShares(amount: number) {
     _addDecimals(amount.toString()),
   ]);
 }
+
+export async function sellBtCEthShares(amount: number) {
+  const { alpLarge } = CONTRACTS;
+  return _blockchainCall(alpLarge, "withdraw", [
+    _addDecimals(amount.toString()),
+  ]);
+}

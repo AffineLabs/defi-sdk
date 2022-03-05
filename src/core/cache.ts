@@ -19,9 +19,11 @@ export async function getAllContracts(
   const usdcABI = (await axios.get(`${s3Root}/abi/MintableToken.json`)).data;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
-  const alpSave = allData.PolygonAlpSave;
-  const relayer = allData.PolygonRelayer;
-  const alpLarge = allData.PolygonBtcEthVault;
+  const {
+    PolygonAlpSave: alpSave,
+    PolygonRelayer: relayer,
+    PolygonBtcEthVault: alpLarge,
+  } = allData;
 
   // Hardcoding USDC address on mumbai for now. TODO: add to addressbook
   const usdcAddr = "0x5fD6A096A23E95692E37Ec7583011863a63214AA";
