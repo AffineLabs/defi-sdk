@@ -1,14 +1,10 @@
 import { ethers } from "ethers";
 
-import * as sdk from "./AlpineDeFiSDK";
 import { SIGNER } from "./cache";
 
-export type AlpineProduct = "alpSave" | "alpLarge";
-export type productAmounts = {
-  [key in AlpineProduct]?: number;
-};
+import { productAmounts, AlpineProduct, buyProduct } from "./product";
 
-export async function portfolioUpdate(
+async function portfolioUpdate(
   buyAmounts: productAmounts,
   sellAmounts: productAmounts
 ) {
@@ -35,19 +31,4 @@ export async function portfolioUpdate(
   );
 
   await multiCall.aggregate(encodedCalls);
-}
-
-// TODO: move this function to a new file
-export async function buyProduct(
-  product: AlpineProduct,
-  amount: number,
-  getData: boolean = false
-) {
-  if (product == "alpSave") {
-    // buy alpSave
-    return sdk.buyUSDCShares(amount, getData);
-  }
-  if (product == "alpLarge") {
-    return sdk.buyBtCEthShares(amount, getData);
-  }
 }
