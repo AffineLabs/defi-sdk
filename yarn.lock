@@ -4192,6 +4192,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "commander@npm:9.0.0"
+  checksum: 15066e433d528315ded8261d16bc600d1f3c5671c75021e685ae67e4d62f7551243ff28411b28dc0a6f8b23c2a0f033550ec6f3e66bdf9d11a4fdc2d33dd9802
+  languageName: node
+  linkType: hard
+
 "component-emitter@npm:^1.2.1":
   version: 1.3.0
   resolution: "component-emitter@npm:1.3.0"
@@ -4392,6 +4399,7 @@ __metadata:
     "@types/mocha": ^9.1.0
     axios: ^0.25.0
     chai: ^4.3.6
+    commander: ^9.0.0
     concurrently: ^7.0.0
     dotenv: ^16.0.0
     ethereum-waffle: ^3.4.0
