@@ -237,7 +237,9 @@ async function _blockchainCall(
 
   contract = contract.connect(signer);
 
-  if (biconomy) {
+  // TODO: This is very clunky. We do this because we don't currently support gasless transactions
+  // with the USDC contract
+  if (biconomy && contract.address !== CONTRACTS.usdc.address) {
     let { relayer } = CONTRACTS;
     relayer = relayer.connect(signer);
 
@@ -262,6 +264,8 @@ async function _blockchainCall(
     if (biconomy === undefined) throw Error("No biconomy provider found");
     const tx = await biconomy.send("eth_sendTransaction", [txParams]);
     console.log(`Transaction hash ${tx}`);
+
+    return;
 
     // Wait for tx to be mined
     // biconomy.once(tx, (transaction) => {

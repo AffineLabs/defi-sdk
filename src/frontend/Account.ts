@@ -2,16 +2,12 @@ import { Magic } from "magic-sdk";
 import { EthNetworkName } from "@magic-sdk/types";
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
-import {
-  TransactionResponse,
-  TransactionReceipt,
-} from "@ethersproject/abstract-provider";
 
-import axios from "axios";
 import { Signer } from "@ethersproject/abstract-signer";
 import detectEthereumProvider from "@metamask/detect-provider";
 
-import { AlpineDeFiSDK, AlpineContracts, types } from "../core";
+import { AlpineDeFiSDK, AlpineContracts, types, init } from "../core";
+import * as productActions from "../core/product";
 
 const DEFAULT_WALLET = "magic";
 
@@ -80,19 +76,21 @@ class Account {
     this.provider = new ethers.providers.Web3Provider(rawProvider);
     this.signer = this.provider.getSigner();
     this.userAddress = await this.signer.getAddress();
+    await this.initBiconomy();
+    await init(this.provider, this.signer, this.biconomy);
+  }
 
+  async initBiconomy() {
     const biconomyRaw = new Biconomy(this.provider, {
       apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
       debug: true,
       strictMode: true,
     });
 
-    this.contracts = await this.getAllContracts();
-
     return new Promise((resolve, reject) => {
       biconomyRaw
         .onEvent(biconomyRaw.READY, () => {
-          // Initialize your dapp here like getting user accounts etc
+          // set the biconomy provider
           this.biconomy = new ethers.providers.Web3Provider(biconomyRaw);
           resolve(null);
         })
@@ -147,15 +145,6 @@ class Account {
   }
 
   /**
-   * check if a user is connected to the magic provider
-   * @deprecated Use `isConnected` instead
-   * @returns whether the user is connected to the magic provider
-   */
-  async isLoggedIn(): Promise<boolean> {
-    return this.isConnected();
-  }
-
-  /**
    * get the user's public address
    * @returns user's public address
    */
@@ -164,21 +153,11 @@ class Account {
   }
 
   /**
-   * get all supported contracts in the alpine protocol
-   * @returns {AlpineContracts} an object with all alpine contracts. Currently has
-   * `usdc`, `alpSave`.
-   */
-
-  async getAllContracts(): Promise<AlpineContracts> {
-    return AlpineDeFiSDK.getAllContracts(this.provider);
-  }
-
-  /**
    * get the current best estimate for gas price
    * @returns {Promise<String>} the best estimate for gas price in eth
    */
   async getGasPrice(): Promise<string> {
-    return AlpineDeFiSDK.getGasPrice(this.provider);
+    return AlpineDeFiSDK.getGasPrice();
   }
 
   /**
@@ -195,7 +174,6 @@ class Account {
     sort: string = "desc"
   ): Promise<Array<types.TxnReceipt>> {
     return AlpineDeFiSDK.getTransactionHistory(
-      this.provider,
       this.userAddress,
       this.polygonscanApiKey,
       page,
@@ -221,33 +199,22 @@ class Account {
    * @param {String} amountUSDC transaction amount in usdc
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
-  async approve(to: string, amountUSDC: string, gas: boolean = true) {
-    const biconomy = gas ? undefined : this.biconomy;
-    return AlpineDeFiSDK.approve(this.signer, biconomy, to, amountUSDC);
+  async approve(to: string, amountUSDC: string) {
+    return AlpineDeFiSDK.approve(to, amountUSDC);
   }
 
-  /**
-   * Deposit usdc to a vault, and get alp tokens in return
-   * @param {ethers.Contract} contract the vault to deposit usdc to
-   * @param {String} amountUSDC amount in usdc
-   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
-   */
-  async buyToken(
-    contract: ethers.Contract,
-    amountUSDC: string,
-    gas: boolean = true
+  async buyProduct(
+    product: productActions.AlpineProduct,
+    dollarAmount: number
   ) {
-    const biconomy = gas ? undefined : this.biconomy;
-    return AlpineDeFiSDK.buyToken(contract, this.signer, biconomy, amountUSDC);
+    return productActions.buyProduct(product, dollarAmount);
   }
 
-  async sellToken(
-    contract: ethers.Contract,
-    amountUSDC: string,
-    gas: boolean = true
+  async sellProduct(
+    product: productActions.AlpineProduct,
+    dollarAmount: number
   ) {
-    const biconomy = gas ? undefined : this.biconomy;
-    return AlpineDeFiSDK.sellToken(contract, this.signer, biconomy, amountUSDC);
+    return productActions.sellProduct(product, dollarAmount);
   }
 
   /**
@@ -256,33 +223,17 @@ class Account {
    * @param amountUSDC amount in usdc
    * @param gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
-  async transfer(to: string, amountUSDC: string, gas: boolean = true) {
-    const biconomy = gas ? undefined : this.biconomy;
-    return AlpineDeFiSDK.transfer(
-      this.contracts.usdc,
-      this.signer,
-      biconomy,
-      to,
-      amountUSDC
-    );
+  async transfer(to: string, amountUSDC: string) {
+    return AlpineDeFiSDK.transfer(to, amountUSDC);
   }
 
   /**
    * Mint USDC token to a wallet
    * @param {String} to receipient address
-   * @param {String} amountUSDC amount in usdc
-   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
-   * @returns {Promise<TxnReceipt|String>} a transaction receipt from the blockchain
+   * @param {number} amountUSDC amount in usdc
    */
-  async mintUSDCTokens(to: string, amountUSDC: string, gas: boolean = true) {
-    const biconomy = gas ? undefined : this.biconomy;
-    return AlpineDeFiSDK.mintUSDC(
-      this.contracts.usdc,
-      this.signer,
-      biconomy,
-      to,
-      amountUSDC
-    );
+  async mintUSDCTokens(to: string, amountUSDC: number) {
+    return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
   }
 }
 
