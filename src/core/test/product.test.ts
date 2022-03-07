@@ -24,7 +24,7 @@ describe("Buy products", async () => {
 
   it("Buy/Sell alpSave", async () => {
     console.log("APPROVING....");
-    await approve(CONTRACTS.alpSave.address, "100000");
+    await approve("alpSave", "100000");
     await buyProduct("alpSave", 10);
     const res = await CONTRACTS.alpSave.balanceOf(wallet.address);
     console.log("alpSave Shares...", res);
@@ -40,7 +40,7 @@ describe("Buy products", async () => {
 
   it("Buy/Sell alpLarge", async () => {
     console.log("buying alpLarge");
-    await approve(CONTRACTS.alpLarge.address, "100000");
+    await approve("alpLarge", "100000");
     await buyProduct("alpLarge", 10);
     const res: ethers.BigNumber = await CONTRACTS.alpLarge.balanceOf(
       wallet.address

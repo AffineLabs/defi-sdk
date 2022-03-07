@@ -9,7 +9,7 @@ import {
 import { JsonRpcProvider } from "@ethersproject/providers";
 
 import { CONTRACTS, SIGNER, BICONOMY } from "./cache";
-import { AlpineProduct } from "./product";
+import { AlpineProduct, productAmounts } from "./product";
 
 /**
  * get the current best estimate for gas price
@@ -281,14 +281,16 @@ async function _blockchainCall(
 /**
  * approve outgoing transaction with another wallet or smart contract for
  * the specified amount
- * @param to the receipient address
+ * @param to the receipient contract
  * @param amountUSDC transaction amount in usdc
- * @param biconomy A biconomy provider. If provided, we'll submit a gasless transaction
  */
-export async function approve(to: string, amountUSDC: string) {
+export async function approve(to: AlpineProduct, amountUSDC: string) {
   // convert to micro usdc
   const amount = _addDecimals(amountUSDC);
-  return _blockchainCall(CONTRACTS.usdc, "approve", [to, amount]);
+  return _blockchainCall(CONTRACTS.usdc, "approve", [
+    CONTRACTS[to].address,
+    amount,
+  ]);
 }
 
 /**
