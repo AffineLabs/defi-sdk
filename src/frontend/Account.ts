@@ -54,7 +54,7 @@ class Account {
    * @param walletType The type of wallet (metamask or magic)
    */
   async connect(email: string, walletType: string = DEFAULT_WALLET) : Promise<string | null> {
-    if (await this.isConnected(walletType)) return null;
+    if (await this.isConnected(walletType)) return this.magicDidToken;
 
     this.walletType = walletType;
 
