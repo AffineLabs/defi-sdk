@@ -1,5 +1,6 @@
 import * as AlpineDeFiSDK from "./AlpineDeFiSDK";
-import { AlpineContracts } from "./types";
+import { AlpineContracts } from "./product";
 import * as types from "./types";
+import { init } from "./cache";
 
-export { AlpineDeFiSDK, AlpineContracts, types };
+export { AlpineDeFiSDK, AlpineContracts, types, init };

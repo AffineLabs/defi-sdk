@@ -5,16 +5,17 @@
     "@ethersproject/abstract-provider": "^5.5.1",
     "@ethersproject/abstract-signer": "^5.5.0",
     "axios": "^0.25.0",
-    "ethers": "^5.5.1"
+    "ethers": "^5.5.4"
   },
   "scripts": {
-    "test": "mocha -r ts-node/register 'test/**/*.test.ts' --timeout 5000",
-    "fork-test": "ts-node fork.ts"
+    "run-test": "mocha -r ts-node/register --timeout 50000",
+    "test": "ts-node fork.ts"
   },
   "devDependencies": {
     "@types/chai": "^4.3.0",
     "@types/mocha": "^9.1.0",
     "chai": "^4.3.6",
+    "commander": "^9.0.0",
     "concurrently": "^7.0.0",
     "dotenv": "^16.0.0",
     "ethereum-waffle": "^3.4.0",

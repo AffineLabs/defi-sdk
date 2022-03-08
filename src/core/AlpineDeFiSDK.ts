@@ -1,50 +1,22 @@
 import axios from "axios";
 import { ethers } from "ethers";
 
-import {
-  AlpineContracts,
-  TxnReceipt,
-  PolygonScanAPIResponse,
-  UserBalance,
-} from "./types";
+import { TxnReceipt, PolygonScanAPIResponse, UserBalance } from "./types";
 import {
   TransactionResponse,
   TransactionReceipt,
 } from "@ethersproject/abstract-provider";
 import { JsonRpcProvider } from "@ethersproject/providers";
-/**
- * Fet all supported contracts in the alpine protocol
- * @returns an object with all alpine contracts. Currently has
- * `usdc`, `alpSave`, `alpBal` and `alpAggr`.
- */
 
-export async function getAllContracts(
-  provider: ethers.providers.JsonRpcProvider
-): Promise<AlpineContracts> {
-  const s3Root = "https://sc-abis.s3.us-east-2.amazonaws.com/latest";
-  const usdcABI = (await axios.get(`${s3Root}/abi/MintableToken.json`)).data;
-  const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
-
-  const alpSave = allData["PolygonAlpSave"];
-  const relayer = allData["PolygonRelayer"];
-
-  // Hardcoding USDC address on mumbai for now. TODO: add to addressbook
-  const usdcAddr = "0x5fD6A096A23E95692E37Ec7583011863a63214AA";
-  return {
-    usdc: new ethers.Contract(usdcAddr, usdcABI, provider),
-    alpSave: new ethers.Contract(alpSave.address, alpSave.abi, provider),
-    relayer: new ethers.Contract(relayer.address, relayer.abi, provider),
-  };
-}
+import { CONTRACTS, SIGNER, BICONOMY } from "./cache";
+import { AlpineProduct } from "./product";
 
 /**
  * get the current best estimate for gas price
  * @returns the best estimate for gas price in eth
  */
-export async function getGasPrice(
-  provider: ethers.providers.JsonRpcProvider
-): Promise<string> {
-  const gas = await provider.getGasPrice(); // gas price in wei
+export async function getGasPrice(): Promise<string> {
+  const gas = await SIGNER.getGasPrice(); // gas price in wei
   // return gas price in ether
   return ethers.utils.formatEther(gas);
 }
@@ -56,8 +28,10 @@ export async function getGasPrice(
  * @returns current token price
  */
 export async function getTokenPrice(
-  contract: ethers.Contract
+  product: AlpineProduct
 ): Promise<String | null> {
+  const contract = CONTRACTS[product];
+
   // total value in micro usdc locked in the contract
   const tvlUSDC = await contract.globalTVL();
   // number of circulating micro tokens
@@ -81,7 +55,6 @@ export async function getTokenPrice(
  * @returns An array of user transaction receipts
  **/
 export async function getTransactionHistory(
-  provider: ethers.providers.JsonRpcProvider,
   userAddress: string,
   polygonscanApiKey: string,
   page: number,
@@ -100,7 +73,7 @@ export async function getTransactionHistory(
   const parsedTxHistory: Array<TxnReceipt> = [];
 
   for (const tx of data) {
-    const ticker = await _getContractTicker(provider, tx.to);
+    const ticker = await _getContractTicker(tx.to || "");
     // filter by outgoing transactions that were sent to alpine contracts
     if (ticker === "unknown") continue;
 
@@ -118,7 +91,7 @@ export async function getTransactionHistory(
       blockNumber: Number(tx.blockNumber),
     } as unknown as TransactionReceipt;
 
-    const parsedTx = await _parseTransaction(provider, fakeTx, fakeReceipt);
+    const parsedTx = await _parseTransaction(fakeTx, fakeReceipt);
     parsedTxHistory.push(parsedTx);
   }
 
@@ -131,18 +104,11 @@ export async function getTransactionHistory(
  * @returns contract ticker for alpine and usdc
  * contracts, and unknown otherwise
  */
-async function _getContractTicker(
-  provider: ethers.providers.JsonRpcProvider,
-  address: string,
-  contracts?: AlpineContracts
-): Promise<string> {
-  if (contracts === undefined) {
-    contracts = await getAllContracts(provider);
-  }
+async function _getContractTicker(address: string): Promise<string> {
   switch (address.toLowerCase()) {
-    case contracts.alpSave.address.toLowerCase():
+    case CONTRACTS.alpSave.address.toLowerCase():
       return "alpSave";
-    case contracts.usdc.address.toLowerCase():
+    case CONTRACTS.usdc.address.toLowerCase():
       return "usdc";
     default:
       return "unknown";
@@ -157,14 +123,14 @@ async function _getContractTicker(
  * @returns the parsed receipt of the transaction
  */
 async function _parseTransaction(
-  provider: ethers.providers.JsonRpcProvider,
   tx: TransactionResponse,
-  receipt: TransactionReceipt,
-  contracts?: AlpineContracts
+  receipt: TransactionReceipt
 ): Promise<TxnReceipt> {
-  if (contracts === undefined) contracts = await getAllContracts(provider);
-  const ticker = await _getContractTicker(provider, tx.to || "", contracts);
-  const contract = contracts[ticker];
+  const ticker = (await _getContractTicker(tx.to || "")) as AlpineProduct;
+
+  const contract = CONTRACTS[ticker];
+
+  // get contract
   const { data, value } = tx;
   const txDescription = contract.interface.parseTransaction({ data, value });
   const { name } = txDescription;
@@ -178,7 +144,7 @@ async function _parseTransaction(
   // for withdraw method of the smart contract, amount is in tokens, so
   // convert that to usdc
   if (name === "withdraw") {
-    const tokenPrice = ethers.BigNumber.from(await getTokenPrice(contract));
+    const tokenPrice = ethers.BigNumber.from(await getTokenPrice(ticker));
     amount = amount.mul(tokenPrice);
   }
   // convert smart contract method names to app's method names
@@ -200,7 +166,7 @@ async function _parseTransaction(
     txnHash: tx.hash,
     blockNumber: receipt.blockNumber,
     status: true,
-    ticker: await _getContractTicker(provider, tx.to || ""),
+    ticker: await _getContractTicker(tx.to || ""),
   };
 }
 
@@ -211,23 +177,18 @@ async function _parseTransaction(
  * and token denominated values.
  */
 export async function getUserBalance(
-  userAddress: string,
-  contract: ethers.Contract
+  contractName: AlpineProduct | "usdc"
 ): Promise<UserBalance> {
   // the returned amounts are in micro units
   // need to divide them by 10^6 to convert to usdc and alpTokens
-  const balance = await contract.balanceOf(userAddress);
-  if (
-    (await _getContractTicker(
-      contract.provider as ethers.providers.JsonRpcProvider,
-      contract.address
-    )) === "usdc"
-  ) {
+  const contract = CONTRACTS[contractName];
+  const balance = contract.balanceOf(await SIGNER.getAddress());
+  if (contractName === "usdc") {
     return {
       balanceUSDC: _removeDecimals(balance),
     };
   } else {
-    let tokenPrice = await getTokenPrice(contract);
+    let tokenPrice = await getTokenPrice(contractName);
     // no token in circulation, so assume the price is 0
     if (tokenPrice == null) {
       tokenPrice = "0";
@@ -263,34 +224,31 @@ function _removeDecimals(amount: ethers.BigNumber): string {
  * @param {ethers.Contract} contract smart contract
  * @param {String} method the method name
  * @param {Array} args the arguments to the method
- * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
- * @returns {Promise<String>} a transaction receipt from the blockchain
+ * @returns a transaction receipt from the blockchain
  */
 async function _blockchainCall(
   contract: ethers.Contract,
-  signer: ethers.Signer,
   method: string,
-  args: Array<any>,
-  biconomy?: ethers.providers.Web3Provider
+  args: Array<any>
 ) {
+  const signer = SIGNER;
+  const biconomy = BICONOMY;
+
   contract = contract.connect(signer);
 
-  if (biconomy) {
-    const contracts = await getAllContracts(
-      contract.provider as JsonRpcProvider
-    );
-    contract = contracts.relayer.connect(signer);
-    console.log({ contract });
-
-    console.log({ biconomy });
+  // TODO: This is very clunky. We do this because we don't currently support gasless transactions
+  // with the USDC contract
+  if (biconomy && contract.address !== CONTRACTS.usdc.address) {
+    let { relayer } = CONTRACTS;
+    relayer = relayer.connect(signer);
 
     console.log({ method }, args);
-    const { data } = await contract.populateTransaction[method](...args);
+    const { data } = await relayer.populateTransaction[method](...args);
 
     console.log({ data });
     const txParams = {
       data,
-      to: contracts.relayer.address,
+      to: relayer.address,
       from: await signer.getAddress(),
       signatureType: "EIP712_SIGN",
     };
@@ -306,6 +264,8 @@ async function _blockchainCall(
     const tx = await biconomy.send("eth_sendTransaction", [txParams]);
     console.log(`Transaction hash ${tx}`);
 
+    return;
+
     // Wait for tx to be mined
     // biconomy.once(tx, (transaction) => {
     //   console.log(transaction);
@@ -320,50 +280,32 @@ async function _blockchainCall(
 /**
  * approve outgoing transaction with another wallet or smart contract for
  * the specified amount
- * @param to the receipient address
+ * @param to the receipient contract
  * @param amountUSDC transaction amount in usdc
- * @param biconomy A biconomy provider. If provided, we'll submit a gasless transaction
  */
-export async function approve(
-  signer: ethers.Signer,
-  biconomy: ethers.providers.Web3Provider | undefined,
-  to: string,
-  amountUSDC: string
-) {
+export async function approve(to: AlpineProduct, amountUSDC: string) {
   // convert to micro usdc
   const amount = _addDecimals(amountUSDC);
-
-  const contracts = await getAllContracts(signer.provider as JsonRpcProvider);
-  const usdcContract = contracts.usdc.connect(signer);
-  return _blockchainCall(
-    usdcContract,
-    signer,
-    "approve",
-    [to, amount],
-    biconomy
-  );
+  return _blockchainCall(CONTRACTS.usdc, "approve", [
+    CONTRACTS[to].address,
+    amount,
+  ]);
 }
 
 /**
  * Deposit usdc to a vault, and get alp tokens in return
- * @param {ethers.Contract} contract the vault to deposit usdc to
  * @param {String} amountUSDC amount in usdc
  * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
  */
-export async function buyToken(
-  contract: ethers.Contract,
-  signer: ethers.Signer,
-  biconomy: ethers.providers.Web3Provider | undefined,
-  amountUSDC: string
-) {
-  const contracts = await getAllContracts(signer.provider as JsonRpcProvider);
-  const userAddress = await signer.getAddress();
-  const amount = _addDecimals(amountUSDC);
+export async function buyUsdcShares(amountUSDC: number) {
+  const contracts = CONTRACTS;
+  const { usdc, alpSave } = contracts;
+  const userAddress = await SIGNER.getAddress();
+  const amount = _addDecimals(amountUSDC.toString());
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
-  const walletBalance = await contracts.usdc.balanceOf(userAddress);
-  // wallet balance < amount to buy
+  const walletBalance = await usdc.balanceOf(userAddress);
   if (walletBalance.lt(amount)) {
     throw new Error(
       `Insuffient balance at user wallet. Balance: ${_removeDecimals(
@@ -373,10 +315,7 @@ export async function buyToken(
   }
 
   // check if user has sufficient allowance
-  const allowance = await contracts.usdc.allowance(
-    userAddress,
-    contract.address
-  );
+  const allowance = await usdc.allowance(userAddress, alpSave.address);
 
   // allowance < amount
   if (allowance.lt(amount)) {
@@ -387,38 +326,16 @@ export async function buyToken(
         "Call approve() to increase the allowance."
     );
   }
-  return _blockchainCall(contract, signer, "deposit", [amount], biconomy);
+  return _blockchainCall(alpSave, "deposit", [amount]);
 }
 
 /**
  * sell alp token and withdraw usdc from a vault (to user's wallet by default)
- * @param {ethers.Contract} contract the vault to withdraw usdc from
  * @param {String} amountUSDC amount in usdc to sell
- * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
  */
-export async function sellToken(
-  contract: ethers.Contract,
-  signer: ethers.Signer,
-  biconomy: ethers.providers.Web3Provider | undefined,
-  amountUSDC: string
-) {
-  const tokenPrice = ethers.BigNumber.from(await getTokenPrice(contract));
-  const amount = _addDecimals(amountUSDC);
-
-  const balanceStr = (await getUserBalance(await signer.getAddress(), contract))
-    .balanceUSDC;
-  const balance = ethers.BigNumber.from(balanceStr);
-
-  // balance at vault < amount requested to sell
-  if (balance.lt(amount)) {
-    const ticker = await contract.symbol();
-    throw new Error(
-      "Insufficient token balance. " +
-        `Balance: ${_removeDecimals(balance)} ${ticker},` +
-        `Requested to sell: ${_removeDecimals(amount)} ${ticker},`
-    );
-  }
-  return _blockchainCall(contract, signer, "withdraw", [amount], biconomy);
+export async function sellUsdcShares(amountUSDC: number) {
+  const amount = _addDecimals(amountUSDC.toString());
+  return _blockchainCall(CONTRACTS.alpSave, "withdraw", [amount]);
 }
 
 /**
@@ -427,23 +344,16 @@ export async function sellToken(
  * @param {String} amountUSDC amount in usdc
  * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
  */
-export async function transfer(
-  contract: ethers.Contract,
-  signer: ethers.Signer,
-  biconomy: ethers.providers.Web3Provider | undefined,
-  to: string,
-  amountUSDC: string
-) {
-  const usdcContract = contract.connect(signer);
+export async function transfer(to: string, amountUSDC: string) {
+  const { usdc } = CONTRACTS;
+
   const amount = _addDecimals(amountUSDC);
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
 
-  const balance = _addDecimals(
-    (await getUserBalance(await signer.getAddress(), usdcContract)).balanceUSDC
-  );
+  const balance = await usdc.balanceOf(await SIGNER.getAddress());
 
   // balance at wallet < amount requested to transfer
   if (balance.lt(amount)) {
@@ -454,28 +364,29 @@ export async function transfer(
     );
   }
 
-  return _blockchainCall(
-    usdcContract,
-    signer,
-    "transfer",
-    [to, amount],
-    biconomy
-  );
+  return _blockchainCall(usdc, "transfer", [to, amount]);
 }
 
-export async function mintUSDC(
-  contract: ethers.Contract,
-  signer: ethers.Signer,
-  biconomy: ethers.providers.Web3Provider | undefined,
-  to: string,
-  amountUSDC: string,
-  gas: boolean = true
-) {
-  const usdc = contract.connect(signer);
-  const amount = _addDecimals(amountUSDC);
+export async function mintUSDC(to: string, amountUSDC: number) {
+  const { usdc } = CONTRACTS;
+  const amount = _addDecimals(amountUSDC.toString());
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
-  return _blockchainCall(usdc, signer, "mint", [to, amount], biconomy);
+  return _blockchainCall(usdc, "mint", [to, amount]);
+}
+
+export async function buyBtCEthShares(amount: number) {
+  const { alpLarge } = CONTRACTS;
+  return _blockchainCall(alpLarge, "deposit", [
+    _addDecimals(amount.toString()),
+  ]);
+}
+
+export async function sellBtCEthShares(amount: number) {
+  const { alpLarge } = CONTRACTS;
+  return _blockchainCall(alpLarge, "withdraw", [
+    _addDecimals(amount.toString()),
+  ]);
 }

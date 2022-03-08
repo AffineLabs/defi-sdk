@@ -1,9 +1,3 @@
-import { ethers } from "ethers";
-
-export type AlpineContracts = {
-  [key: string]: ethers.Contract;
-};
-
 export interface TxnReceipt {
   method: string;
   amount: string;

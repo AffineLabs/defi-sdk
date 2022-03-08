@@ -30,4 +30,4 @@ jobs:
         run: yarn --frozen-lockfile
 
       - name: Build and run tests.
-        run: cd src/core &&  yarn fork-test
+        run: cd src/core &&  yarn test
