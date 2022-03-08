@@ -188,8 +188,10 @@ class Account {
    * @returns user balance as both usdc
    * and token denominated values.
    */
-  async getUserBalance(contract: ethers.Contract): Promise<types.UserBalance> {
-    return AlpineDeFiSDK.getUserBalance(this.userAddress, contract);
+  async getUserBalance(
+    contract: productActions.AlpineProduct | "usdc"
+  ): Promise<types.UserBalance> {
+    return AlpineDeFiSDK.getUserBalance(contract);
   }
 
   /**

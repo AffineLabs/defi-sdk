@@ -9,7 +9,7 @@ import {
 import { JsonRpcProvider } from "@ethersproject/providers";
 
 import { CONTRACTS, SIGNER, BICONOMY } from "./cache";
-import { AlpineProduct, productAmounts } from "./product";
+import { AlpineProduct } from "./product";
 
 /**
  * get the current best estimate for gas price
@@ -177,19 +177,18 @@ async function _parseTransaction(
  * and token denominated values.
  */
 export async function getUserBalance(
-  userAddress: string,
-  contract: ethers.Contract
+  contractName: AlpineProduct | "usdc"
 ): Promise<UserBalance> {
   // the returned amounts are in micro units
   // need to divide them by 10^6 to convert to usdc and alpTokens
-  const balance = await contract.balanceOf(userAddress);
-  const ticker = await _getContractTicker(contract.address);
-  if (ticker === "usdc") {
+  const contract = CONTRACTS[contractName];
+  const balance = contract.balanceOf(await SIGNER.getAddress());
+  if (contractName === "usdc") {
     return {
       balanceUSDC: _removeDecimals(balance),
     };
   } else {
-    let tokenPrice = await getTokenPrice(ticker as AlpineProduct);
+    let tokenPrice = await getTokenPrice(contractName);
     // no token in circulation, so assume the price is 0
     if (tokenPrice == null) {
       tokenPrice = "0";

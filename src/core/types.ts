@@ -1,10 +1,3 @@
-import { ethers } from "ethers";
-
-type ContractName = "usdc" | "alpLarge" | "relayer" | "alpSave";
-export type AlpineContracts = {
-  [key in ContractName]: ethers.Contract;
-};
-
 export interface TxnReceipt {
   method: string;
   amount: string;
