@@ -20,6 +20,7 @@ class Account {
   polygonscanApiKey: string;
   userAddress: string;
   walletType: string;
+  magicDidToken: string | null = null;
 
   /**
    * Creates an alpine account object
@@ -52,13 +53,15 @@ class Account {
    * @param email user's email address
    * @param walletType The type of wallet (metamask or magic)
    */
-  async connect(email: string, walletType: string = DEFAULT_WALLET) {
-    if (await this.isConnected(walletType)) return;
+  async connect(email: string, walletType: string = DEFAULT_WALLET) : Promise<string | null> {
+    if (await this.isConnected(walletType)) return null;
 
     this.walletType = walletType;
-    if (walletType === "magic") {
-      await this.magic.auth.loginWithMagicLink({ email });
-    } else if (walletType === "metamask") {
+
+    // Users will be connected to magic no matter what 'walletType' is
+    this.magicDidToken = await this.magic.auth.loginWithMagicLink({ email });
+    
+    if (walletType === "metamask") {
       await this._checkIfMetamaskAvailable();
       // we know that window.ethereum exists here
       const metamaskProvider = new ethers.providers.Web3Provider(
@@ -78,6 +81,8 @@ class Account {
     this.userAddress = await this.signer.getAddress();
     await this.initBiconomy();
     await init(this.provider, this.signer, this.biconomy);
+
+    return this.magicDidToken;
   }
 
   async initBiconomy() {
@@ -103,12 +108,13 @@ class Account {
   /**
    * Disconnect a user from the magic provider
    */
-  async disconnect() {
+  async disconnect() : Promise<void> {
     // Nothing to disconnect in the metamask case (we just clear the previous userAddress)
-    if (this.walletType === "magic") await this.magic.user.logout();
+    if (this.magic && await this.magic.user.isLoggedIn()) await this.magic.user.logout();
     this.signer = undefined;
     this.userAddress = undefined;
     this.walletType = undefined;
+    this.magicDidToken = null;
   }
 
   /**
@@ -236,6 +242,10 @@ class Account {
    */
   async mintUSDCTokens(to: string, amountUSDC: number) {
     return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
+  }
+
+  getMagicDidToken() : string | null {
+    return this.magicDidToken;
   }
 }
 
