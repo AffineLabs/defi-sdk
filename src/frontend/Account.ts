@@ -6,46 +6,27 @@ import { ethers } from "ethers";
 import { Signer } from "@ethersproject/abstract-signer";
 import detectEthereumProvider from "@metamask/detect-provider";
 
-import { AlpineDeFiSDK, AlpineContracts, types, init } from "../core";
+import { AlpineDeFiSDK, types, init } from "../core";
 import * as productActions from "../core/product";
 
 const DEFAULT_WALLET = "magic";
 
 class Account {
-  magic: Magic;
-  contracts: AlpineContracts;
-  signer: Signer;
-  provider: ethers.providers.Web3Provider;
-  biconomy: ethers.providers.Web3Provider;
-  polygonscanApiKey: string;
-  userAddress: string;
-  walletType: string;
+  magic?: Magic;
+  signer?: Signer;
+  provider?: ethers.providers.Web3Provider;
+  biconomy?: ethers.providers.Web3Provider;
+  polygonscanApiKey?: string;
+  userAddress?: string;
+  walletType?: string;
   magicDidToken: string | null = null;
 
   /**
    * Creates an alpine account object
    * @param network the name of the network. Supports `mainnet` and `kovan` and `mumbai`
    */
-  constructor(network: EthNetworkName | string = "kovan") {
-    // the api key is public
-    if (network.toLowerCase() === "mumbai") {
-      const customNodeOptions = {
-        rpcUrl:
-          "https://polygon-mumbai.g.alchemy.com/v2/TeRjoE-o4Y1bws12B3OFtAr8pywW-23w",
-        chainId: 80001,
-      };
-      this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
-        network: customNodeOptions,
-      });
-      this.magic.network = "matic"; // TODO: why is this needed?
-    } else {
-      this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
-        network: network as EthNetworkName,
-      });
-    }
+  constructor() {}
 
-    this.polygonscanApiKey = "7DHSDECZBDA4VHMEGHNK1T6CXIAUEVRAP2";
-  }
   /**
    * connect the user account to magic's sdk. In particular,
    * login with with magic, get provider, signer and set up
@@ -53,14 +34,34 @@ class Account {
    * @param email user's email address
    * @param walletType The type of wallet (metamask or magic)
    */
-  async connect(email: string, walletType: string = DEFAULT_WALLET) : Promise<string | null> {
+  async connect(
+    email: string,
+    walletType: string = DEFAULT_WALLET,
+    network: "mainnet" | "mumbai" = "mumbai"
+  ): Promise<string | null> {
     if (await this.isConnected(walletType)) return this.magicDidToken;
-
     this.walletType = walletType;
+
+    if (network === "mumbai") {
+      const customNodeOptions = {
+        rpcUrl:
+          "https://polygon-mumbai.g.alchemy.com/v2/TeRjoE-o4Y1bws12B3OFtAr8pywW-23w",
+        chainId: 80001,
+      };
+      // the magic api key is public
+      this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
+        network: customNodeOptions,
+      });
+    } else {
+      this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
+        network: network as EthNetworkName,
+      });
+    }
+    this.polygonscanApiKey = "7DHSDECZBDA4VHMEGHNK1T6CXIAUEVRAP2";
 
     // Users will be connected to magic no matter what 'walletType' is
     this.magicDidToken = await this.magic.auth.loginWithMagicLink({ email });
-    
+
     if (walletType === "metamask") {
       await this._checkIfMetamaskAvailable();
       // we know that window.ethereum exists here
@@ -85,7 +86,7 @@ class Account {
     return this.magicDidToken;
   }
 
-  async initBiconomy() {
+  private async initBiconomy() {
     const biconomyRaw = new Biconomy(this.provider, {
       apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
       debug: true,
@@ -108,9 +109,10 @@ class Account {
   /**
    * Disconnect a user from the magic provider
    */
-  async disconnect() : Promise<void> {
+  async disconnect(): Promise<void> {
     // Nothing to disconnect in the metamask case (we just clear the previous userAddress)
-    if (this.magic && await this.magic.user.isLoggedIn()) await this.magic.user.logout();
+    if (this.magic && (await this.magic.user.isLoggedIn()))
+      await this.magic.user.logout();
     this.signer = undefined;
     this.userAddress = undefined;
     this.walletType = undefined;
@@ -208,6 +210,7 @@ class Account {
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
   async approve(to: productActions.AlpineProduct, amountUSDC: string) {
+    console.log("to, amount in Account", { to, amountUSDC });
     return AlpineDeFiSDK.approve(to, amountUSDC);
   }
 
@@ -244,7 +247,7 @@ class Account {
     return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
   }
 
-  getMagicDidToken() : string | null {
+  getMagicDidToken(): string | null {
     return this.magicDidToken;
   }
 }
