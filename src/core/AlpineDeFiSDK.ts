@@ -182,7 +182,10 @@ export async function getUserBalance(
   // the returned amounts are in micro units
   // need to divide them by 10^6 to convert to usdc and alpTokens
   const contract = CONTRACTS[contractName];
-  const balance = contract.balanceOf(await SIGNER.getAddress());
+  const balance: ethers.BigNumber = await contract.balanceOf(
+    await SIGNER.getAddress()
+  );
+  console.log("BALNCE IN get user balance", balance);
   if (contractName === "usdc") {
     return {
       balanceUSDC: _removeDecimals(balance),
