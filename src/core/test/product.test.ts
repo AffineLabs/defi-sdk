@@ -18,7 +18,7 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(
 
 describe("Buy products", async () => {
   before(async () => {
-    init(testProvider, wallet, undefined);
+    await init(testProvider, wallet, undefined);
     await AlpineDeFiSDK.mintUSDC(wallet.address, 100);
   });
 
@@ -30,17 +30,17 @@ describe("Buy products", async () => {
     console.log("alpSave Shares...", res);
     assert(res.gt(0));
 
-    // TODO: This assert will only work if 1 alpSave is $1. Fix
     await sellProduct("alpSave", 10);
     const newBal: ethers.BigNumber = await CONTRACTS.alpSave.balanceOf(
       wallet.address
     );
-    assert(newBal.eq(0));
+    assert(newBal.lt(res));
   });
 
   it("Buy/Sell alpLarge", async () => {
-    console.log("buying alpLarge");
     await approve("alpLarge", "100000");
+
+    console.log("buying alpLarge");
     await buyProduct("alpLarge", 10);
     const res: ethers.BigNumber = await CONTRACTS.alpLarge.balanceOf(
       wallet.address

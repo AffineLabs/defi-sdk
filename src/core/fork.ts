@@ -20,7 +20,7 @@ if (!testFiles) testFiles = "test/**/*.test.ts";
 // this PR: https://github.com/mds1/convex-shutdown-simulation/pull/4 which shows that pinning a block number fixes the issue
 const { result } = concurrently(
   [
-    `yarn ganache --fork.url ${process.env.POLYGON_ALCHEMY_URL} --fork.blockNumber 25426242`,
+    `yarn ganache --fork.url ${process.env.POLYGON_ALCHEMY_URL} --fork.blockNumber 25450771`,
     `yarn run-test ${testFiles}`,
   ],
   // The ganache process does not exit. The process exits successfully if the `yarn test` process exits correctly
