@@ -45,7 +45,7 @@ class Account {
 
     // RPC url from https://docs.polygon.technology/docs/develop/network-details/network/
     const customNodeOptions = {
-      rpcUrl: "https://polygon-rpc.com/",
+      rpcUrl: `https://rpc-${network}.maticvigil.com}`,
       chainId: 80001,
     };
     // the magic api key is public
@@ -206,7 +206,6 @@ class Account {
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
   async approve(to: productActions.AlpineProduct, amountUSDC: string) {
-    console.log("to, amount in Account", { to, amountUSDC });
     return AlpineDeFiSDK.approve(to, amountUSDC);
   }
 
