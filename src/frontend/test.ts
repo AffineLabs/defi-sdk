@@ -9,18 +9,11 @@ const main = async () => {
   const addr = await alpAccount.getUserAddress();
   console.log({ getUserAddress: addr });
 
-  // let balance = await alpAccount.getUserBalance(contracts.usdc);
-  // console.log({ usdc: balance });
-
-  // balance = await alpAccount.getUserBalance(contracts.alpSave);
-  // console.log({ alpSave: balance });
-
   let response;
 
-  console.log("BEFORE APPROVE");
-
-  response = await alpAccount.approve("alpLarge", "1000000000000000000");
-  console.log("approved");
+  // console.log("BEFORE APPROVE");
+  // response = await alpAccount.approve("alpLarge", "1000000000000000000");
+  // console.log("approved");
 
   // response = await alpAccount.getTransactionHistory(0, 10);
   // console.log({ response });

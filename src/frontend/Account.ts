@@ -23,7 +23,7 @@ class Account {
 
   /**
    * Creates an alpine account object
-   * @param network the name of the network. Supports `mainnet` and `kovan` and `mumbai`
+  
    */
   constructor() {}
 
@@ -33,6 +33,7 @@ class Account {
    * the smart contracts.
    * @param email user's email address
    * @param walletType The type of wallet (metamask or magic)
+   * @param network the name of the (polygon) network.
    */
   async connect(
     email: string,
@@ -42,21 +43,16 @@ class Account {
     if (await this.isConnected(walletType)) return this.magicDidToken;
     this.walletType = walletType;
 
-    if (network === "mumbai") {
-      const customNodeOptions = {
-        rpcUrl:
-          "https://polygon-mumbai.g.alchemy.com/v2/TeRjoE-o4Y1bws12B3OFtAr8pywW-23w",
-        chainId: 80001,
-      };
-      // the magic api key is public
-      this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
-        network: customNodeOptions,
-      });
-    } else {
-      this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
-        network: network as EthNetworkName,
-      });
-    }
+    // RPC url from https://docs.polygon.technology/docs/develop/network-details/network/
+    const customNodeOptions = {
+      rpcUrl: "https://polygon-rpc.com/",
+      chainId: 80001,
+    };
+    // the magic api key is public
+    this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
+      network: customNodeOptions,
+    });
+
     this.polygonscanApiKey = "7DHSDECZBDA4VHMEGHNK1T6CXIAUEVRAP2";
 
     // Users will be connected to magic no matter what 'walletType' is
