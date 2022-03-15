@@ -3,7 +3,7 @@ import { Account } from "./Account";
 const main = async () => {
   const email = "tosin@multiplyr.ai";
   const alpAccount = new Account();
-  await alpAccount.connect(email, "metamask");
+  await alpAccount.connect(email, "magic");
 
   console.log("before get address");
   const addr = await alpAccount.getUserAddress();
@@ -22,5 +22,4 @@ const main = async () => {
   console.log("exiting");
 };
 
-main();
-// .catch((err) => console.log({ err }));
+main().catch((err) => console.log({ err }));

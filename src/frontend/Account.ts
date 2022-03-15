@@ -37,7 +37,7 @@ class Account {
    */
   async connect(
     email: string,
-    walletType: string = DEFAULT_WALLET,
+    walletType: "magic" | "metamask" = DEFAULT_WALLET,
     network: "mainnet" | "mumbai" = "mumbai"
   ): Promise<string | null> {
     if (await this.isConnected(walletType)) return this.magicDidToken;
@@ -45,7 +45,7 @@ class Account {
 
     // RPC url from https://docs.polygon.technology/docs/develop/network-details/network/
     const customNodeOptions = {
-      rpcUrl: `https://rpc-${network}.maticvigil.com}`,
+      rpcUrl: `https://rpc-${network}.maticvigil.com`,
       chainId: 80001,
     };
     // the magic api key is public
