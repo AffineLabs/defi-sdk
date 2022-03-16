@@ -5,17 +5,23 @@ const main = async () => {
   const alpAccount = new Account();
   await alpAccount.connect(email, "metamask");
 
-  console.log("before get address");
   const addr = await alpAccount.getUserAddress();
   console.log({ getUserAddress: addr });
 
   let response;
 
-  await alpAccount.setGasMode(true);
-  await alpAccount.buyProduct("alpSave", 10);
+  // await alpAccount.setGasMode(true);
+  // await alpAccount.mintUSDCTokens(addr, 1000);
 
-  await alpAccount.setGasMode(false);
-  await alpAccount.sellProduct("alpSave", 10);
+  // await alpAccount.approve("alpSave", "100000000");
+  // await alpAccount.setGasMode(false);
+  // await alpAccount.transfer("0x8f954E7D7ec3A31D9568316fb0F472B03fc2a7d5", "5");
+
+  // await alpAccount.setGasMode(true);
+  // await alpAccount.buyProduct("alpSave", 10);
+
+  // await alpAccount.setGasMode(false);
+  // await alpAccount.sellProduct("alpSave", 10);
 
   // console.log("BEFORE APPROVE");
   // response = await alpAccount.approve("alpLarge", "1000000000000000000");

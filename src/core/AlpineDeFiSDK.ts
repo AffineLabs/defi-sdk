@@ -6,10 +6,10 @@ import {
   TransactionResponse,
   TransactionReceipt,
 } from "@ethersproject/abstract-provider";
-import { JsonRpcProvider } from "@ethersproject/providers";
 
 import { CONTRACTS, SIGNER, BICONOMY } from "./cache";
 import { AlpineProduct } from "./product";
+import { sendBiconomy } from "./biconomy";
 
 /**
  * get the current best estimate for gas price
@@ -129,8 +129,6 @@ async function _parseTransaction(
   const ticker = (await _getContractTicker(tx.to || "")) as AlpineProduct;
 
   const contract = CONTRACTS[ticker];
-
-  // get contract
   const { data, value } = tx;
   const txDescription = contract.interface.parseTransaction({ data, value });
   const { name } = txDescription;
@@ -239,8 +237,6 @@ async function _blockchainCall(
 
   contract = contract.connect(signer);
 
-  // TODO: This is very clunky. We do this because we don't currently support gasless transactions
-  // with the USDC contract
   if (biconomy && contract.address !== CONTRACTS.usdc.address) {
     let { relayer } = CONTRACTS;
     relayer = relayer.connect(signer);
@@ -263,7 +259,6 @@ async function _blockchainCall(
     // Signature type is not an expected field in the object passed into the array
     // Biconomy reads this field and passes on your transaction
 
-    if (biconomy === undefined) throw Error("No biconomy provider found");
     const tx = await biconomy.send("eth_sendTransaction", [txParams]);
     console.log(`Transaction hash ${tx}`);
 
@@ -274,6 +269,12 @@ async function _blockchainCall(
     //   console.log(transaction);
     //   return "success";
     // });
+  }
+
+  if (biconomy && contract.address == CONTRACTS.usdc.address) {
+    console.log("usdc meta tx about to happen");
+    await sendBiconomy(contract, signer, method, args);
+    return;
   }
 
   const tx = await contract[method].apply(null, args);
