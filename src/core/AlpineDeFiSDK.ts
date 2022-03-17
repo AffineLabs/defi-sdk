@@ -272,7 +272,6 @@ async function _blockchainCall(
   }
 
   if (biconomy && contract.address == CONTRACTS.usdc.address) {
-    console.log("usdc meta tx about to happen");
     await sendBiconomy(contract, signer, method, args);
     return;
   }

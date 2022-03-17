@@ -10,14 +10,14 @@ const main = async () => {
 
   let response;
 
-  // await alpAccount.setGasMode(true);
-  // await alpAccount.mintUSDCTokens(addr, 1000);
-
-  // await alpAccount.approve("alpSave", "100000000");
   // await alpAccount.setGasMode(false);
   // await alpAccount.transfer("0x8f954E7D7ec3A31D9568316fb0F472B03fc2a7d5", "5");
 
-  // await alpAccount.setGasMode(true);
+  await alpAccount.setGasMode(true);
+  // await alpAccount.mintUSDCTokens(addr, 1000);
+  // await alpAccount.approve("alpSave", "100000000");
+
+  // await alpAccount.setGasMode(false);
   // await alpAccount.buyProduct("alpSave", 10);
 
   // await alpAccount.setGasMode(false);

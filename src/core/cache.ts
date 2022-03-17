@@ -15,7 +15,7 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
 export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider
 ): Promise<AlpineContracts> {
-  const s3Root = "https://sc-abis.s3.us-east-2.amazonaws.com/test";
+  const s3Root = "https://sc-abis.s3.us-east-2.amazonaws.com/latest";
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
   const {
