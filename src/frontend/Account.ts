@@ -13,13 +13,15 @@ const DEFAULT_WALLET = "magic";
 
 class Account {
   magic?: Magic;
-  signer?: Signer;
-  provider?: ethers.providers.Web3Provider;
+  signer!: Signer;
+  provider!: ethers.providers.Web3Provider;
   biconomy?: ethers.providers.Web3Provider;
   polygonscanApiKey?: string;
   userAddress?: string;
-  walletType?: string;
+  walletType: "magic" | "metamask" = DEFAULT_WALLET;
   magicDidToken: string | null = null;
+  // if true, send regular transaction, if false, use biconomy
+  gas: boolean = false;
 
   /**
    * Creates an alpine account object
@@ -154,6 +156,13 @@ class Account {
    */
   async getUserAddress(): Promise<string> {
     return this.userAddress;
+  }
+
+  async setGasMode(useGas: boolean) {
+    // this.biconomy is created upon connection and will always exist
+    this.gas = useGas;
+    const biconomyProvider = useGas ? undefined : this.biconomy;
+    return init(this.provider, this.signer, biconomyProvider);
   }
 
   /**
