@@ -38,7 +38,6 @@ export async function init(
   signer: ethers.Signer,
   biconomy: ethers.providers.Web3Provider | undefined
 ) {
-  if (biconomy) provider = biconomy;
   CONTRACTS = await getAllContracts(provider);
   SIGNER = signer;
   BICONOMY = biconomy;

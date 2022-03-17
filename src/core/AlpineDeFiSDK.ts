@@ -21,6 +21,10 @@ export async function getGasPrice(): Promise<string> {
   return ethers.utils.formatEther(gas);
 }
 
+export async function getMaticBalance() {
+  const user = await SIGNER.getAddress();
+  return ethers.utils.formatEther(await SIGNER.getBalance());
+}
 /**
  * Get current usdc price of an alpine token. If there's 0 token in circulation
  * returns null.

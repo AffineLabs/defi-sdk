@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { CompletionListener } from "concurrently/dist/src/completion-listener";
 import { BICONOMY } from "./cache";
 
 // See https://docs.biconomy.io/products/enable-gasless-transactions/custom-implementation/sdk
@@ -10,7 +9,6 @@ export async function sendBiconomy(
   method: string,
   args: Array<any>
 ) {
-  console.log("IN SEND BICONOMY\n\n\n");
   // Initialize Constants
   const domainType = [
     { name: "name", type: "string" },
