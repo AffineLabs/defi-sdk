@@ -7,6 +7,7 @@ const main = async () => {
 
   const addr = await alpAccount.getUserAddress();
   console.log({ getUserAddress: addr });
+  console.log("matic bal: ", await alpAccount.getMaticBalance());
 
   let response;
 

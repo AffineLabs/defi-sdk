@@ -172,6 +172,9 @@ class Account {
   async getGasPrice(): Promise<string> {
     return AlpineDeFiSDK.getGasPrice();
   }
+  async getMaticBalance() {
+    return AlpineDeFiSDK.getMaticBalance();
+  }
 
   /**
    * get transaction history of the user with alpine smart contracts
