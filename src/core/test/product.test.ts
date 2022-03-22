@@ -45,10 +45,10 @@ describe("Buy products", async () => {
     const res: ethers.BigNumber = await CONTRACTS.alpLarge.balanceOf(
       wallet.address
     );
-    console.log("alpLarge shares....", res);
+    console.log("alpLarge shares....", res.toString());
     assert(res.gt(0));
 
-    await sellProduct("alpLarge", 0.1);
+    await sellProduct("alpLarge", 10);
     const newBal: ethers.BigNumber = await CONTRACTS.alpLarge.balanceOf(
       wallet.address
     );
