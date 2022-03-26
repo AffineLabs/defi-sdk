@@ -15,6 +15,8 @@ const main = async () => {
   // await alpAccount.transfer("0x8f954E7D7ec3A31D9568316fb0F472B03fc2a7d5", "5");
 
   await alpAccount.setGasMode(true);
+  const info = await alpAccount.getTokenInfo("alpSave");
+  console.log({ info });
   // await alpAccount.mintUSDCTokens(addr, 1000);
   // await alpAccount.approve("alpSave", "100000000");
 

@@ -4,7 +4,7 @@ import { solidity } from "ethereum-waffle";
 chai.use(solidity);
 const { expect } = chai;
 
-import { buyProduct, sellProduct } from "../product";
+import { buyProduct, sellProduct, getTokenInfo } from "../product";
 import { AlpineDeFiSDK } from "..";
 import { CONTRACTS, init } from "../cache";
 import { approve } from "../AlpineDeFiSDK";
@@ -54,5 +54,27 @@ describe("Buy products", async () => {
     );
     console.log("newBal: ", newBal.toString());
     assert(newBal.lt(res));
+  });
+});
+
+describe("Product info", async () => {
+  before(async () => {
+    await init(testProvider, wallet, undefined);
+    await AlpineDeFiSDK.mintUSDC(wallet.address, 100);
+  });
+  it("Can get token info", async () => {
+    const saveInfo = await getTokenInfo("alpSave");
+    console.log({ saveInfo });
+
+    expect(Number(saveInfo.amount) * Number(saveInfo.price)).to.closeTo(
+      Number(saveInfo.equity),
+      0.1
+    );
+    const largeInfo = await getTokenInfo("alpLarge");
+    console.log({ largeInfo });
+    expect(Number(largeInfo.amount) * Number(largeInfo.price)).to.closeTo(
+      Number(largeInfo.equity),
+      0.5
+    );
   });
 });
