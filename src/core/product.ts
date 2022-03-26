@@ -61,8 +61,8 @@ export async function getTokenInfo(product: AlpineProduct): Promise<TokenInfo> {
   const price = equity.div(amount);
   console.log({ equity, amount, price });
   return {
-    amount: ethers.utils.formatUnits(amount, 8),
-    price: ethers.utils.formatUnits(price, 8),
+    amount: ethers.utils.formatUnits(amount, 18),
+    price: ethers.utils.parseUnits(price.toString(), 10).toString(),
     equity: ethers.utils.formatUnits(equity, 8),
   };
 }

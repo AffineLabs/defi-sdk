@@ -63,10 +63,18 @@ describe("Product info", async () => {
     await AlpineDeFiSDK.mintUSDC(wallet.address, 100);
   });
   it("Can get token info", async () => {
-    const res = await getTokenInfo("alpSave");
-    console.log(res);
-    const res2 = await getTokenInfo("alpLarge");
-    console.log(res2);
-    // TODO: add some asserts
+    const saveInfo = await getTokenInfo("alpSave");
+    console.log({ saveInfo });
+
+    expect(Number(saveInfo.amount) * Number(saveInfo.price)).to.closeTo(
+      Number(saveInfo.equity),
+      0.1
+    );
+    const largeInfo = await getTokenInfo("alpLarge");
+    console.log({ largeInfo });
+    expect(Number(largeInfo.amount) * Number(largeInfo.price)).to.closeTo(
+      Number(largeInfo.equity),
+      0.5
+    );
   });
 });

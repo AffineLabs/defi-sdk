@@ -1,5 +1,4 @@
 import { Magic } from "magic-sdk";
-import { EthNetworkName } from "@magic-sdk/types";
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
 
@@ -174,6 +173,10 @@ class Account {
   }
   async getMaticBalance() {
     return AlpineDeFiSDK.getMaticBalance();
+  }
+
+  async getTokenInfo(product: productActions.AlpineProduct) {
+    return productActions.getTokenInfo(product);
   }
 
   /**
