@@ -57,7 +57,9 @@ class Account {
     this.polygonscanApiKey = "7DHSDECZBDA4VHMEGHNK1T6CXIAUEVRAP2";
 
     // Users will be connected to magic no matter what 'walletType' is
+    console.time("login-with-magic");
     this.magicDidToken = await this.magic.auth.loginWithMagicLink({ email });
+    console.timeEnd("login-with-magic");
 
     if (walletType === "metamask") {
       await this._checkIfMetamaskAvailable();
@@ -76,9 +78,15 @@ class Account {
         : window.ethereum;
     this.provider = new ethers.providers.Web3Provider(rawProvider);
     this.signer = this.provider.getSigner();
+    console.time("signer-get-address");
     this.userAddress = await this.signer.getAddress();
+    console.timeEnd("signer-get-address");
+    console.time("init-Biconomy");
     await this.initBiconomy();
+    console.timeEnd("init-Biconomy");
+    console.time("init-contracts");
     await init(this.provider, this.signer, this.biconomy);
+    console.timeEnd("init-contracts");
 
     return this.magicDidToken;
   }
@@ -108,6 +116,8 @@ class Account {
    */
   async disconnect(): Promise<void> {
     // Nothing to disconnect in the metamask case (we just clear the previous userAddress)
+    console.log({ magic: this.magic });
+    console.log("magic user:", this.magic.user.isLoggedIn());
     if (this.magic && (await this.magic.user.isLoggedIn()))
       await this.magic.user.logout();
     this.signer = undefined;
