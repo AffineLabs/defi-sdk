@@ -17,7 +17,6 @@ export async function getAllContracts(
   version: string
 ): Promise<AlpineContracts> {
   const s3Root = `https://sc-abis.s3.us-east-2.amazonaws.com/${version}`;
-  console.log({ s3Root });
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
   const {
@@ -41,7 +40,6 @@ export async function init(
   biconomy: ethers.providers.Web3Provider | undefined,
   contractVersion: string = "latest"
 ) {
-  console.log("constract version in init: ", contractVersion);
   CONTRACTS = await getAllContracts(provider, contractVersion);
   SIGNER = signer;
   BICONOMY = biconomy;
