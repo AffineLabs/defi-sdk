@@ -22,6 +22,9 @@ const main = async () => {
   console.log({ getUserAddress: addr });
   console.log("matic bal: ", await alpAccount.getMaticBalance());
 
+  // await alpAccount.approve("alpLarge", "100000000");
+  await alpAccount.buyProduct("alpLarge", 10);
+
   let response;
 
   // await alpAccount.setGasMode(false);

@@ -7,7 +7,7 @@ export type productAmounts = {
   [key in AlpineProduct]?: number;
 };
 
-type ContractName = "usdc" | "relayer" | AlpineProduct;
+type ContractName = "usdc" | "forwarder" | AlpineProduct;
 export type AlpineContracts = {
   [key in ContractName]: ethers.Contract;
 };

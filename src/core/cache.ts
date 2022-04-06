@@ -21,16 +21,16 @@ export async function getAllContracts(
 
   const {
     PolygonAlpSave: alpSave,
-    PolygonRelayer: relayer,
     PolygonBtcEthVault: alpLarge,
     PolygonUSDC: usdc,
+    Forwarder: forwarder,
   } = allData;
 
   return {
     usdc: new ethers.Contract(usdc.address, usdc.abi, provider),
     alpSave: new ethers.Contract(alpSave.address, alpSave.abi, provider),
-    relayer: new ethers.Contract(relayer.address, relayer.abi, provider),
     alpLarge: new ethers.Contract(alpLarge.address, alpLarge.abi, provider),
+    forwarder: new ethers.Contract(forwarder.address, forwarder.abi, provider),
   };
 }
 

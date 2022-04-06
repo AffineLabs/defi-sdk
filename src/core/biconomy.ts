@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { BICONOMY } from "./cache";
+import { BICONOMY, CONTRACTS, SIGNER } from "./cache";
 
 // See https://docs.biconomy.io/products/enable-gasless-transactions/custom-implementation/sdk
 export async function sendBiconomy(
@@ -105,4 +105,123 @@ function getSignatureParameters(signature: string) {
     s,
     v,
   };
+}
+
+// See https://github.com/MetaMask/test-dapp/blob/f3ce3e6972e9fe2b239caf8069740c5e84a156b0/src/index.js#L1024
+export async function getSignature(
+  contract: ethers.Contract,
+  signer: ethers.Signer,
+  method: string,
+  args: Array<any>
+) {
+  const userAddress = await signer.getAddress();
+  const { forwarder } = CONTRACTS;
+
+  const domain = {
+    chainId: "80001",
+    name: "MinimalForwarder",
+    verifyingContract: forwarder.address,
+    version: "0.0.1",
+  };
+
+  const message = {
+    from: userAddress,
+    to: contract.address,
+    value: 0,
+    // See https://github.com/OpenZeppelin/openzeppelin-contracts/blob/f81b80fb3957ad9c86bb9f9504dd49a8ef409022/contracts/metatx/MinimalForwarder.sol#L56
+    // This number only has to be small enough to not trigger the above condition
+    // TODO: consider getting a real gas estimate
+    gas: 21e3,
+    nonce: (await forwarder.getNonce(userAddress)).toNumber(),
+    data: contract.interface.encodeFunctionData(method, args),
+  };
+
+  console.log({ message });
+
+  const msgParams = {
+    domain,
+    primaryType: "ForwardRequest",
+    types: {
+      EIP712Domain: [
+        { name: "name", type: "string" },
+        { name: "version", type: "string" },
+        { name: "chainId", type: "uint256" },
+        { name: "verifyingContract", type: "address" },
+      ],
+      ForwardRequest: [
+        { name: "from", type: "address" },
+        { name: "to", type: "address" },
+        { name: "value", type: "uint256" },
+        { name: "gas", type: "uint256" },
+        { name: "nonce", type: "uint256" },
+        { name: "data", type: "bytes" },
+      ],
+    },
+    message,
+  };
+
+  const provider: JsonRpcProvider = signer.provider as JsonRpcProvider;
+  const signature: string = await provider.send("eth_signTypedData_v4", [
+    userAddress,
+    JSON.stringify(msgParams),
+  ]);
+  console.log({ signature });
+
+  return { signature, request: message };
+}
+
+export async function sendToForwarder(
+  signatures: Array<string>,
+  requests: Array<any>
+) {
+  // Call executeBatch
+
+  const { forwarder } = CONTRACTS;
+  // call a modified version of the below
+
+  // const encodedRequests = requests.map((req) =>
+  //   ethers.utils.defaultAbiCoder.encode(
+  //     ["address", "address", "uint256", "uint256", "uint256", "bytes"],
+  //     [req.from, req.to, req.value, req.gas, req.nonce, req.data]
+  //   )
+  // );
+  // console.log({ encodedRequests });
+  const encodedCall = forwarder.interface.encodeFunctionData("executeBatch", [
+    requests,
+    ethers.utils.hexConcat(signatures),
+  ]);
+  console.log({ encodedCall });
+  // const { data: metaTxData } = await forwarder.populateTransaction.executeBatch(
+  //   encodedRequests,
+  //   ethers.utils.hexConcat(signatures)
+  // );
+  // console.log("populatedTransaction");
+  // console.log({ metaTxData });
+
+  const metaTxParams = {
+    data: encodedCall,
+    to: forwarder.address,
+    from: await SIGNER.getAddress(),
+    signatureType: "EIP712_SIGN",
+  };
+
+  console.log({ metaTxParams });
+
+  // Actually send transaction here
+
+  // Biconomy team note: Ethers does not allow providing custom options while sending transaction
+  // See comment from CTO of biconomy: https://github.com/ethers-io/ethers.js/discussions/1313#discussioncomment-399944
+  // Also See https://ethereumbuilders.gitbooks.io/guide/content/en/ethereum_json_rpc.html#eth_sendtransaction
+  // Signature type is not an expected field in the object passed into the array
+  // Biconomy reads this field and passes on your transaction
+
+  const biconomy = BICONOMY as ethers.providers.Web3Provider;
+  const tx = await biconomy.send("eth_sendTransaction", [metaTxParams]);
+  console.log(`Biconomy Transaction hash ${tx}`);
+
+  // Wait for tx to be mined
+  // biconomy.once(tx, (transaction) => {
+  //   console.log(transaction);
+  //   return "success";
+  // });
 }
