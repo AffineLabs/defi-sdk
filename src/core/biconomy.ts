@@ -131,7 +131,7 @@ export async function getSignature(
     // See https://github.com/OpenZeppelin/openzeppelin-contracts/blob/f81b80fb3957ad9c86bb9f9504dd49a8ef409022/contracts/metatx/MinimalForwarder.sol#L56
     // This number only has to be small enough to not trigger the above condition
     // TODO: consider getting a real gas estimate
-    gas: 21e3,
+    gas: 2e6,
     nonce: (await forwarder.getNonce(userAddress)).toNumber(),
     data: contract.interface.encodeFunctionData(method, args),
   };
@@ -186,17 +186,34 @@ export async function sendToForwarder(
   //   )
   // );
   // console.log({ encodedRequests });
+  console.log({ forwarder });
+
+  // The below actually works when using gas
+  // const test = await forwarder.connect(SIGNER).executeBatch(
+  //   requests.map((req) => [
+  //     req.from,
+  //     req.to,
+  //     req.value,
+  //     req.gas,
+  //     req.nonce,
+  //     req.data,
+  //   ]),
+  //   ethers.utils.hexConcat(signatures)
+  // );
+  // await test.wait();
+  // return;
   const encodedCall = forwarder.interface.encodeFunctionData("executeBatch", [
-    requests,
+    requests.map((req) => [
+      req.from,
+      req.to,
+      req.value,
+      req.gas,
+      req.nonce,
+      req.data,
+    ]),
     ethers.utils.hexConcat(signatures),
   ]);
   console.log({ encodedCall });
-  // const { data: metaTxData } = await forwarder.populateTransaction.executeBatch(
-  //   encodedRequests,
-  //   ethers.utils.hexConcat(signatures)
-  // );
-  // console.log("populatedTransaction");
-  // console.log({ metaTxData });
 
   const metaTxParams = {
     data: encodedCall,
