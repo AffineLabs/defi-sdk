@@ -21,6 +21,7 @@ class Account {
   magicDidToken: string | null = null;
   // if true, send regular transaction, if false, use biconomy
   gas: boolean = false;
+  contractVersion: string = "v0.0.6-meta.0";
 
   /**
    * Creates an alpine account object
@@ -39,7 +40,8 @@ class Account {
   async connect(
     email: string,
     walletType: "magic" | "metamask" = DEFAULT_WALLET,
-    network: "mainnet" | "mumbai" = "mumbai"
+    network: "mainnet" | "mumbai" = "mumbai",
+    contractVersion?: string
   ): Promise<string | null> {
     if (await this.isConnected(walletType)) return this.magicDidToken;
     this.walletType = walletType;
@@ -85,7 +87,9 @@ class Account {
     await this.initBiconomy();
     console.timeEnd("init-Biconomy");
     console.time("init-contracts");
-    await init(this.provider, this.signer, this.biconomy);
+
+    if (contractVersion) this.contractVersion = contractVersion;
+    await init(this.provider, this.signer, this.biconomy, this.contractVersion);
     console.timeEnd("init-contracts");
 
     return this.magicDidToken;
@@ -171,7 +175,12 @@ class Account {
     // this.biconomy is created upon connection and will always exist
     this.gas = useGas;
     const biconomyProvider = useGas ? undefined : this.biconomy;
-    return init(this.provider, this.signer, biconomyProvider);
+    return init(
+      this.provider,
+      this.signer,
+      biconomyProvider,
+      this.contractVersion
+    );
   }
 
   /**
