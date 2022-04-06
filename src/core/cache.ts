@@ -13,9 +13,10 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
  */
 
 export async function getAllContracts(
-  provider: ethers.providers.JsonRpcProvider
+  provider: ethers.providers.JsonRpcProvider,
+  version: string
 ): Promise<AlpineContracts> {
-  const s3Root = "https://sc-abis.s3.us-east-2.amazonaws.com/latest";
+  const s3Root = `https://sc-abis.s3.us-east-2.amazonaws.com/${version}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
   const {
@@ -36,9 +37,10 @@ export async function getAllContracts(
 export async function init(
   provider: ethers.providers.JsonRpcProvider,
   signer: ethers.Signer,
-  biconomy: ethers.providers.Web3Provider | undefined
+  biconomy: ethers.providers.Web3Provider | undefined,
+  contractVersion: string = "latest"
 ) {
-  CONTRACTS = await getAllContracts(provider);
+  CONTRACTS = await getAllContracts(provider, contractVersion);
   SIGNER = signer;
   BICONOMY = biconomy;
 }
