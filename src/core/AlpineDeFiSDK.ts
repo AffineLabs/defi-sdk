@@ -259,10 +259,7 @@ async function _blockchainCall(
     return;
   }
 
-  const tx = await contract[method].apply(
-    null,
-    args.concat({ gasLimit: 15e6 })
-  );
+  const tx = await contract[method].apply(null, args);
   await tx.wait();
 }
 
