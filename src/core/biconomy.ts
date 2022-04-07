@@ -177,31 +177,6 @@ export async function sendToForwarder(
   // Call executeBatch
 
   const { forwarder } = CONTRACTS;
-  // call a modified version of the below
-
-  // const encodedRequests = requests.map((req) =>
-  //   ethers.utils.defaultAbiCoder.encode(
-  //     ["address", "address", "uint256", "uint256", "uint256", "bytes"],
-  //     [req.from, req.to, req.value, req.gas, req.nonce, req.data]
-  //   )
-  // );
-  // console.log({ encodedRequests });
-  console.log({ forwarder });
-
-  // The below actually works when using gas
-  // const test = await forwarder.connect(SIGNER).executeBatch(
-  //   requests.map((req) => [
-  //     req.from,
-  //     req.to,
-  //     req.value,
-  //     req.gas,
-  //     req.nonce,
-  //     req.data,
-  //   ]),
-  //   ethers.utils.hexConcat(signatures)
-  // );
-  // await test.wait();
-  // return;
   const encodedCall = forwarder.interface.encodeFunctionData("executeBatch", [
     requests.map((req) => [
       req.from,
@@ -213,7 +188,6 @@ export async function sendToForwarder(
     ]),
     ethers.utils.hexConcat(signatures),
   ]);
-  console.log({ encodedCall });
 
   const metaTxParams = {
     data: encodedCall,
