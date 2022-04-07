@@ -9,7 +9,7 @@ import {
 
 import { CONTRACTS, SIGNER, BICONOMY } from "./cache";
 import { AlpineProduct } from "./product";
-import { sendBiconomy } from "./biconomy";
+import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 
 /**
  * get the current best estimate for gas price
@@ -225,7 +225,7 @@ function _removeDecimals(amount: ethers.BigNumber): string {
 }
 
 /**
- * call a smart contract method with arguments
+ * Call a smart contract method with arguments
  * @param {ethers.Contract} contract smart contract
  * @param {String} method the method name
  * @param {Array} args the arguments to the method
@@ -242,37 +242,16 @@ async function _blockchainCall(
   contract = contract.connect(signer);
 
   if (biconomy && contract.address !== CONTRACTS.usdc.address) {
-    let { relayer } = CONTRACTS;
-    relayer = relayer.connect(signer);
-
     console.log({ method }, args);
-    const { data } = await relayer.populateTransaction[method](...args);
-
-    console.log({ data });
-    const txParams = {
-      data,
-      to: relayer.address,
-      from: await signer.getAddress(),
-      signatureType: "EIP712_SIGN",
-    };
-    console.log({ txParams });
-
-    // Biconomy team note: Ethers does not allow providing custom options while sending transaction
-    // See comment from CTO of biconomy: https://github.com/ethers-io/ethers.js/discussions/1313#discussioncomment-399944
-    // Also See https://ethereumbuilders.gitbooks.io/guide/content/en/ethereum_json_rpc.html#eth_sendtransaction
-    // Signature type is not an expected field in the object passed into the array
-    // Biconomy reads this field and passes on your transaction
-
-    const tx = await biconomy.send("eth_sendTransaction", [txParams]);
-    console.log(`Transaction hash ${tx}`);
-
+    const { signature, request } = await getSignature(
+      contract,
+      signer,
+      method,
+      args
+    );
+    console.log({ signature, request });
+    await sendToForwarder([signature], [request]);
     return;
-
-    // Wait for tx to be mined
-    // biconomy.once(tx, (transaction) => {
-    //   console.log(transaction);
-    //   return "success";
-    // });
   }
 
   if (biconomy && contract.address == CONTRACTS.usdc.address) {
@@ -280,10 +259,7 @@ async function _blockchainCall(
     return;
   }
 
-  const tx = await contract[method].apply(
-    null,
-    args.concat({ gasLimit: 15e6 })
-  );
+  const tx = await contract[method].apply(null, args);
   await tx.wait();
 }
 

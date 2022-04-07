@@ -7,7 +7,7 @@ export type productAmounts = {
   [key in AlpineProduct]?: number;
 };
 
-type ContractName = "usdc" | "relayer" | AlpineProduct;
+type ContractName = "usdc" | "forwarder" | AlpineProduct;
 export type AlpineContracts = {
   [key in ContractName]: ethers.Contract;
 };
@@ -56,13 +56,18 @@ export async function getTokenInfo(product: AlpineProduct): Promise<TokenInfo> {
   const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();
   console.log({ totalDollars });
   // totalDollars * percentOfTotalSupply
-  // dollars diven by btc/eth vault actually have 8 decimals
-  const equity = totalDollars.mul(amount).div(await alpLarge.totalSupply());
-  const price = equity.div(amount);
+  // dollars given by btc/eth vault actually have 8 decimals
+  const totalSupply: ethers.BigNumber = await alpLarge.totalSupply();
+  const equity = totalDollars.mul(amount).div(totalSupply);
+  console.log({
+    totalDollars: totalDollars.toString(),
+    totalSupply: totalSupply.toString(),
+  });
+  const price = totalDollars.toNumber() / totalSupply.div(1e10).toNumber();
   console.log({ equity, amount, price });
   return {
     amount: ethers.utils.formatUnits(amount, 18),
-    price: ethers.utils.parseUnits(price.toString(), 10).toString(),
+    price: price.toString(),
     equity: ethers.utils.formatUnits(equity, 8),
   };
 }

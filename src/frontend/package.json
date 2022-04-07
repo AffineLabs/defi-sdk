@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "1.0.0",
   "dependencies": {
-    "@biconomy/mexa": "^2.0.26",
+    "@biconomy/mexa": "^2.0.32",
     "@magic-sdk/types": "^7.0.0",
     "@metamask/detect-provider": "^1.2.0",
     "core": "1.0.0",

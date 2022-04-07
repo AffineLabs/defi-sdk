@@ -21,7 +21,7 @@ class Account {
   magicDidToken: string | null = null;
   // if true, send regular transaction, if false, use biconomy
   gas: boolean = false;
-  contractVersion: string = "v0.0.6-meta.0";
+  contractVersion: string = "v0.0.7-forwarder.0";
 
   /**
    * Creates an alpine account object
