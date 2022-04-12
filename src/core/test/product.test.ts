@@ -80,4 +80,9 @@ describe("Product info", async () => {
       1
     );
   });
+
+  const usdcInfo = await getTokenInfo("usdc");
+  expect(usdcInfo.amount).to.equal(
+    ethers.utils.formatUnits(await CONTRACTS.usdc.balanceOf(wallet.address), 6)
+  );
 });

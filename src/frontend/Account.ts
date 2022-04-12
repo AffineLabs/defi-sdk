@@ -120,8 +120,6 @@ class Account {
    */
   async disconnect(): Promise<void> {
     // Nothing to disconnect in the metamask case (we just clear the previous userAddress)
-    console.log({ magic: this.magic });
-    console.log("magic user:", this.magic.user.isLoggedIn());
     if (this.magic && (await this.magic.user.isLoggedIn()))
       await this.magic.user.logout();
     this.signer = undefined;
@@ -218,18 +216,6 @@ class Account {
       offset,
       sort
     );
-  }
-
-  /**
-   * gets user's current balance at the vault.
-   * @param {ethers.Contract} contract a known smart contract.
-   * @returns user balance as both usdc
-   * and token denominated values.
-   */
-  async getUserBalance(
-    contract: productActions.AlpineProduct | "usdc"
-  ): Promise<types.UserBalance> {
-    return AlpineDeFiSDK.getUserBalance(contract);
   }
 
   /**

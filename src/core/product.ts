@@ -35,7 +35,9 @@ export interface TokenInfo {
   price: string; // dollars / 1 base unit of token
   equity: string; // in dollars
 }
-export async function getTokenInfo(product: AlpineProduct): Promise<TokenInfo> {
+export async function getTokenInfo(
+  product: AlpineProduct | "usdc"
+): Promise<TokenInfo> {
   const user = await SIGNER.getAddress();
   if (product === "alpSave") {
     const { alpSave } = CONTRACTS;
@@ -49,25 +51,36 @@ export async function getTokenInfo(product: AlpineProduct): Promise<TokenInfo> {
     };
   }
 
-  // alpLarge
-  const { alpLarge } = CONTRACTS;
-  // TODO: let the contract take care of pricing
-  const amount: ethers.BigNumber = await alpLarge.balanceOf(user);
-  const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();
-  console.log({ totalDollars });
-  // totalDollars * percentOfTotalSupply
-  // dollars given by btc/eth vault actually have 8 decimals
-  const totalSupply: ethers.BigNumber = await alpLarge.totalSupply();
-  const equity = totalDollars.mul(amount).div(totalSupply);
-  console.log({
-    totalDollars: totalDollars.toString(),
-    totalSupply: totalSupply.toString(),
-  });
-  const price = totalDollars.toNumber() / totalSupply.div(1e10).toNumber();
-  console.log({ equity, amount, price });
+  if (product === "alpLarge") {
+    // alpLarge
+    const { alpLarge } = CONTRACTS;
+    // TODO: let the contract take care of pricing
+    const amount: ethers.BigNumber = await alpLarge.balanceOf(user);
+    const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();
+    console.log({ totalDollars });
+    // totalDollars * percentOfTotalSupply
+    // dollars given by btc/eth vault actually have 8 decimals
+    const totalSupply: ethers.BigNumber = await alpLarge.totalSupply();
+    const equity = totalDollars.mul(amount).div(totalSupply);
+    console.log({
+      totalDollars: totalDollars.toString(),
+      totalSupply: totalSupply.toString(),
+    });
+    const price = totalDollars.toNumber() / totalSupply.div(1e10).toNumber();
+    console.log({ equity, amount, price });
+    return {
+      amount: ethers.utils.formatUnits(amount, 18),
+      price: price.toString(),
+      equity: ethers.utils.formatUnits(equity, 8),
+    };
+  }
+
+  // usdc
+  const { usdc } = CONTRACTS;
+  const amount = await usdc.balanceOf(user);
   return {
-    amount: ethers.utils.formatUnits(amount, 18),
-    price: price.toString(),
-    equity: ethers.utils.formatUnits(equity, 8),
+    amount: ethers.utils.formatUnits(amount, 6),
+    price: "1",
+    equity: ethers.utils.formatUnits(amount, 6),
   };
 }

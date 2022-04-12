@@ -173,40 +173,6 @@ async function _parseTransaction(
 }
 
 /**
- * gets user's current balance at the vault.
- * @param {ethers.Contract} contract a known smart contract.
- * @returns {Promise<UserBalance>} user balance as both usdc
- * and token denominated values.
- */
-export async function getUserBalance(
-  contractName: AlpineProduct | "usdc"
-): Promise<UserBalance> {
-  // the returned amounts are in micro units
-  // need to divide them by 10^6 to convert to usdc and alpTokens
-  const contract = CONTRACTS[contractName];
-  const balance: ethers.BigNumber = await contract.balanceOf(
-    await SIGNER.getAddress()
-  );
-  console.log("BALNCE IN get user balance", balance);
-  if (contractName === "usdc") {
-    return {
-      balanceUSDC: _removeDecimals(balance),
-    };
-  } else {
-    let tokenPrice = await getTokenPrice(contractName);
-    // no token in circulation, so assume the price is 0
-    if (tokenPrice == null) {
-      tokenPrice = "0";
-    }
-    return {
-      balanceUSDC: _removeDecimals(
-        balance.mul(ethers.BigNumber.from(tokenPrice))
-      ),
-    };
-  }
-}
-
-/**
  * Converts a unit amount to equivalent micro unit amount
  * @param {string} amount an amount in unit eg. usdc.
  * @returns {ethers.BigNumber} equivalent amount in micro unit eg. micro usdc.
