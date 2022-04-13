@@ -29,7 +29,7 @@ const main = async () => {
   let response;
 
   await alpAccount.setGasMode(true);
-  const info = await alpAccount.getTokenInfo("alpSave");
+  const info = await alpAccount.getTokenInfo("usdc");
   console.log({ info });
 
   console.log("exiting");
