@@ -192,7 +192,7 @@ class Account {
     return AlpineDeFiSDK.getMaticBalance();
   }
 
-  async getTokenInfo(product: productActions.AlpineProduct) {
+  async getTokenInfo(product: productActions.AlpineProduct | "usdc") {
     return productActions.getTokenInfo(product);
   }
 
