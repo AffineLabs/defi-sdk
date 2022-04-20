@@ -87,6 +87,7 @@ export async function sendBiconomy(
   const tx = await biconomy.send("eth_sendTransaction", [metaTxParams]);
 
   console.log(`Transaction hash ${tx}`);
+  await biconomy.waitForTransaction(tx);
 }
 
 function getSignatureParameters(signature: string) {
@@ -209,10 +210,6 @@ export async function sendToForwarder(
   const biconomy = BICONOMY as ethers.providers.Web3Provider;
   const tx = await biconomy.send("eth_sendTransaction", [metaTxParams]);
   console.log(`Biconomy Transaction hash ${tx}`);
-
-  // Wait for tx to be mined
-  // biconomy.once(tx, (transaction) => {
-  //   console.log(transaction);
-  //   return "success";
-  // });
+  await biconomy.waitForTransaction(tx);
+  console.log("Tx confirmed");
 }
