@@ -15,20 +15,16 @@ const main = async () => {
 
   // await magic.user.logout();
   console.time("entire-connect");
-  await alpAccount.connect(email, "metamask");
+  await alpAccount.connect(email, "magic");
+  console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 
-  const addr = await alpAccount.getUserAddress();
-  console.log({ getUserAddress: addr });
-  console.log("matic bal: ", await alpAccount.getMaticBalance());
-
   // await alpAccount.setGasMode(true);
-  // await alpAccount.approve("alpLarge", "100000000000");
-  // await alpAccount.buyProduct("alpLarge", 10);
+  // await alpAccount.approve("alpSave", "1000000000000");
+  // await alpAccount.buyProduct("alpSave", 10);
 
   let response;
 
-  await alpAccount.setGasMode(true);
   const info = await alpAccount.getTokenInfo("usdc");
   console.log({ info });
 
