@@ -22,7 +22,6 @@ const main = async () => {
   // await alpAccount.setGasMode(true);
   // await alpAccount.approve("alpSave", "1000000000000");
   // await alpAccount.buyProduct("alpSave", 10);
-  console.log("product was bought or sold");
 
   let response;
 
