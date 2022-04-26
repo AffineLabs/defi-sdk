@@ -7,6 +7,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 
 import { AlpineDeFiSDK, types, init } from "../core";
 import * as productActions from "../core/product";
+import { setSimulationMode } from "../core/cache";
 
 const DEFAULT_WALLET = "magic";
 
@@ -190,6 +191,9 @@ class Account {
   }
   async getMaticBalance() {
     return AlpineDeFiSDK.getMaticBalance();
+  }
+  async setSimulationMode(mode: boolean) {
+    return setSimulationMode(mode);
   }
 
   async getTokenInfo(product: productActions.AlpineProduct | "usdc") {

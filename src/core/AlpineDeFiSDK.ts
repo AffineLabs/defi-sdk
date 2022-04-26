@@ -1,13 +1,18 @@
 import axios from "axios";
 import { ethers } from "ethers";
 
-import { TxnReceipt, PolygonScanAPIResponse, UserBalance } from "./types";
+import {
+  TxnReceipt,
+  PolygonScanAPIResponse,
+  UserBalance,
+  DryRunReceipt,
+} from "./types";
 import {
   TransactionResponse,
   TransactionReceipt,
 } from "@ethersproject/abstract-provider";
 
-import { CONTRACTS, SIGNER, BICONOMY } from "./cache";
+import { CONTRACTS, SIGNER, BICONOMY, SIMULATE } from "./cache";
 import { AlpineProduct } from "./product";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 
@@ -22,7 +27,6 @@ export async function getGasPrice(): Promise<string> {
 }
 
 export async function getMaticBalance() {
-  const user = await SIGNER.getAddress();
   return ethers.utils.formatEther(await SIGNER.getBalance());
 }
 /**
@@ -201,7 +205,7 @@ async function _blockchainCall(
   contract: ethers.Contract,
   method: string,
   args: Array<any>
-) {
+): Promise<void | DryRunReceipt> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
 
@@ -223,6 +227,35 @@ async function _blockchainCall(
   if (biconomy && contract.address == CONTRACTS.usdc.address) {
     await sendBiconomy(contract, signer, method, args);
     return;
+  }
+
+  // regular (non-meta) tx
+  if (SIMULATE) {
+    const [gasEstimate, gasPrice] = await Promise.all([
+      contract.estimateGas[method].apply(null, args),
+      SIGNER.getGasPrice(),
+    ]);
+
+    console.log(
+      `gasEstimate: ${gasEstimate.toString()} and gasPrice: ${gasPrice.toString()}`
+    );
+
+    // cost is gas * gasPrice
+    const cost = gasEstimate.mul(gasPrice);
+    const txnCost = ethers.utils.formatEther(cost);
+
+    let alpFee = ethers.BigNumber.from(0);
+    if (
+      method == "withdraw" &&
+      contract.address === CONTRACTS.alpSave.address
+    ) {
+      const usdcAmount: ethers.BigNumber = args[0];
+      const withdrawFeeBps: ethers.BigNumber =
+        await CONTRACTS.alpSave.withdrawalFee();
+      console.log({ withdrawFeeBps }, withdrawFeeBps.toString());
+      alpFee = usdcAmount.mul(withdrawFeeBps).div(10_000);
+    }
+    return { txnCost, alpFee: _removeDecimals(alpFee).toString() };
   }
 
   const tx = await contract[method].apply(null, args);
