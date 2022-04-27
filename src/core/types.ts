@@ -1,6 +1,6 @@
 export interface DryRunReceipt {
-  txnCost: number;
-  alpFee: number;
+  txnCost: string;
+  alpFee: string;
 }
 
 export interface TxnReceipt {

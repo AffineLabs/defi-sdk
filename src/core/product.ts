@@ -84,3 +84,53 @@ export async function getTokenInfo(
     equity: ethers.utils.formatUnits(amount, 6),
   };
 }
+
+export async function tokensFromShares(
+  product: AlpineProduct,
+  amount: ethers.BigNumber
+) {
+  if (product === "alpSave") {
+    const { alpSave } = CONTRACTS;
+    const tokens: ethers.BigNumber = await alpSave.tokensFromShares(amount);
+    return tokens;
+  }
+
+  if (product === "alpLarge") {
+    // alpLarge
+    const { alpLarge } = CONTRACTS;
+    const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();
+    const totalSupply: ethers.BigNumber = await alpLarge.totalSupply();
+    // totalDollars / totalShares * numShares
+    const dollars = totalDollars.mul(amount).div(totalSupply);
+    // The token we're talking about is USDC here, which only has 6 decimals.
+    return dollars.div(1e2);
+  }
+}
+
+export async function sharesFromTokens(
+  product: AlpineProduct,
+  tokenAmount: ethers.BigNumber
+) {
+  if (product === "alpSave") {
+    const { alpSave } = CONTRACTS;
+    const shares: ethers.BigNumber = await alpSave.sharesFromTokens(
+      tokenAmount
+    );
+    return shares;
+  }
+
+  if (product === "alpLarge") {
+    // alpLarge
+    const { alpLarge } = CONTRACTS;
+    // TODO: let the contract take care of pricing
+    const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();
+    console.log({ totalDollars });
+    // totalSupply / totalDollars * dollars
+    // dollars given by btc/eth vault actually have 8 decimals
+    const totalSupply: ethers.BigNumber = await alpLarge.totalSupply();
+    // convert tokenAmount (a USDC amount with 6 decimals) to dollar amount (8 decimals)
+    const shares = totalSupply.mul(tokenAmount.mul(1e2)).div(totalDollars);
+    return shares;
+  }
+  return ethers.BigNumber.from(0);
+}

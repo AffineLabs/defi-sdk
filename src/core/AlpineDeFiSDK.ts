@@ -13,11 +13,11 @@ import {
 } from "@ethersproject/abstract-provider";
 
 import { CONTRACTS, SIGNER, BICONOMY, SIMULATE } from "./cache";
-import { AlpineProduct } from "./product";
+import { AlpineProduct, sharesFromTokens, tokensFromShares } from "./product";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 
 /**
- * get the current best estimate for gas price
+ * Get the current best estimate for gas price
  * @returns the best estimate for gas price in eth
  */
 export async function getGasPrice(): Promise<string> {
@@ -204,7 +204,8 @@ function _removeDecimals(amount: ethers.BigNumber): string {
 async function _blockchainCall(
   contract: ethers.Contract,
   method: string,
-  args: Array<any>
+  args: Array<any>,
+  options?: any
 ): Promise<void | DryRunReceipt> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
@@ -252,10 +253,10 @@ async function _blockchainCall(
       const usdcAmount: ethers.BigNumber = args[0];
       const withdrawFeeBps: ethers.BigNumber =
         await CONTRACTS.alpSave.withdrawalFee();
-      console.log({ withdrawFeeBps }, withdrawFeeBps.toString());
       alpFee = usdcAmount.mul(withdrawFeeBps).div(10_000);
     }
-    return { txnCost, alpFee: _removeDecimals(alpFee).toString() };
+    console.log({ options });
+    return { txnCost, alpFee: _removeDecimals(alpFee).toString(), ...options };
   }
 
   const tx = await contract[method].apply(null, args);
@@ -311,16 +312,24 @@ export async function buyUsdcShares(amountUSDC: number) {
         "Call approve() to increase the allowance."
     );
   }
-  return _blockchainCall(alpSave, "deposit", [amount]);
+  return _blockchainCall(alpSave, "deposit", [amount], {
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: (await sharesFromTokens("alpSave", amount)).toString(),
+  });
 }
 
 /**
  * sell alp token and withdraw usdc from a vault (to user's wallet by default)
- * @param {String} amountUSDC amount in usdc to sell
+ * @param amountUSDC amount in usdc to sell
  */
 export async function sellUsdcShares(amountUSDC: number) {
   const amount = _addDecimals(amountUSDC.toString());
-  return _blockchainCall(CONTRACTS.alpSave, "withdraw", [amount]);
+  // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
+  const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
+  return _blockchainCall(CONTRACTS.alpSave, "withdraw", [amount], {
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: (await sharesFromTokens("alpSave", usdcToWihdraw)).toString(),
+  });
 }
 
 /**
@@ -362,16 +371,22 @@ export async function mintUSDC(to: string, amountUSDC: number) {
   return _blockchainCall(usdc, "mint", [to, amount]);
 }
 
-export async function buyBtCEthShares(amount: number) {
+export async function buyBtCEthShares(amountUSDC: number) {
   const { alpLarge } = CONTRACTS;
-  return _blockchainCall(alpLarge, "deposit", [
-    _addDecimals(amount.toString()),
-  ]);
+  const amount = _addDecimals(amountUSDC.toString());
+  return _blockchainCall(alpLarge, "deposit", [amount], {
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: (await sharesFromTokens("alpLarge", amount)).toString(),
+  });
 }
 
-export async function sellBtCEthShares(amount: number) {
+export async function sellBtCEthShares(amountUSDC: number) {
   const { alpLarge } = CONTRACTS;
-  return _blockchainCall(alpLarge, "withdraw", [
-    _addDecimals(amount.toString()),
-  ]);
+  const amount = _addDecimals(amountUSDC.toString());
+  // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
+  const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
+  return _blockchainCall(alpLarge, "withdraw", [amount], {
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: (await sharesFromTokens("alpLarge", usdcToWihdraw)).toString(),
+  });
 }
