@@ -244,8 +244,12 @@ async function _blockchainCall(
     // cost is gas * gasPrice
     const cost = gasEstimate.mul(gasPrice);
     const txnCost = ethers.utils.formatEther(cost);
+    // TODO: consider getting matic price from some api
+    const maticPrice = 1.25;
+    const txnCostUSD = (Number(txnCost) * maticPrice).toString();
 
     let alpFee = ethers.BigNumber.from(0);
+    let alpFeePercent: string = "0";
     if (
       method == "withdraw" &&
       contract.address === CONTRACTS.alpSave.address
@@ -254,9 +258,16 @@ async function _blockchainCall(
       const withdrawFeeBps: ethers.BigNumber =
         await CONTRACTS.alpSave.withdrawalFee();
       alpFee = usdcAmount.mul(withdrawFeeBps).div(10_000);
+      alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
     }
     console.log({ options });
-    return { txnCost, alpFee: _removeDecimals(alpFee).toString(), ...options };
+    return {
+      txnCost,
+      txnCostUSD,
+      alpFeePercent,
+      alpFee: _removeDecimals(alpFee).toString(),
+      ...options,
+    };
   }
 
   const tx = await contract[method].apply(null, args);

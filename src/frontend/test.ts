@@ -15,13 +15,13 @@ const main = async () => {
 
   // await magic.user.logout();
   console.time("entire-connect");
-  await alpAccount.connect(email, "metamask");
+  await alpAccount.connect(email, "magic");
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 
   await alpAccount.setGasMode(true);
   await alpAccount.setSimulationMode(true);
-  const dryRunReceipt = await alpAccount.buyProduct("alpLarge", 1);
+  const dryRunReceipt = await alpAccount.sellProduct("alpSave", 1);
   console.log({ dryRunReceipt });
 
   // console.time("check-login");
