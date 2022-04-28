@@ -1,18 +1,24 @@
 import axios from "axios";
 import { ethers } from "ethers";
 
-import { TxnReceipt, PolygonScanAPIResponse, UserBalance } from "./types";
+import {
+  TxnReceipt,
+  PolygonScanAPIResponse,
+  DryRunReceipt,
+  TxMetaData,
+  SmallTxReceipt,
+} from "./types";
 import {
   TransactionResponse,
   TransactionReceipt,
 } from "@ethersproject/abstract-provider";
 
-import { CONTRACTS, SIGNER, BICONOMY } from "./cache";
-import { AlpineProduct } from "./product";
+import { CONTRACTS, SIGNER, BICONOMY, SIMULATE } from "./cache";
+import { AlpineProduct } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 
 /**
- * get the current best estimate for gas price
+ * Get the current best estimate for gas price
  * @returns the best estimate for gas price in eth
  */
 export async function getGasPrice(): Promise<string> {
@@ -22,7 +28,6 @@ export async function getGasPrice(): Promise<string> {
 }
 
 export async function getMaticBalance() {
-  const user = await SIGNER.getAddress();
   return ethers.utils.formatEther(await SIGNER.getBalance());
 }
 /**
@@ -177,7 +182,7 @@ async function _parseTransaction(
  * @param {string} amount an amount in unit eg. usdc.
  * @returns {ethers.BigNumber} equivalent amount in micro unit eg. micro usdc.
  */
-function _addDecimals(amount: string): ethers.BigNumber {
+export function _addDecimals(amount: string): ethers.BigNumber {
   return ethers.utils.parseUnits(amount, 6);
 }
 
@@ -186,7 +191,7 @@ function _addDecimals(amount: string): ethers.BigNumber {
  * @param {ethers.BigNumber} amount an amount in micro unit eg. micro usdc.
  * @returns {string} equivalent amount in unit.
  */
-function _removeDecimals(amount: ethers.BigNumber): string {
+export function _removeDecimals(amount: ethers.BigNumber): string {
   return ethers.utils.formatUnits(amount, 6);
 }
 
@@ -197,11 +202,12 @@ function _removeDecimals(amount: ethers.BigNumber): string {
  * @param {Array} args the arguments to the method
  * @returns a transaction receipt from the blockchain
  */
-async function _blockchainCall(
+export async function blockchainCall(
   contract: ethers.Contract,
   method: string,
-  args: Array<any>
-) {
+  args: Array<any>,
+  options?: TxMetaData
+): Promise<void | SmallTxReceipt | DryRunReceipt> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
 
@@ -225,8 +231,52 @@ async function _blockchainCall(
     return;
   }
 
-  const tx = await contract[method].apply(null, args);
-  await tx.wait();
+  // regular (non-meta) tx
+  if (SIMULATE) {
+    const [gasEstimate, gasPrice] = await Promise.all([
+      contract.estimateGas[method].apply(null, args),
+      SIGNER.getGasPrice(),
+    ]);
+
+    console.log(
+      `gasEstimate: ${gasEstimate.toString()} and gasPrice: ${gasPrice.toString()}`
+    );
+
+    // cost is gas * gasPrice
+    const cost = gasEstimate.mul(gasPrice);
+    const txnCost = ethers.utils.formatEther(cost);
+    // TODO: consider getting matic price from some api
+    const maticPrice = 1.25;
+    const txnCostUSD = (Number(txnCost) * maticPrice).toString();
+
+    let alpFee = ethers.BigNumber.from(0);
+    let alpFeePercent: string = "0";
+    if (
+      method == "withdraw" &&
+      contract.address === CONTRACTS.alpSave.address
+    ) {
+      const usdcAmount: ethers.BigNumber = args[0];
+      const withdrawFeeBps: ethers.BigNumber =
+        await CONTRACTS.alpSave.withdrawalFee();
+      alpFee = usdcAmount.mul(withdrawFeeBps).div(10_000);
+      alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
+    }
+    return {
+      txnCost,
+      txnCostUSD,
+      alpFeePercent,
+      alpFee: _removeDecimals(alpFee).toString(),
+      dollarAmount: options?.dollarAmount || "0",
+      tokenAmount: options?.tokenAmount || "0",
+    };
+  }
+
+  const tx: TransactionResponse = await contract[method].apply(null, args);
+  const receipt = await tx.wait();
+  return {
+    blockNumber: receipt.blockNumber.toString(),
+    txnHash: receipt.transactionHash,
+  };
 }
 
 /**
@@ -238,56 +288,10 @@ async function _blockchainCall(
 export async function approve(to: AlpineProduct, amountUSDC: string) {
   // convert to micro usdc
   const amount = _addDecimals(amountUSDC);
-  return _blockchainCall(CONTRACTS.usdc, "approve", [
+  return blockchainCall(CONTRACTS.usdc, "approve", [
     CONTRACTS[to].address,
     amount,
   ]);
-}
-
-/**
- * Deposit usdc to a vault, and get alp tokens in return
- * @param {String} amountUSDC amount in usdc
- * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
- */
-export async function buyUsdcShares(amountUSDC: number) {
-  const contracts = CONTRACTS;
-  const { usdc, alpSave } = contracts;
-  const userAddress = await SIGNER.getAddress();
-  const amount = _addDecimals(amountUSDC.toString());
-  if (amount.isNegative() || amount.isZero()) {
-    throw new Error("amount must be positive.");
-  }
-  const walletBalance = await usdc.balanceOf(userAddress);
-  if (walletBalance.lt(amount)) {
-    throw new Error(
-      `Insuffient balance at user wallet. Balance: ${_removeDecimals(
-        walletBalance
-      )}, Requested to buy: ${amountUSDC}`
-    );
-  }
-
-  // check if user has sufficient allowance
-  const allowance = await usdc.allowance(userAddress, alpSave.address);
-
-  // allowance < amount
-  if (allowance.lt(amount)) {
-    throw new Error(
-      `Insufficient allowance. Allowance: ${_removeDecimals(
-        allowance
-      )} USDC, Required: ${amountUSDC} USDC. ` +
-        "Call approve() to increase the allowance."
-    );
-  }
-  return _blockchainCall(alpSave, "deposit", [amount]);
-}
-
-/**
- * sell alp token and withdraw usdc from a vault (to user's wallet by default)
- * @param {String} amountUSDC amount in usdc to sell
- */
-export async function sellUsdcShares(amountUSDC: number) {
-  const amount = _addDecimals(amountUSDC.toString());
-  return _blockchainCall(CONTRACTS.alpSave, "withdraw", [amount]);
 }
 
 /**
@@ -316,7 +320,7 @@ export async function transfer(to: string, amountUSDC: string) {
     );
   }
 
-  return _blockchainCall(usdc, "transfer", [to, amount]);
+  return blockchainCall(usdc, "transfer", [to, amount]);
 }
 
 export async function mintUSDC(to: string, amountUSDC: number) {
@@ -326,19 +330,5 @@ export async function mintUSDC(to: string, amountUSDC: number) {
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
-  return _blockchainCall(usdc, "mint", [to, amount]);
-}
-
-export async function buyBtCEthShares(amount: number) {
-  const { alpLarge } = CONTRACTS;
-  return _blockchainCall(alpLarge, "deposit", [
-    _addDecimals(amount.toString()),
-  ]);
-}
-
-export async function sellBtCEthShares(amount: number) {
-  const { alpLarge } = CONTRACTS;
-  return _blockchainCall(alpLarge, "withdraw", [
-    _addDecimals(amount.toString()),
-  ]);
+  return blockchainCall(usdc, "mint", [to, amount]);
 }

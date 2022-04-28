@@ -6,7 +6,9 @@ import { Signer } from "@ethersproject/abstract-signer";
 import detectEthereumProvider from "@metamask/detect-provider";
 
 import { AlpineDeFiSDK, types, init } from "../core";
+import { AlpineProduct } from "../core/types";
 import * as productActions from "../core/product";
+import { setSimulationMode } from "../core/cache";
 
 const DEFAULT_WALLET = "magic";
 
@@ -191,8 +193,11 @@ class Account {
   async getMaticBalance() {
     return AlpineDeFiSDK.getMaticBalance();
   }
+  async setSimulationMode(mode: boolean) {
+    return setSimulationMode(mode);
+  }
 
-  async getTokenInfo(product: productActions.AlpineProduct | "usdc") {
+  async getTokenInfo(product: AlpineProduct | "usdc") {
     return productActions.getTokenInfo(product);
   }
 
@@ -225,21 +230,15 @@ class Account {
    * @param {String} amountUSDC transaction amount in usdc
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
-  async approve(to: productActions.AlpineProduct, amountUSDC: string) {
+  async approve(to: AlpineProduct, amountUSDC: string) {
     return AlpineDeFiSDK.approve(to, amountUSDC);
   }
 
-  async buyProduct(
-    product: productActions.AlpineProduct,
-    dollarAmount: number
-  ) {
+  async buyProduct(product: AlpineProduct, dollarAmount: number) {
     return productActions.buyProduct(product, dollarAmount);
   }
 
-  async sellProduct(
-    product: productActions.AlpineProduct,
-    dollarAmount: number
-  ) {
+  async sellProduct(product: AlpineProduct, dollarAmount: number) {
     return productActions.sellProduct(product, dollarAmount);
   }
 

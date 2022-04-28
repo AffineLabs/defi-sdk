@@ -1,7 +1,5 @@
 import { ethers } from "ethers";
 import chai from "chai";
-import { solidity } from "ethereum-waffle";
-chai.use(solidity);
 const { expect } = chai;
 
 import { AlpineDeFiSDK } from "..";
@@ -26,6 +24,8 @@ it("Mint some usdc", async () => {
   );
   const oneUSDC = ethers.BigNumber.from(10).pow(6);
   await AlpineDeFiSDK.mintUSDC(wallet.address, 1);
-  const afterBal = await contracts.usdc.balanceOf(wallet.address);
-  expect(afterBal).to.equal(beforeBal.add(oneUSDC));
+  const afterBal: ethers.BigNumber = await contracts.usdc.balanceOf(
+    wallet.address
+  );
+  expect(afterBal.eq(beforeBal.add(oneUSDC))).to.be.true;
 });

@@ -1,13 +1,10 @@
 import { ethers } from "ethers";
-import chai, { assert } from "chai";
-import { solidity } from "ethereum-waffle";
-chai.use(solidity);
+import chai from "chai";
 const { expect } = chai;
 
+import { approve, mintUSDC } from "../AlpineDeFiSDK";
+import { CONTRACTS, init, SIGNER } from "../cache";
 import { buyProduct, sellProduct, getTokenInfo } from "../product";
-import { AlpineDeFiSDK } from "..";
-import { CONTRACTS, init } from "../cache";
-import { approve } from "../AlpineDeFiSDK";
 
 const testProvider = new ethers.providers.JsonRpcProvider(
   "http://localhost:8545"
@@ -19,7 +16,7 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(
 describe("Buy products", async () => {
   before(async () => {
     await init(testProvider, wallet, undefined);
-    await AlpineDeFiSDK.mintUSDC(wallet.address, 100);
+    await mintUSDC(wallet.address, 100);
   });
 
   it("Buy/Sell alpSave", async () => {
@@ -28,13 +25,13 @@ describe("Buy products", async () => {
     await buyProduct("alpSave", 10);
     const res = await CONTRACTS.alpSave.balanceOf(wallet.address);
     console.log("alpSave Shares...", res);
-    assert(res.gt(0));
+    expect(res.gt(0)).to.be.true;
 
     await sellProduct("alpSave", 10);
     const newBal: ethers.BigNumber = await CONTRACTS.alpSave.balanceOf(
       wallet.address
     );
-    assert(newBal.lt(res));
+    expect(newBal.lt(res)).to.be.true;
   });
 
   it("Buy/Sell alpLarge", async () => {
@@ -46,7 +43,7 @@ describe("Buy products", async () => {
       wallet.address
     );
     console.log("alpLarge shares....", res.toString());
-    assert(res.gt(0));
+    expect(res.gt(0)).to.be.true;
 
     // TODO: figure out why we get an "out of gas" error when forking from ganache
     // Passing in the gas limit causes the function to succeed. When it does succeed, it uses 296895 gas
@@ -63,7 +60,7 @@ describe("Buy products", async () => {
 describe("Product info", async () => {
   before(async () => {
     await init(testProvider, wallet, undefined);
-    await AlpineDeFiSDK.mintUSDC(wallet.address, 100);
+    await mintUSDC(wallet.address, 100);
   });
   it("Can get token info", async () => {
     const saveInfo = await getTokenInfo("alpSave");
@@ -79,6 +76,17 @@ describe("Product info", async () => {
       Number(largeInfo.equity),
       1
     );
+
+    const usdcInfo = await getTokenInfo("usdc");
+    console.log({ usdcInfo });
+    expect(usdcInfo.amount).to.equal(
+      ethers.utils.formatUnits(
+        await CONTRACTS.usdc.balanceOf(wallet.address),
+        6
+      )
+    );
+    expect(usdcInfo.price).to.equal("1");
+    expect(usdcInfo.equity).to.equal(usdcInfo.amount);
   });
 
   const usdcInfo = await getTokenInfo("usdc");

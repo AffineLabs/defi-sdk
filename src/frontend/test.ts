@@ -19,6 +19,20 @@ const main = async () => {
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 
+  await alpAccount.setGasMode(true);
+  await alpAccount.setSimulationMode(true);
+  const receipt = await alpAccount.buyProduct("alpSave", 1);
+  console.log({ receipt });
+
+  // console.time("check-login");
+  // await alpAccount.magic?.user.isLoggedIn();
+  // console.timeEnd("check-login");
+
+  console.time("check-id-token");
+  const res = await alpAccount.magic?.user.getIdToken();
+  console.timeEnd("check-id-token");
+  console.log({ res });
+
   // await alpAccount.setGasMode(true);
   // await alpAccount.approve("alpSave", "1000000000000");
   // await alpAccount.buyProduct("alpSave", 10);

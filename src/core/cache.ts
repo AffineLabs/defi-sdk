@@ -1,10 +1,11 @@
 import { ethers } from "ethers";
 import axios from "axios";
-import { AlpineContracts } from "./product";
+import { AlpineContracts } from "./types";
 
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
 export let BICONOMY: ethers.providers.Web3Provider | undefined;
+export let SIMULATE: boolean = false;
 
 /**
  * Fet all supported contracts in the alpine protocol
@@ -43,4 +44,8 @@ export async function init(
   CONTRACTS = await getAllContracts(provider, contractVersion);
   SIGNER = signer;
   BICONOMY = biconomy;
+}
+
+export async function setSimulationMode(mode: boolean) {
+  SIMULATE = mode;
 }
