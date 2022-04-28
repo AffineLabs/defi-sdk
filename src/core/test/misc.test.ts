@@ -7,7 +7,7 @@ chai.use(solidity);
 const { expect } = chai;
 
 import { AlpineDeFiSDK } from "..";
-import { CONTRACTS, init, SIGNER } from "../cache";
+import { init, SIGNER } from "../cache";
 
 const testProvider = new ethers.providers.JsonRpcProvider(
   "http://localhost:8545"
