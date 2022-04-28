@@ -6,6 +6,7 @@ import {
   PolygonScanAPIResponse,
   UserBalance,
   DryRunReceipt,
+  txMetaData,
 } from "./types";
 import {
   TransactionResponse,
@@ -205,7 +206,7 @@ async function _blockchainCall(
   contract: ethers.Contract,
   method: string,
   args: Array<any>,
-  options?: any
+  options?: txMetaData
 ): Promise<void | DryRunReceipt> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
@@ -266,7 +267,8 @@ async function _blockchainCall(
       txnCostUSD,
       alpFeePercent,
       alpFee: _removeDecimals(alpFee).toString(),
-      ...options,
+      dollarAmount: options?.dollarAmount || "0",
+      tokenAmount: options?.tokenAmount || "0",
     };
   }
 

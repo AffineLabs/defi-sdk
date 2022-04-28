@@ -1,6 +1,18 @@
 export interface DryRunReceipt {
   txnCost: string;
+  txnCostUSD: string;
   alpFee: string;
+  alpFeePercent: string;
+  dollarAmount: string;
+  tokenAmount: string;
+}
+// This is metadata passed to the _blockChainCall for transactions where the user is buying or selling a basket (
+// (e.g. alpSave or alpLarge)
+export interface txMetaData {
+  // the dollar amount being bought or sold
+  dollarAmount: string;
+  // the amount of the basket token being bought or sold
+  tokenAmount: string;
 }
 
 export interface TxnReceipt {
