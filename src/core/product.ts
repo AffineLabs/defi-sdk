@@ -1,33 +1,99 @@
 import { ethers } from "ethers";
-import * as sdk from "./AlpineDeFiSDK";
-import { CONTRACTS, SIGNER, BICONOMY } from "./cache";
+import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
+import { CONTRACTS, SIGNER } from "./cache";
 
-export type AlpineProduct = "alpSave" | "alpLarge";
-export type productAmounts = {
-  [key in AlpineProduct]?: number;
-};
-
-type ContractName = "usdc" | "forwarder" | AlpineProduct;
-export type AlpineContracts = {
-  [key in ContractName]: ethers.Contract;
-};
+import { AlpineProduct } from "./types";
 
 export async function buyProduct(product: AlpineProduct, amount: number) {
   if (product === "alpSave") {
-    return sdk.buyUsdcShares(amount);
+    return buyUsdcShares(amount);
   }
   if (product === "alpLarge") {
-    return sdk.buyBtCEthShares(amount);
+    return buyBtCEthShares(amount);
   }
 }
 
 export async function sellProduct(product: AlpineProduct, amount: number) {
   if (product === "alpSave") {
-    return sdk.sellUsdcShares(amount);
+    return sellUsdcShares(amount);
   }
   if (product === "alpLarge") {
-    return sdk.sellBtCEthShares(amount);
+    return sellBtCEthShares(amount);
   }
+}
+
+/**
+ * Deposit usdc to a vault, and get alp tokens in return
+ * @param {String} amountUSDC amount in usdc
+ * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
+ */
+export async function buyUsdcShares(amountUSDC: number) {
+  const contracts = CONTRACTS;
+  const { usdc, alpSave } = contracts;
+  const userAddress = await SIGNER.getAddress();
+  const amount = _addDecimals(amountUSDC.toString());
+  if (amount.isNegative() || amount.isZero()) {
+    throw new Error("amount must be positive.");
+  }
+  const walletBalance = await usdc.balanceOf(userAddress);
+  if (walletBalance.lt(amount)) {
+    throw new Error(
+      `Insuffient balance at user wallet. Balance: ${_removeDecimals(
+        walletBalance
+      )}, Requested to buy: ${amountUSDC}`
+    );
+  }
+
+  // check if user has sufficient allowance
+  const allowance = await usdc.allowance(userAddress, alpSave.address);
+
+  // allowance < amount
+  if (allowance.lt(amount)) {
+    throw new Error(
+      `Insufficient allowance. Allowance: ${_removeDecimals(
+        allowance
+      )} USDC, Required: ${amountUSDC} USDC. ` +
+        "Call approve() to increase the allowance."
+    );
+  }
+  return blockchainCall(alpSave, "deposit", [amount], {
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: (await sharesFromTokens("alpSave", amount)).toString(),
+  });
+}
+
+/**
+ * sell alp token and withdraw usdc from a vault (to user's wallet by default)
+ * @param amountUSDC amount in usdc to sell
+ */
+export async function sellUsdcShares(amountUSDC: number) {
+  const amount = _addDecimals(amountUSDC.toString());
+  // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
+  const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
+  return blockchainCall(CONTRACTS.alpSave, "withdraw", [amount], {
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: (await sharesFromTokens("alpSave", usdcToWihdraw)).toString(),
+  });
+}
+
+export async function buyBtCEthShares(amountUSDC: number) {
+  const { alpLarge } = CONTRACTS;
+  const amount = _addDecimals(amountUSDC.toString());
+  return blockchainCall(alpLarge, "deposit", [amount], {
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: (await sharesFromTokens("alpLarge", amount)).toString(),
+  });
+}
+
+export async function sellBtCEthShares(amountUSDC: number) {
+  const { alpLarge } = CONTRACTS;
+  const amount = _addDecimals(amountUSDC.toString());
+  // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
+  const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
+  return blockchainCall(alpLarge, "withdraw", [amount], {
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: (await sharesFromTokens("alpLarge", usdcToWihdraw)).toString(),
+  });
 }
 
 export interface TokenInfo {

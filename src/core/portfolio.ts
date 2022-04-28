@@ -1,8 +1,4 @@
-import { ethers } from "ethers";
-
-import { SIGNER } from "./cache";
-
-import { productAmounts, AlpineProduct, buyProduct } from "./product";
+import { AlpineProduct, productAmounts } from "./types";
 
 async function portfolioUpdate(
   buyAmounts: productAmounts,

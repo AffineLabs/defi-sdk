@@ -14,7 +14,7 @@ import {
 } from "@ethersproject/abstract-provider";
 
 import { CONTRACTS, SIGNER, BICONOMY, SIMULATE } from "./cache";
-import { AlpineProduct, sharesFromTokens } from "./product";
+import { AlpineProduct } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 
 /**
@@ -182,7 +182,7 @@ async function _parseTransaction(
  * @param {string} amount an amount in unit eg. usdc.
  * @returns {ethers.BigNumber} equivalent amount in micro unit eg. micro usdc.
  */
-function _addDecimals(amount: string): ethers.BigNumber {
+export function _addDecimals(amount: string): ethers.BigNumber {
   return ethers.utils.parseUnits(amount, 6);
 }
 
@@ -191,7 +191,7 @@ function _addDecimals(amount: string): ethers.BigNumber {
  * @param {ethers.BigNumber} amount an amount in micro unit eg. micro usdc.
  * @returns {string} equivalent amount in unit.
  */
-function _removeDecimals(amount: ethers.BigNumber): string {
+export function _removeDecimals(amount: ethers.BigNumber): string {
   return ethers.utils.formatUnits(amount, 6);
 }
 
@@ -202,7 +202,7 @@ function _removeDecimals(amount: ethers.BigNumber): string {
  * @param {Array} args the arguments to the method
  * @returns a transaction receipt from the blockchain
  */
-async function _blockchainCall(
+export async function blockchainCall(
   contract: ethers.Contract,
   method: string,
   args: Array<any>,
@@ -288,64 +288,10 @@ async function _blockchainCall(
 export async function approve(to: AlpineProduct, amountUSDC: string) {
   // convert to micro usdc
   const amount = _addDecimals(amountUSDC);
-  return _blockchainCall(CONTRACTS.usdc, "approve", [
+  return blockchainCall(CONTRACTS.usdc, "approve", [
     CONTRACTS[to].address,
     amount,
   ]);
-}
-
-/**
- * Deposit usdc to a vault, and get alp tokens in return
- * @param {String} amountUSDC amount in usdc
- * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
- */
-export async function buyUsdcShares(amountUSDC: number) {
-  const contracts = CONTRACTS;
-  const { usdc, alpSave } = contracts;
-  const userAddress = await SIGNER.getAddress();
-  const amount = _addDecimals(amountUSDC.toString());
-  if (amount.isNegative() || amount.isZero()) {
-    throw new Error("amount must be positive.");
-  }
-  const walletBalance = await usdc.balanceOf(userAddress);
-  if (walletBalance.lt(amount)) {
-    throw new Error(
-      `Insuffient balance at user wallet. Balance: ${_removeDecimals(
-        walletBalance
-      )}, Requested to buy: ${amountUSDC}`
-    );
-  }
-
-  // check if user has sufficient allowance
-  const allowance = await usdc.allowance(userAddress, alpSave.address);
-
-  // allowance < amount
-  if (allowance.lt(amount)) {
-    throw new Error(
-      `Insufficient allowance. Allowance: ${_removeDecimals(
-        allowance
-      )} USDC, Required: ${amountUSDC} USDC. ` +
-        "Call approve() to increase the allowance."
-    );
-  }
-  return _blockchainCall(alpSave, "deposit", [amount], {
-    dollarAmount: amountUSDC.toString(),
-    tokenAmount: (await sharesFromTokens("alpSave", amount)).toString(),
-  });
-}
-
-/**
- * sell alp token and withdraw usdc from a vault (to user's wallet by default)
- * @param amountUSDC amount in usdc to sell
- */
-export async function sellUsdcShares(amountUSDC: number) {
-  const amount = _addDecimals(amountUSDC.toString());
-  // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-  const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
-  return _blockchainCall(CONTRACTS.alpSave, "withdraw", [amount], {
-    dollarAmount: amountUSDC.toString(),
-    tokenAmount: (await sharesFromTokens("alpSave", usdcToWihdraw)).toString(),
-  });
 }
 
 /**
@@ -374,7 +320,7 @@ export async function transfer(to: string, amountUSDC: string) {
     );
   }
 
-  return _blockchainCall(usdc, "transfer", [to, amount]);
+  return blockchainCall(usdc, "transfer", [to, amount]);
 }
 
 export async function mintUSDC(to: string, amountUSDC: number) {
@@ -384,25 +330,5 @@ export async function mintUSDC(to: string, amountUSDC: number) {
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
-  return _blockchainCall(usdc, "mint", [to, amount]);
-}
-
-export async function buyBtCEthShares(amountUSDC: number) {
-  const { alpLarge } = CONTRACTS;
-  const amount = _addDecimals(amountUSDC.toString());
-  return _blockchainCall(alpLarge, "deposit", [amount], {
-    dollarAmount: amountUSDC.toString(),
-    tokenAmount: (await sharesFromTokens("alpLarge", amount)).toString(),
-  });
-}
-
-export async function sellBtCEthShares(amountUSDC: number) {
-  const { alpLarge } = CONTRACTS;
-  const amount = _addDecimals(amountUSDC.toString());
-  // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-  const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
-  return _blockchainCall(alpLarge, "withdraw", [amount], {
-    dollarAmount: amountUSDC.toString(),
-    tokenAmount: (await sharesFromTokens("alpLarge", usdcToWihdraw)).toString(),
-  });
+  return blockchainCall(usdc, "mint", [to, amount]);
 }

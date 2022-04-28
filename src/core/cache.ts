@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import axios from "axios";
-import { AlpineContracts } from "./product";
+import { AlpineContracts } from "./types";
 
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;

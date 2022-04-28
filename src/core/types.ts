@@ -1,3 +1,5 @@
+import { ethers } from "ethers";
+
 export interface DryRunReceipt {
   txnCost: string;
   txnCostUSD: string;
@@ -19,6 +21,16 @@ export interface SmallTxReceipt {
   blockNumber: string;
   txnHash: string;
 }
+
+export type AlpineProduct = "alpSave" | "alpLarge";
+export type productAmounts = {
+  [key in AlpineProduct]?: number;
+};
+
+type ContractName = "usdc" | "forwarder" | AlpineProduct;
+export type AlpineContracts = {
+  [key in ContractName]: ethers.Contract;
+};
 
 export interface TxnReceipt {
   method: string;
