@@ -20,9 +20,9 @@ const main = async () => {
   console.timeEnd("entire-connect");
 
   await alpAccount.setGasMode(true);
-  await alpAccount.setSimulationMode(true);
-  const dryRunReceipt = await alpAccount.sellProduct("alpSave", 1);
-  console.log({ dryRunReceipt });
+  // await alpAccount.setSimulationMode(true);
+  const receipt = await alpAccount.buyProduct("alpSave", 1);
+  console.log({ receipt });
 
   // console.time("check-login");
   // await alpAccount.magic?.user.isLoggedIn();

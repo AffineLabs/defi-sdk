@@ -4,9 +4,9 @@ import { ethers } from "ethers";
 import {
   TxnReceipt,
   PolygonScanAPIResponse,
-  UserBalance,
   DryRunReceipt,
-  txMetaData,
+  TxMetaData,
+  SmallTxReceipt,
 } from "./types";
 import {
   TransactionResponse,
@@ -14,7 +14,7 @@ import {
 } from "@ethersproject/abstract-provider";
 
 import { CONTRACTS, SIGNER, BICONOMY, SIMULATE } from "./cache";
-import { AlpineProduct, sharesFromTokens, tokensFromShares } from "./product";
+import { AlpineProduct, sharesFromTokens } from "./product";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 
 /**
@@ -206,8 +206,8 @@ async function _blockchainCall(
   contract: ethers.Contract,
   method: string,
   args: Array<any>,
-  options?: txMetaData
-): Promise<void | DryRunReceipt> {
+  options?: TxMetaData
+): Promise<void | SmallTxReceipt | DryRunReceipt> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
 
@@ -261,7 +261,6 @@ async function _blockchainCall(
       alpFee = usdcAmount.mul(withdrawFeeBps).div(10_000);
       alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
     }
-    console.log({ options });
     return {
       txnCost,
       txnCostUSD,
@@ -272,8 +271,12 @@ async function _blockchainCall(
     };
   }
 
-  const tx = await contract[method].apply(null, args);
-  await tx.wait();
+  const tx: TransactionResponse = await contract[method].apply(null, args);
+  const receipt = await tx.wait();
+  return {
+    blockNumber: receipt.blockNumber.toString(),
+    txnHash: receipt.transactionHash,
+  };
 }
 
 /**
