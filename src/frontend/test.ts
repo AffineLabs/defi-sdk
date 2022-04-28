@@ -20,7 +20,7 @@ const main = async () => {
   console.timeEnd("entire-connect");
 
   await alpAccount.setGasMode(true);
-  // await alpAccount.setSimulationMode(true);
+  await alpAccount.setSimulationMode(true);
   const receipt = await alpAccount.buyProduct("alpSave", 1);
   console.log({ receipt });
 

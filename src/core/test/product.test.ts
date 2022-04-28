@@ -79,6 +79,17 @@ describe("Product info", async () => {
       Number(largeInfo.equity),
       1
     );
+
+    const usdcInfo = await getTokenInfo("usdc");
+    console.log({ usdcInfo });
+    expect(usdcInfo.amount).to.equal(
+      ethers.utils.formatUnits(
+        await CONTRACTS.usdc.balanceOf(wallet.address),
+        6
+      )
+    );
+    expect(usdcInfo.price).to.equal("1");
+    expect(usdcInfo.equity).to.equal(usdcInfo.amount);
   });
 
   const usdcInfo = await getTokenInfo("usdc");
