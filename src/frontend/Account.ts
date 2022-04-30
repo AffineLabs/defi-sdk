@@ -27,7 +27,6 @@ class Account {
 
   /**
    * Creates an alpine account object
-  
    */
   constructor() {}
 
@@ -54,11 +53,11 @@ class Account {
       chainId: 80001,
     };
     // the magic api key is public
-    this.magic = new Magic("pk_live_1EF4B8FEB56F7AA4", {
+    this.magic = new Magic(process.env.MAGIC_API_KEY || "", {
       network: customNodeOptions,
     });
 
-    this.polygonscanApiKey = "7DHSDECZBDA4VHMEGHNK1T6CXIAUEVRAP2";
+    this.polygonscanApiKey = process.env.POLYGONSCAN_API_KEY;
 
     // Users will be connected to magic no matter what 'walletType' is
     console.time("login-with-magic");
