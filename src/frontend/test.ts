@@ -15,25 +15,22 @@ const main = async () => {
 
   // await magic.user.logout();
   console.time("entire-connect");
-  await alpAccount.connect(email, "magic");
+
+  await alpAccount.connect(
+    email,
+    "magic",
+    process.env.MAGIC_API_KEY || "",
+    process.env.POLYGONSCAN_API_KEY || ""
+  );
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 
-  await alpAccount.setGasMode(true);
-  await alpAccount.setSimulationMode(true);
-  const receipt = await alpAccount.buyProduct("alpSave", 1);
-  console.log({ receipt });
+  // await alpAccount.setGasMode(true);
+  // await alpAccount.setSimulationMode(true);
+  // const receipt = await alpAccount.buyProduct("alpSave", 1);
+  // console.log({ receipt });
 
-  // console.time("check-login");
-  // await alpAccount.magic?.user.isLoggedIn();
-  // console.timeEnd("check-login");
-
-  // console.time("check-id-token");
-  // const res = await alpAccount.magic?.user.getIdToken();
-  // console.timeEnd("check-id-token");
-  // console.log({ res });
-
-  const history = await alpAccount.getTransactionHistory(1, 1);
+  const history = await alpAccount.getTransactionHistory(1, 0);
   console.log({ history });
 
   console.log("exiting");
