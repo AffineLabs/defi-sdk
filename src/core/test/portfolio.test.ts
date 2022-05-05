@@ -16,7 +16,7 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(
 
 describe("Portfolio transactions", async () => {
   before(async () => {
-    await init(testProvider, wallet, undefined);
+    await init(wallet, undefined);
   });
   it("Buy Portfolio", async () => {});
 });

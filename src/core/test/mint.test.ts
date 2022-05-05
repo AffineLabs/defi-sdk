@@ -12,7 +12,7 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(
   testProvider
 );
 before(async () => {
-  await init(testProvider, wallet, undefined);
+  await init(wallet, undefined);
 });
 it("Mint some usdc", async () => {
   const blockNum = await testProvider.getBlockNumber();
