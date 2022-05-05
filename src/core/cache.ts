@@ -8,7 +8,7 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
 export let SIMULATE: boolean = false;
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-export const PROVIDER = new ethers.providers.StaticJsonRpcProvider(
+export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(
   `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
 );
 
@@ -49,6 +49,10 @@ export async function init(
   CONTRACTS = await getAllContracts(provider, contractVersion);
   SIGNER = signer;
   BICONOMY = biconomy;
+}
+
+export function setProvider(provider: ethers.providers.StaticJsonRpcProvider) {
+  PROVIDER = provider;
 }
 
 export async function setSimulationMode(mode: boolean) {

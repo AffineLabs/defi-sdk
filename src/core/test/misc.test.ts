@@ -5,7 +5,7 @@ import chai from "chai";
 const { expect } = chai;
 
 import { AlpineDeFiSDK } from "..";
-import { init, SIGNER } from "../cache";
+import { init, setProvider, SIGNER } from "../cache";
 
 const testProvider = new ethers.providers.JsonRpcProvider(
   "http://localhost:8545"
@@ -16,6 +16,7 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(
 
 describe("Balances", async () => {
   before(async () => {
+    setProvider(testProvider);
     await init(wallet, undefined);
   });
 

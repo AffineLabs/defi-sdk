@@ -3,15 +3,17 @@ import chai from "chai";
 const { expect } = chai;
 
 import { AlpineDeFiSDK } from "..";
-import { CONTRACTS, init } from "../cache";
+import { CONTRACTS, init, setProvider } from "../cache";
 
 const testProvider = new ethers.providers.JsonRpcProvider(
   "http://localhost:8545"
 );
+
 const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(
   testProvider
 );
 before(async () => {
+  setProvider(testProvider);
   await init(wallet, undefined);
 });
 it("Mint some usdc", async () => {

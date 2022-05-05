@@ -3,7 +3,7 @@ import chai from "chai";
 const { expect } = chai;
 
 import { approve, mintUSDC } from "../AlpineDeFiSDK";
-import { CONTRACTS, init, SIGNER } from "../cache";
+import { CONTRACTS, init, setProvider, SIGNER } from "../cache";
 import { buyProduct, sellProduct, getTokenInfo } from "../product";
 
 const testProvider = new ethers.providers.JsonRpcProvider(
@@ -15,6 +15,7 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(
 
 describe("Buy products", async () => {
   before(async () => {
+    setProvider(testProvider);
     await init(wallet, undefined);
     await mintUSDC(wallet.address, 100);
   });
