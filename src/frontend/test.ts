@@ -22,10 +22,6 @@ const main = async () => {
   // await alpAccount.setSimulationMode(true);
   // const receipt = await alpAccount.buyProduct("alpSave", 1);
   // console.log({ receipt });
-
-  const history = await alpAccount.getTransactionHistory(1, 0);
-  console.log({ history });
-
   console.log("exiting");
 };
 

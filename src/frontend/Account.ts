@@ -82,11 +82,11 @@ class Account {
     this.userAddress = await this.signer.getAddress();
     console.timeEnd("signer-get-address");
 
-    console.time("init-Biconomy");
-    await this.initBiconomy(walletProvider);
-    console.timeEnd("init-Biconomy");
-    console.time("init-contracts");
+    // console.time("init-Biconomy");
+    // await this.initBiconomy(walletProvider);
+    // console.timeEnd("init-Biconomy");
 
+    console.time("init-contracts");
     if (contractVersion) this.contractVersion = contractVersion;
     await init(this.signer, this.biconomy, this.contractVersion);
     console.timeEnd("init-contracts");
@@ -191,28 +191,6 @@ class Account {
 
   async getTokenInfo(product: AlpineProduct | "usdc") {
     return productActions.getTokenInfo(product);
-  }
-
-  /**
-   * get transaction history of the user with alpine smart contracts
-   * @param {Number} page the page number
-   * @param {Number} offset number of transanctions in the page
-   * @param {String} sort `asc` or `desc`; sorts the transactions in ascending or decensing order
-   *                      default is `desc`.
-   * @returns An array of user transaction receipts
-   **/
-  async getTransactionHistory(
-    page: number,
-    offset: number,
-    sort: string = "desc"
-  ): Promise<Array<types.TxnReceipt>> {
-    return AlpineDeFiSDK.getTransactionHistory(
-      this.userAddress,
-      this.polygonscanApiKey,
-      page,
-      offset,
-      sort
-    );
   }
 
   /**
