@@ -7,6 +7,11 @@ export let SIGNER: ethers.Signer;
 export let BICONOMY: ethers.providers.Web3Provider | undefined;
 export let SIMULATE: boolean = false;
 
+const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
+const PROVIDER = new ethers.providers.StaticJsonRpcProvider(
+  `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
+);
+
 /**
  * Fet all supported contracts in the alpine protocol
  * @returns an object with all alpine contracts. Currently has
@@ -36,11 +41,11 @@ export async function getAllContracts(
 }
 
 export async function init(
-  provider: ethers.providers.JsonRpcProvider,
   signer: ethers.Signer,
   biconomy: ethers.providers.Web3Provider | undefined,
   contractVersion: string = "latest"
 ) {
+  const provider = PROVIDER;
   CONTRACTS = await getAllContracts(provider, contractVersion);
   SIGNER = signer;
   BICONOMY = biconomy;

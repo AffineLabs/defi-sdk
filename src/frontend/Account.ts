@@ -1,8 +1,6 @@
 import { Magic } from "magic-sdk";
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
-
-import { Signer } from "@ethersproject/abstract-signer";
 import detectEthereumProvider from "@metamask/detect-provider";
 
 import { AlpineDeFiSDK, types, init } from "../core";
@@ -14,9 +12,8 @@ const DEFAULT_WALLET = "magic";
 
 class Account {
   magic?: Magic;
-  signer!: Signer;
-  provider!: ethers.providers.Web3Provider;
-  biconomy?: ethers.providers.Web3Provider;
+  signer!: ethers.Signer;
+  biconomy!: ethers.providers.Web3Provider;
   polygonscanApiKey?: string;
   userAddress?: string;
   walletType: "magic" | "metamask" = DEFAULT_WALLET;
@@ -74,30 +71,32 @@ class Account {
       await metamaskProvider.send("eth_requestAccounts", []);
     }
 
-    const rawProvider =
+    const _provider =
       walletType === "magic"
         ? (this.magic
             .rpcProvider as unknown as ethers.providers.ExternalProvider)
-        : window.ethereum;
-    this.provider = new ethers.providers.Web3Provider(rawProvider);
-    this.signer = this.provider.getSigner();
+        : (window.ethereum as unknown as ethers.providers.ExternalProvider);
+    const provider = new ethers.providers.Web3Provider(_provider);
+    this.signer = provider.getSigner();
+
     console.time("signer-get-address");
     this.userAddress = await this.signer.getAddress();
     console.timeEnd("signer-get-address");
+
     console.time("init-Biconomy");
-    await this.initBiconomy();
+    await this.initBiconomy(provider);
     console.timeEnd("init-Biconomy");
     console.time("init-contracts");
 
     if (contractVersion) this.contractVersion = contractVersion;
-    await init(this.provider, this.signer, this.biconomy, this.contractVersion);
+    await init(this.signer, this.biconomy, this.contractVersion);
     console.timeEnd("init-contracts");
 
     return this.magicDidToken;
   }
 
-  private async initBiconomy() {
-    const biconomyRaw = new Biconomy(this.provider, {
+  private async initBiconomy(provider: ethers.providers.Web3Provider) {
+    const biconomyRaw = new Biconomy(provider, {
       apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
       debug: true,
       strictMode: true,
@@ -174,12 +173,7 @@ class Account {
     // this.biconomy is created upon connection and will always exist
     this.gas = useGas;
     const biconomyProvider = useGas ? undefined : this.biconomy;
-    return init(
-      this.provider,
-      this.signer,
-      biconomyProvider,
-      this.contractVersion
-    );
+    return init(this.signer, biconomyProvider, this.contractVersion);
   }
 
   /**
