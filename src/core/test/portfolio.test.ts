@@ -2,10 +2,7 @@ import { ethers } from "ethers";
 import chai from "chai";
 const { expect } = chai;
 
-// import { portfolioUpdate } from "../portfolio";
-// import { AlpineDeFiSDK } from "..";
-import { CONTRACTS, init } from "../cache";
-// import { approve } from "../AlpineDeFiSDK";
+import { CONTRACTS, init, setProvider } from "../cache";
 
 const testProvider = new ethers.providers.JsonRpcProvider(
   "http://localhost:8545"
@@ -16,7 +13,8 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(
 
 describe("Portfolio transactions", async () => {
   before(async () => {
-    await init(testProvider, wallet, undefined);
+    setProvider(testProvider);
+    await init(wallet, undefined);
   });
   it("Buy Portfolio", async () => {});
 });

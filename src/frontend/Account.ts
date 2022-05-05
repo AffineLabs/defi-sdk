@@ -1,22 +1,19 @@
 import { Magic } from "magic-sdk";
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
-
-import { Signer } from "@ethersproject/abstract-signer";
 import detectEthereumProvider from "@metamask/detect-provider";
 
 import { AlpineDeFiSDK, types, init } from "../core";
 import { AlpineProduct } from "../core/types";
 import * as productActions from "../core/product";
-import { setSimulationMode } from "../core/cache";
+import { setSimulationMode, PROVIDER } from "../core/cache";
 
 const DEFAULT_WALLET = "magic";
 
 class Account {
   magic?: Magic;
-  signer!: Signer;
-  provider!: ethers.providers.Web3Provider;
-  biconomy?: ethers.providers.Web3Provider;
+  signer!: ethers.Signer;
+  biconomy!: ethers.providers.Web3Provider;
   polygonscanApiKey?: string;
   userAddress?: string;
   walletType: "magic" | "metamask" = DEFAULT_WALLET;
@@ -49,9 +46,8 @@ class Account {
     if (await this.isConnected(walletType)) return this.magicDidToken;
     this.walletType = walletType;
 
-    // RPC url from https://docs.polygon.technology/docs/develop/network-details/network/
     const customNodeOptions = {
-      rpcUrl: `https://rpc-${network}.maticvigil.com`,
+      rpcUrl: PROVIDER.connection.url,
       chainId: 80001,
     };
     // the magic api key is public
@@ -64,6 +60,11 @@ class Account {
     this.magicDidToken = await this.magic.auth.loginWithMagicLink({ email });
     console.timeEnd("login-with-magic");
 
+    let walletProvider: ethers.providers.Web3Provider =
+      new ethers.providers.Web3Provider(
+        this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider
+      );
+
     if (walletType === "metamask") {
       await this._checkIfMetamaskAvailable();
       // we know that window.ethereum exists here
@@ -72,32 +73,29 @@ class Account {
       );
       // MetaMask requires requesting permission to connect users accounts
       await metamaskProvider.send("eth_requestAccounts", []);
+      walletProvider = metamaskProvider;
     }
 
-    const rawProvider =
-      walletType === "magic"
-        ? (this.magic
-            .rpcProvider as unknown as ethers.providers.ExternalProvider)
-        : window.ethereum;
-    this.provider = new ethers.providers.Web3Provider(rawProvider);
-    this.signer = this.provider.getSigner();
+    this.signer = walletProvider.getSigner();
+
     console.time("signer-get-address");
     this.userAddress = await this.signer.getAddress();
     console.timeEnd("signer-get-address");
-    console.time("init-Biconomy");
-    await this.initBiconomy();
-    console.timeEnd("init-Biconomy");
-    console.time("init-contracts");
 
+    // console.time("init-Biconomy");
+    // await this.initBiconomy(walletProvider);
+    // console.timeEnd("init-Biconomy");
+
+    console.time("init-contracts");
     if (contractVersion) this.contractVersion = contractVersion;
-    await init(this.provider, this.signer, this.biconomy, this.contractVersion);
+    await init(this.signer, this.biconomy, this.contractVersion);
     console.timeEnd("init-contracts");
 
     return this.magicDidToken;
   }
 
-  private async initBiconomy() {
-    const biconomyRaw = new Biconomy(this.provider, {
+  private async initBiconomy(provider: ethers.providers.Web3Provider) {
+    const biconomyRaw = new Biconomy(provider, {
       apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
       debug: true,
       strictMode: true,
@@ -174,12 +172,7 @@ class Account {
     // this.biconomy is created upon connection and will always exist
     this.gas = useGas;
     const biconomyProvider = useGas ? undefined : this.biconomy;
-    return init(
-      this.provider,
-      this.signer,
-      biconomyProvider,
-      this.contractVersion
-    );
+    return init(this.signer, biconomyProvider, this.contractVersion);
   }
 
   /**
@@ -198,28 +191,6 @@ class Account {
 
   async getTokenInfo(product: AlpineProduct | "usdc") {
     return productActions.getTokenInfo(product);
-  }
-
-  /**
-   * get transaction history of the user with alpine smart contracts
-   * @param {Number} page the page number
-   * @param {Number} offset number of transanctions in the page
-   * @param {String} sort `asc` or `desc`; sorts the transactions in ascending or decensing order
-   *                      default is `desc`.
-   * @returns An array of user transaction receipts
-   **/
-  async getTransactionHistory(
-    page: number,
-    offset: number,
-    sort: string = "desc"
-  ): Promise<Array<types.TxnReceipt>> {
-    return AlpineDeFiSDK.getTransactionHistory(
-      this.userAddress,
-      this.polygonscanApiKey,
-      page,
-      offset,
-      sort
-    );
   }
 
   /**
