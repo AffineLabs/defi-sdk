@@ -8,7 +8,7 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
 export let SIMULATE: boolean = false;
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-const PROVIDER = new ethers.providers.StaticJsonRpcProvider(
+export const PROVIDER = new ethers.providers.StaticJsonRpcProvider(
   `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`
 );
 

@@ -6,7 +6,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { AlpineDeFiSDK, types, init } from "../core";
 import { AlpineProduct } from "../core/types";
 import * as productActions from "../core/product";
-import { setSimulationMode } from "../core/cache";
+import { setSimulationMode, PROVIDER } from "../core/cache";
 
 const DEFAULT_WALLET = "magic";
 
@@ -46,9 +46,8 @@ class Account {
     if (await this.isConnected(walletType)) return this.magicDidToken;
     this.walletType = walletType;
 
-    // RPC url from https://docs.polygon.technology/docs/develop/network-details/network/
     const customNodeOptions = {
-      rpcUrl: `https://rpc-${network}.maticvigil.com`,
+      rpcUrl: PROVIDER.connection.url,
       chainId: 80001,
     };
     // the magic api key is public
