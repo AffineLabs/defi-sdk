@@ -60,6 +60,11 @@ class Account {
     this.magicDidToken = await this.magic.auth.loginWithMagicLink({ email });
     console.timeEnd("login-with-magic");
 
+    let walletProvider: ethers.providers.Web3Provider =
+      new ethers.providers.Web3Provider(
+        this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider
+      );
+
     if (walletType === "metamask") {
       await this._checkIfMetamaskAvailable();
       // we know that window.ethereum exists here
@@ -68,22 +73,17 @@ class Account {
       );
       // MetaMask requires requesting permission to connect users accounts
       await metamaskProvider.send("eth_requestAccounts", []);
+      walletProvider = metamaskProvider;
     }
 
-    const _provider =
-      walletType === "magic"
-        ? (this.magic
-            .rpcProvider as unknown as ethers.providers.ExternalProvider)
-        : (window.ethereum as unknown as ethers.providers.ExternalProvider);
-    const provider = new ethers.providers.Web3Provider(_provider);
-    this.signer = provider.getSigner();
+    this.signer = walletProvider.getSigner();
 
     console.time("signer-get-address");
     this.userAddress = await this.signer.getAddress();
     console.timeEnd("signer-get-address");
 
     console.time("init-Biconomy");
-    await this.initBiconomy(provider);
+    await this.initBiconomy(walletProvider);
     console.timeEnd("init-Biconomy");
     console.time("init-contracts");
 
