@@ -5,12 +5,7 @@ const main = async () => {
   const alpAccount = new Account();
   console.time("entire-connect");
 
-  await alpAccount.connect(
-    email,
-    "metamask",
-    process.env.MAGIC_API_KEY || "",
-    process.env.POLYGONSCAN_API_KEY || ""
-  );
+  await alpAccount.connect(email, "metamask");
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 

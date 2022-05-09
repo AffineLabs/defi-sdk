@@ -1,17 +1,7 @@
-import axios from "axios";
 import { ethers } from "ethers";
 
-import {
-  TxnReceipt,
-  PolygonScanAPIResponse,
-  DryRunReceipt,
-  TxMetaData,
-  SmallTxReceipt,
-} from "./types";
-import {
-  TransactionResponse,
-  TransactionReceipt,
-} from "@ethersproject/abstract-provider";
+import { DryRunReceipt, TxMetaData, SmallTxReceipt } from "./types";
+import { TransactionResponse } from "@ethersproject/abstract-provider";
 
 import { CONTRACTS, SIGNER, BICONOMY, SIMULATE } from "./cache";
 import { AlpineProduct } from "./types";

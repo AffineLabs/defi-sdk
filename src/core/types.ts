@@ -45,27 +45,6 @@ export interface TxnReceipt {
   status: boolean;
 }
 
-//docs.polygonscan.com/api-endpoints/accounts#get-a-list-of-normal-transactions-by-address
-export interface PolygonScanAPIResponse {
-  blockNumber: string;
-  blockHash: string;
-  timeStamp: string;
-  hash: string;
-  nonce: string;
-  transactionIndex: string;
-  from: string;
-  to: string;
-  value: string;
-  gas: string;
-  gasPrice: string;
-  input: string;
-  contractAddress: string;
-  cumulativeGasUsed: string;
-  txreceipt_status: string;
-  gasUsed: string;
-  confirmations: string;
-}
-
 export interface UserBalance {
   balanceUSDC: string;
 }
