@@ -14,7 +14,6 @@ class Account {
   magic?: Magic;
   signer!: ethers.Signer;
   biconomy!: ethers.providers.Web3Provider;
-  polygonscanApiKey?: string;
   userAddress?: string;
   walletType: "magic" | "metamask" = DEFAULT_WALLET;
   magicDidToken: string | null = null;
@@ -38,10 +37,8 @@ class Account {
   async connect(
     email: string,
     walletType: "magic" | "metamask" = DEFAULT_WALLET,
-    magicApiKey: string,
-    polygonscanApiKey: string,
-    contractVersion?: string,
-    network: "mainnet" | "mumbai" = "mumbai"
+    network: "mainnet" | "mumbai" = "mumbai",
+    contractVersion?: string
   ): Promise<string | null> {
     if (await this.isConnected(walletType)) return this.magicDidToken;
     this.walletType = walletType;
@@ -51,9 +48,9 @@ class Account {
       chainId: 80001,
     };
     // the magic api key is public
-    this.magic = new Magic(magicApiKey, { network: customNodeOptions });
-
-    this.polygonscanApiKey = polygonscanApiKey;
+    this.magic = new Magic(process.env.MAGIC_API_KEY || "", {
+      network: customNodeOptions,
+    });
 
     // Users will be connected to magic no matter what 'walletType' is
     console.time("login-with-magic");
