@@ -1,6 +1,6 @@
 {
   "name": "@alpine-ramp/alpine-defi-sdk",
-  "version": "0.0.9-simulation.4",
+  "version": "0.0.9-simulation.5",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/Multiplyr/defi-sdk.git",
@@ -20,5 +20,6 @@
   "packageManager": "yarn@3.1.1",
   "workspaces": [
     "src/*"
-  ]
+  ],
+  "prepublishOnly": "yarn tsc"
 }
