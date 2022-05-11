@@ -231,6 +231,14 @@ class Account {
   getMagicDidToken(): string | null {
     return this.magicDidToken;
   }
+
+  async generateMagicDidToken(): Promise<string | undefined> {
+    return await this.magic?.user.generateIdToken();
+  }
+
+  async isLoggedInToMagic(): Promise<boolean> {
+    return this.magic ? await this.magic.user.isLoggedIn() : false;
+  }
 }
 
 export { Account };
