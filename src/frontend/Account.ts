@@ -233,7 +233,11 @@ class Account {
   }
 
   async generateMagicDidToken(): Promise<string | undefined> {
-    return await this.magic?.user.generateIdToken();
+    const didToken = await this.magic?.user.generateIdToken();
+
+    if (didToken) this.magicDidToken = didToken;
+
+    return didToken;
   }
 
   async isLoggedInToMagic(): Promise<boolean> {
