@@ -1,4 +1,4 @@
-import { Account } from "./frontend";
+import { Account, ReadAccount } from "./frontend";
 import { AlpineDeFiSDK, AlpineContracts } from "./core";
 
-export { Account, AlpineDeFiSDK, AlpineContracts };
+export { Account, ReadAccount, AlpineDeFiSDK, AlpineContracts };
