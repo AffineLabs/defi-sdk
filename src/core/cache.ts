@@ -1,11 +1,12 @@
-import { ethers } from "ethers";
+import { ethers, Signer } from "ethers";
 import axios from "axios";
 import { AlpineContracts } from "./types";
 
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
-export let BICONOMY: ethers.providers.Web3Provider | undefined;
+export let userAddress: string;
 export let SIMULATE: boolean = false;
+export let BICONOMY: ethers.providers.Web3Provider | undefined;
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(
@@ -41,13 +42,20 @@ export async function getAllContracts(
 }
 
 export async function init(
-  signer: ethers.Signer,
+  signerOrAddress: ethers.Signer | string,
   biconomy: ethers.providers.Web3Provider | undefined,
   contractVersion: string = "latest"
 ) {
   const provider = PROVIDER;
   CONTRACTS = await getAllContracts(provider, contractVersion);
-  SIGNER = signer;
+
+  if (ethers.Signer.isSigner(signerOrAddress)) {
+    SIGNER = signerOrAddress;
+    userAddress = await SIGNER.getAddress();
+  } else {
+    userAddress = signerOrAddress;
+  }
+
   BICONOMY = biconomy;
 }
 
