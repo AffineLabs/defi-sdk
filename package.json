@@ -7,7 +7,8 @@
   "author": "larryob <tosin@multiplyr.ai>",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "start": "parcel src/frontend/index.html"
   },
   "devDependencies": {
     "eslint": "^8.2.0",
