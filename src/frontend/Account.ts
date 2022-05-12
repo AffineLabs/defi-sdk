@@ -218,6 +218,18 @@ class Account {
   getMagicDidToken(): string | null {
     return this.magicDidToken;
   }
+
+  async generateMagicDidToken(): Promise<string | undefined> {
+    const didToken = await this.magic?.user.generateIdToken();
+
+    if (didToken) this.magicDidToken = didToken;
+
+    return didToken;
+  }
+
+  async isLoggedInToMagic(): Promise<boolean> {
+    return this.magic ? await this.magic.user.isLoggedIn() : false;
+  }
 }
 
 class ReadAccount {
