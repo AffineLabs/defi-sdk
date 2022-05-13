@@ -58,7 +58,7 @@ export async function buyUsdcShares(amountUSDC: number) {
   }
   return blockchainCall(alpSave, "deposit", [amount], {
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: (await sharesFromTokens("alpSave", amount)).toString(),
+    tokenAmount: _removeDecimals(await sharesFromTokens("alpSave", amount)),
   });
 }
 
@@ -72,7 +72,9 @@ export async function sellUsdcShares(amountUSDC: number) {
   const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
   return blockchainCall(CONTRACTS.alpSave, "withdraw", [amount], {
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: (await sharesFromTokens("alpSave", usdcToWihdraw)).toString(),
+    tokenAmount: _removeDecimals(
+      await sharesFromTokens("alpSave", usdcToWihdraw)
+    ),
   });
 }
 
@@ -81,7 +83,10 @@ export async function buyBtCEthShares(amountUSDC: number) {
   const amount = _addDecimals(amountUSDC.toString());
   return blockchainCall(alpLarge, "deposit", [amount], {
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: (await sharesFromTokens("alpLarge", amount)).toString(),
+    tokenAmount: ethers.utils.formatUnits(
+      await sharesFromTokens("alpLarge", amount),
+      18
+    ),
   });
 }
 
@@ -92,7 +97,10 @@ export async function sellBtCEthShares(amountUSDC: number) {
   const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
   return blockchainCall(alpLarge, "withdraw", [amount], {
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: (await sharesFromTokens("alpLarge", usdcToWihdraw)).toString(),
+    tokenAmount: ethers.utils.formatUnits(
+      await sharesFromTokens("alpLarge", usdcToWihdraw),
+      18
+    ),
   });
 }
 
