@@ -1,12 +1,14 @@
 {
   "name": "@alpine-ramp/alpine-defi-sdk",
   "version": "0.0.9-simulation.7",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": "https://github.com/Multiplyr/defi-sdk.git",
   "author": "larryob <tosin@multiplyr.ai>",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint src/"
+    "lint": "eslint src/",
+    "postinstall": "tsc"
   },
   "devDependencies": {
     "eslint": "^8.2.0",
