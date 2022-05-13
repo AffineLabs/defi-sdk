@@ -7,8 +7,7 @@
   "author": "larryob <tosin@multiplyr.ai>",
   "license": "MIT",
   "scripts": {
-    "lint": "eslint src/",
-    "postinstall": "tsc"
+    "lint": "eslint src/"
   },
   "devDependencies": {
     "eslint": "^8.2.0",
