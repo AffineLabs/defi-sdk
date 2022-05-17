@@ -1,7 +1,7 @@
 import { Account, ReadAccount } from "./Account";
 
 const main = async () => {
-  const email = "tosin@multiplyr.ai";
+  const email: string = process.env.EMAIL || "";
   const alpAccount = new Account();
   console.time("entire-connect");
 
