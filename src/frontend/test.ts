@@ -12,11 +12,11 @@ const main = async () => {
   const bal = await alpAccount.getTokenInfo("usdc");
   console.log({ bal });
 
-  // await alpAccount.setGasMode(true);
+  await alpAccount.setGasMode(true);
   // await alpAccount.approve("alpSave", "1000000");
-  // await alpAccount.setSimulationMode(true);
-  // const receipt = await alpAccount.buyProduct("alpSave", 1);
-  // console.log({ receipt });
+  await alpAccount.setSimulationMode(true);
+  const receipt = await alpAccount.buyProduct("alpSave", 1);
+  console.log({ receipt });
   console.log("exiting");
 };
 
