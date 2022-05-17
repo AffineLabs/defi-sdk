@@ -24,7 +24,7 @@ See .env.example and src/core/.env.example for the configuration values you will
 
 ### Manual Browser Testing
 
-Run `yarn start` and simply modify src/frontend/test.ts to have whatever javascript you'd like to try out
+Run `yarn start` and simply modify src/frontend/test.ts to have whatever javascript you'd like to try out.
 
 ### Unit/Integration tests
 
