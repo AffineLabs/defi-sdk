@@ -3,14 +3,7 @@ import { ethers } from "ethers";
 import { DryRunReceipt, TxMetaData, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
-import {
-  CONTRACTS,
-  SIGNER,
-  BICONOMY,
-  SIMULATE,
-  PROVIDER,
-  userAddress,
-} from "./cache";
+import { CONTRACTS, SIGNER, BICONOMY, SIMULATE } from "./cache";
 import { AlpineProduct } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 
@@ -19,13 +12,13 @@ import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
  * @returns the best estimate for gas price in eth
  */
 export async function getGasPrice(): Promise<string> {
-  const gas = await PROVIDER.getGasPrice(); // gas price in wei
+  const gas = await SIGNER.getGasPrice(); // gas price in wei
   // return gas price in ether
   return ethers.utils.formatEther(gas);
 }
 
 export async function getMaticBalance() {
-  return ethers.utils.formatEther(await PROVIDER.getBalance(userAddress));
+  return ethers.utils.formatEther(await SIGNER.getBalance());
 }
 
 /**
@@ -86,7 +79,7 @@ export async function blockchainCall(
   if (SIMULATE) {
     const [gasEstimate, gasPrice] = await Promise.all([
       contract.estimateGas[method].apply(null, args),
-      PROVIDER.getGasPrice(),
+      SIGNER.getGasPrice(),
     ]);
 
     console.log(

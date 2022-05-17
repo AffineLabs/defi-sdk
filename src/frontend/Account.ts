@@ -9,7 +9,6 @@ import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
 
 const DEFAULT_WALLET = "magic";
-const CONTRACT_VERSION = "v0.0.8-detailed.0";
 
 class Account {
   magic?: Magic;
@@ -20,7 +19,7 @@ class Account {
   magicDidToken: string | null = null;
   // if true, send regular transaction, if false, use biconomy
   gas: boolean = false;
-  contractVersion: string = CONTRACT_VERSION;
+  contractVersion: string = "v0.0.8-detailed.0";
 
   /**
    * Creates an alpine account object
@@ -173,8 +172,22 @@ class Account {
     return init(this.signer, biconomyProvider, this.contractVersion);
   }
 
+  /**
+   * get the current best estimate for gas price
+   * @returns {Promise<String>} the best estimate for gas price in eth
+   */
+  async getGasPrice(): Promise<string> {
+    return AlpineDeFiSDK.getGasPrice();
+  }
+  async getMaticBalance() {
+    return AlpineDeFiSDK.getMaticBalance();
+  }
   async setSimulationMode(mode: boolean) {
     return setSimulationMode(mode);
+  }
+
+  async getTokenInfo(product: AlpineProduct | "usdc") {
+    return productActions.getTokenInfo(product);
   }
 
   /**
@@ -232,29 +245,4 @@ class Account {
   }
 }
 
-class ReadAccount {
-  userAddress: string;
-  constructor(userAddress: string) {
-    this.userAddress = userAddress;
-  }
-
-  async init() {
-    return init(this.userAddress, undefined, CONTRACT_VERSION);
-  }
-  /**
-   * get the current best estimate for gas price
-   * @returns {Promise<String>} the best estimate for gas price in eth
-   */
-  async getGasPrice(): Promise<string> {
-    return AlpineDeFiSDK.getGasPrice();
-  }
-  async getMaticBalance() {
-    return AlpineDeFiSDK.getMaticBalance();
-  }
-
-  async getTokenInfo(product: AlpineProduct | "usdc") {
-    return productActions.getTokenInfo(product);
-  }
-}
-
-export { Account, ReadAccount };
+export { Account };

@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
-import { CONTRACTS, SIGNER, userAddress } from "./cache";
+import { CONTRACTS, SIGNER } from "./cache";
 
 import { AlpineProduct } from "./types";
 
@@ -112,7 +112,7 @@ export interface TokenInfo {
 export async function getTokenInfo(
   product: AlpineProduct | "usdc"
 ): Promise<TokenInfo> {
-  const user = userAddress;
+  const user = await SIGNER.getAddress();
   if (product === "alpSave") {
     const { alpSave } = CONTRACTS;
     const amount: ethers.BigNumber = await alpSave.balanceOf(user);

@@ -1,4 +1,4 @@
-import { Account, ReadAccount } from "./Account";
+import { Account } from "./Account";
 
 const main = async () => {
   const email = "tosin@multiplyr.ai";
@@ -9,20 +9,15 @@ const main = async () => {
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 
-  await alpAccount.setGasMode(true);
+  const bal = await alpAccount.getTokenInfo("usdc");
+  console.log({ bal });
+
+  // await alpAccount.setGasMode(true);
   // await alpAccount.approve("alpSave", "1000000");
-  await alpAccount.setSimulationMode(true);
-  const receipt = await alpAccount.sellProduct("alpLarge", 1);
-  console.log({ receipt });
-
-  const readAcc = new ReadAccount("0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D");
-  await readAcc.init();
-  const gas = await readAcc.getGasPrice();
-  const balance = await readAcc.getMaticBalance();
-  const info = await readAcc.getTokenInfo("usdc");
-  console.log({ gas, balance, info });
-
+  // await alpAccount.setSimulationMode(true);
+  // const receipt = await alpAccount.buyProduct("alpSave", 1);
+  // console.log({ receipt });
   console.log("exiting");
 };
 
-main();
+main().catch((err) => console.log({ err }));
