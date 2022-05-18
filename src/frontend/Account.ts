@@ -1,4 +1,5 @@
 import { Magic } from "magic-sdk";
+// @ts-ignore
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
@@ -58,16 +59,15 @@ class Account {
     this.magicDidToken = await this.magic.auth.loginWithMagicLink({ email });
     console.timeEnd("login-with-magic");
 
-    let walletProvider: ethers.providers.Web3Provider =
-      new ethers.providers.Web3Provider(
-        this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider
-      );
+    let walletProvider = new ethers.providers.Web3Provider(
+      this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider
+    );
 
     if (walletType === "metamask") {
       await this._checkIfMetamaskAvailable();
       // we know that window.ethereum exists here
       const metamaskProvider = new ethers.providers.Web3Provider(
-        window.ethereum
+        window.ethereum as ethers.providers.ExternalProvider
       );
       // MetaMask requires requesting permission to connect users accounts
       await metamaskProvider.send("eth_requestAccounts", []);
@@ -106,7 +106,7 @@ class Account {
           this.biconomy = new ethers.providers.Web3Provider(biconomyRaw);
           resolve(null);
         })
-        .onEvent(biconomyRaw.ERROR, (error, message) => {
+        .onEvent(biconomyRaw.ERROR, (error: Error, message: string) => {
           reject(message);
         });
     });
@@ -116,12 +116,8 @@ class Account {
    * Disconnect a user from the magic provider
    */
   async disconnect(): Promise<void> {
-    // Nothing to disconnect in the metamask case (we just clear the previous userAddress)
     if (this.magic && (await this.magic.user.isLoggedIn()))
       await this.magic.user.logout();
-    this.signer = undefined;
-    this.userAddress = undefined;
-    this.walletType = undefined;
     this.magicDidToken = null;
   }
 
@@ -130,14 +126,7 @@ class Account {
    * @returns Whether the user is connected to the magic provider
    */
   async isConnected(walletType: string = DEFAULT_WALLET): Promise<boolean> {
-    // We set the user address to undefined when disconnecting
-    // Also if the user refreshes the page then all of the state set in the constructor is wiped away
-    // wallet type needs to be matched also
-    return (
-      this.userAddress !== undefined &&
-      this.walletType !== undefined &&
-      this.walletType === walletType
-    );
+    return this.magicDidToken !== null;
   }
 
   /**
@@ -162,7 +151,7 @@ class Account {
    * get the user's public address
    * @returns user's public address
    */
-  async getUserAddress(): Promise<string> {
+  async getUserAddress() {
     return this.userAddress;
   }
 

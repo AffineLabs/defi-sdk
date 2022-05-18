@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
 import { CONTRACTS, SIGNER, userAddress } from "./cache";
 
-import { AlpineProduct } from "./types";
+import { AlpineProduct, TokenInfo } from "./types";
 
 export async function buyProduct(product: AlpineProduct, amount: number) {
   if (product === "alpSave") {
@@ -104,11 +104,6 @@ export async function sellBtCEthShares(amountUSDC: number) {
   });
 }
 
-export interface TokenInfo {
-  amount: string; // in base unit
-  price: string; // dollars / 1 base unit of token
-  equity: string; // in dollars
-}
 export async function getTokenInfo(
   product: AlpineProduct | "usdc"
 ): Promise<TokenInfo> {

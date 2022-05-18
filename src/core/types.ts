@@ -31,7 +31,11 @@ type ContractName = "usdc" | "forwarder" | AlpineProduct;
 export type AlpineContracts = {
   [key in ContractName]: ethers.Contract;
 };
-
+export interface TokenInfo {
+  amount: string; // in base unit
+  price: string; // dollars / 1 base unit of token
+  equity: string; // in dollars
+}
 export interface TxnReceipt {
   method: string;
   amount: string;
