@@ -26,7 +26,7 @@ class Account {
   /**
    * Creates an alpine account object
    */
-  constructor() {}
+  constructor() { }
 
   /**
    * connect the user account to magic's sdk. In particular,

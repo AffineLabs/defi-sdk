@@ -1,7 +1,7 @@
 import { Account, ReadAccount } from "./Account";
 
 const main = async () => {
-  const email = "tosin@multiplyr.ai";
+  const email: string = process.env.EMAIL || "";
   const alpAccount = new Account();
   console.time("entire-connect");
 
@@ -12,7 +12,7 @@ const main = async () => {
   await alpAccount.setGasMode(true);
   // await alpAccount.approve("alpSave", "1000000");
   await alpAccount.setSimulationMode(true);
-  const receipt = await alpAccount.buyProduct("alpSave", 1);
+  const receipt = await alpAccount.sellProduct("alpLarge", 1);
   console.log({ receipt });
 
   const readAcc = new ReadAccount("0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D");
