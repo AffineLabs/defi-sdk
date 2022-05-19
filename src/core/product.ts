@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
+import { _addDecimals, _removeDecimals, blockchainCall, getGasPrice } from "./AlpineDeFiSDK";
 import { CONTRACTS, SIGNER, userAddress } from "./cache";
 
 import { AlpineProduct, TokenInfo } from "./types";
@@ -109,18 +109,18 @@ export async function getTokenInfo(
 ): Promise<TokenInfo> {
   const user = userAddress;
   if (product === "alpSave" || product === "alpLarge") {
-    const contract: ethers.Contract = CONTRACTS[product];
+    const contract = CONTRACTS[product];
     const amount: ethers.BigNumber = await contract.balanceOf(user);
-    const price: ethers.BigNumber = (await contract.detailedPrice()).num;
-    const equity: ethers.BigNumber = amount.mul(price)
-    // token amount has 6 decimals 
-    // and price has 6 decimals for alpSave and 8 decimals for alpLarge
-    const amount_decimals = 6
-    const price_decimals = (product === "alpSave") ? 6 : 8
+    let num: ethers.BigNumber
+    let decimals: ethers.BigNumber
+    // price and number of decimals of each unit of the contract
+    ({ num, decimals } = await contract.detailedPrice());
+    const amount_decimals = ethers.BigNumber.from(await contract.decimals());
+    const equity = amount.mul(num)
     return {
       amount: ethers.utils.formatUnits(amount, amount_decimals),
-      price: ethers.utils.formatUnits(price, price_decimals),
-      equity: ethers.utils.formatUnits(equity, amount_decimals + price_decimals),
+      price: ethers.utils.formatUnits(num, decimals),
+      equity: ethers.utils.formatUnits(equity, amount_decimals.add(decimals)),
     };
   }
   // usdc
