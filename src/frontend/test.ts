@@ -1,7 +1,7 @@
 import { Account, ReadAccount } from "./Account";
 
 const main = async () => {
-  const email: string = process.env.EMAIL || "";
+  const email = process.env.EMAIL || "";
 
   const alpAccount = new Account();
   console.time("entire-connect");
@@ -10,14 +10,13 @@ const main = async () => {
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 
-  // await alpAccount.setGasMode(true);
-  // await alpAccount.approve("alpSave", "1000000");
-  // await alpAccount.setSimulationMode(true);
-  // const receipt = await alpAccount.buyProduct("alpSave", 1);
-  // console.log({ receipt });
+  await alpAccount.setGasMode(true);
+  // await alpAccount.approve("alpLarge", "1000000");
+  await alpAccount.setSimulationMode(true);
+  const receipt = await alpAccount.buyProduct("alpLarge", 1);
+  console.log({ receipt });
 
-  const wallet_address: string = alpAccount.userAddress || "";
-  const readAcc = new ReadAccount(wallet_address);
+  const readAcc = new ReadAccount(alpAccount.userAddress || "");
   await readAcc.init();
   const gas = await readAcc.getGasPrice();
   const balance = await readAcc.getMaticBalance();
