@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { _addDecimals, _removeDecimals, blockchainCall, getGasPrice } from "./AlpineDeFiSDK";
+import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
 import { CONTRACTS, SIGNER, userAddress } from "./cache";
 
 import { AlpineProduct, TokenInfo } from "./types";
