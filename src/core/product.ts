@@ -53,7 +53,7 @@ export async function buyUsdcShares(amountUSDC: number) {
       `Insufficient allowance. Allowance: ${_removeDecimals(
         allowance
       )} USDC, Required: ${amountUSDC} USDC. ` +
-        "Call approve() to increase the allowance."
+      "Call approve() to increase the allowance."
     );
   }
   return blockchainCall(alpSave, "deposit", [amount], {
@@ -108,42 +108,21 @@ export async function getTokenInfo(
   product: AlpineProduct | "usdc"
 ): Promise<TokenInfo> {
   const user = userAddress;
-  if (product === "alpSave") {
-    const { alpSave } = CONTRACTS;
-    const amount: ethers.BigNumber = await alpSave.balanceOf(user);
-    const equity: ethers.BigNumber = await alpSave.tokensFromShares(amount);
-    const price: ethers.BigNumber = await alpSave.tokensFromShares(1e6);
+  if (product === "alpSave" || product === "alpLarge") {
+    const contract = CONTRACTS[product];
+    const amount: ethers.BigNumber = await contract.balanceOf(user);
+    let num: ethers.BigNumber
+    let decimals: ethers.BigNumber
+    // price and number of decimals of each unit of the contract
+    ({ num, decimals } = await contract.detailedPrice());
+    const amount_decimals = ethers.BigNumber.from(await contract.decimals());
+    const equity = amount.mul(num)
     return {
-      amount: ethers.utils.formatUnits(amount, 6),
-      price: ethers.utils.formatUnits(price, 6),
-      equity: ethers.utils.formatUnits(equity, 6),
+      amount: ethers.utils.formatUnits(amount, amount_decimals),
+      price: ethers.utils.formatUnits(num, decimals),
+      equity: ethers.utils.formatUnits(equity, amount_decimals.add(decimals)),
     };
   }
-
-  if (product === "alpLarge") {
-    // alpLarge
-    const { alpLarge } = CONTRACTS;
-    // TODO: let the contract take care of pricing
-    const amount: ethers.BigNumber = await alpLarge.balanceOf(user);
-    const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();
-    console.log({ totalDollars });
-    // totalDollars * percentOfTotalSupply
-    // dollars given by btc/eth vault actually have 8 decimals
-    const totalSupply: ethers.BigNumber = await alpLarge.totalSupply();
-    const equity = totalDollars.mul(amount).div(totalSupply);
-    console.log({
-      totalDollars: totalDollars.toString(),
-      totalSupply: totalSupply.toString(),
-    });
-    const price = totalDollars.toNumber() / totalSupply.div(1e10).toNumber();
-    console.log({ equity, amount, price });
-    return {
-      amount: ethers.utils.formatUnits(amount, 18),
-      price: price.toString(),
-      equity: ethers.utils.formatUnits(equity, 8),
-    };
-  }
-
   // usdc
   const { usdc } = CONTRACTS;
   const amount = await usdc.balanceOf(user);
