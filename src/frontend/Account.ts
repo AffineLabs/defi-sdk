@@ -10,7 +10,7 @@ import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
 
 const DEFAULT_WALLET = "magic";
-const CONTRACT_VERSION = "v0.0.8-detailed.0";
+const CONTRACT_VERSION = "v0.0.9-wormhole.0";
 
 class Account {
   magic?: Magic;
@@ -26,7 +26,7 @@ class Account {
   /**
    * Creates an alpine account object
    */
-  constructor() { }
+  constructor() {}
 
   /**
    * connect the user account to magic's sdk. In particular,

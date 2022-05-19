@@ -53,7 +53,7 @@ export async function buyUsdcShares(amountUSDC: number) {
       `Insufficient allowance. Allowance: ${_removeDecimals(
         allowance
       )} USDC, Required: ${amountUSDC} USDC. ` +
-      "Call approve() to increase the allowance."
+        "Call approve() to increase the allowance."
     );
   }
   return blockchainCall(alpSave, "deposit", [amount], {
@@ -81,7 +81,7 @@ export async function sellUsdcShares(amountUSDC: number) {
 export async function buyBtCEthShares(amountUSDC: number) {
   const { alpLarge } = CONTRACTS;
   const amount = _addDecimals(amountUSDC.toString());
-  return blockchainCall(alpLarge, "deposit", [amount], {
+  return blockchainCall(alpLarge, "deposit", [amount, userAddress], {
     dollarAmount: amountUSDC.toString(),
     tokenAmount: ethers.utils.formatUnits(
       await sharesFromTokens("alpLarge", amount),
@@ -95,13 +95,18 @@ export async function sellBtCEthShares(amountUSDC: number) {
   const amount = _addDecimals(amountUSDC.toString());
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
   const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
-  return blockchainCall(alpLarge, "withdraw", [amount], {
-    dollarAmount: amountUSDC.toString(),
-    tokenAmount: ethers.utils.formatUnits(
-      await sharesFromTokens("alpLarge", usdcToWihdraw),
-      18
-    ),
-  });
+  return blockchainCall(
+    alpLarge,
+    "withdraw",
+    [amount, userAddress, userAddress],
+    {
+      dollarAmount: amountUSDC.toString(),
+      tokenAmount: ethers.utils.formatUnits(
+        await sharesFromTokens("alpLarge", usdcToWihdraw),
+        18
+      ),
+    }
+  );
 }
 
 export async function getTokenInfo(
@@ -111,12 +116,12 @@ export async function getTokenInfo(
   if (product === "alpSave" || product === "alpLarge") {
     const contract = CONTRACTS[product];
     const amount: ethers.BigNumber = await contract.balanceOf(user);
-    let num: ethers.BigNumber
-    let decimals: ethers.BigNumber
+    let num: ethers.BigNumber;
+    let decimals: ethers.BigNumber;
     // price and number of decimals of each unit of the contract
     ({ num, decimals } = await contract.detailedPrice());
     const amount_decimals = ethers.BigNumber.from(await contract.decimals());
-    const equity = amount.mul(num)
+    const equity = amount.mul(num);
     return {
       amount: ethers.utils.formatUnits(amount, amount_decimals),
       price: ethers.utils.formatUnits(num, decimals),
