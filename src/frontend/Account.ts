@@ -1,4 +1,4 @@
-import { Magic } from "magic-sdk";
+import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
 // @ts-ignore
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
@@ -40,7 +40,8 @@ class Account {
     email: string,
     walletType: "magic" | "metamask" = DEFAULT_WALLET,
     network: "mainnet" | "mumbai" = "mumbai",
-    contractVersion?: string
+    contractVersion?: string,
+    shouldRunMagicTestMode?: boolean
   ): Promise<string | null> {
     if (await this.isConnected(walletType)) return this.magicDidToken;
     this.walletType = walletType;
@@ -49,10 +50,17 @@ class Account {
       rpcUrl: PROVIDER.connection.url,
       chainId: 80001,
     };
-    // the magic api key is public
-    this.magic = new Magic(process.env.MAGIC_API_KEY || "", {
+
+    const magicOptions: MagicSDKAdditionalConfiguration = {
       network: customNodeOptions,
-    });
+    };
+
+    if (shouldRunMagicTestMode) {
+      magicOptions.testMode = true;
+    }
+
+    // the magic api key is public
+    this.magic = new Magic(process.env.MAGIC_API_KEY || "", magicOptions);
 
     // Users will be connected to magic no matter what 'walletType' is
     console.time("login-with-magic");
