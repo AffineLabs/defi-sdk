@@ -10,7 +10,6 @@ import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
 
 const DEFAULT_WALLET = "magic";
-const CONTRACT_VERSION = "v0.0.9-wormhole.0";
 
 class Account {
   magic?: Magic;
@@ -21,7 +20,6 @@ class Account {
   magicDidToken: string | null = null;
   // if true, send regular transaction, if false, use biconomy
   gas: boolean = false;
-  contractVersion: string = CONTRACT_VERSION;
 
   /**
    * Creates an alpine account object
@@ -40,7 +38,6 @@ class Account {
     email: string,
     walletType: "magic" | "metamask" = DEFAULT_WALLET,
     network: "mainnet" | "mumbai" = "mumbai",
-    contractVersion?: string,
     shouldRunMagicTestMode?: boolean
   ): Promise<string | null> {
     if (await this.isConnected(walletType)) return this.magicDidToken;
@@ -93,8 +90,7 @@ class Account {
     // console.timeEnd("init-Biconomy");
 
     console.time("init-contracts");
-    if (contractVersion) this.contractVersion = contractVersion;
-    await init(this.signer, this.biconomy, this.contractVersion);
+    await init(this.signer, this.biconomy);
     console.timeEnd("init-contracts");
 
     return this.magicDidToken;
@@ -236,7 +232,7 @@ class ReadAccount {
   }
 
   async init() {
-    return init(this.userAddress, undefined, CONTRACT_VERSION);
+    return init(this.userAddress, undefined);
   }
   /**
    * get the current best estimate for gas price

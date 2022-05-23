@@ -2,6 +2,7 @@ import { ethers, Signer } from "ethers";
 import axios from "axios";
 import { AlpineContracts } from "./types";
 
+const CONTRACT_VERSION = "stable";
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
@@ -44,7 +45,7 @@ export async function getAllContracts(
 export async function init(
   signerOrAddress: ethers.Signer | string,
   biconomy: ethers.providers.Web3Provider | undefined,
-  contractVersion: string = "latest"
+  contractVersion: string = CONTRACT_VERSION
 ) {
   const provider = PROVIDER;
   CONTRACTS = await getAllContracts(provider, contractVersion);
