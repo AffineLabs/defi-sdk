@@ -163,7 +163,7 @@ class Account {
     // this.biconomy is created upon connection and will always exist
     this.gas = useGas;
     const biconomyProvider = useGas ? undefined : this.biconomy;
-    return init(this.signer, biconomyProvider, this.contractVersion);
+    return init(this.signer, biconomyProvider);
   }
 
   async setSimulationMode(mode: boolean) {
