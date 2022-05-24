@@ -9,8 +9,8 @@
   "scripts": {
     "lint": "eslint src/",
     "start": "parcel src/frontend/index.html",
-    "format": "prettier --check \"**/*.{ts,js}\"",
-    "format:fix": "prettier --write \"**/*.{ts,js}\""
+    "format": "prettier --check \"src/**/*.{ts,js}\"",
+    "format:fix": "prettier --write \"src/**/*.{ts,js}\""
   },
   "devDependencies": {
     "eslint": "^8.2.0",
