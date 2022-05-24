@@ -38,7 +38,7 @@ class Account {
     email: string,
     walletType: "magic" | "metamask" = DEFAULT_WALLET,
     network: "mainnet" | "mumbai" = "mumbai",
-    shouldRunMagicTestMode?: boolean
+    shouldRunMagicTestMode?: boolean,
   ): Promise<string | null> {
     if (await this.isConnected(walletType)) return this.magicDidToken;
     this.walletType = walletType;
@@ -65,15 +65,13 @@ class Account {
     console.timeEnd("login-with-magic");
 
     let walletProvider = new ethers.providers.Web3Provider(
-      this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider
+      this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider,
     );
 
     if (walletType === "metamask") {
       await this._checkIfMetamaskAvailable();
       // we know that window.ethereum exists here
-      const metamaskProvider = new ethers.providers.Web3Provider(
-        window.ethereum as ethers.providers.ExternalProvider
-      );
+      const metamaskProvider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
       // MetaMask requires requesting permission to connect users accounts
       await metamaskProvider.send("eth_requestAccounts", []);
       walletProvider = metamaskProvider;
@@ -120,8 +118,7 @@ class Account {
    * Disconnect a user from the magic provider
    */
   async disconnect(): Promise<void> {
-    if (this.magic && (await this.magic.user.isLoggedIn()))
-      await this.magic.user.logout();
+    if (this.magic && (await this.magic.user.isLoggedIn())) await this.magic.user.logout();
     this.magicDidToken = null;
   }
 

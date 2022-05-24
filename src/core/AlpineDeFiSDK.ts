@@ -3,14 +3,7 @@ import { ethers } from "ethers";
 import { DryRunReceipt, TxMetaData, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
-import {
-  CONTRACTS,
-  SIGNER,
-  BICONOMY,
-  SIMULATE,
-  PROVIDER,
-  userAddress,
-} from "./cache";
+import { CONTRACTS, SIGNER, BICONOMY, SIMULATE, PROVIDER, userAddress } from "./cache";
 import { AlpineProduct } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 
@@ -57,7 +50,7 @@ export async function blockchainCall(
   contract: ethers.Contract,
   method: string,
   args: Array<any>,
-  options?: TxMetaData
+  options?: TxMetaData,
 ): Promise<void | SmallTxReceipt | DryRunReceipt> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
@@ -66,12 +59,7 @@ export async function blockchainCall(
 
   if (biconomy && contract.address !== CONTRACTS.usdc.address) {
     console.log({ method }, args);
-    const { signature, request } = await getSignature(
-      contract,
-      signer,
-      method,
-      args
-    );
+    const { signature, request } = await getSignature(contract, signer, method, args);
     console.log({ signature, request });
     await sendToForwarder([signature], [request]);
     return;
@@ -89,9 +77,7 @@ export async function blockchainCall(
       PROVIDER.getGasPrice(),
     ]);
 
-    console.log(
-      `gasEstimate: ${gasEstimate.toString()} and gasPrice: ${gasPrice.toString()}`
-    );
+    console.log(`gasEstimate: ${gasEstimate.toString()} and gasPrice: ${gasPrice.toString()}`);
 
     // cost is gas * gasPrice
     const cost = gasEstimate.mul(gasPrice);
@@ -102,13 +88,9 @@ export async function blockchainCall(
 
     let alpFee = ethers.BigNumber.from(0);
     let alpFeePercent: string = "0";
-    if (
-      method == "withdraw" &&
-      contract.address === CONTRACTS.alpSave.address
-    ) {
+    if (method == "withdraw" && contract.address === CONTRACTS.alpSave.address) {
       const usdcAmount: ethers.BigNumber = args[0];
-      const withdrawFeeBps: ethers.BigNumber =
-        await CONTRACTS.alpSave.withdrawalFee();
+      const withdrawFeeBps: ethers.BigNumber = await CONTRACTS.alpSave.withdrawalFee();
       alpFee = usdcAmount.mul(withdrawFeeBps).div(10_000);
       alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
     }
@@ -139,10 +121,7 @@ export async function blockchainCall(
 export async function approve(to: AlpineProduct, amountUSDC: string) {
   // convert to micro usdc
   const amount = _addDecimals(amountUSDC);
-  return blockchainCall(CONTRACTS.usdc, "approve", [
-    CONTRACTS[to].address,
-    amount,
-  ]);
+  return blockchainCall(CONTRACTS.usdc, "approve", [CONTRACTS[to].address, amount]);
 }
 
 /**
@@ -167,7 +146,7 @@ export async function transfer(to: string, amountUSDC: string) {
     throw new Error(
       "Insuffient balance at user's wallet. " +
         `Balance: ${_removeDecimals(balance)}, ` +
-        `Requested to transfer: ${_removeDecimals(amount)}`
+        `Requested to transfer: ${_removeDecimals(amount)}`,
     );
   }
 

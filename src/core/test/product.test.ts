@@ -6,12 +6,8 @@ import { approve, mintUSDC } from "../AlpineDeFiSDK";
 import { CONTRACTS, init, setProvider, SIGNER } from "../cache";
 import { buyProduct, sellProduct, getTokenInfo } from "../product";
 
-const testProvider = new ethers.providers.JsonRpcProvider(
-  "http://localhost:8545"
-);
-const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(
-  testProvider
-);
+const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
 
 describe("Buy products", async () => {
   before(async () => {
@@ -29,9 +25,7 @@ describe("Buy products", async () => {
     expect(res.gt(0)).to.be.true;
 
     await sellProduct("alpSave", 10);
-    const newBal: ethers.BigNumber = await CONTRACTS.alpSave.balanceOf(
-      wallet.address
-    );
+    const newBal: ethers.BigNumber = await CONTRACTS.alpSave.balanceOf(wallet.address);
     expect(newBal.lt(res)).to.be.true;
   });
 
@@ -40,9 +34,7 @@ describe("Buy products", async () => {
 
     console.log("buying alpLarge");
     await buyProduct("alpLarge", 10);
-    const res: ethers.BigNumber = await CONTRACTS.alpLarge.balanceOf(
-      wallet.address
-    );
+    const res: ethers.BigNumber = await CONTRACTS.alpLarge.balanceOf(wallet.address);
     console.log("alpLarge shares....", res.toString());
     expect(res.gt(0)).to.be.true;
 
@@ -67,31 +59,18 @@ describe("Product info", async () => {
     const saveInfo = await getTokenInfo("alpSave");
     console.log({ saveInfo });
 
-    expect(Number(saveInfo.amount) * Number(saveInfo.price)).to.closeTo(
-      Number(saveInfo.equity),
-      0.1
-    );
+    expect(Number(saveInfo.amount) * Number(saveInfo.price)).to.closeTo(Number(saveInfo.equity), 0.1);
     const largeInfo = await getTokenInfo("alpLarge");
     console.log({ largeInfo });
-    expect(Number(largeInfo.amount) * Number(largeInfo.price)).to.closeTo(
-      Number(largeInfo.equity),
-      1
-    );
+    expect(Number(largeInfo.amount) * Number(largeInfo.price)).to.closeTo(Number(largeInfo.equity), 1);
 
     const usdcInfo = await getTokenInfo("usdc");
     console.log({ usdcInfo });
-    expect(usdcInfo.amount).to.equal(
-      ethers.utils.formatUnits(
-        await CONTRACTS.usdc.balanceOf(wallet.address),
-        6
-      )
-    );
+    expect(usdcInfo.amount).to.equal(ethers.utils.formatUnits(await CONTRACTS.usdc.balanceOf(wallet.address), 6));
     expect(usdcInfo.price).to.equal("1");
     expect(usdcInfo.equity).to.equal(usdcInfo.amount);
   });
 
   const usdcInfo = await getTokenInfo("usdc");
-  expect(usdcInfo.amount).to.equal(
-    ethers.utils.formatUnits(await CONTRACTS.usdc.balanceOf(wallet.address), 6)
-  );
+  expect(usdcInfo.amount).to.equal(ethers.utils.formatUnits(await CONTRACTS.usdc.balanceOf(wallet.address), 6));
 });
