@@ -8,7 +8,9 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint src/",
-    "start": "parcel src/frontend/index.html"
+    "start": "parcel src/frontend/index.html",
+    "format": "prettier --check \"**/*.{ts,js,sol}\"",
+    "format:fix": "prettier --write \"**/*.{ts,js,sol}\""
   },
   "devDependencies": {
     "eslint": "^8.2.0",
