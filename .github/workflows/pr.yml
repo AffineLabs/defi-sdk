@@ -28,6 +28,9 @@ jobs:
 
       - name: Install yarn dependencies
         run: yarn --frozen-lockfile
+      
+      - name: Check Typescript compilation errors
+        run: yarn tsc
 
       - name: Build and run tests.
         run: cd src/core &&  yarn test
