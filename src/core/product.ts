@@ -38,9 +38,7 @@ export async function buyUsdcShares(amountUSDC: number) {
   const walletBalance = await usdc.balanceOf(userAddress);
   if (walletBalance.lt(amount)) {
     throw new Error(
-      `Insuffient balance at user wallet. Balance: ${_removeDecimals(
-        walletBalance
-      )}, Requested to buy: ${amountUSDC}`
+      `Insuffient balance at user wallet. Balance: ${_removeDecimals(walletBalance)}, Requested to buy: ${amountUSDC}`,
     );
   }
 
@@ -50,10 +48,8 @@ export async function buyUsdcShares(amountUSDC: number) {
   // allowance < amount
   if (allowance.lt(amount)) {
     throw new Error(
-      `Insufficient allowance. Allowance: ${_removeDecimals(
-        allowance
-      )} USDC, Required: ${amountUSDC} USDC. ` +
-        "Call approve() to increase the allowance."
+      `Insufficient allowance. Allowance: ${_removeDecimals(allowance)} USDC, Required: ${amountUSDC} USDC. ` +
+        "Call approve() to increase the allowance.",
     );
   }
   return blockchainCall(alpSave, "deposit", [amount], {
@@ -72,9 +68,7 @@ export async function sellUsdcShares(amountUSDC: number) {
   const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
   return blockchainCall(CONTRACTS.alpSave, "withdraw", [amount], {
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(
-      await sharesFromTokens("alpSave", usdcToWihdraw)
-    ),
+    tokenAmount: _removeDecimals(await sharesFromTokens("alpSave", usdcToWihdraw)),
   });
 }
 
@@ -83,10 +77,7 @@ export async function buyBtCEthShares(amountUSDC: number) {
   const amount = _addDecimals(amountUSDC.toString());
   return blockchainCall(alpLarge, "deposit", [amount, userAddress], {
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: ethers.utils.formatUnits(
-      await sharesFromTokens("alpLarge", amount),
-      18
-    ),
+    tokenAmount: ethers.utils.formatUnits(await sharesFromTokens("alpLarge", amount), 18),
   });
 }
 
@@ -95,23 +86,13 @@ export async function sellBtCEthShares(amountUSDC: number) {
   const amount = _addDecimals(amountUSDC.toString());
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
   const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
-  return blockchainCall(
-    alpLarge,
-    "withdraw",
-    [amount, userAddress, userAddress],
-    {
-      dollarAmount: amountUSDC.toString(),
-      tokenAmount: ethers.utils.formatUnits(
-        await sharesFromTokens("alpLarge", usdcToWihdraw),
-        18
-      ),
-    }
-  );
+  return blockchainCall(alpLarge, "withdraw", [amount, userAddress, userAddress], {
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: ethers.utils.formatUnits(await sharesFromTokens("alpLarge", usdcToWihdraw), 18),
+  });
 }
 
-export async function getTokenInfo(
-  product: AlpineProduct | "usdc"
-): Promise<TokenInfo> {
+export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<TokenInfo> {
   const user = userAddress;
   if (product === "alpSave" || product === "alpLarge") {
     const contract = CONTRACTS[product];
@@ -138,10 +119,7 @@ export async function getTokenInfo(
   };
 }
 
-export async function tokensFromShares(
-  product: AlpineProduct,
-  amount: ethers.BigNumber
-) {
+export async function tokensFromShares(product: AlpineProduct, amount: ethers.BigNumber) {
   if (product === "alpSave") {
     const { alpSave } = CONTRACTS;
     const tokens: ethers.BigNumber = await alpSave.tokensFromShares(amount);
@@ -160,15 +138,10 @@ export async function tokensFromShares(
   }
 }
 
-export async function sharesFromTokens(
-  product: AlpineProduct,
-  tokenAmount: ethers.BigNumber
-) {
+export async function sharesFromTokens(product: AlpineProduct, tokenAmount: ethers.BigNumber) {
   if (product === "alpSave") {
     const { alpSave } = CONTRACTS;
-    const shares: ethers.BigNumber = await alpSave.sharesFromTokens(
-      tokenAmount
-    );
+    const shares: ethers.BigNumber = await alpSave.sharesFromTokens(tokenAmount);
     return shares;
   }
 

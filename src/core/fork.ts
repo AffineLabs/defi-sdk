@@ -5,10 +5,7 @@ import { config as dotenvConfig } from "dotenv";
 import { resolve } from "path";
 dotenvConfig({ path: resolve(__dirname, "./.env") });
 
-program.argument(
-  "[testFiles]",
-  "Glob of tests files, e.g. test/product.test.ts"
-);
+program.argument("[testFiles]", "Glob of tests files, e.g. test/product.test.ts");
 
 program.parse();
 
@@ -20,22 +17,19 @@ if (!testFiles) testFiles = "test/**/*.test.ts";
 // this PR: https://github.com/mds1/convex-shutdown-simulation/pull/4
 // Whether we pin a recent block or use the latest block, the issue persists
 const { result } = concurrently(
-  [
-    `yarn ganache --fork.url ${process.env.POLYGON_ALCHEMY_URL}`,
-    `yarn run-test ${testFiles}`,
-  ],
+  [`yarn ganache --fork.url ${process.env.POLYGON_ALCHEMY_URL}`, `yarn run-test ${testFiles}`],
   // The ganache process does not exit. The process exits successfully if the `yarn test` process exits correctly
-  { successCondition: "first", killOthers: ["failure", "success"] }
+  { successCondition: "first", killOthers: ["failure", "success"] },
 );
 
 result.then(
-  (res) => {
+  res => {
     console.log("Tests finished successfully.");
     process.exit(0);
   },
-  (err) => {
+  err => {
     console.log("Tests failed!");
     console.log({ err });
     process.exit(1);
-  }
+  },
 );

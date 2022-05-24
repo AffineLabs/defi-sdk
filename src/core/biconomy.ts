@@ -3,12 +3,7 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { BICONOMY, CONTRACTS, SIGNER } from "./cache";
 
 // See https://docs.biconomy.io/products/enable-gasless-transactions/custom-implementation/sdk
-export async function sendBiconomy(
-  contract: ethers.Contract,
-  signer: ethers.Signer,
-  method: string,
-  args: Array<any>
-) {
+export async function sendBiconomy(contract: ethers.Contract, signer: ethers.Signer, method: string, args: Array<any>) {
   // Initialize Constants
   const domainType = [
     { name: "name", type: "string" },
@@ -27,10 +22,7 @@ export async function sendBiconomy(
     name: await contract.name(),
     version: "1",
     verifyingContract: contract.address,
-    salt: ethers.utils.hexZeroPad(
-      ethers.BigNumber.from(80001).toHexString(),
-      32
-    ),
+    salt: ethers.utils.hexZeroPad(ethers.BigNumber.from(80001).toHexString(), 32),
   };
 
   const userAddress = await signer.getAddress();
@@ -60,20 +52,16 @@ export async function sendBiconomy(
     because we have used salt in domain data instead of chainId*/
   // Get the EIP-712 Signature and send the transaction
   const provider: JsonRpcProvider = signer.provider as JsonRpcProvider;
-  let signature = await provider.send("eth_signTypedData_v3", [
-    userAddress,
-    dataToSign,
-  ]);
+  let signature = await provider.send("eth_signTypedData_v3", [userAddress, dataToSign]);
   let { r, s, v } = getSignatureParameters(signature);
 
-  const { data: metaTxData } =
-    await contract.populateTransaction.executeMetaTransaction(
-      userAddress,
-      functionSignature,
-      r,
-      s,
-      v
-    );
+  const { data: metaTxData } = await contract.populateTransaction.executeMetaTransaction(
+    userAddress,
+    functionSignature,
+    r,
+    s,
+    v,
+  );
 
   const metaTxParams = {
     data: metaTxData,
@@ -92,9 +80,7 @@ export async function sendBiconomy(
 
 function getSignatureParameters(signature: string) {
   if (!ethers.utils.isHexString(signature)) {
-    throw new Error(
-      'Given value "'.concat(signature, '" is not a valid hex string.')
-    );
+    throw new Error('Given value "'.concat(signature, '" is not a valid hex string.'));
   }
   let r = signature.slice(0, 66);
   let s = "0x".concat(signature.slice(66, 130));
@@ -109,12 +95,7 @@ function getSignatureParameters(signature: string) {
 }
 
 // See https://github.com/MetaMask/test-dapp/blob/f3ce3e6972e9fe2b239caf8069740c5e84a156b0/src/index.js#L1024
-export async function getSignature(
-  contract: ethers.Contract,
-  signer: ethers.Signer,
-  method: string,
-  args: Array<any>
-) {
+export async function getSignature(contract: ethers.Contract, signer: ethers.Signer, method: string, args: Array<any>) {
   const userAddress = await signer.getAddress();
   const { forwarder } = CONTRACTS;
 
@@ -162,31 +143,18 @@ export async function getSignature(
   };
 
   const provider: JsonRpcProvider = signer.provider as JsonRpcProvider;
-  const signature: string = await provider.send("eth_signTypedData_v4", [
-    userAddress,
-    JSON.stringify(msgParams),
-  ]);
+  const signature: string = await provider.send("eth_signTypedData_v4", [userAddress, JSON.stringify(msgParams)]);
   console.log({ signature });
 
   return { signature, request: message };
 }
 
-export async function sendToForwarder(
-  signatures: Array<string>,
-  requests: Array<any>
-) {
+export async function sendToForwarder(signatures: Array<string>, requests: Array<any>) {
   // Call executeBatch
 
   const { forwarder } = CONTRACTS;
   const encodedCall = forwarder.interface.encodeFunctionData("executeBatch", [
-    requests.map((req) => [
-      req.from,
-      req.to,
-      req.value,
-      req.gas,
-      req.nonce,
-      req.data,
-    ]),
+    requests.map(req => [req.from, req.to, req.value, req.gas, req.nonce, req.data]),
     ethers.utils.hexConcat(signatures),
   ]);
 
