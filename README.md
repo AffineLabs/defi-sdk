@@ -2,7 +2,11 @@
 
 ## Pre-requisites
 
-- Install nvm with these [instructions](https://github.com/nvm-sh/nvm#install--update-script). Alternatively simply install node 16.
+- Install nvm with these [instructions](https://github.com/nvm-sh/nvm#install--update-script). Then run
+
+```sh
+nvm use
+```
 
 - Install yarn with
 
@@ -20,7 +24,7 @@ yarn install
 
 ### Configuration
 
-See .env.example and src/core/.env.example for the configuration values you will need.
+See .env.example for the configuration values you will need.
 
 ### Manual Browser Testing
 
