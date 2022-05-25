@@ -20,7 +20,7 @@ yarn install
 
 ### Configuration
 
-See .env.example and src/core/.env.example for the configuration values you will need.
+See .env.example for the configuration values you will need.
 
 ### Manual Browser Testing
 
