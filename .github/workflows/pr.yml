@@ -35,5 +35,8 @@ jobs:
       - name: Check formatting errors using prettier
         run: yarn format
 
+      - name: Check linting errors using eslint
+        run: yarn lint
+
       - name: Build and run tests.
         run: cd src/core &&  yarn test
