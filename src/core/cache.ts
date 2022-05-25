@@ -6,7 +6,6 @@ const CONTRACT_VERSION = "stable";
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
-export let SIMULATE: boolean = false;
 export let BICONOMY: ethers.providers.Web3Provider | undefined;
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
@@ -57,8 +56,4 @@ export async function init(
 
 export function setProvider(provider: ethers.providers.StaticJsonRpcProvider) {
   PROVIDER = provider;
-}
-
-export async function setSimulationMode(mode: boolean) {
-  SIMULATE = mode;
 }

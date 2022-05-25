@@ -1,11 +1,12 @@
 import { ethers } from "ethers";
 
-import { DryRunReceipt, TxMetaData, SmallTxReceipt } from "./types";
+import { FullTxReceipt, DryRunReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
-import { CONTRACTS, SIGNER, BICONOMY, SIMULATE, PROVIDER, userAddress } from "./cache";
+import { CONTRACTS, SIGNER, BICONOMY, PROVIDER, userAddress } from "./cache";
 import { AlpineProduct } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
+import { GasInfo } from "..";
 
 /**
  * Get the current best estimate for gas price
@@ -50,8 +51,8 @@ export async function blockchainCall(
   contract: ethers.Contract,
   method: string,
   args: Array<any>,
-  options?: TxMetaData,
-): Promise<void | SmallTxReceipt | DryRunReceipt> {
+  simulate: boolean = false,
+): Promise<void | SmallTxReceipt | GasInfo> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
 
@@ -71,7 +72,7 @@ export async function blockchainCall(
   }
 
   // regular (non-meta) tx
-  if (SIMULATE) {
+  if (simulate) {
     const [gasEstimate, gasPrice] = await Promise.all([
       contract.estimateGas[method].apply(null, args),
       PROVIDER.getGasPrice(),
@@ -86,29 +87,38 @@ export async function blockchainCall(
     const maticPrice = 1.25;
     const txnCostUSD = (Number(txnCost) * maticPrice).toString();
 
-    let alpFee = ethers.BigNumber.from(0);
-    let alpFeePercent: string = "0";
-    if (method == "withdraw" && contract.address === CONTRACTS.alpSave.address) {
-      const usdcAmount: ethers.BigNumber = args[0];
-      const withdrawFeeBps: ethers.BigNumber = await CONTRACTS.alpSave.withdrawalFee();
-      alpFee = usdcAmount.mul(withdrawFeeBps).div(10_000);
-      alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
-    }
-    return {
-      txnCost,
-      txnCostUSD,
-      alpFeePercent,
-      alpFee: _removeDecimals(alpFee).toString(),
-      dollarAmount: options?.dollarAmount || "0",
-      tokenAmount: options?.tokenAmount || "0",
-    };
+    return { txnCost, txnCostUSD };
+
+    // let alpFee = ethers.BigNumber.from(0);
+    // let alpFeePercent: string = "0";
+    // if (method == "withdraw" && contract.address === CONTRACTS.alpSave.address) {
+    //   const usdcAmount: ethers.BigNumber = args[0];
+    //   const withdrawFeeBps: ethers.BigNumber = await CONTRACTS.alpSave.withdrawalFee();
+    //   alpFee = usdcAmount.mul(withdrawFeeBps).div(10_000);
+    //   alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
+    // }
+    // return {
+    //   txnCost,
+    //   txnCostUSD,
+    //   alpFeePercent,
+    //   alpFee: _removeDecimals(alpFee).toString(),
+    //   dollarAmount: options?.dollarAmount || "0",
+    //   tokenAmount: options?.tokenAmount || "0",
+    // };
   }
 
   const tx: TransactionResponse = await contract[method].apply(null, args);
   const receipt = await tx.wait();
+
+  const cost = receipt.gasUsed.mul(receipt.effectiveGasPrice);
+  const txnCost = ethers.utils.formatEther(cost);
+  const maticPrice = 1.25;
+  const txnCostUSD = (Number(txnCost) * maticPrice).toString();
   return {
     blockNumber: receipt.blockNumber.toString(),
     txnHash: receipt.transactionHash,
+    txnCost,
+    txnCostUSD,
   };
 }
 
@@ -118,10 +128,32 @@ export async function blockchainCall(
  * @param to the receipient contract
  * @param amountUSDC transaction amount in usdc
  */
-export async function approve(to: AlpineProduct, amountUSDC: string) {
-  // convert to micro usdc
+export function approve(to: AlpineProduct, amountUSDC: string) {
   const amount = _addDecimals(amountUSDC);
-  return blockchainCall(CONTRACTS.usdc, "approve", [CONTRACTS[to].address, amount]);
+  const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
+  return {
+    simulate: async (): Promise<DryRunReceipt> => {
+      const dryRunInfo = (await blockchainCall(
+        CONTRACTS.usdc,
+        "approve",
+        [CONTRACTS[to].address, amount],
+        true,
+      )) as GasInfo;
+      return { ...basicInfo, ...dryRunInfo };
+    },
+    call: async (): Promise<FullTxReceipt> => {
+      const receipt = (await blockchainCall(
+        CONTRACTS.usdc,
+        "approve",
+        [CONTRACTS[to].address, amount],
+        false,
+      )) as SmallTxReceipt;
+      return {
+        ...basicInfo,
+        ...receipt,
+      };
+    },
+  };
 }
 
 /**

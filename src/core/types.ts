@@ -1,13 +1,17 @@
 import { ethers } from "ethers";
 
-export interface DryRunReceipt {
+export interface GasInfo {
   txnCost: string;
   txnCostUSD: string;
+}
+export interface DryRunReceipt extends GasInfo {
   alpFee: string;
   alpFeePercent: string;
   dollarAmount: string;
   tokenAmount: string;
 }
+export interface FullTxReceipt extends DryRunReceipt, SmallTxReceipt {}
+
 // This is metadata passed to the _blockChainCall for transactions where the user is buying or selling a basket (
 // (e.g. alpSave or alpLarge)
 export interface TxMetaData {
@@ -17,7 +21,7 @@ export interface TxMetaData {
   tokenAmount: string;
 }
 
-export interface SmallTxReceipt {
+export interface SmallTxReceipt extends GasInfo {
   blockNumber: string;
   txnHash: string;
 }

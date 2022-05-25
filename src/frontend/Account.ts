@@ -7,7 +7,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { AlpineDeFiSDK, types, init } from "../core";
 import { AlpineProduct } from "../core/types";
 import * as productActions from "../core/product";
-import { setSimulationMode, PROVIDER } from "../core/cache";
+import { PROVIDER } from "../core/cache";
 
 const DEFAULT_WALLET = "magic";
 
@@ -163,10 +163,6 @@ class Account {
     return init(this.signer, biconomyProvider);
   }
 
-  async setSimulationMode(mode: boolean) {
-    return setSimulationMode(mode);
-  }
-
   /**
    * approve outgoing transaction with another wallet or smart contract for
    * the specified amount
@@ -174,15 +170,15 @@ class Account {
    * @param {String} amountUSDC transaction amount in usdc
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
-  async approve(to: AlpineProduct, amountUSDC: string) {
+  approve(to: AlpineProduct, amountUSDC: string) {
     return AlpineDeFiSDK.approve(to, amountUSDC);
   }
 
-  async buyProduct(product: AlpineProduct, dollarAmount: number) {
+  buyProduct(product: AlpineProduct, dollarAmount: number) {
     return productActions.buyProduct(product, dollarAmount);
   }
 
-  async sellProduct(product: AlpineProduct, dollarAmount: number) {
+  sellProduct(product: AlpineProduct, dollarAmount: number) {
     return productActions.sellProduct(product, dollarAmount);
   }
 
