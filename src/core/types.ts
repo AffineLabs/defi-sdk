@@ -12,15 +12,6 @@ export interface DryRunReceipt extends GasInfo {
 }
 export interface FullTxReceipt extends DryRunReceipt, SmallTxReceipt {}
 
-// This is metadata passed to the _blockChainCall for transactions where the user is buying or selling a basket (
-// (e.g. alpSave or alpLarge)
-export interface TxMetaData {
-  // the dollar amount being bought or sold
-  dollarAmount: string;
-  // the amount of the basket token being bought or sold
-  tokenAmount: string;
-}
-
 export interface SmallTxReceipt extends GasInfo {
   blockNumber: string;
   txnHash: string;
