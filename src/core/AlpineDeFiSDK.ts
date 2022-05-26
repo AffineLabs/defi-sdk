@@ -49,7 +49,7 @@ export function _removeDecimals(amount: ethers.BigNumber): string {
 export async function blockchainCall(
   contract: ethers.Contract,
   method: string,
-  args: Array<any>,
+  args: Array<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   options?: TxMetaData,
 ): Promise<void | SmallTxReceipt | DryRunReceipt> {
   const signer = SIGNER;
@@ -87,7 +87,7 @@ export async function blockchainCall(
     const txnCostUSD = (Number(txnCost) * maticPrice).toString();
 
     let alpFee = ethers.BigNumber.from(0);
-    let alpFeePercent: string = "0";
+    let alpFeePercent = "0";
     if (method == "withdraw" && contract.address === CONTRACTS.alpSave.address) {
       const usdcAmount: ethers.BigNumber = args[0];
       const withdrawFeeBps: ethers.BigNumber = await CONTRACTS.alpSave.withdrawalFee();

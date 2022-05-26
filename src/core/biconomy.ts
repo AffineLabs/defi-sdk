@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ethers } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { BICONOMY, CONTRACTS, SIGNER } from "./cache";
@@ -18,7 +19,7 @@ export async function sendBiconomy(contract: ethers.Contract, signer: ethers.Sig
     { name: "functionSignature", type: "bytes" },
   ];
   // TODO: Configure chain id correctly
-  let domainData = {
+  const domainData = {
     name: await contract.name(),
     version: "1",
     verifyingContract: contract.address,
@@ -27,12 +28,12 @@ export async function sendBiconomy(contract: ethers.Contract, signer: ethers.Sig
 
   const userAddress = await signer.getAddress();
   // TODO: this will not work with polygon mainnet usdc. FIX.
-  let nonce = await contract.getNonce(userAddress);
+  const nonce = await contract.getNonce(userAddress);
   console.log({ nonce });
   // This is the calldata for the contract function we want to call, e.g. transfer()
   const functionSignature = contract.interface.encodeFunctionData(method, args);
 
-  let message = {
+  const message = {
     nonce: parseInt(nonce),
     from: userAddress,
     functionSignature,
@@ -52,8 +53,8 @@ export async function sendBiconomy(contract: ethers.Contract, signer: ethers.Sig
     because we have used salt in domain data instead of chainId*/
   // Get the EIP-712 Signature and send the transaction
   const provider: JsonRpcProvider = signer.provider as JsonRpcProvider;
-  let signature = await provider.send("eth_signTypedData_v3", [userAddress, dataToSign]);
-  let { r, s, v } = getSignatureParameters(signature);
+  const signature = await provider.send("eth_signTypedData_v3", [userAddress, dataToSign]);
+  const { r, s, v } = getSignatureParameters(signature);
 
   const { data: metaTxData } = await contract.populateTransaction.executeMetaTransaction(
     userAddress,
@@ -82,9 +83,9 @@ function getSignatureParameters(signature: string) {
   if (!ethers.utils.isHexString(signature)) {
     throw new Error('Given value "'.concat(signature, '" is not a valid hex string.'));
   }
-  let r = signature.slice(0, 66);
-  let s = "0x".concat(signature.slice(66, 130));
-  let vStr = "0x".concat(signature.slice(130, 132));
+  const r = signature.slice(0, 66);
+  const s = "0x".concat(signature.slice(66, 130));
+  const vStr = "0x".concat(signature.slice(130, 132));
   let v = ethers.BigNumber.from(vStr).toNumber();
   if (![27, 28].includes(v)) v += 27;
   return {
