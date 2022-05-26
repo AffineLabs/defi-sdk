@@ -1,4 +1,4 @@
-import { ethers, Signer } from "ethers";
+import { ethers } from "ethers";
 import axios from "axios";
 import { AlpineContracts } from "./types";
 
@@ -6,7 +6,7 @@ const CONTRACT_VERSION = "stable";
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
-export let SIMULATE: boolean = false;
+export let SIMULATE = false;
 export let BICONOMY: ethers.providers.Web3Provider | undefined;
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;

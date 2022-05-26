@@ -1,10 +1,11 @@
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
 
-import { AlpineDeFiSDK, types, init } from "../core";
+import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct } from "../core/types";
 import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
@@ -19,12 +20,12 @@ class Account {
   walletType: "magic" | "metamask" = DEFAULT_WALLET;
   magicDidToken: string | null = null;
   // if true, send regular transaction, if false, use biconomy
-  gas: boolean = false;
+  gas = false;
 
   /**
    * Creates an alpine account object
    */
-  constructor() {}
+  // constructor() {}
 
   /**
    * connect the user account to magic's sdk. In particular,
@@ -37,7 +38,7 @@ class Account {
   async connect(
     email: string,
     walletType: "magic" | "metamask" = DEFAULT_WALLET,
-    network: "mainnet" | "mumbai" = "mumbai",
+    network: "mainnet" | "mumbai" = "mumbai", // eslint-disable-line @typescript-eslint/no-unused-vars
     shouldRunMagicTestMode?: boolean,
   ): Promise<string | null> {
     if (await this.isConnected(walletType)) return this.magicDidToken;
@@ -126,6 +127,7 @@ class Account {
    * Check if a user is connected to the magic provider
    * @returns Whether the user is connected to the magic provider
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async isConnected(walletType: string = DEFAULT_WALLET): Promise<boolean> {
     return this.magicDidToken !== null;
   }

@@ -26,6 +26,7 @@ const { result } = concurrently(
 );
 
 result.then(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   res => {
     console.log("Tests finished successfully.");
     process.exit(0);
