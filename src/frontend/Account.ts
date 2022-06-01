@@ -119,7 +119,7 @@ class Account {
    * Disconnect a user from the magic provider
    */
   async disconnect(): Promise<void> {
-    if (this.magic && (await this.magic.user.isLoggedIn())) await this.magic.user.logout();
+    if (this.magic?.user) await this.magic.user.logout();
     this.magicDidToken = null;
   }
 
