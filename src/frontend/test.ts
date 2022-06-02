@@ -11,11 +11,11 @@ const main = async () => {
   console.timeEnd("entire-connect");
 
   await alpAccount.setGasMode(true);
-  const simRes = await alpAccount.approve("alpSave", "1000000").simulate();
-  console.log({ simRes });
-  // const realApproval = await alpAccount.approve("alpSave", "1000000").call();
-  // console.log({ realApproval });
-  const receipt = await alpAccount.sellProduct("alpSave", 1).simulate();
+  await alpAccount.setSimulationMode(true);
+  const res = await alpAccount.approve("alpLarge", "1000000");
+  console.log({ res });
+
+  const receipt = await alpAccount.buyProduct("alpLarge", 1);
   console.log({ receipt });
 
   const readAcc = new ReadAccount(alpAccount.userAddress || "");

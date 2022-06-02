@@ -18,22 +18,22 @@ describe("Buy products", async () => {
 
   it("Buy/Sell alpSave", async () => {
     console.log("APPROVING....");
-    await approve("alpSave", "100000").call();
-    await buyProduct("alpSave", 10).call();
+    await approve("alpSave", "100000");
+    await buyProduct("alpSave", 10);
     const res = await CONTRACTS.alpSave.balanceOf(wallet.address);
     console.log("alpSave Shares...", res);
     expect(res.gt(0)).to.be.true;
 
-    await sellProduct("alpSave", 10).call();
+    await sellProduct("alpSave", 10);
     const newBal: ethers.BigNumber = await CONTRACTS.alpSave.balanceOf(wallet.address);
     expect(newBal.lt(res)).to.be.true;
   });
 
   it("Buy/Sell alpLarge", async () => {
-    await approve("alpLarge", "100000").call();
+    await approve("alpLarge", "100000");
 
     console.log("buying alpLarge");
-    await buyProduct("alpLarge", 10).call();
+    await buyProduct("alpLarge", 10);
     const res: ethers.BigNumber = await CONTRACTS.alpLarge.balanceOf(wallet.address);
     console.log("alpLarge shares....", res.toString());
     expect(res.gt(0)).to.be.true;

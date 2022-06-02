@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
 
-import { FullTxReceipt, DryRunReceipt, SmallTxReceipt } from "./types";
+import { DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
-import { CONTRACTS, SIGNER, BICONOMY, PROVIDER, userAddress } from "./cache";
+import { CONTRACTS, SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE } from "./cache";
 import { AlpineProduct } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
@@ -88,23 +88,6 @@ export async function blockchainCall(
     const txnCostUSD = (Number(txnCost) * maticPrice).toString();
 
     return { txnCost, txnCostUSD };
-
-    // let alpFee = ethers.BigNumber.from(0);
-    // let alpFeePercent: string = "0";
-    // if (method == "withdraw" && contract.address === CONTRACTS.alpSave.address) {
-    //   const usdcAmount: ethers.BigNumber = args[0];
-    //   const withdrawFeeBps: ethers.BigNumber = await CONTRACTS.alpSave.withdrawalFee();
-    //   alpFee = usdcAmount.mul(withdrawFeeBps).div(10_000);
-    //   alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
-    // }
-    // return {
-    //   txnCost,
-    //   txnCostUSD,
-    //   alpFeePercent,
-    //   alpFee: _removeDecimals(alpFee).toString(),
-    //   dollarAmount: options?.dollarAmount || "0",
-    //   tokenAmount: options?.tokenAmount || "0",
-    // };
   }
 
   const tx: TransactionResponse = await contract[method].apply(null, args);
@@ -128,32 +111,29 @@ export async function blockchainCall(
  * @param to the receipient contract
  * @param amountUSDC transaction amount in usdc
  */
-export function approve(to: AlpineProduct, amountUSDC: string) {
+export async function approve(to: AlpineProduct, amountUSDC: string): Promise<DryRunReceipt | FullTxReceipt> {
   const amount = _addDecimals(amountUSDC);
   const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
-  return {
-    simulate: async (): Promise<DryRunReceipt> => {
-      const dryRunInfo = (await blockchainCall(
-        CONTRACTS.usdc,
-        "approve",
-        [CONTRACTS[to].address, amount],
-        true,
-      )) as GasInfo;
-      return { ...basicInfo, ...dryRunInfo };
-    },
-    call: async (): Promise<FullTxReceipt> => {
-      const receipt = (await blockchainCall(
-        CONTRACTS.usdc,
-        "approve",
-        [CONTRACTS[to].address, amount],
-        false,
-      )) as SmallTxReceipt;
-      return {
-        ...basicInfo,
-        ...receipt,
-      };
-    },
-  };
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(
+      CONTRACTS.usdc,
+      "approve",
+      [CONTRACTS[to].address, amount],
+      true,
+    )) as GasInfo;
+    return { ...basicInfo, ...dryRunInfo };
+  } else {
+    const receipt = (await blockchainCall(
+      CONTRACTS.usdc,
+      "approve",
+      [CONTRACTS[to].address, amount],
+      false,
+    )) as SmallTxReceipt;
+    return {
+      ...basicInfo,
+      ...receipt,
+    };
+  }
 }
 
 /**

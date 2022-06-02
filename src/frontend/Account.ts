@@ -7,7 +7,7 @@ import detectEthereumProvider from "@metamask/detect-provider";
 import { AlpineDeFiSDK, types, init } from "../core";
 import { AlpineProduct } from "../core/types";
 import * as productActions from "../core/product";
-import { PROVIDER } from "../core/cache";
+import { setSimulationMode, PROVIDER } from "../core/cache";
 
 const DEFAULT_WALLET = "magic";
 
@@ -92,6 +92,9 @@ class Account {
     console.timeEnd("init-contracts");
 
     return this.magicDidToken;
+  }
+  async setSimulationMode(mode: boolean) {
+    return setSimulationMode(mode);
   }
 
   private async initBiconomy(provider: ethers.providers.Web3Provider) {
