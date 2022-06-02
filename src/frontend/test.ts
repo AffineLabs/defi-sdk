@@ -11,10 +11,12 @@ const main = async () => {
   console.timeEnd("entire-connect");
 
   await alpAccount.setGasMode(true);
-  // await alpAccount.approve("alpLarge", "1000000");
-  // await alpAccount.setSimulationMode(true);
-  // const receipt = await alpAccount.buyProduct("alpLarge", 1);
-  // console.log({ receipt });
+  await alpAccount.setSimulationMode(true);
+  const res = await alpAccount.approve("alpLarge", "1000000");
+  console.log({ res });
+
+  const receipt = await alpAccount.buyProduct("alpLarge", 1);
+  console.log({ receipt });
 
   const readAcc = new ReadAccount(alpAccount.userAddress || "");
   await readAcc.init();

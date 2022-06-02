@@ -1,14 +1,14 @@
 import { ethers } from "ethers";
+import { GasInfo, SmallTxReceipt } from "..";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
-import { CONTRACTS, SIGNER, userAddress } from "./cache";
+import { CONTRACTS, SIGNER, SIMULATE, userAddress } from "./cache";
 
-import { AlpineProduct, TokenInfo } from "./types";
+import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
 
 export async function buyProduct(product: AlpineProduct, amount: number) {
   if (product === "alpSave") {
     return buyUsdcShares(amount);
-  }
-  if (product === "alpLarge") {
+  } else {
     return buyBtCEthShares(amount);
   }
 }
@@ -25,9 +25,8 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
 /**
  * Deposit usdc to a vault, and get alp tokens in return
  * @param {String} amountUSDC amount in usdc
- * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
  */
-export async function buyUsdcShares(amountUSDC: number) {
+export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
   const contracts = CONTRACTS;
   const { usdc, alpSave } = contracts;
   const userAddress = await SIGNER.getAddress();
@@ -52,44 +51,120 @@ export async function buyUsdcShares(amountUSDC: number) {
         "Call approve() to increase the allowance.",
     );
   }
-  return blockchainCall(alpSave, "deposit", [amount], {
+
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
     dollarAmount: amountUSDC.toString(),
     tokenAmount: _removeDecimals(await sharesFromTokens("alpSave", amount)),
-  });
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(alpSave, "deposit", [amount], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(alpSave, "deposit", [amount], false)) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
 }
 
 /**
  * sell alp token and withdraw usdc from a vault (to user's wallet by default)
  * @param amountUSDC amount in usdc to sell
  */
-export async function sellUsdcShares(amountUSDC: number) {
-  const amount = _addDecimals(amountUSDC.toString());
+export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const contracts = CONTRACTS;
+  const { alpSave } = contracts;
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-  const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
-  return blockchainCall(CONTRACTS.alpSave, "withdraw", [amount], {
+  const usdcToWihdraw = _addDecimals(amountUSDC.toString());
+  const withdrawFeeBps: ethers.BigNumber = await alpSave.withdrawalFee();
+  const alpFee = usdcToWihdraw.mul(withdrawFeeBps).div(10_000);
+  const alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
+
+  const basicInfo = {
+    alpFee: _removeDecimals(alpFee).toString(),
+    alpFeePercent,
     dollarAmount: amountUSDC.toString(),
     tokenAmount: _removeDecimals(await sharesFromTokens("alpSave", usdcToWihdraw)),
-  });
+  };
+  console.log({ basicInfo });
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(alpSave, "withdraw", [usdcToWihdraw], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(alpSave, "withdraw", [usdcToWihdraw], false)) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
 }
 
-export async function buyBtCEthShares(amountUSDC: number) {
+export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { alpLarge } = CONTRACTS;
   const amount = _addDecimals(amountUSDC.toString());
-  return blockchainCall(alpLarge, "deposit", [amount, userAddress], {
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
     dollarAmount: amountUSDC.toString(),
     tokenAmount: ethers.utils.formatUnits(await sharesFromTokens("alpLarge", amount), 18),
-  });
+  };
+
+  const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(alpLarge, "deposit", [amount, userAddress], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(alpLarge, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
+    const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
+    const amountChanged = afterBal.sub(beforeBal);
+
+    const res = { ...basicInfo, ...receipt, tokenAmount: ethers.utils.formatUnits(amountChanged, 18) };
+    return res;
+  }
 }
 
-export async function sellBtCEthShares(amountUSDC: number) {
+export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { alpLarge } = CONTRACTS;
-  const amount = _addDecimals(amountUSDC.toString());
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-  const usdcToWihdraw = ethers.utils.parseUnits(amountUSDC.toString(), 6);
-  return blockchainCall(alpLarge, "withdraw", [amount, userAddress, userAddress], {
+  const usdcToWihdraw = _addDecimals(amountUSDC.toString());
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
     dollarAmount: amountUSDC.toString(),
     tokenAmount: ethers.utils.formatUnits(await sharesFromTokens("alpLarge", usdcToWihdraw), 18),
-  });
+  };
+
+  const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(
+      alpLarge,
+      "withdraw",
+      [usdcToWihdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(
+      alpLarge,
+      "withdraw",
+      [usdcToWihdraw, userAddress, userAddress],
+      false,
+    )) as SmallTxReceipt;
+    const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
+    const amountChanged = beforeBal.sub(afterBal);
+    return { ...basicInfo, ...receipt, tokenAmount: ethers.utils.formatUnits(amountChanged, 18) };
+  }
 }
 
 export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<TokenInfo> {
