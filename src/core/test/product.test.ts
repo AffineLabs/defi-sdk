@@ -3,7 +3,7 @@ import chai from "chai";
 const { expect } = chai;
 
 import { approve, mintUSDC } from "../AlpineDeFiSDK";
-import { CONTRACTS, init, setProvider, SIGNER } from "../cache";
+import { CONTRACTS, init, setProvider } from "../cache";
 import { buyProduct, sellProduct, getTokenInfo } from "../product";
 
 const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");

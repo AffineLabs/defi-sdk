@@ -1,10 +1,11 @@
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
 
-import { AlpineDeFiSDK, types, init } from "../core";
+import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct } from "../core/types";
 import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
@@ -12,19 +13,19 @@ import { setSimulationMode, PROVIDER } from "../core/cache";
 const DEFAULT_WALLET = "magic";
 
 class Account {
-  magic?: Magic;
+  magic!: Magic;
   signer!: ethers.Signer;
   biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
   walletType: "magic" | "metamask" = DEFAULT_WALLET;
   magicDidToken: string | null = null;
   // if true, send regular transaction, if false, use biconomy
-  gas: boolean = false;
+  gas = false;
 
   /**
    * Creates an alpine account object
    */
-  constructor() {}
+  // constructor() {}
 
   /**
    * connect the user account to magic's sdk. In particular,
@@ -37,7 +38,7 @@ class Account {
   async connect(
     email: string,
     walletType: "magic" | "metamask" = DEFAULT_WALLET,
-    network: "mainnet" | "mumbai" = "mumbai",
+    network: "mainnet" | "mumbai" = "mumbai", // eslint-disable-line @typescript-eslint/no-unused-vars
     shouldRunMagicTestMode?: boolean,
   ): Promise<string | null> {
     if (await this.isConnected(walletType)) return this.magicDidToken;
@@ -64,24 +65,7 @@ class Account {
     this.magicDidToken = await this.magic.auth.loginWithMagicLink({ email });
     console.timeEnd("login-with-magic");
 
-    let walletProvider = new ethers.providers.Web3Provider(
-      this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider,
-    );
-
-    if (walletType === "metamask") {
-      await this._checkIfMetamaskAvailable();
-      // we know that window.ethereum exists here
-      const metamaskProvider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
-      // MetaMask requires requesting permission to connect users accounts
-      await metamaskProvider.send("eth_requestAccounts", []);
-      walletProvider = metamaskProvider;
-    }
-
-    this.signer = walletProvider.getSigner();
-
-    console.time("signer-get-address");
-    this.userAddress = await this.signer.getAddress();
-    console.timeEnd("signer-get-address");
+    await this.changeWallet(walletType);
 
     // console.time("init-Biconomy");
     // await this.initBiconomy(walletProvider);
@@ -95,6 +79,29 @@ class Account {
   }
   async setSimulationMode(mode: boolean) {
     return setSimulationMode(mode);
+  }
+
+  async changeWallet(walletType: "magic" | "metamask") {
+    let walletProvider: ethers.providers.Web3Provider;
+    // change to metamask
+    if (walletType === "metamask") {
+      await this._checkIfMetamaskAvailable();
+      // we know that window.ethereum exists here
+      const metamaskProvider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
+      // MetaMask requires requesting permission to connect users accounts
+      await metamaskProvider.send("eth_requestAccounts", []);
+
+      walletProvider = metamaskProvider;
+    } else {
+      // change to magic
+      walletProvider = new ethers.providers.Web3Provider(
+        this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider,
+      );
+    }
+
+    this.signer = walletProvider.getSigner();
+    this.userAddress = await this.signer.getAddress();
+    this.walletType = walletType;
   }
 
   private async initBiconomy(provider: ethers.providers.Web3Provider) {
@@ -121,7 +128,7 @@ class Account {
    * Disconnect a user from the magic provider
    */
   async disconnect(): Promise<void> {
-    if (this.magic && (await this.magic.user.isLoggedIn())) await this.magic.user.logout();
+    if (this.magic?.user) await this.magic.user.logout();
     this.magicDidToken = null;
   }
 
@@ -129,6 +136,7 @@ class Account {
    * Check if a user is connected to the magic provider
    * @returns Whether the user is connected to the magic provider
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async isConnected(walletType: string = DEFAULT_WALLET): Promise<boolean> {
     return this.magicDidToken !== null;
   }

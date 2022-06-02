@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MNEMONIC: ${{ secrets.MNEMONIC }}
-      POLYGON_ALCHEMY_URL: https://polygon-mumbai.g.alchemy.com/v2/${{ secrets.ALCHEMY_POLYGON_KEY }}
+      ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -34,6 +34,9 @@ jobs:
 
       - name: Check formatting errors using prettier
         run: yarn format
+
+      - name: Check linting errors using eslint
+        run: yarn lint
 
       - name: Build and run tests.
         run: cd src/core &&  yarn test

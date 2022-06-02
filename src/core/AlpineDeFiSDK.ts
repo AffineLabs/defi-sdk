@@ -50,7 +50,7 @@ export function _removeDecimals(amount: ethers.BigNumber): string {
 export async function blockchainCall(
   contract: ethers.Contract,
   method: string,
-  args: Array<any>,
+  args: Array<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   simulate: boolean = false,
 ): Promise<void | SmallTxReceipt | GasInfo> {
   const signer = SIGNER;
