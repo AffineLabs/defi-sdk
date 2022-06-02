@@ -13,7 +13,7 @@ import { setSimulationMode, PROVIDER } from "../core/cache";
 const DEFAULT_WALLET = "magic";
 
 class Account {
-  magic?: Magic;
+  magic!: Magic;
   signer!: ethers.Signer;
   biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
@@ -65,24 +65,7 @@ class Account {
     this.magicDidToken = await this.magic.auth.loginWithMagicLink({ email });
     console.timeEnd("login-with-magic");
 
-    let walletProvider = new ethers.providers.Web3Provider(
-      this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider,
-    );
-
-    if (walletType === "metamask") {
-      await this._checkIfMetamaskAvailable();
-      // we know that window.ethereum exists here
-      const metamaskProvider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
-      // MetaMask requires requesting permission to connect users accounts
-      await metamaskProvider.send("eth_requestAccounts", []);
-      walletProvider = metamaskProvider;
-    }
-
-    this.signer = walletProvider.getSigner();
-
-    console.time("signer-get-address");
-    this.userAddress = await this.signer.getAddress();
-    console.timeEnd("signer-get-address");
+    await this.changeWallet(walletType);
 
     // console.time("init-Biconomy");
     // await this.initBiconomy(walletProvider);
@@ -93,6 +76,29 @@ class Account {
     console.timeEnd("init-contracts");
 
     return this.magicDidToken;
+  }
+
+  async changeWallet(walletType: "magic" | "metamask") {
+    let walletProvider: ethers.providers.Web3Provider;
+    // change to metamask
+    if (walletType === "metamask") {
+      await this._checkIfMetamaskAvailable();
+      // we know that window.ethereum exists here
+      const metamaskProvider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
+      // MetaMask requires requesting permission to connect users accounts
+      await metamaskProvider.send("eth_requestAccounts", []);
+
+      walletProvider = metamaskProvider;
+    } else {
+      // change to magic
+      walletProvider = new ethers.providers.Web3Provider(
+        this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider,
+      );
+    }
+
+    this.signer = walletProvider.getSigner();
+    this.userAddress = await this.signer.getAddress();
+    this.walletType = walletType;
   }
 
   private async initBiconomy(provider: ethers.providers.Web3Provider) {
