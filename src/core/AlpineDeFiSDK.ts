@@ -51,7 +51,7 @@ export async function blockchainCall(
   contract: ethers.Contract,
   method: string,
   args: Array<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
-  simulate: boolean = false,
+  simulate = false,
 ): Promise<void | SmallTxReceipt | GasInfo> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
