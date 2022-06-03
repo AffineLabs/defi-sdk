@@ -19,6 +19,14 @@ export interface SmallTxReceipt extends GasInfo {
 
 export type AlpineProduct = "alpSave" | "alpLarge";
 export type productAmounts = {
+  [key in AlpineProduct]?: string;
+};
+
+export type productBalances = {
+  [key in AlpineProduct]?: ethers.BigNumber;
+};
+
+export type productAllocation = {
   [key in AlpineProduct]?: number;
 };
 
