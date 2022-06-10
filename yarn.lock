@@ -11,7 +11,9 @@ __metadata:
   dependencies:
     "@typescript-eslint/eslint-plugin": ^5.26.0
     "@typescript-eslint/parser": ^5.26.0
+    aws-sdk: 2.4.12
     eslint: ^8.16.0
+    fs-extra: ^10.1.0
     parcel: ^2.2.1
     prettier: 2.5.1
     typescript: ^4.7.2
@@ -2702,6 +2704,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"aws-sdk@npm:2.4.12":
+  version: 2.4.12
+  resolution: "aws-sdk@npm:2.4.12"
+  dependencies:
+    jmespath: 0.15.0
+    sax: 1.1.5
+    xml2js: 0.4.15
+    xmlbuilder: 2.6.2
+  checksum: 1bac4a8ce608279ebb12cb83d557e9b88612ab3e8842a5d1ae379ab4194237ac5296d3f4452b34a48535a763c0bc67f44f12358a4b24343d094e6fbcb2d48059
+  languageName: node
+  linkType: hard
+
 "axios@npm:^0.25.0":
   version: 0.25.0
   resolution: "axios@npm:0.25.0"
@@ -4784,6 +4798,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"fs-extra@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "fs-extra@npm:10.1.0"
+  dependencies:
+    graceful-fs: ^4.2.0
+    jsonfile: ^6.0.1
+    universalify: ^2.0.0
+  checksum: dc94ab37096f813cc3ca12f0f1b5ad6744dfed9ed21e953d72530d103cea193c2f81584a39e9dee1bea36de5ee66805678c0dddc048e8af1427ac19c00fffc50
+  languageName: node
+  linkType: hard
+
 "fs-minipass@npm:^2.0.0":
   version: 2.1.0
   resolution: "fs-minipass@npm:2.1.0"
@@ -5030,6 +5055,13 @@ __metadata:
   version: 4.2.8
   resolution: "graceful-fs@npm:4.2.8"
   checksum: 5d224c8969ad0581d551dfabdb06882706b31af2561bd5e2034b4097e67cc27d05232849b8643866585fd0a41c7af152950f8776f4dd5579e9853733f31461c6
+  languageName: node
+  linkType: hard
+
+"graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0":
+  version: 4.2.10
+  resolution: "graceful-fs@npm:4.2.10"
+  checksum: 3f109d70ae123951905d85032ebeae3c2a5a7a997430df00ea30df0e3a6c60cf6689b109654d6fdacd28810a053348c4d14642da1d075049e6be1ba5216218da
   languageName: node
   linkType: hard
 
@@ -5709,6 +5741,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jmespath@npm:0.15.0":
+  version: 0.15.0
+  resolution: "jmespath@npm:0.15.0"
+  checksum: 353bb9e69cc4c1560be0a4df43cb4020abc246e1c60cb5b55dcc76d8c858383f1633faf22ccaf6a5e09568a2077d0f4f1e989e6fcfd496b5cef87964cc8cb9e7
+  languageName: node
+  linkType: hard
+
 "js-sha3@npm:0.5.7":
   version: 0.5.7
   resolution: "js-sha3@npm:0.5.7"
@@ -5786,6 +5825,19 @@ __metadata:
   bin:
     json5: lib/cli.js
   checksum: e88fc5274bb58fc99547baa777886b069d2dd96d9cfc4490b305fd16d711dabd5979e35a4f90873cefbeb552e216b041a304fe56702bedba76e19bc7845f208d
+  languageName: node
+  linkType: hard
+
+"jsonfile@npm:^6.0.1":
+  version: 6.1.0
+  resolution: "jsonfile@npm:6.1.0"
+  dependencies:
+    graceful-fs: ^4.1.6
+    universalify: ^2.0.0
+  dependenciesMeta:
+    graceful-fs:
+      optional: true
+  checksum: 7af3b8e1ac8fe7f1eccc6263c6ca14e1966fcbc74b618d3c78a0a2075579487547b94f72b7a1114e844a1e15bb00d440e5d1720bfc4612d790a6f285d5ea8354
   languageName: node
   linkType: hard
 
@@ -5951,6 +6003,13 @@ __metadata:
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
+  languageName: node
+  linkType: hard
+
+"lodash@npm:~3.5.0":
+  version: 3.5.0
+  resolution: "lodash@npm:3.5.0"
+  checksum: f996ec63ad0a1e040082789d3d0e4330f4236c2b14971f98deb9dfcdf61fde064e7a80efbdce86301b01146207b7f0b5ce01f3dba7001f79789a7a48a8223e97
   languageName: node
   linkType: hard
 
@@ -7631,6 +7690,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sax@npm:1.1.5":
+  version: 1.1.5
+  resolution: "sax@npm:1.1.5"
+  checksum: afa4d720fee081ddbc889be21c5cbe20568f198c7b0a17c02049341f55489d817e3c75c90360964b736c6811363c36e2483c69234571595aa8a3e6b72cb0c65a
+  languageName: node
+  linkType: hard
+
+"sax@npm:>=0.6.0":
+  version: 1.2.4
+  resolution: "sax@npm:1.2.4"
+  checksum: d3df7d32b897a2c2f28e941f732c71ba90e27c24f62ee918bd4d9a8cfb3553f2f81e5493c7f0be94a11c1911b643a9108f231dd6f60df3fa9586b5d2e3e9e1fe
+  languageName: node
+  linkType: hard
+
 "scrypt-js@npm:2.0.4":
   version: 2.0.4
   resolution: "scrypt-js@npm:2.0.4"
@@ -8399,6 +8472,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"universalify@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "universalify@npm:2.0.0"
+  checksum: 2406a4edf4a8830aa6813278bab1f953a8e40f2f63a37873ffa9a3bc8f9745d06cc8e88f3572cb899b7e509013f7f6fcc3e37e8a6d914167a5381d8440518c44
+  languageName: node
+  linkType: hard
+
 "unpipe@npm:~1.0.0":
   version: 1.0.0
   resolution: "unpipe@npm:1.0.0"
@@ -8831,6 +8911,32 @@ __metadata:
     parse-headers: ^2.0.0
     xtend: ^4.0.0
   checksum: a1db277e37737caf3ed363d2a33ce4b4ea5b5fc190b663a6f70bc252799185b840ccaa166eaeeea4841c9c60b87741f0a24e29cbcf6708dd425986d4df186d2f
+  languageName: node
+  linkType: hard
+
+"xml2js@npm:0.4.15":
+  version: 0.4.15
+  resolution: "xml2js@npm:0.4.15"
+  dependencies:
+    sax: ">=0.6.0"
+    xmlbuilder: ">=2.4.6"
+  checksum: 41515adf17b270f370fba8f3e06c013571ffc3456379c34f5c8089deb591204cae86881af7a40ef6f96682bb5477ecd7d4e6e0ea2f000f9097e392d14281d863
+  languageName: node
+  linkType: hard
+
+"xmlbuilder@npm:2.6.2":
+  version: 2.6.2
+  resolution: "xmlbuilder@npm:2.6.2"
+  dependencies:
+    lodash: ~3.5.0
+  checksum: 8504580b9304105e97d4078be4b9aacb68e3ff0d4e734477ffac32d043d5df7c72fda7849e0887ffe13cf97119333a05111d2b5622c005b81518cc2a300a74ea
+  languageName: node
+  linkType: hard
+
+"xmlbuilder@npm:>=2.4.6":
+  version: 15.1.1
+  resolution: "xmlbuilder@npm:15.1.1"
+  checksum: 14f7302402e28d1f32823583d121594a9dca36408d40320b33f598bd589ca5163a352d076489c9c64d2dc1da19a790926a07bf4191275330d4de2b0d85bb1843
   languageName: node
   linkType: hard
 
