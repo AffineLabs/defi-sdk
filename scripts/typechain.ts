@@ -18,7 +18,7 @@ async function getTypechainFiles(): Promise<Array<any>> {
   let params = {
     Bucket: smartContractBucket, // we will access the files only from the smart contract bucket
     Delimiter: "", // this will make sure that all subdirectories will also get accessed
-    Prefix: contractVersion + "/typechain/src/testnet/", // get only those files which are under '<VERSION>/typechain'
+    Prefix: contractVersion + "/typechain/", // get only those files which are under '<VERSION>/typechain'
   };
   const { Contents: files } = await s3.listObjects(params).promise();
   return files;
