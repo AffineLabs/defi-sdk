@@ -11,7 +11,8 @@
     "lint:fix": "eslint --fix \"src/**/*.{ts,js}\"",
     "start": "parcel src/frontend/index.html",
     "format": "prettier --check \"src/**/*.{ts,js}\"",
-    "format:fix": "prettier --write \"src/**/*.{ts,js}\""
+    "format:fix": "prettier --write \"src/**/*.{ts,js}\"",
+    "build": "npx ts-node scripts/typechain.ts"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.26.0",

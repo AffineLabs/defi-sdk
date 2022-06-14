@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ERC20, Forwarder, L2Vault, TwoAssetBasket } from "../../typechain";
 
 export interface GasInfo {
   txnCost: string;
@@ -22,9 +22,11 @@ export type productAmounts = {
   [key in AlpineProduct]?: number;
 };
 
-type ContractName = "usdc" | "forwarder" | AlpineProduct;
 export type AlpineContracts = {
-  [key in ContractName]: ethers.Contract;
+  alpSave: L2Vault;
+  alpLarge: TwoAssetBasket;
+  forwarder: Forwarder;
+  usdc: ERC20;
 };
 export interface TokenInfo {
   amount: string; // in base unit
