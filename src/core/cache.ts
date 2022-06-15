@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import axios from "axios";
 import { AlpineContracts } from "./types";
 
-const CONTRACT_VERSION = "stable";
+const CONTRACT_VERSION = "v0.0.10-erc4626.0";
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
