@@ -3,6 +3,8 @@ const fse = require("fs-extra");
 var readline = require("readline");
 let AWS = require("aws-sdk");
 
+const awsKey: string = process.env.AWS_ACCESS_KEY_ID || "";
+const awsSecret: string = process.env.AWS_SECRET_ACCESS_KEY || "";
 const awsRegion: string = process.env.AWS_REGION || "";
 const smartContractBucket: string = process.env.S3_BUCKET_FOR_SMART_CONTRACTS || "";
 const contractVersion: string = process.env.CONTRACT_VERSION || "";
@@ -14,11 +16,7 @@ const EXCLUDED_FILES = ["typechain/hardhat.d.ts"];
 // the s3 directory is https://sc-abis.s3.us-east-2.amazonaws.com/<VERSION>/typechain
 async function getTypechainFiles(): Promise<Array<any>> {
   // configure AWS
-  AWS.config.update({
-    accessKeyId: "AKIA57A4FLINJH5KNWJA",
-    secretAccessKey: "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",
-    region: awsRegion,
-  });
+  AWS.config.update({ accessKeyId: awsKey, secretAccessKey: awsSecret, region: awsRegion });
   let s3 = new AWS.S3();
   let params = {
     Bucket: smartContractBucket, // we will access the files only from the smart contract bucket
