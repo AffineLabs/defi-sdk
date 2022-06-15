@@ -21,7 +21,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: "us-east-2"
       S3_BUCKET_FOR_SMART_CONTRACTS: "sc-abis"
-      CONTRACT_VERSION: ${{ github.event.release.tag_name || 'test' }}
+      CONTRACT_VERSION: "test"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
