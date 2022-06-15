@@ -56,17 +56,17 @@ export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt |
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(await sharesFromTokens("alpSave", amount)),
+    tokenAmount: _removeDecimals(await alpSave.convertToShares(amount)),
   };
 
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(alpSave, "deposit", [amount], true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(alpSave, "deposit", [amount, userAddress], true)) as GasInfo;
     return {
       ...basicInfo,
       ...dryRunInfo,
     };
   } else {
-    const receipt = (await blockchainCall(alpSave, "deposit", [amount], false)) as SmallTxReceipt;
+    const receipt = (await blockchainCall(alpSave, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
     return { ...basicInfo, ...receipt };
   }
 }
@@ -76,6 +76,7 @@ export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt |
  * @param amountUSDC amount in usdc to sell
  */
 export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const userAddress = await SIGNER.getAddress();
   const contracts = CONTRACTS;
   const { alpSave } = contracts;
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
@@ -88,18 +89,28 @@ export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt 
     alpFee: _removeDecimals(alpFee).toString(),
     alpFeePercent,
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(await sharesFromTokens("alpSave", usdcToWihdraw)),
+    tokenAmount: _removeDecimals(await alpSave.convertToShares(usdcToWihdraw)),
   };
   console.log({ basicInfo });
 
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(alpSave, "withdraw", [usdcToWihdraw], true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(
+      alpSave,
+      "withdraw",
+      [usdcToWihdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
     return {
       ...basicInfo,
       ...dryRunInfo,
     };
   } else {
-    const receipt = (await blockchainCall(alpSave, "withdraw", [usdcToWihdraw], false)) as SmallTxReceipt;
+    const receipt = (await blockchainCall(
+      alpSave,
+      "withdraw",
+      [usdcToWihdraw, userAddress, userAddress],
+      false,
+    )) as SmallTxReceipt;
     return { ...basicInfo, ...receipt };
   }
 }
@@ -215,7 +226,7 @@ export async function tokensFromShares(product: AlpineProduct, amount: ethers.Bi
 export async function sharesFromTokens(product: AlpineProduct, tokenAmount: ethers.BigNumber) {
   if (product === "alpSave") {
     const { alpSave } = CONTRACTS;
-    const shares: ethers.BigNumber = await alpSave.sharesFromTokens(tokenAmount);
+    const shares: ethers.BigNumber = await alpSave.convertToShares(tokenAmount);
     return shares;
   }
 
