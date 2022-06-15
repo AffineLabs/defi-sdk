@@ -2,8 +2,6 @@ import axios from "axios";
 const fse = require("fs-extra");
 let AWS = require("aws-sdk");
 
-const awsKey: string = process.env.AWS_ACCESS_KEY_ID || "";
-const awsSecret: string = process.env.AWS_SECRET_ACCESS_KEY || "";
 const awsRegion: string = process.env.AWS_REGION || "";
 const smartContractBucket: string = process.env.S3_BUCKET_FOR_SMART_CONTRACTS || "";
 const contractVersion: string = process.env.CONTRACT_VERSION || "";
@@ -12,7 +10,7 @@ const contractVersion: string = process.env.CONTRACT_VERSION || "";
 const EXCLUDED_FILES = ["typechain/hardhat.d.ts"];
 
 // configure AWS
-AWS.config.update({ accessKeyId: awsKey, secretAccessKey: awsSecret, region: awsRegion });
+AWS.config.update({ region: awsRegion });
 
 // get all typechain file names from the s3 bucket
 // the s3 directory is https://sc-abis.s3.us-east-2.amazonaws.com/<VERSION>/typechain

@@ -17,11 +17,9 @@ jobs:
     env:
       MNEMONIC: ${{ secrets.MNEMONIC }}
       ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ secrets.AWS_REGION }}
-      S3_BUCKET_FOR_SMART_CONTRACTS: ${{ secrets.S3_BUCKET_FOR_SMART_CONTRACTS }}
-      CONTRACT_VERSION: ${{ secrets.CONTRACT_VERSION }}
+      AWS_REGION: "us-east-2"
+      S3_BUCKET_FOR_SMART_CONTRACTS: "sc-abis"
+      CONTRACT_VERSION: ${{ github.event.release.tag_name || 'test' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
