@@ -1,5 +1,6 @@
 import axios from "axios";
 const fse = require("fs-extra");
+var readline = require("readline");
 let AWS = require("aws-sdk");
 
 const awsRegion: string = process.env.AWS_REGION || "";
@@ -60,7 +61,7 @@ async function importTypechain(): Promise<void> {
 
     // log the progress percentage
     const progress = Math.floor(((i + 1) / files.length) * 100);
-    process.stdout.cursorTo(0);
+    readline.cursorTo(process.stdout, 0);
     process.stdout.write(progress + "%");
   }
 }
