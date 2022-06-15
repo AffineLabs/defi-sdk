@@ -1,12 +1,12 @@
 import axios from "axios";
 const fse = require("fs-extra");
-var readline = require("readline");
+import readline from "readline";
 let AWS = require("aws-sdk");
 
 const awsKey: string = process.env.AWS_ACCESS_KEY_ID || "";
 const awsSecret: string = process.env.AWS_SECRET_ACCESS_KEY || "";
 const awsRegion: string = process.env.AWS_REGION || "";
-const smartContractBucket: string = process.env.S3_BUCKET_FOR_SMART_CONTRACTS || "";
+const smartContractBucket: string = "sc-abis";
 const contractVersion: string = process.env.CONTRACT_VERSION || "";
 
 // we won't import the following files
@@ -33,12 +33,6 @@ async function readTypechainFile(fileName: string): Promise<string> {
   return typechainData;
 }
 
-// write typechain data to the given file path
-async function WriteTypechainFile(filePath: string, fileData: string): Promise<void> {
-  // fs-extra will make sure that if a directory doesn't exist then it will create one
-  await fse.outputFile(filePath, fileData);
-}
-
 // get the typechain file names from the s3 bucket,
 // read the files
 // and finally write them to the 'typechain' subdirectory in the user's sdk repo
@@ -47,7 +41,7 @@ async function importTypechain(): Promise<void> {
   for (let i = 0; i < files.length; i++) {
     const { Key } = files[i];
     let filePath: string = Key;
-    const fileName = "https://sc-abis.s3.us-east-2.amazonaws.com/" + filePath;
+    const fileName = `https://sc-abis.s3.us-east-2.amazonaws.com/${filePath}`;
     const typechainData = await readTypechainFile(fileName);
 
     // make sure that each file get's uploaded to the 'typechain' folder
@@ -55,7 +49,10 @@ async function importTypechain(): Promise<void> {
     const prefix: string = `${contractVersion}/`;
     filePath = filePath.replace(prefix, "");
     if (EXCLUDED_FILES.includes(filePath)) continue;
-    await WriteTypechainFile(filePath, typechainData);
+
+    // write typechain data to the given file path
+    // fs-extra will make sure that if a directory doesn't exist then it will create one
+    await fse.outputFile(filePath, typechainData);
 
     // log the progress percentage
     const progress = Math.floor(((i + 1) / files.length) * 100);
