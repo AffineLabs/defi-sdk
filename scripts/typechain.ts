@@ -9,12 +9,11 @@ const contractVersion: string = process.env.CONTRACT_VERSION || "";
 // we won't import the following files
 const EXCLUDED_FILES = ["typechain/hardhat.d.ts"];
 
-// configure AWS
-AWS.config.update({ region: awsRegion });
-
 // get all typechain file names from the s3 bucket
 // the s3 directory is https://sc-abis.s3.us-east-2.amazonaws.com/<VERSION>/typechain
 async function getTypechainFiles(): Promise<Array<any>> {
+  // configure AWS
+  AWS.config.update({ region: awsRegion });
   let s3 = new AWS.S3();
   let params = {
     Bucket: smartContractBucket, // we will access the files only from the smart contract bucket
