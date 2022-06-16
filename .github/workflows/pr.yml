@@ -17,6 +17,8 @@ jobs:
     env:
       MNEMONIC: ${{ secrets.MNEMONIC }}
       ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+      AWS_REGION: "us-east-2"
+      CONTRACT_VERSION: "test"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -28,6 +30,9 @@ jobs:
 
       - name: Install yarn dependencies
         run: yarn --frozen-lockfile
+
+      - name: Import typechain files from the s3 bucket
+        run: yarn build
 
       - name: Check Typescript compilation errors
         run: yarn tsc
