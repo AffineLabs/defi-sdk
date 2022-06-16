@@ -3,6 +3,11 @@ import * as fse from "fs-extra";
 import readline from "readline";
 import * as AWS from "aws-sdk";
 
+// load environment variables from a .env file into process.env
+import { config as dotenvConfig } from "dotenv";
+import { resolve } from "path";
+dotenvConfig({ path: resolve(__dirname, "../.env") });
+
 const awsRegion: string = process.env.AWS_REGION || "";
 const smartContractBucket: string = "sc-abis";
 const contractVersion: string = process.env.CONTRACT_VERSION || "";

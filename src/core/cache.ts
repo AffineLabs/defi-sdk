@@ -21,7 +21,10 @@ export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(
  * `usdc`, `alpSave`, `alpBal` and `alpAggr`.
  */
 
-export async function getAllContracts(provider: ethers.providers.JsonRpcProvider, version: string): Promise<any> {
+export async function getAllContracts(
+  provider: ethers.providers.JsonRpcProvider,
+  version: string,
+): Promise<AlpineContracts> {
   const s3Root = `https://sc-abis.s3.us-east-2.amazonaws.com/${version}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
