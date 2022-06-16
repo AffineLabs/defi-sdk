@@ -15,6 +15,7 @@
     "build": "ts-node scripts/typechain.ts"
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
     "aws-sdk": "^2.1155.0",

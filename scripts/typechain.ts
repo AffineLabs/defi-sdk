@@ -1,10 +1,8 @@
 import axios from "axios";
-const fse = require("fs-extra");
+import * as fse from "fs-extra";
 import readline from "readline";
-let AWS = require("aws-sdk");
+import * as AWS from "aws-sdk";
 
-const awsKey: string = process.env.AWS_ACCESS_KEY_ID || "";
-const awsSecret: string = process.env.AWS_SECRET_ACCESS_KEY || "";
 const awsRegion: string = process.env.AWS_REGION || "";
 const smartContractBucket: string = "sc-abis";
 const contractVersion: string = process.env.CONTRACT_VERSION || "";
@@ -16,14 +14,15 @@ const EXCLUDED_FILES = ["typechain/hardhat.d.ts"];
 // the s3 directory is https://sc-abis.s3.us-east-2.amazonaws.com/<VERSION>/typechain
 async function getTypechainFiles(): Promise<Array<any>> {
   // configure AWS
-  AWS.config.update({ accessKeyId: awsKey, secretAccessKey: awsSecret, region: awsRegion });
+  AWS.config.update({ region: awsRegion });
   let s3 = new AWS.S3();
   let params = {
     Bucket: smartContractBucket, // we will access the files only from the smart contract bucket
     Delimiter: "", // this will make sure that all subdirectories will also get accessed
     Prefix: contractVersion + "/typechain/", // get only those files which are under '<VERSION>/typechain'
   };
-  const { Contents: files } = await s3.listObjects(params).promise();
+  // const { Contents: files } = await s3.listObjects(params).promise();
+  const { Contents: files } = await s3.makeUnauthenticatedRequest("listObjects", params).promise();
   return files;
 }
 
@@ -37,6 +36,17 @@ async function readTypechainFile(fileName: string): Promise<string> {
 // read the files
 // and finally write them to the 'typechain' subdirectory in the user's sdk repo
 async function importTypechain(): Promise<void> {
+  // AWS.config.update({ region: awsRegion });
+  // let s3 = new AWS.S3();
+  // const path = "https://sc-abis.s3.us-east-2.amazonaws.com/test/typechain/index.ts";
+  // let params = {
+  //   Bucket: smartContractBucket, // we will access the files only from the smart contract bucket
+  //   Delimiter: "", // this will make sure that all subdirectories will also get accessed
+  //   Prefix: path, // get only those files which are under '<VERSION>/typechain'
+  // };
+  // const file = await s3.makeUnauthenticatedRequest("getObject", params).promise();
+  // console.log({ file });
+  // return;
   const files = await getTypechainFiles();
   for (let i = 0; i < files.length; i++) {
     const { Key } = files[i];
