@@ -154,7 +154,7 @@ export async function sendToForwarder(signatures: Array<string>, requests: Array
   // Call executeBatch
 
   const { forwarder } = CONTRACTS;
-  const encodedCall = forwarder.interface.encodeFunctionData("executeBatch", [
+  const encodedCall = (forwarder as any).interface.encodeFunctionData("executeBatch", [
     requests.map(req => [req.from, req.to, req.value, req.gas, req.nonce, req.data]),
     ethers.utils.hexConcat(signatures),
   ]);
