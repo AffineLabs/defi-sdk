@@ -18,7 +18,6 @@ class Account {
   biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
   walletType: "magic" | "metamask" = DEFAULT_WALLET;
-  magicDidToken: string | null = null;
   // if true, send regular transaction, if false, use biconomy
   gas = false;
 
@@ -40,8 +39,10 @@ class Account {
     walletType: "magic" | "metamask" = DEFAULT_WALLET,
     network: "mainnet" | "mumbai" = "mumbai", // eslint-disable-line @typescript-eslint/no-unused-vars
     shouldRunMagicTestMode?: boolean,
-  ): Promise<string | null> {
-    if (await this.isConnected(walletType)) return this.magicDidToken;
+    noncedMessage?: string,
+    verify?: (message: string) => Promise<boolean | undefined>,
+  ): Promise<void> {
+    if (await this.isConnected(walletType)) return;
     this.walletType = walletType;
 
     const customNodeOptions = {
@@ -60,12 +61,7 @@ class Account {
     // the magic api key is public
     this.magic = new Magic(process.env.MAGIC_API_KEY || "", magicOptions);
 
-    // Users will be connected to magic no matter what 'walletType' is
-    console.time("login-with-magic");
-    this.magicDidToken = await this.magic.auth.loginWithMagicLink({ email });
-    console.timeEnd("login-with-magic");
-
-    await this.changeWallet(walletType);
+    await this.changeWallet(walletType, email, noncedMessage, verify);
 
     // console.time("init-Biconomy");
     // await this.initBiconomy(walletProvider);
@@ -74,14 +70,18 @@ class Account {
     console.time("init-contracts");
     await init(this.signer, this.biconomy);
     console.timeEnd("init-contracts");
-
-    return this.magicDidToken;
   }
+
   async setSimulationMode(mode: boolean) {
     return setSimulationMode(mode);
   }
 
-  async changeWallet(walletType: "magic" | "metamask") {
+  async changeWallet(
+    walletType: "magic" | "metamask",
+    email?: string,
+    noncedMessage?: string,
+    verify?: (message: string) => Promise<boolean | undefined>,
+  ): Promise<void | undefined> {
     let walletProvider: ethers.providers.Web3Provider;
     // change to metamask
     if (walletType === "metamask") {
@@ -93,6 +93,10 @@ class Account {
 
       walletProvider = metamaskProvider;
     } else {
+      if (!email) return;
+      console.time("login-with-magic");
+      await this.magic.auth.loginWithMagicLink({ email });
+      console.timeEnd("login-with-magic");
       // change to magic
       walletProvider = new ethers.providers.Web3Provider(
         this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider,
@@ -100,6 +104,17 @@ class Account {
     }
 
     this.signer = walletProvider.getSigner();
+
+    if (noncedMessage && verify) {
+      const signedMessage = await this.signer.signMessage(noncedMessage);
+      const _isVerified: boolean | undefined = await verify(signedMessage);
+
+      if (!_isVerified) {
+        // case - user is not verified, should skip storing the address
+        return;
+      }
+    }
+
     this.userAddress = await this.signer.getAddress();
     this.walletType = walletType;
   }
@@ -127,9 +142,9 @@ class Account {
   /**
    * Disconnect a user from the magic provider
    */
-  async disconnect(): Promise<void> {
-    if (this.magic?.user) await this.magic.user.logout();
-    this.magicDidToken = null;
+  async disconnect(walletType: "magic" | "metamask"): Promise<void> {
+    if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
+    this.userAddress = undefined;
   }
 
   /**
@@ -138,7 +153,7 @@ class Account {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async isConnected(walletType: string = DEFAULT_WALLET): Promise<boolean> {
-    return this.magicDidToken !== null;
+    return Boolean(this.userAddress);
   }
 
   /**
@@ -212,20 +227,17 @@ class Account {
     return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
   }
 
-  getMagicDidToken(): string | null {
-    return this.magicDidToken;
-  }
-
-  async generateMagicDidToken(): Promise<string | undefined> {
-    const didToken = await this.magic?.user.generateIdToken();
-
-    if (didToken) this.magicDidToken = didToken;
-
-    return didToken;
-  }
-
   async isLoggedInToMagic(): Promise<boolean> {
     return this.magic ? await this.magic.user.isLoggedIn() : false;
+  }
+
+  async getChainId() {
+    if (this.walletType === "metamask") {
+      // @ts-ignore
+      return await window.ethereum.request({ method: "eth_chainId" });
+    }
+
+    return;
   }
 }
 
