@@ -153,7 +153,7 @@ class Account {
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async isConnected(walletType: string = DEFAULT_WALLET): Promise<boolean> {
-    return Boolean(this.userAddress);
+    return Boolean(this.userAddress) && walletType === this.walletType;
   }
 
   /**
@@ -239,6 +239,17 @@ class Account {
     }
 
     return;
+  }
+
+  async switchMetamaskNetwork(chainId: string): Promise<void> {
+    if ((await this.isConnected("metamask")) && window.ethereum) {
+      const provider = window.ethereum as ethers.providers.ExternalProvider;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return await provider.request!({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId }],
+      });
+    }
   }
 }
 
