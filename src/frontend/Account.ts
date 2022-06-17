@@ -39,7 +39,7 @@ class Account {
     walletType: "magic" | "metamask" = DEFAULT_WALLET,
     network: "mainnet" | "mumbai" = "mumbai", // eslint-disable-line @typescript-eslint/no-unused-vars
     shouldRunMagicTestMode?: boolean,
-    noncedMessage?: string,
+    message?: string,
     verify?: (message: string) => Promise<boolean | undefined>,
   ): Promise<void> {
     if (await this.isConnected(walletType)) return;
@@ -61,7 +61,7 @@ class Account {
     // the magic api key is public
     this.magic = new Magic(process.env.MAGIC_API_KEY || "", magicOptions);
 
-    await this.changeWallet(walletType, email, noncedMessage, verify);
+    await this.changeWallet(walletType, email, message, verify);
 
     // console.time("init-Biconomy");
     // await this.initBiconomy(walletProvider);
@@ -79,7 +79,7 @@ class Account {
   async changeWallet(
     walletType: "magic" | "metamask",
     email?: string,
-    noncedMessage?: string,
+    message?: string,
     verify?: (message: string) => Promise<boolean | undefined>,
   ): Promise<void | undefined> {
     let walletProvider: ethers.providers.Web3Provider;
@@ -105,8 +105,8 @@ class Account {
 
     this.signer = walletProvider.getSigner();
 
-    if (noncedMessage && verify) {
-      const signedMessage = await this.signer.signMessage(noncedMessage);
+    if (message && verify) {
+      const signedMessage = await this.signer.signMessage(message);
       const _isVerified: boolean | undefined = await verify(signedMessage);
 
       if (!_isVerified) {
