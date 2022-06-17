@@ -228,7 +228,7 @@ class Account {
   }
 
   async isLoggedInToMagic(): Promise<boolean> {
-    return this.magic ? await this.magic.user.isLoggedIn() : false;
+    return this.magic?.user ? await this.magic.user.isLoggedIn() : false;
   }
 
   async getChainId(): Promise<unknown> {
