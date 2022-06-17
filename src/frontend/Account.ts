@@ -231,8 +231,9 @@ class Account {
     return this.magic ? await this.magic.user.isLoggedIn() : false;
   }
 
-  async getChainId() {
+  async getChainId(): Promise<unknown> {
     if (this.walletType === "metamask") {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       return await window.ethereum.request({ method: "eth_chainId" });
     }
