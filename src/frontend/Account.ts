@@ -73,13 +73,11 @@ class Account {
     } else {
       if (!email) throw new Error("Email is required for Magic wallet");
 
-      const customNodeOptions = {
-        rpcUrl: PROVIDER.connection.url,
-        chainId: 80001,
-      };
-
       const magicOptions: MagicSDKAdditionalConfiguration = {
-        network: customNodeOptions,
+        network: {
+          rpcUrl: PROVIDER.connection.url,
+          chainId: 80001,
+        },
       };
 
       if (shouldRunMagicTestMode) {
