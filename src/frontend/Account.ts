@@ -36,9 +36,7 @@ class Account {
    * @param network the name of the (polygon) network.
    */
   async connect(args: IConnectAccount): Promise<void> {
-    const { walletType } = args;
-    if (this.isConnected(walletType)) return;
-    this.walletType = walletType;
+    if (this.isConnected(args.walletType)) return;
 
     await this.changeWallet(args);
 
@@ -74,6 +72,7 @@ class Account {
       walletProvider = metamaskProvider;
     } else {
       if (!email) throw new Error("Email is required for Magic wallet");
+
       const customNodeOptions = {
         rpcUrl: PROVIDER.connection.url,
         chainId: 80001,
