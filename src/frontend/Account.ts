@@ -73,7 +73,7 @@ class Account {
 
       walletProvider = metamaskProvider;
     } else {
-      if (!email) return;
+      if (!email) throw new Error("Email is required for Magic wallet");
       const customNodeOptions = {
         rpcUrl: PROVIDER.connection.url,
         chainId: 80001,
