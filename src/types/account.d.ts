@@ -1,5 +1,5 @@
 export interface IConnectAccount {
-  email: string;
+  email?: string;
   walletType: "magic" | "metamask";
   network?: "mainnet" | "mumbai";
   shouldRunMagicTestMode?: boolean;
