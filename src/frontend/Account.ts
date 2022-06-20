@@ -223,24 +223,17 @@ class Account {
     return this.magic?.user ? await this.magic.user.isLoggedIn() : false;
   }
 
-  async getChainId(): Promise<unknown> {
-    if (this.walletType === "metamask") {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      return await window.ethereum.request({ method: "eth_chainId" });
-    }
+  async getChainId(): Promise<string> {
+    if (this.walletType !== "metamask") throw Error("Metamask is not connected!!");
 
-    return;
+    const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
+    return provider.send("eth_chainId", []);
   }
 
   async switchMetamaskNetwork(chainId: string): Promise<void> {
     if ((await this.isConnected("metamask")) && window.ethereum) {
-      const provider = window.ethereum as ethers.providers.ExternalProvider;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      return await provider.request!({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId }],
-      });
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      return await provider.send("wallet_switchEthereumChain", [{ chainId }]);
     }
   }
 }
