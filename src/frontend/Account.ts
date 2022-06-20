@@ -9,6 +9,7 @@ import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct } from "../core/types";
 import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
+import { IConnectAccount } from "../types/account";
 
 const DEFAULT_WALLET = "magic";
 
@@ -34,34 +35,12 @@ class Account {
    * @param walletType The type of wallet (metamask or magic)
    * @param network the name of the (polygon) network.
    */
-  async connect(
-    email: string,
-    walletType: "magic" | "metamask" = DEFAULT_WALLET,
-    network: "mainnet" | "mumbai" = "mumbai", // eslint-disable-line @typescript-eslint/no-unused-vars
-    shouldRunMagicTestMode?: boolean,
-    message?: string,
-    verify?: (message: string) => Promise<boolean | undefined>,
-  ): Promise<void> {
-    if (await this.isConnected(walletType)) return;
+  async connect(args: IConnectAccount): Promise<void> {
+    const { walletType } = args;
+    if (this.isConnected(walletType)) return;
     this.walletType = walletType;
 
-    const customNodeOptions = {
-      rpcUrl: PROVIDER.connection.url,
-      chainId: 80001,
-    };
-
-    const magicOptions: MagicSDKAdditionalConfiguration = {
-      network: customNodeOptions,
-    };
-
-    if (shouldRunMagicTestMode) {
-      magicOptions.testMode = true;
-    }
-
-    // the magic api key is public
-    this.magic = new Magic(process.env.MAGIC_API_KEY || "", magicOptions);
-
-    await this.changeWallet(walletType, email, message, verify);
+    await this.changeWallet(args);
 
     // console.time("init-Biconomy");
     // await this.initBiconomy(walletProvider);
@@ -76,12 +55,13 @@ class Account {
     return setSimulationMode(mode);
   }
 
-  async changeWallet(
-    walletType: "magic" | "metamask",
-    email?: string,
-    message?: string,
-    verify?: (message: string) => Promise<boolean | undefined>,
-  ): Promise<void | undefined> {
+  async changeWallet({
+    walletType,
+    email,
+    getMessage,
+    verify,
+    shouldRunMagicTestMode,
+  }: IConnectAccount): Promise<void | undefined> {
     let walletProvider: ethers.providers.Web3Provider;
     // change to metamask
     if (walletType === "metamask") {
@@ -94,6 +74,21 @@ class Account {
       walletProvider = metamaskProvider;
     } else {
       if (!email) return;
+      const customNodeOptions = {
+        rpcUrl: PROVIDER.connection.url,
+        chainId: 80001,
+      };
+
+      const magicOptions: MagicSDKAdditionalConfiguration = {
+        network: customNodeOptions,
+      };
+
+      if (shouldRunMagicTestMode) {
+        magicOptions.testMode = true;
+      }
+
+      // the magic api key is public
+      this.magic = new Magic(process.env.MAGIC_API_KEY || "", magicOptions);
       console.time("login-with-magic");
       await this.magic.auth.loginWithMagicLink({ email });
       console.timeEnd("login-with-magic");
@@ -104,19 +99,20 @@ class Account {
     }
 
     this.signer = walletProvider.getSigner();
-
-    if (message && verify) {
-      const signedMessage = await this.signer.signMessage(message);
-      const _isVerified: boolean | undefined = await verify(signedMessage);
-
-      if (!_isVerified) {
-        // case - user is not verified, should skip storing the address
-        return;
-      }
-    }
-
     this.userAddress = await this.signer.getAddress();
     this.walletType = walletType;
+
+    if (getMessage && verify) {
+      const _message = await getMessage(this.userAddress);
+      const _signedMessage = await this.signer.signMessage(_message);
+      const _isVerified: boolean | undefined = await verify(_signedMessage);
+
+      if (!_isVerified) {
+        // case - user is not verified, should disconnect
+        if (this.isConnected(walletType)) await this.disconnect(walletType);
+        throw new Error("Verification failed!");
+      }
+    }
   }
 
   private async initBiconomy(provider: ethers.providers.Web3Provider) {
@@ -151,8 +147,7 @@ class Account {
    * Check if a user is connected to the magic provider
    * @returns Whether the user is connected to the magic provider
    */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async isConnected(walletType: string = DEFAULT_WALLET): Promise<boolean> {
+  isConnected(walletType: string = DEFAULT_WALLET): boolean {
     return Boolean(this.userAddress) && walletType === this.walletType;
   }
 
