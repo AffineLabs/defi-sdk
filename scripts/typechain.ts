@@ -55,7 +55,7 @@ async function importTypechain(): Promise<void> {
 
     // write typechain data to the given file path
     // fs-extra will make sure that if a directory doesn't exist then it will create one
-    await fse.outputFile(filePath, typechainData);
+    await fse.outputFile(`src/${filePath}`, typechainData);
 
     // log the progress percentage
     const progress = Math.floor(((i + 1) / files.length) * 100);
