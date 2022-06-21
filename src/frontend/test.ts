@@ -6,7 +6,7 @@ const main = async () => {
   const alpAccount = new Account();
   console.time("entire-connect");
 
-  await alpAccount.connect(email, "metamask");
+  await alpAccount.connect({ email, walletType: "metamask" });
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 
