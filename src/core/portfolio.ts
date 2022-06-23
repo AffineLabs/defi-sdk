@@ -1,70 +1,75 @@
-import { buyProduct, sellProduct, tokensFromShares } from "./product";
-import { AlpineProduct, productAllocation, productAmounts, productBalances } from "./types";
-import { getSignature, sendToForwarder } from "./biconomy";
-import { Contract, ethers } from "ethers";
-import { BICONOMY, CONTRACTS, SIGNER, userAddress } from "./cache";
+import { tokensFromShares } from "./product";
+import { productAllocation, productAmounts, productBalances, alpineProducts } from "./types";
+import { getSignature } from "./biconomy";
+import { ethers } from "ethers";
+import { CONTRACTS, SIGNER, userAddress } from "./cache";
 import { _addDecimals } from "./AlpineDeFiSDK";
 
 const ALLOCSUM = 100;
 
 async function portfolioUpdate(buyAmounts: productAmounts, sellAmounts: productAmounts) {
-  let signatures: string[] = [];
-  let requests: any[] = [];
-  for (let [key,value] of Object.entries(sellAmounts)) {
-    if (key === "alpSave" || key == "alpLarge") {
-      const usdcAmount = _addDecimals(value.toString());
-      const {signature, request} = await getSignature(CONTRACTS[key], SIGNER, "withdraw", [usdcAmount]);
-      signatures.push(signature);
-      requests.push(request);
-    }
+  const data: any[] = [];
+  let router = CONTRACTS.router;
+  let IERC4626 = CONTRACTS.IERC4626;
+
+  for (const product of alpineProducts) {//unsure about how to withdraw
+    const sellAmount = sellAmounts[product];
+    if (sellAmount === undefined)
+      continue;
+    const usdcAmount = _addDecimals(sellAmount.toString());
+    const {signature, request} = await getSignature(CONTRACTS[product], SIGNER, "withdraw", [usdcAmount]);
+    data.push(abi.encodeWithSelector(router.depositToVault.selector, IERC4626(userAddress), usdcAmount, 0));
   }
 
-  for (let [key,value] of Object.entries(buyAmounts)) {
-    if (key === "alpSave" || key == "alpLarge") {
-      const usdcAmount = _addDecimals(value.toString());
-      const {signature, request} = await getSignature(CONTRACTS[key], SIGNER, "deposit", [usdcAmount]);;
-      signatures.push(signature);
-      requests.push(request);
-    }
+  for (const product of alpineProducts) {
+      const buyAmount = buyAmounts[product];
+      if (buyAmount === undefined)
+        continue;
+      const usdcAmount = _addDecimals(buyAmount.toString());
+      console.log(`${product}: ${usdcAmount}`);
+      const {signature, request} = await getSignature(CONTRACTS[product], SIGNER, "deposit", [usdcAmount]);
+      data.push(abi.encodeWithSelector(router.depositToVault.selector, IERC4626(userAddress), usdcAmount, 0));   
   }
-  const { forwarder } = CONTRACTS;
-  const encodedCall = forwarder.interface.encodeFunctionData("executeBatch", [
-    requests.map(req => [req.from, req.to, req.value, req.gas, req.nonce, req.data]),
-    ethers.utils.hexConcat(signatures),
-  ]);
+  router.multicall(data);
 }
 
-async function portfolioPurchase(allocations: productAllocation, amount:number){
-  let buyAmounts: productAmounts = {};
-  for (let [product,alloc] of Object.entries(allocations)) {
-    if (product === "alpSave" || product == "alpLarge") {
-      buyAmounts[product] = (alloc*amount/ALLOCSUM).toString();
-    }
+export async function portfolioPurchase(allocations: productAllocation, amount:number){
+  const buyAmounts: productAmounts = {};
+  for (const product of alpineProducts) {
+      buyAmounts[product] = (allocations[product]!*amount/ALLOCSUM).toString();
   }
-  portfolioUpdate(buyAmounts, {});
+  console.log({buyAmounts});
+  return portfolioUpdate(buyAmounts, {});
 }
 
-async function portfolioRebalance(allocations:productAllocation){
+export async function portfolioSell(allocations:productAllocation, amount:number){
+  const sellAmounts: productAmounts = {};
+  for (const product of alpineProducts) {
+      sellAmounts[product] = (allocations[product]!*amount/ALLOCSUM).toString();
+  }
+  return portfolioUpdate({}, sellAmounts);
+}
+
+
+export async function portfolioRebalance(allocations:productAllocation){
   // difference between current vs desired allocation * amount to buy or sell for every product
   const user = userAddress;
   const contracts = CONTRACTS;
-  let coinBalance:productBalances = {};
-  let total: ethers.BigNumber = ethers.BigNumber.from(0);
-  let buyAmounts:productAmounts = {};
-  let sellAmounts:productAmounts = {};
-  for (let [product,alloc] of Object.entries(allocations)){
-    if (product == "alpSave" || product == "alpLarge"){
+  const coinBalance:productBalances = {};
+  const total: ethers.BigNumber = ethers.BigNumber.from(0);
+  const buyAmounts:productAmounts = {};
+  const sellAmounts:productAmounts = {};
+  for (const product of alpineProducts){
       const contract = CONTRACTS[product];
       const tokenBalance: ethers.BigNumber = await contract.balanceOf(user);
       const dollarsBalance = await tokensFromShares(product, tokenBalance);
       total.add(dollarsBalance!);
       coinBalance[product] = dollarsBalance;
-    }
   }
-  for (let [product,currentBalance]of Object.entries(coinBalance)){
-    if (product == "alpSave" || product == "alpLarge"){
+  for (const product of alpineProducts){
       // Ideal Amount is the desired proportion * total money
-        let idealAmount = total.mul(allocations[product]!).div(ALLOCSUM);
+        const idealAmount = total.mul(allocations[product]!).div(ALLOCSUM);
+        const currentBalance = coinBalance[product]!;
         if (idealAmount > currentBalance){
           const amount = idealAmount.sub(currentBalance);
           buyAmounts[product] = amount.div(CONTRACTS[product].decimals()).toString();
@@ -73,17 +78,6 @@ async function portfolioRebalance(allocations:productAllocation){
           const amount = currentBalance.sub(idealAmount);
           sellAmounts[product] = amount.div(CONTRACTS[product].decimals()).toString();
         }
-    }
   }
-  portfolioUpdate(buyAmounts, sellAmounts);
-}
-
-async function portfolioSell(allocations:productAllocation, amount:number){
-  let sellAmounts: productAmounts = {};
-  for (let [product,alloc] of Object.entries(allocations)) {
-    if (product === "alpSave" || product == "alpLarge") {
-      sellAmounts[product] = (alloc*amount/ALLOCSUM).toString();
-    }
-  }
-  portfolioUpdate({}, sellAmounts);
+  return portfolioUpdate(buyAmounts, sellAmounts);
 }

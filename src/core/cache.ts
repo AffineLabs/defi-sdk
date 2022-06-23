@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import axios from "axios";
 import { AlpineContracts } from "./types";
 
-const CONTRACT_VERSION = "stable";
+const CONTRACT_VERSION = "test";
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
@@ -27,13 +27,15 @@ export async function getAllContracts(
   const s3Root = `https://sc-abis.s3.us-east-2.amazonaws.com/${version}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
-  const { PolygonAlpSave: alpSave, PolygonBtcEthVault: alpLarge, PolygonUSDC: usdc, Forwarder: forwarder } = allData;
+  const { PolygonAlpSave: alpSave, PolygonBtcEthVault: alpLarge, PolygonUSDC: usdc, Forwarder: forwarder, Router:router, IERC4626:IERC4626 } = allData;
 
   return {
     usdc: new ethers.Contract(usdc.address, usdc.abi, provider),
     alpSave: new ethers.Contract(alpSave.address, alpSave.abi, provider),
     alpLarge: new ethers.Contract(alpLarge.address, alpLarge.abi, provider),
     forwarder: new ethers.Contract(forwarder.address, forwarder.abi, provider),
+    router: new ethers.Contract(router.address, router.abi, router.provider),
+    IERC4626: new ethers.Contract(IERC4626.address, IERC4626.abi, provider),
   };
 }
 

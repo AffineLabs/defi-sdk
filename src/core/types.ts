@@ -17,7 +17,9 @@ export interface SmallTxReceipt extends GasInfo {
   txnHash: string;
 }
 
-export type AlpineProduct = "alpSave" | "alpLarge";
+export const alpineProducts = ["alpSave", "alpLarge"] as const;
+export type AlpineProduct = typeof alpineProducts[number];
+
 export type productAmounts = {
   [key in AlpineProduct]?: string;
 };
@@ -30,7 +32,7 @@ export type productAllocation = {
   [key in AlpineProduct]?: number;
 };
 
-type ContractName = "usdc" | "forwarder" | AlpineProduct;
+type ContractName = "usdc" | "forwarder" | "router" | "IERC4626" |AlpineProduct;
 export type AlpineContracts = {
   [key in ContractName]: ethers.Contract;
 };
