@@ -1,8 +1,9 @@
 import { ethers } from "ethers";
 import axios from "axios";
 import { AlpineContracts } from "./types";
+import { Forwarder__factory, L2Vault__factory, MintableToken__factory, TwoAssetBasket__factory } from "../../typechain";
 
-const CONTRACT_VERSION = "test";
+const CONTRACT_VERSION = "v0.0.10-erc4626.0";
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
@@ -30,12 +31,10 @@ export async function getAllContracts(
   const { PolygonAlpSave: alpSave, PolygonBtcEthVault: alpLarge, PolygonUSDC: usdc, Forwarder: forwarder, Router:router, IERC4626:IERC4626 } = allData;
 
   return {
-    usdc: new ethers.Contract(usdc.address, usdc.abi, provider),
-    alpSave: new ethers.Contract(alpSave.address, alpSave.abi, provider),
-    alpLarge: new ethers.Contract(alpLarge.address, alpLarge.abi, provider),
-    forwarder: new ethers.Contract(forwarder.address, forwarder.abi, provider),
-    router: new ethers.Contract(router.address, router.abi, router.provider),
-    IERC4626: new ethers.Contract(IERC4626.address, IERC4626.abi, provider),
+    alpSave: L2Vault__factory.connect(alpSave.address, provider),
+    alpLarge: TwoAssetBasket__factory.connect(alpLarge.address, provider),
+    forwarder: Forwarder__factory.connect(forwarder.address, provider),
+    usdc: MintableToken__factory.connect(usdc.address, provider),
   };
 }
 
