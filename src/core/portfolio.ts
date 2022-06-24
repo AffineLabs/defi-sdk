@@ -3,34 +3,33 @@ import { productAllocation, productAmounts, productBalances, alpineProducts } fr
 import { getSignature } from "./biconomy";
 import { ethers } from "ethers";
 import { CONTRACTS, SIGNER, userAddress } from "./cache";
-import { _addDecimals } from "./AlpineDeFiSDK";
+import { blockchainCall, _addDecimals } from "./AlpineDeFiSDK";
 
 const ALLOCSUM = 100;
 
 async function portfolioUpdate(buyAmounts: productAmounts, sellAmounts: productAmounts) {
   const data: any[] = [];
   let router = CONTRACTS.router;
-  let IERC4626 = CONTRACTS.IERC4626;
-
   for (const product of alpineProducts) {//unsure about how to withdraw
     const sellAmount = sellAmounts[product];
     if (sellAmount === undefined)
       continue;
     const usdcAmount = _addDecimals(sellAmount.toString());
-    const {signature, request} = await getSignature(CONTRACTS[product], SIGNER, "withdraw", [usdcAmount]);
-    data.push(abi.encodeWithSelector(router.depositToVault.selector, IERC4626(userAddress), usdcAmount, 0));
+    let iface = router.interface;
+    data.push((iface as any).encodeFunctionData("withdraw", [CONTRACTS[product].address ,userAddress, usdcAmount, ethers.BigNumber.from(Number.MAX_SAFE_INTEGER)]));
   }
-
+  console.log("Passed Withdraw")
   for (const product of alpineProducts) {
       const buyAmount = buyAmounts[product];
       if (buyAmount === undefined)
         continue;
       const usdcAmount = _addDecimals(buyAmount.toString());
       console.log(`${product}: ${usdcAmount}`);
-      const {signature, request} = await getSignature(CONTRACTS[product], SIGNER, "deposit", [usdcAmount]);
-      data.push(abi.encodeWithSelector(router.depositToVault.selector, IERC4626(userAddress), usdcAmount, 0));   
+      let iface = router.interface;
+      data.push((iface as any).encodeFunctionData("depositToVault", [CONTRACTS[product].address ,userAddress, usdcAmount, 0])); 
   }
-  router.multicall(data);
+  console.log("Data: ", data);
+  return blockchainCall(router, "multicall", [data]);
 }
 
 export async function portfolioPurchase(allocations: productAllocation, amount:number){
@@ -72,11 +71,11 @@ export async function portfolioRebalance(allocations:productAllocation){
         const currentBalance = coinBalance[product]!;
         if (idealAmount > currentBalance){
           const amount = idealAmount.sub(currentBalance);
-          buyAmounts[product] = amount.div(CONTRACTS[product].decimals()).toString();
+          buyAmounts[product] = amount.div(await CONTRACTS[product].decimals()).toString();
         }
         else if(currentBalance > idealAmount){
           const amount = currentBalance.sub(idealAmount);
-          sellAmounts[product] = amount.div(CONTRACTS[product].decimals()).toString();
+          sellAmounts[product] = amount.div(await CONTRACTS[product].decimals()).toString();
         }
   }
   return portfolioUpdate(buyAmounts, sellAmounts);

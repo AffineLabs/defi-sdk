@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { tokensFromShares } from "../product";
+import { getTokenInfo, tokensFromShares } from "../product";
 import { init, setProvider, CONTRACTS, userAddress, PROVIDER } from "../cache";
 import { productAllocation, productBalances, alpineProducts } from "../types";
 import { portfolioPurchase, portfolioRebalance, portfolioSell } from "../portfolio"
@@ -24,7 +24,9 @@ describe("Portfolio transactions", async () => {
     const allocation:productAllocation = {};
     allocation['alpLarge'] = 50;
     allocation['alpSave'] = 50;
-    await portfolioPurchase(allocation, 1000);
+    console.log("Balance Before: ", await getTokenInfo("usdc"));
+    console.log("Result : ", await portfolioPurchase(allocation, 1000));
+    console.log("Balance After: ", await getTokenInfo("usdc"));
     const user = userAddress;
     const coinBalance:productBalances = {};
     const total: ethers.BigNumber = ethers.BigNumber.from(0);
