@@ -3,7 +3,7 @@ import * as fse from "fs-extra";
 import readline from "readline";
 import * as AWS from "aws-sdk";
 
-import { CONTRACT_VERSION } from "../src/core/cache";
+import { CONTRACT_VERSION } from "./constants";
 
 const awsRegion = "us-east-2";
 const smartContractBucket = "sc-abis";
