@@ -2268,6 +2268,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lru-cache@npm:5.1.1":
+  version: 5.1.1
+  resolution: "@types/lru-cache@npm:5.1.1"
+  checksum: e1d6c0085f61b16ec5b3073ec76ad1be4844ea036561c3f145fc19f71f084b58a6eb600b14128aa95809d057d28f1d147c910186ae51219f58366ffd2ff2e118
+  languageName: node
+  linkType: hard
+
 "@types/mocha@npm:^9.1.0":
   version: 9.1.0
   resolution: "@types/mocha@npm:9.1.0"
@@ -2311,6 +2318,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 1bd10b9afa724084b655dc81b7b315def3d2d0e272014ef16009fa76e17537411c07c0695fdea412bc7b36d2a02687f5fea33522d55b8ef29eda42992f812913
+  languageName: node
+  linkType: hard
+
+"@types/seedrandom@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@types/seedrandom@npm:3.0.1"
+  checksum: d9755452f224a4f5072a1d8738da6c9de3039fc59a2a449b1f658e51087be7b48ada49bcabc8b0f16633c095f55598c32fcd072c448858422a2f6a0566569e4c
   languageName: node
   linkType: hard
 
@@ -3443,7 +3457,7 @@ __metadata:
     concurrently: ^7.0.0
     dotenv: ^16.0.0
     ethers: ^5.6.2
-    ganache: ^7.0.4
+    ganache: ^7.3.1
     mocha: ^9.2.2
     ts-node: ^10.8.0
   languageName: unknown
@@ -4892,11 +4906,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ganache@npm:^7.0.4":
-  version: 7.0.4
-  resolution: "ganache@npm:7.0.4"
+"ganache@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "ganache@npm:7.3.1"
   dependencies:
     "@trufflesuite/bigint-buffer": 1.1.9
+    "@types/bn.js": ^5.1.0
+    "@types/lru-cache": 5.1.1
+    "@types/seedrandom": 3.0.1
     bufferutil: 4.0.5
     emittery: 0.10.0
     keccak: 3.0.1
@@ -4911,7 +4928,7 @@ __metadata:
   bin:
     ganache: dist/node/cli.js
     ganache-cli: dist/node/cli.js
-  checksum: 9611ef44120c5cfd2deaa1eace2740bd76d9fb26bf254ebf7c05468de327d26eaca46f8618cc9e662f13f0fb95de2efd498430ab5d0af4e976145e94b0a7de6e
+  checksum: 46fe69554dbf12c0f6b2d8cd94945d6989864d01da9daee98f453e26fa6b87008ab92f9a18580872258a48cf49a651ff732e3f754a89f7ceba8bb35f953a1f59
   languageName: node
   linkType: hard
 

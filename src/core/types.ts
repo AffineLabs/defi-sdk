@@ -1,4 +1,4 @@
-import { ERC20, Forwarder, L2Vault, TwoAssetBasket } from "../../typechain";
+import { ERC20, Forwarder, L2Vault, TwoAssetBasket } from "../typechain";
 
 export interface GasInfo {
   txnCost: string;
