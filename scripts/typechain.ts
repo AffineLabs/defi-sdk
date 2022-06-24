@@ -3,14 +3,11 @@ import * as fse from "fs-extra";
 import readline from "readline";
 import * as AWS from "aws-sdk";
 
-// load environment variables from a .env file into process.env
-import { config as dotenvConfig } from "dotenv";
-import { resolve } from "path";
-dotenvConfig({ path: resolve(__dirname, "../.env") });
+import { CONTRACT_VERSION } from "../src/core/cache";
 
-const awsRegion: string = process.env.AWS_REGION || "";
-const smartContractBucket: string = "sc-abis";
-const contractVersion: string = process.env.CONTRACT_VERSION || "";
+const awsRegion = "us-east-2";
+const smartContractBucket = "sc-abis";
+const contractVersion = CONTRACT_VERSION;
 
 // we won't import the following files
 const EXCLUDED_FILES = ["typechain/hardhat.d.ts"];
@@ -20,8 +17,8 @@ const EXCLUDED_FILES = ["typechain/hardhat.d.ts"];
 async function getTypechainFiles(): Promise<Array<any>> {
   // configure AWS
   AWS.config.update({ region: awsRegion });
-  let s3 = new AWS.S3();
-  let params = {
+  const s3 = new AWS.S3();
+  const params = {
     Bucket: smartContractBucket, // we will access the files only from the smart contract bucket
     Delimiter: "", // this will make sure that all subdirectories will also get accessed
     Prefix: contractVersion + "/typechain/", // get only those files which are under '<VERSION>/typechain'
