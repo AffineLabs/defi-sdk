@@ -14,6 +14,7 @@ const EXCLUDED_FILES = ["typechain/hardhat.d.ts"];
 
 // get all typechain file names from the s3 bucket
 // the s3 directory is https://sc-abis.s3.us-east-2.amazonaws.com/<VERSION>/typechain
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function getTypechainFiles(): Promise<Array<any>> {
   // configure AWS
   AWS.config.update({ region: awsRegion });
@@ -46,7 +47,7 @@ async function importTypechain(): Promise<void> {
 
     // make sure that each file get's uploaded to the 'typechain' folder
     // so first remove the '<VERSION>/' prefix from the path
-    const prefix: string = `${contractVersion}/`;
+    const prefix = `${contractVersion}/`;
     filePath = filePath.replace(prefix, "");
     if (EXCLUDED_FILES.includes(filePath)) continue;
 
