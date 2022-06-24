@@ -184,8 +184,8 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
     const contract = CONTRACTS[product];
     const amount: ethers.BigNumber = await contract.balanceOf(user);
     // price and number of decimals of each unit of the contract
-    type DetailedNum = { num: ethers.BigNumber; decimals: ethers.BigNumber };
-    const { num, decimals }: DetailedNum = await contract.detailedPrice();
+    // type DetailedNum = { num: ethers.BigNumber; decimals: ethers.BigNumber };
+    const { num, decimals } = await contract.detailedPrice();
     const amount_decimals = ethers.BigNumber.from(await contract.decimals());
     const equity = amount.mul(num);
     return {
@@ -207,7 +207,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
 export async function tokensFromShares(product: AlpineProduct, amount: ethers.BigNumber) {
   if (product === "alpSave") {
     const { alpSave } = CONTRACTS;
-    const tokens: ethers.BigNumber = await alpSave.tokensFromShares(amount);
+    const tokens: ethers.BigNumber = await alpSave.convertToAssets(amount);
     return tokens;
   }
 
