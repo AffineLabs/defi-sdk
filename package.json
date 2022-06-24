@@ -12,7 +12,7 @@
     "start": "parcel src/frontend/index.html",
     "format": "prettier --check \"src/**/*.{ts,js}\"",
     "format:fix": "prettier --write \"src/**/*.{ts,js}\"",
-    "build": "ts-node scripts/typechain.ts"
+    "build": "ts-node src/core/typechain.ts"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
