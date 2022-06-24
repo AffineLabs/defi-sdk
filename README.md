@@ -1,7 +1,5 @@
 # Alpine DeFi SDK
 
-## TODO: Update documentation 
-
 ## Pre-requisites
 
 - Install nvm with these [instructions](https://github.com/nvm-sh/nvm#install--update-script). Then run
