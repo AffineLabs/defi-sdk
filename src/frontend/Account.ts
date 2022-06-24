@@ -102,7 +102,7 @@ class Account {
     if (getMessage && verify) {
       const _message = await getMessage(this.userAddress);
       const _signedMessage = await this.signer.signMessage(_message);
-      const _isVerified: boolean | undefined = await verify(_signedMessage);
+      const _isVerified: boolean | undefined = await verify(_signedMessage, this.userAddress);
 
       if (!_isVerified) {
         // case - user is not verified, should disconnect
