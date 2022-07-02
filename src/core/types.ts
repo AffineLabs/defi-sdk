@@ -40,6 +40,7 @@ export type AlpineContracts = {
   usdc: ERC20;
   router: Router;
 };
+
 export interface TokenInfo {
   amount: string; // in base unit
   price: string; // dollars / 1 base unit of token

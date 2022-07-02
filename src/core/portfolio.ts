@@ -1,27 +1,30 @@
-import { tokensFromShares } from "./product";
+import { sharesFromTokens, tokensFromShares } from "./product";
 import { productAllocation, productAmounts, productBalances, alpineProducts } from "./types";
 import { getSignature } from "./biconomy";
 import { ethers } from "ethers";
 import { CONTRACTS, SIGNER, userAddress } from "./cache";
-import { blockchainCall, _addDecimals } from "./AlpineDeFiSDK";
+import { blockchainCall, _addDecimals, _removeDecimals } from "./AlpineDeFiSDK";
 
 const ALLOCSUM = 100;
 
-async function portfolioUpdate(buyAmounts: productAmounts, sellAmounts: productAmounts) {
+export async function portfolioUpdate(buyAmounts: productAmounts, sellAmounts: productAmounts) {
   const data: any[] = [];
   let router = CONTRACTS.router;
   for (const product of alpineProducts) {//unsure about how to withdraw
     const sellAmount = sellAmounts[product];
-    if (sellAmount === undefined)
+    if (sellAmount === undefined || Number(sellAmount) === 0)
+    {
+      console.log("Skipped: ", product)
       continue;
+    }
     const usdcAmount = _addDecimals(sellAmount.toString());
     let iface = router.interface;
-    data.push((iface as any).encodeFunctionData("withdraw", [CONTRACTS[product].address ,userAddress, usdcAmount, ethers.BigNumber.from(Number.MAX_SAFE_INTEGER)]));
+    data.push((iface as any).encodeFunctionData("withdraw", [CONTRACTS[product].address ,userAddress, usdcAmount, ethers.BigNumber.from(2).pow(256).sub(1)]));
   }
   console.log("Passed Withdraw")
   for (const product of alpineProducts) {
       const buyAmount = buyAmounts[product];
-      if (buyAmount === undefined)
+      if (buyAmount === undefined || Number(buyAmount) === 0)
         continue;
       const usdcAmount = _addDecimals(buyAmount.toString());
       console.log(`${product}: ${usdcAmount}`);
@@ -46,6 +49,7 @@ export async function portfolioSell(allocations:productAllocation, amount:number
   for (const product of alpineProducts) {
       sellAmounts[product] = (allocations[product]!*amount/ALLOCSUM).toString();
   }
+  console.log({sellAmounts});
   return portfolioUpdate({}, sellAmounts);
 }
 
@@ -71,11 +75,11 @@ export async function portfolioRebalance(allocations:productAllocation){
         const currentBalance = coinBalance[product]!;
         if (idealAmount > currentBalance){
           const amount = idealAmount.sub(currentBalance);
-          buyAmounts[product] = amount.div(await CONTRACTS[product].decimals()).toString();
+          buyAmounts[product] = _removeDecimals(amount.div(await CONTRACTS[product].decimals())).toString();
         }
         else if(currentBalance > idealAmount){
           const amount = currentBalance.sub(idealAmount);
-          sellAmounts[product] = amount.div(await CONTRACTS[product].decimals()).toString();
+          sellAmounts[product] = _removeDecimals(amount.div(await CONTRACTS[product].decimals())).toString();
         }
   }
   return portfolioUpdate(buyAmounts, sellAmounts);

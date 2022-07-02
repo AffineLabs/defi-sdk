@@ -5,7 +5,7 @@ import { DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
 import { CONTRACTS, SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE } from "./cache";
-import { AlpineProduct } from "./types";
+import { AlpineProduct, AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
 
@@ -121,7 +121,7 @@ export async function blockchainCall(
  * @param to the receipient contract
  * @param amountUSDC transaction amount in usdc
  */
-export async function approve(to: AlpineProduct, amountUSDC: string): Promise<DryRunReceipt | FullTxReceipt> {
+export async function approve(to: keyof AlpineContracts, amountUSDC: string): Promise<DryRunReceipt | FullTxReceipt> {
   const amount = _addDecimals(amountUSDC);
   const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
   if (SIMULATE) {

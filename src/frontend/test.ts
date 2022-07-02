@@ -1,8 +1,16 @@
 import { Account, ReadAccount } from "./Account";
+import { ethers } from "ethers";
+import { blockchainCall } from "../core/AlpineDeFiSDK";
+import { CONTRACTS } from "../core/cache";
+import { mintUSDC } from "../core/AlpineDeFiSDK";
+import { approve } from "../core/AlpineDeFiSDK";
+import { productAllocation } from "../core/types";
 
 const main = async () => {
   const email = process.env.EMAIL || "";
-
+  await approve("router", "1000000");
+  await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address ,CONTRACTS.alpLarge.address, ethers.BigNumber.from(2).pow(256).sub(1)]);
+  await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address ,CONTRACTS.alpSave.address, ethers.BigNumber.from(2).pow(256).sub(1)]);
   const alpAccount = new Account();
   console.time("entire-connect");
 
@@ -12,6 +20,11 @@ const main = async () => {
 
   await alpAccount.setGasMode(true);
   await alpAccount.setSimulationMode(true);
+  let allocation:productAllocation = {};
+  allocation['alpSave'] = 100;
+  allocation['alpLarge'] = 0;
+  await alpAccount.portfolioPurchase(allocation, 1000);
+  await alpAccount.portfolioSell(allocation, 100);
   const res = await alpAccount.approve("alpLarge", "1000000");
   console.log({ res });
 

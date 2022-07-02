@@ -5,8 +5,10 @@ import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
 
+import { productAllocation } from "../core/types";
+import { portfolioSell, portfolioPurchase } from "../core/portfolio"; 
 import { AlpineDeFiSDK, init } from "../core";
-import { AlpineProduct } from "../core/types";
+import { AlpineProduct, AlpineContracts } from "../core/types";
 import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
 import { IConnectAccount, MetamaskError } from "../types/account";
@@ -187,8 +189,16 @@ class Account {
    * @param {String} amountUSDC transaction amount in usdc
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
-  approve(to: AlpineProduct, amountUSDC: string) {
+  approve(to: keyof AlpineContracts, amountUSDC: string) {
     return AlpineDeFiSDK.approve(to, amountUSDC);
+  }
+
+  portfolioSell(allocations:productAllocation, amount:number) {
+    return portfolioSell(allocations, amount);
+  }
+
+  portfolioPurchase(alloctions:productAllocation, amount:number) {
+    return portfolioPurchase(alloctions, amount);
   }
 
   buyProduct(product: AlpineProduct, dollarAmount: number) {
