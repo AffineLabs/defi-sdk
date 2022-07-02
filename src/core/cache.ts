@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
 import axios from "axios";
 import { AlpineContracts } from "./types";
-import { Forwarder__factory, L2Vault__factory, MintableToken__factory, TwoAssetBasket__factory, Router__factory } from "../typechain";
-import { CONTRACT_VERSION } from "./constants";
+import { ERC165__factory, Forwarder__factory, L2Vault__factory, MintableToken__factory, TwoAssetBasket__factory, Router__factory } from "../../typechain";
 
+const CONTRACT_VERSION = "test";
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
