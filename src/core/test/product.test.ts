@@ -38,15 +38,10 @@ describe("Buy products", async () => {
     console.log("alpLarge shares....", res.toString());
     expect(res.gt(0)).to.be.true;
 
-    // TODO: figure out why we get an "out of gas" error when forking from ganache
-    // Passing in the gas limit causes the function to succeed. When it does succeed, it uses 296895 gas
-
-    // await sellProduct("alpLarge", 10);
-    // const newBal: ethers.BigNumber = await CONTRACTS.alpLarge.balanceOf(
-    //   wallet.address
-    // );
-    // console.log("newBal: ", newBal.toString());
-    // assert(newBal.lt(res));
+    await sellProduct("alpLarge", 1);
+    const newBal: ethers.BigNumber = await CONTRACTS.alpLarge.balanceOf(wallet.address);
+    console.log("newBal: ", newBal.toString());
+    expect(newBal.lt(res)).to.be.true;
   });
 });
 

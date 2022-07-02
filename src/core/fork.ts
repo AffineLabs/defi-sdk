@@ -19,7 +19,7 @@ if (!testFiles) testFiles = "test/**/*.test.ts";
 const { result } = concurrently(
   [
     `yarn ganache --fork.url https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-    `yarn run-test ${testFiles}`,
+    `yarn run-test src/core/${testFiles}`,
   ],
   // The ganache process does not exit. The process exits successfully if the `yarn test` process exits correctly
   { successCondition: "first", killOthers: ["failure", "success"] },
