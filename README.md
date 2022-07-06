@@ -2,6 +2,8 @@
 
 ## Pre-requisites
 
+# TODO: Write documentation
+
 - Install nvm with these [instructions](https://github.com/nvm-sh/nvm#install--update-script). Then run
 
 ```sh

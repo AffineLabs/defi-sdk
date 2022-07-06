@@ -4,5 +4,11 @@ export interface IConnectAccount {
   network?: "mainnet" | "mumbai";
   shouldRunMagicTestMode?: boolean;
   getMessage?: (address: string) => Promise<string>;
-  verify?: (message: string) => Promise<boolean | undefined>;
+  verify?: (message: string, address: string) => Promise<boolean | undefined>;
+}
+
+export interface MetamaskError {
+  code: number;
+  message: string;
+  stack: string;
 }

@@ -11,9 +11,8 @@ import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct, AlpineContracts } from "../core/types";
 import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
-import { IConnectAccount } from "../types/account";
-
-const DEFAULT_WALLET = "magic";
+import { IConnectAccount, MetamaskError } from "../types/account";
+import { DEFAULT_CHAIN_ID, DEFAULT_NETWORK_PARAMS, DEFAULT_WALLET } from "../core/constants";
 
 class Account {
   magic!: Magic;
@@ -104,7 +103,7 @@ class Account {
     if (getMessage && verify) {
       const _message = await getMessage(this.userAddress);
       const _signedMessage = await this.signer.signMessage(_message);
-      const _isVerified: boolean | undefined = await verify(_signedMessage);
+      const _isVerified: boolean | undefined = await verify(_signedMessage, this.userAddress);
 
       if (!_isVerified) {
         // case - user is not verified, should disconnect
@@ -233,17 +232,30 @@ class Account {
     return this.magic?.user ? await this.magic.user.isLoggedIn() : false;
   }
 
-  async getChainId(): Promise<string> {
+  async isConnectedToAllowedNetwork(): Promise<boolean> {
     if (this.walletType !== "metamask") throw Error("Metamask is not connected!!");
 
     const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
-    return provider.send("eth_chainId", []);
+    return (await provider.send("eth_chainId", [])) === DEFAULT_CHAIN_ID;
   }
 
-  async switchMetamaskNetwork(chainId: string): Promise<void> {
-    if ((await this.isConnected("metamask")) && window.ethereum) {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      return await provider.send("wallet_switchEthereumChain", [{ chainId }]);
+  async switchMetamaskToAllowedNetwork(): Promise<void> {
+    if (!window.ethereum) throw new Error("Metamask is not installed!");
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    try {
+      await provider.send("wallet_switchEthereumChain", [{ chainId: DEFAULT_CHAIN_ID }]);
+    } catch (error: unknown) {
+      const err = error as MetamaskError;
+      console.error("Error on switching ethereum chain", error);
+
+      if (err.code === 4902) {
+        /**
+         * case - 4902 indicates that the chain has not been added to MetaMask.
+         * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
+         */
+        await provider.send("wallet_addEthereumChain", [{ ...DEFAULT_NETWORK_PARAMS }]);
+      }
     }
   }
 }

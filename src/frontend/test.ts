@@ -43,4 +43,37 @@ const main = async () => {
   console.log("exiting");
 };
 
+const handleButtonClick = () => {
+  document.addEventListener(
+    "click",
+    async function (event) {
+      if (!event || !event.target) return;
+
+      const element = event.target as HTMLInputElement;
+
+      // If the clicked element doesn't have the right selector, bail
+      if (!element.matches("#switchToPolygon")) return;
+
+      // Don't follow the link
+      event.preventDefault();
+
+      // Log the clicked element in the console
+      console.log(event.target);
+
+      const account = new Account();
+      try {
+        await account.switchMetamaskToAllowedNetwork();
+      } catch (error) {
+        console.log("ERROR ===>", error);
+      }
+      await account.connect({ walletType: "metamask" });
+      console.log("Metamask connected!!");
+      const isConnected = await account.isConnectedToAllowedNetwork();
+      console.log({ isConnected });
+    },
+    false,
+  );
+};
+
 main();
+handleButtonClick();
