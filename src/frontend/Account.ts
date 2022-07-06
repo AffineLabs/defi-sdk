@@ -223,8 +223,6 @@ class Account {
   }
 
   async isConnectedToAllowedNetwork(): Promise<boolean> {
-    if (this.walletType !== "metamask") throw Error("Metamask is not connected!!");
-
     const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
     return (await provider.send("eth_chainId", [])) === DEFAULT_CHAIN_ID;
   }
