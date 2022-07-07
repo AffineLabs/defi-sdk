@@ -6,7 +6,7 @@ import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
 
 import { productAllocation } from "../core/types";
-import { portfolioSell, portfolioPurchase } from "../core/portfolio"; 
+import { portfolioSell, portfolioPurchase } from "../core/portfolio";
 import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct, AlpineContracts } from "../core/types";
 import * as productActions from "../core/product";
@@ -193,11 +193,11 @@ class Account {
     return AlpineDeFiSDK.approve(to, amountUSDC);
   }
 
-  portfolioSell(allocations:productAllocation, amount:number) {
+  portfolioSell(allocations: productAllocation, amount: number) {
     return portfolioSell(allocations, amount);
   }
 
-  portfolioPurchase(alloctions:productAllocation, amount:number) {
+  portfolioPurchase(alloctions: productAllocation, amount: number) {
     return portfolioPurchase(alloctions, amount);
   }
 
