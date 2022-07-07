@@ -37,6 +37,7 @@ describe("Portfolio transactions", async () => {
       ethers.BigNumber.from(2).pow(256).sub(1),
     ]);
   });
+
   it("Portfolio Purchase", async () => {
     const coinBalance: productBalances = {};
     const user = userAddress;
@@ -52,10 +53,13 @@ describe("Portfolio transactions", async () => {
       const dollarsBalance = await tokensFromShares(product, tokenBalance);
       coinBalance[product] = dollarsBalance;
     }
-    assert(coinBalance["alpLarge"]! > ethers.BigNumber.from(0));
-    assert(coinBalance["alpSave"]! > ethers.BigNumber.from(0));
+    const alpLargeBalance = Number(_removeDecimals(coinBalance["alpLarge"]!));
+    const alpSaveBalance = Number(_removeDecimals(coinBalance['alpSave']!));
+    assert(alpLargeBalance > 495);
+    assert(alpSaveBalance > 495);
     assert(balanceBefore - balanceAfter == 1000);
   });
+
   it("Portfolio Sell", async () => {
     const coinBalance: productBalances = {};
     let allocation: productAllocation = {};
@@ -73,6 +77,7 @@ describe("Portfolio transactions", async () => {
     }
     assert(Number(_removeDecimals(coinBalance["alpSave"]!)) > 395);
     assert(Number(_removeDecimals(coinBalance["alpSave"]!)) < 400);
+
   });
   it("Portfolio Rebalance", async () => {
     const allocation: productAllocation = {};
@@ -81,7 +86,7 @@ describe("Portfolio transactions", async () => {
     await portfolioRebalance(allocation);
     const user = userAddress;
     const coinBalance: productBalances = {};
-    const total: ethers.BigNumber = ethers.BigNumber.from(0);
+    const total = ethers.BigNumber.from(0);
     for (const product of alpineProducts) {
       const contract = CONTRACTS[product];
       const tokenBalance: ethers.BigNumber = await contract.balanceOf(user);
@@ -89,7 +94,11 @@ describe("Portfolio transactions", async () => {
       total.add(dollarsBalance!);
       coinBalance[product] = dollarsBalance;
     }
-    assert(Number(_removeDecimals(coinBalance["alpLarge"]!)) + 5 > Number(_removeDecimals(coinBalance["alpSave"]!)));
-    assert(Number(_removeDecimals(coinBalance["alpLarge"]!)) - 5 < Number(_removeDecimals(coinBalance["alpSave"]!)));
+    const alpLargeBalance = Number(_removeDecimals(coinBalance["alpLarge"]!));
+    const alpSaveBalance = Number(_removeDecimals(coinBalance['alpSave']!));
+    if (alpLargeBalance > alpSaveBalance)
+      assert(alpLargeBalance - alpSaveBalance < 5);
+    else
+      assert(alpSaveBalance - alpLargeBalance < 5);
   });
 });

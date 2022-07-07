@@ -8,14 +8,12 @@ import { blockchainCall, _addDecimals, _removeDecimals } from "./AlpineDeFiSDK";
 const ALLOCSUM = 100;
 
 export async function portfolioUpdate(buyAmounts: productAmounts, sellAmounts: productAmounts) {
-  const data: any[] = [];
-  let router = CONTRACTS.router;
-  for (const product of alpineProducts) {//unsure about how to withdraw
+  const data: string[] = [];
+  const router = CONTRACTS.router;
+  for (const product of alpineProducts) {
     const sellAmount = sellAmounts[product];
     if (sellAmount === undefined || Number(sellAmount) === 0)
-    {
       continue;
-    }
     const usdcAmount = _addDecimals(sellAmount.toString());
     let iface = router.interface;
     data.push((iface as any).encodeFunctionData("withdraw", [CONTRACTS[product].address ,userAddress, usdcAmount, ethers.BigNumber.from(2).pow(256).sub(1)]));
