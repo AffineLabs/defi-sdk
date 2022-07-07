@@ -99,14 +99,15 @@ class Account {
     this.walletType = walletType;
 
     if (getMessage && verify) {
-      const _message = await getMessage(this.userAddress);
-      const _signedMessage = await this.signer.signMessage(_message);
-      const _isVerified: boolean | undefined = await verify(_signedMessage, this.userAddress);
-
-      if (!_isVerified) {
+      try {
+        const _message = await getMessage(this.userAddress);
+        const _signedMessage = await this.signer.signMessage(_message);
+        await verify(_signedMessage, this.userAddress);
+      } catch (error: unknown) {
+        const err = error as MetamaskError;
         // case - user is not verified, should disconnect
         if (this.isConnected(walletType)) await this.disconnect(walletType);
-        throw new Error("Verification failed!");
+        throw new Error(err?.message ?? "Verification failed!");
       }
     }
   }
@@ -222,9 +223,13 @@ class Account {
     return this.magic?.user ? await this.magic.user.isLoggedIn() : false;
   }
 
-  async isConnectedToAllowedNetwork(): Promise<boolean> {
+  async getChainId(): Promise<string> {
     const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
-    return (await provider.send("eth_chainId", [])) === DEFAULT_CHAIN_ID;
+    return await provider.send("eth_chainId", []);
+  }
+
+  async isConnectedToAllowedNetwork(): Promise<boolean> {
+    return (await this.getChainId()) === DEFAULT_CHAIN_ID;
   }
 
   async switchMetamaskToAllowedNetwork(): Promise<void> {
