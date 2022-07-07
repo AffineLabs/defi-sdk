@@ -62,7 +62,7 @@ describe("Portfolio transactions", async () => {
 
   it("Portfolio Sell", async () => {
     const coinBalance: productBalances = {};
-    let allocation: productAllocation = {};
+    const allocation: productAllocation = {};
     allocation["alpSave"] = 100;
     allocation["alpLarge"] = 0;
     await portfolioSell(allocation, 100);

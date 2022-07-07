@@ -28,7 +28,7 @@ const main = async () => {
 
   await alpAccount.setGasMode(true);
   await alpAccount.setSimulationMode(true);
-  let allocation: productAllocation = {};
+  const allocation: productAllocation = {};
   allocation["alpSave"] = 100;
   allocation["alpLarge"] = 0;
   await alpAccount.portfolioPurchase(allocation, 1000);
