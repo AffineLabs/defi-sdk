@@ -26,11 +26,11 @@ export type productAmounts = {
 };
 
 export type productBalances = {
-  [key in AlpineProduct]?: ethers.BigNumber;
+  [key in AlpineProduct]: ethers.BigNumber;
 };
 
 export type productAllocation = {
-  [key in AlpineProduct]?: number;
+  [key in AlpineProduct]: number;
 };
 
 export type AlpineContracts = {
