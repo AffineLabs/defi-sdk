@@ -5,7 +5,7 @@ import { DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
 import { CONTRACTS, SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE } from "./cache";
-import { AlpineProduct, AlpineContracts } from "./types";
+import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
 

@@ -4,7 +4,7 @@ import { init, setProvider, CONTRACTS, userAddress, PROVIDER } from "../cache";
 import { productAllocation, productBalances, alpineProducts } from "../types";
 import { portfolioPurchase, portfolioRebalance, portfolioSell } from "../portfolio";
 import { expect } from "chai";
-import { approve, blockchainCall, mintUSDC, _addDecimals, _removeDecimals } from "../AlpineDeFiSDK";
+import { approve, blockchainCall, mintUSDC, _removeDecimals } from "../AlpineDeFiSDK";
 
 const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);

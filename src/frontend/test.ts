@@ -1,16 +1,10 @@
 import { Account, ReadAccount } from "./Account";
-import { blockchainCall } from "../core/AlpineDeFiSDK";
-import { CONTRACTS } from "../core/cache";
-import { mintUSDC } from "../core/AlpineDeFiSDK";
-import { approve } from "../core/AlpineDeFiSDK";
-import { productAllocation } from "../core/types";
 import { ethers } from "ethers";
 
 const main = async () => {
   const email = process.env.EMAIL || "";
   const alpAccount = new Account();
   console.time("entire-connect");
-  const MAX_INT = ethers.BigNumber.from(2).pow(256).sub(1);
 
   await alpAccount.connect({ email, walletType: "metamask" });
   console.log("wallet: ", await alpAccount.getUserAddress());

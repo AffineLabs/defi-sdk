@@ -13,7 +13,6 @@ export async function portfolioUpdate(buyAmounts: productAmounts, sellAmounts: p
     const sellAmount = sellAmounts[product];
     if (sellAmount === undefined || Number(sellAmount) === 0) continue;
     const usdcAmount = _addDecimals(sellAmount.toString());
-    const iface = router.interface;
     data.push(
       router.interface.encodeFunctionData("withdraw", [
         CONTRACTS[product].address,
@@ -27,7 +26,6 @@ export async function portfolioUpdate(buyAmounts: productAmounts, sellAmounts: p
     const buyAmount = buyAmounts[product];
     if (buyAmount === undefined || Number(buyAmount) === 0) continue;
     const usdcAmount = _addDecimals(buyAmount.toString());
-    const iface = router.interface;
     data.push(
       router.interface.encodeFunctionData("depositToVault", [CONTRACTS[product].address, userAddress, usdcAmount, 0]),
     );

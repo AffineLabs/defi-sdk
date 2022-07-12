@@ -1,4 +1,4 @@
-export const CONTRACT_VERSION = "test";
+export const CONTRACT_VERSION = "stable";
 export const DEFAULT_WALLET = "magic";
 export const DEFAULT_CHAIN_ID = "0x13881";
 export const DEFAULT_NETWORK_PARAMS = {
