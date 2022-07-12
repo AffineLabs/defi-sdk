@@ -1,5 +1,4 @@
 import { Account, ReadAccount } from "./Account";
-import { ethers } from "ethers";
 
 const main = async () => {
   const email = process.env.EMAIL || "";
