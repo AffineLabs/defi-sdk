@@ -209,9 +209,7 @@ export async function tokensFromShares(product: AlpineProduct, amount: ethers.Bi
     const { alpSave } = CONTRACTS;
     const tokens: ethers.BigNumber = await alpSave.convertToAssets(amount);
     return tokens;
-  }
-
-  if (product === "alpLarge") {
+  } else {
     // alpLarge
     const { alpLarge } = CONTRACTS;
     const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();

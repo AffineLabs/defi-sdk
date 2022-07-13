@@ -1,7 +1,13 @@
 import { ethers } from "ethers";
 import axios from "axios";
 import { AlpineContracts } from "./types";
-import { Forwarder__factory, L2Vault__factory, MintableToken__factory, TwoAssetBasket__factory } from "../typechain";
+import {
+  Forwarder__factory,
+  L2Vault__factory,
+  MintableToken__factory,
+  TwoAssetBasket__factory,
+  Router__factory,
+} from "../typechain";
 import { CONTRACT_VERSION } from "./constants";
 
 export let CONTRACTS: AlpineContracts;
@@ -28,13 +34,19 @@ export async function getAllContracts(
   const s3Root = `https://sc-abis.s3.us-east-2.amazonaws.com/${version}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
-  const { PolygonAlpSave: alpSave, PolygonBtcEthVault: alpLarge, PolygonUSDC: usdc, Forwarder: forwarder } = allData;
-
+  const {
+    PolygonAlpSave: alpSave,
+    PolygonBtcEthVault: alpLarge,
+    PolygonUSDC: usdc,
+    Forwarder: forwarder,
+    ERC4626Router: router,
+  } = allData;
   return {
     alpSave: L2Vault__factory.connect(alpSave.address, provider),
     alpLarge: TwoAssetBasket__factory.connect(alpLarge.address, provider),
     forwarder: Forwarder__factory.connect(forwarder.address, provider),
     usdc: MintableToken__factory.connect(usdc.address, provider),
+    router: Router__factory.connect(router.address, provider),
   };
 }
 

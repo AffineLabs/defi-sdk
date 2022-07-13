@@ -2,7 +2,6 @@ import { Account, ReadAccount } from "./Account";
 
 const main = async () => {
   const email = process.env.EMAIL || "";
-
   const alpAccount = new Account();
   console.time("entire-connect");
 
@@ -10,11 +9,20 @@ const main = async () => {
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 
-  await alpAccount.setGasMode(true);
-  await alpAccount.setSimulationMode(true);
-  const res = await alpAccount.approve("alpLarge", "1000000");
-  console.log({ res });
-
+  await alpAccount.setSimulationMode(false);
+  // await approve("router", "1000000");
+  // //This approval allows the alpLarge vault to spend USDC
+  // await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address, CONTRACTS.alpLarge.address, MAX_INT]);
+  // //This approval allows the alpSave vault to spend USDC
+  // await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address, CONTRACTS.alpSave.address, MAX_INT]);
+  // //This approval lets the router burn alpLarge shares
+  // await blockchainCall(CONTRACTS.alpLarge, "approve", [CONTRACTS.router.address, MAX_INT]);
+  // //This approval lets the router burn alpSave shares
+  // await blockchainCall(CONTRACTS.alpSave, "approve", [CONTRACTS.router.address, MAX_INT]);
+  // await mintUSDC(alpAccount.userAddress || "", 10000);
+  // let allocation:productAllocation = { alpLarge: 50, alpSave: 50 };
+  // await alpAccount.portfolioPurchase(allocation, 1000);
+  // await alpAccount.portfolioSell(allocation, 100);
   const receipt = await alpAccount.buyProduct("alpLarge", 1);
   console.log({ receipt });
 

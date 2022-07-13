@@ -1,4 +1,5 @@
-import { ERC20, Forwarder, L2Vault, TwoAssetBasket } from "../typechain";
+import { ERC20, Forwarder, L2Vault, Router, TwoAssetBasket } from "../typechain";
+import { ethers } from "ethers";
 
 export interface GasInfo {
   txnCost: string;
@@ -17,9 +18,19 @@ export interface SmallTxReceipt extends GasInfo {
   txnHash: string;
 }
 
-export type AlpineProduct = "alpSave" | "alpLarge";
+export const alpineProducts = ["alpSave", "alpLarge"] as const;
+export type AlpineProduct = typeof alpineProducts[number];
+
 export type productAmounts = {
-  [key in AlpineProduct]?: number;
+  [key in AlpineProduct]?: string;
+};
+
+export type productBalances = {
+  [key in AlpineProduct]: ethers.BigNumber;
+};
+
+export type productAllocation = {
+  [key in AlpineProduct]: number;
 };
 
 export type AlpineContracts = {
@@ -27,7 +38,9 @@ export type AlpineContracts = {
   alpLarge: TwoAssetBasket;
   forwarder: Forwarder;
   usdc: ERC20;
+  router: Router;
 };
+
 export interface TokenInfo {
   amount: string; // in base unit
   price: string; // dollars / 1 base unit of token
