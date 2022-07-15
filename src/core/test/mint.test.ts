@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import chai from "chai";
 const { expect } = chai;
 import { AlpineDeFiSDK } from "..";
-import { CONTRACTS, init, PROVIDER, setProvider, userAddress } from "../cache";
+import { CONTRACTS, init, PROVIDER, setProvider } from "../cache";
 
 const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 
