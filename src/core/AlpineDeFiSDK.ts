@@ -125,19 +125,18 @@ export async function approve(to: keyof AlpineContracts, amountUSDC: string): Pr
   const amount = _addDecimals(amountUSDC);
   const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
   if (SIMULATE) {
-      const dryRunInfo = (await blockchainCall(
-        CONTRACTS.usdc,
-        "approve",
-        [to === 'alpLarge'? CONTRACTS.router.address:CONTRACTS[to].address, amount],
-        true,
-      )) as GasInfo;
-      return { ...basicInfo, ...dryRunInfo };
-    }
-  else{
+    const dryRunInfo = (await blockchainCall(
+      CONTRACTS.usdc,
+      "approve",
+      [to === "alpLarge" ? CONTRACTS.router.address : CONTRACTS[to].address, amount],
+      true,
+    )) as GasInfo;
+    return { ...basicInfo, ...dryRunInfo };
+  } else {
     const receipt = (await blockchainCall(
       CONTRACTS.usdc,
       "approve",
-      [to === 'alpLarge'? CONTRACTS.router.address: CONTRACTS[to].address, amount],
+      [to === "alpLarge" ? CONTRACTS.router.address : CONTRACTS[to].address, amount],
       false,
     )) as SmallTxReceipt;
     return {
