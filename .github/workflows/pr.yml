@@ -28,6 +28,11 @@ jobs:
         with:
           node-version: "16.x"
 
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
       - name: Install yarn dependencies
         run: yarn --frozen-lockfile
 
@@ -44,4 +49,4 @@ jobs:
         run: yarn lint
 
       - name: Build and run tests.
-        run: cd src/core &&  yarn test
+        run: yarn test
