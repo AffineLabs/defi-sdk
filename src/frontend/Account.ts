@@ -41,7 +41,6 @@ class Account {
 
     await this.changeWallet(args);
 
-
     console.time("init-contracts");
     await init(this.signer, this.biconomy);
     console.timeEnd("init-contracts");

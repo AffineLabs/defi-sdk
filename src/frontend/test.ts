@@ -11,9 +11,9 @@ const main = async () => {
   await alpAccount.connect({ email, walletType: "metamask" });
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
-  const router = CONTRACTS.router
+  const router = CONTRACTS.router;
   await alpAccount.setSimulationMode(false);
-  
+
   // await approve("router", "1000000");
   // //This approval allows the alpLarge vault to spend USDC
   // await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address, CONTRACTS.alpLarge.address, ethers.BigNumber.from(2).pow(256).sub(1)]);
