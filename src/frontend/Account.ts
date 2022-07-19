@@ -41,9 +41,6 @@ class Account {
 
     await this.changeWallet(args);
 
-    // console.time("init-Biconomy");
-    // await this.initBiconomy(walletProvider);
-    // console.timeEnd("init-Biconomy");
 
     console.time("init-contracts");
     await init(this.signer, this.biconomy);
@@ -95,7 +92,9 @@ class Account {
         this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider,
       );
     }
-
+    console.time("init-Biconomy");
+    await this.initBiconomy(walletProvider);
+    console.timeEnd("init-Biconomy");
     this.signer = walletProvider.getSigner();
     this.userAddress = await this.signer.getAddress();
     this.walletType = walletType;
