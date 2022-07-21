@@ -1,6 +1,6 @@
 {
   "name": "@alpine-ramp/alpine-defi-sdk",
-  "version": "0.0.11-allow-and-verify.1",
+  "version": "0.0.11-upgrade-magic.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/Multiplyr/defi-sdk.git",
@@ -24,7 +24,7 @@
     "@metamask/detect-provider": "^1.2.0",
     "axios": "^0.25.0",
     "ethers": "^5.6.5",
-    "magic-sdk": "^7.0.0"
+    "magic-sdk": "^8.1.1"
   },
   "devDependencies": {
     "@types/chai": "^4.3.0",
