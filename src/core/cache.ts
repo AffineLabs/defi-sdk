@@ -42,15 +42,15 @@ export async function getAllContracts(
     PolygonUSDC: usdc,
     Forwarder: forwarder,
     ERC4626Router: router,
-    EmergencyWithdrawalQueue: ewQueue,
   } = allData;
+  const alpSaveContract = L2Vault__factory.connect(alpSave.address, provider);
   return {
-    alpSave: L2Vault__factory.connect(alpSave.address, provider),
+    alpSave: alpSaveContract,
     alpLarge: TwoAssetBasket__factory.connect(alpLarge.address, provider),
     forwarder: Forwarder__factory.connect(forwarder.address, provider),
     usdc: MintableToken__factory.connect(usdc.address, provider),
     router: Router__factory.connect(router.address, provider),
-    ewQueue: EmergencyWithdrawalQueue__factory.connect(ewQueue.address, provider),
+    ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSaveContract.emergencyWithdrawalQueue(), provider),
   };
 }
 
