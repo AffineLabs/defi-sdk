@@ -1,6 +1,3 @@
-import { ethers } from "ethers";
-import { approve, blockchainCall } from "../core/AlpineDeFiSDK";
-import { CONTRACTS, userAddress } from "../core/cache";
 import { Account, ReadAccount } from "./Account";
 
 const main = async () => {
@@ -11,7 +8,7 @@ const main = async () => {
   await alpAccount.connect({ email, walletType: "metamask" });
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
-  const router = CONTRACTS.router;
+  // const router = CONTRACTS.router;
   await alpAccount.setSimulationMode(false);
 
   // await approve("router", "1000000");
