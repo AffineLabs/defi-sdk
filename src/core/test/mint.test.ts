@@ -10,7 +10,7 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(te
 before(async () => {
   setProvider(testProvider);
   await init(wallet, undefined);
-  await PROVIDER.send("evm_setAccountBalance", [wallet.address, ethers.BigNumber.from(10).pow(18).toHexString()]);
+  await PROVIDER.send("anvil_setBalance", [wallet.address, ethers.BigNumber.from(10).pow(18).toHexString()]);
 });
 it("Mint some usdc", async () => {
   const blockNum = await testProvider.getBlockNumber();
