@@ -6,13 +6,12 @@ import {
   EmergencyWithdrawalQueueEnqueueEvent,
   EmergencyWithdrawalQueueDequeueEvent,
 } from "../typechain/src/polygon/EmergencyWithdrawalQueue";
-import { AlpineProduct, FullTxReceipt } from "./types";
+import { AlpineProduct } from "./types";
 
 export async function getUserEmergencyWithdrawalQueueRequests(
   product: AlpineProduct,
 ): Promise<EmergencyWithdrawalQueueRequest[]> {
   if (product === "alpSave") {
-    const sharePrice = await CONTRACTS.alpSave.detailedPrice();
     const ewQueueEnqueueEvents: EmergencyWithdrawalQueueEnqueueEvent[] = await CONTRACTS.ewQueue.queryFilter(
       CONTRACTS.ewQueue.filters.EmergencyWithdrawalQueueEnqueue(null, userAddress, userAddress, null),
     );
@@ -25,7 +24,7 @@ export async function getUserEmergencyWithdrawalQueueRequests(
         ewQueue.push({
           pos: eventPtr.sub(ewQueueHeadPtr).toNumber(),
           shares: eventShares.toNumber(),
-          sharesVauleInAsset: eventShares.mul(sharePrice.num).toNumber(),
+          sharesValueInAsset: (await CONTRACTS.alpSave.convertToAssets(eventShares)).toNumber(),
         });
       }
     }
@@ -36,30 +35,27 @@ export async function getUserEmergencyWithdrawalQueueRequests(
 }
 
 export async function vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<number> {
-  const vaultAvailableAssets = await CONTRACTS.usdc.balanceOf(CONTRACTS[product].address);
+  const vaultAvailableAssets = await (await CONTRACTS.usdc.balanceOf(CONTRACTS[product].address)).toNumber();
   if (product === "alpSave") {
     const ewQueueDebt = await CONTRACTS.ewQueue.totalDebt();
-    const sharePrice = await CONTRACTS.alpSave.detailedPrice();
-    const ewQueueDebtInAssets = ewQueueDebt.mul(sharePrice.num);
+    const ewQueueDebtInAssets = (await CONTRACTS.alpSave.convertToAssets(ewQueueDebt)).toNumber();
     if (vaultAvailableAssets < ewQueueDebtInAssets) {
       return 0;
     }
-    return vaultAvailableAssets.sub(ewQueueDebtInAssets).toNumber();
+    return vaultAvailableAssets - ewQueueDebtInAssets;
   } else {
-    return vaultAvailableAssets.toNumber();
+    return vaultAvailableAssets;
   }
 }
 
-export async function txHasEnqueueEvent(txReceipt: FullTxReceipt): Promise<boolean> {
-  const txnReceipt = await PROVIDER.getTransactionReceipt(txReceipt.txnHash);
-  let eventABI = [
-    "event EmergencyWithdrawalQueueEnqueue(uint256 indexed pos, address indexed owner, address indexed receiver, uint256 shares)",
-  ];
-  let eventInterface = new ethers.utils.Interface(eventABI);
-  for (const l of txnReceipt.logs) {
+export async function txHasEnqueueEvent(txHash: string): Promise<boolean> {
+  const txReceipt = await PROVIDER.getTransactionReceipt(txHash);
+  for (const l of txReceipt.logs) {
     try {
-      eventInterface.parseLog(l);
-      return true;
+      const logDescription = CONTRACTS.ewQueue.interface.parseLog(l);
+      if (logDescription.name == "EmergencyWithdrawalQueueDequeue") {
+        return true;
+      }
     } catch (e) {
       continue;
     }
@@ -83,7 +79,7 @@ export async function getEmergencyWithdrawalQueueTransfers(
       const eventShares = e.args[3];
       transfers.push({
         shares: eventShares.toNumber(),
-        sharesVauleInAsset: eventShares.mul(sharePrice.num).toNumber(),
+        sharesValueInAsset: sharePrice.num.toNumber(),
         txHash: e.transactionHash,
         timestamp: new Date((await e.getBlock()).timestamp),
       });
