@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import { _addDecimals, _removeDecimals } from "./AlpineDeFiSDK";
 import { CONTRACTS, PROVIDER, userAddress } from "./cache";
 import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, TxnReceipt } from "./types";
@@ -35,17 +34,7 @@ export async function getUserEmergencyWithdrawalQueueRequests(
 }
 
 export async function vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<number> {
-  const vaultAvailableAssets = await (await CONTRACTS.usdc.balanceOf(CONTRACTS[product].address)).toNumber();
-  if (product === "alpSave") {
-    const ewQueueDebt = await CONTRACTS.ewQueue.totalDebt();
-    const ewQueueDebtInAssets = (await CONTRACTS.alpSave.convertToAssets(ewQueueDebt)).toNumber();
-    if (vaultAvailableAssets < ewQueueDebtInAssets) {
-      return 0;
-    }
-    return vaultAvailableAssets - ewQueueDebtInAssets;
-  } else {
-    return vaultAvailableAssets;
-  }
+  return (await CONTRACTS.alpSave.vaultTVL()).toNumber();
 }
 
 export async function txHasEnqueueEvent(txHash: string): Promise<boolean> {
