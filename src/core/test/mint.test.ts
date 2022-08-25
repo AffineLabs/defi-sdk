@@ -1,9 +1,8 @@
 import { ethers } from "ethers";
 import chai from "chai";
 const { expect } = chai;
-
 import { AlpineDeFiSDK } from "..";
-import { CONTRACTS, init, setProvider } from "../cache";
+import { CONTRACTS, init, PROVIDER, setProvider } from "../cache";
 
 const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 
@@ -11,6 +10,7 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(te
 before(async () => {
   setProvider(testProvider);
   await init(wallet, undefined);
+  await PROVIDER.send("anvil_setBalance", [wallet.address, ethers.BigNumber.from(10).pow(18).toHexString()]);
 });
 it("Mint some usdc", async () => {
   const blockNum = await testProvider.getBlockNumber();

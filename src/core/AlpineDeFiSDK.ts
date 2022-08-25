@@ -131,7 +131,7 @@ export async function approve(to: keyof AlpineContracts, amountUSDC: string): Pr
     const dryRunInfo = (await blockchainCall(
       CONTRACTS.usdc,
       "approve",
-      [CONTRACTS[to].address, amount],
+      [to === "alpLarge" ? CONTRACTS.router.address : CONTRACTS[to].address, amount],
       true,
     )) as GasInfo;
     return { ...basicInfo, ...dryRunInfo };
@@ -139,7 +139,7 @@ export async function approve(to: keyof AlpineContracts, amountUSDC: string): Pr
     const receipt = (await blockchainCall(
       CONTRACTS.usdc,
       "approve",
-      [CONTRACTS[to].address, amount],
+      [to === "alpLarge" ? CONTRACTS.router.address : CONTRACTS[to].address, amount],
       false,
     )) as SmallTxReceipt;
     return {
