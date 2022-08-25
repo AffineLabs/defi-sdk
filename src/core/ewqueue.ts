@@ -34,7 +34,10 @@ export async function getUserEmergencyWithdrawalQueueRequests(
 }
 
 export async function vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<number> {
-  return (await CONTRACTS.alpSave.vaultTVL()).toNumber();
+  const vaultTVL = await CONTRACTS.alpSave.vaultTVL();
+  const debtToEWQ = await CONTRACTS.ewQueue.totalDebt();
+  if (debtToEWQ.gt(vaultTVL)) return 0;
+  return vaultTVL.sub(debtToEWQ).toNumber();
 }
 
 export async function txHasEnqueueEvent(txHash: string): Promise<boolean> {
