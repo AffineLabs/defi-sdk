@@ -92,7 +92,8 @@ export async function blockchainCall(
     console.log(`gasEstimate: ${gasEstimate.toString()} and gasPrice: ${gasPrice.toString()}`);
 
     // cost is gas * gasPrice
-    const cost = gasEstimate.mul(gasPrice);
+    // TODO: remove this hotfix once alchemy/mumbai are more stable
+    const cost = gasEstimate.mul(gasPrice.mul(2));
     const txnCost = ethers.utils.formatEther(cost);
     const maticPrice = await getMaticPrice();
     const txnCostUSD = (Number(txnCost) * maticPrice).toString();
@@ -100,7 +101,9 @@ export async function blockchainCall(
     return { txnCost, txnCostUSD };
   }
 
-  const tx: TransactionResponse = await contract[method].apply(null, args);
+  // TODO: remove this hotfix once alchemy/mumbai are more stable
+  const gasPrice = await PROVIDER.getGasPrice();
+  const tx: TransactionResponse = await contract[method].apply(null, args.concat({ gasPrice: gasPrice.mul(2) }));
   const receipt = await tx.wait();
 
   const cost = receipt.gasUsed.mul(receipt.effectiveGasPrice);

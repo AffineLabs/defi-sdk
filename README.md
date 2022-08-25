@@ -2,7 +2,11 @@
 
 ## Pre-requisites
 
-# TODO: Write documentation
+### Foundry
+
+See instructions for installation [here](https://github.com/gakonst/foundry#installation).
+
+### Node
 
 - Install nvm with these [instructions](https://github.com/nvm-sh/nvm#install--update-script). Then run
 

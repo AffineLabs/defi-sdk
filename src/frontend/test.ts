@@ -12,6 +12,7 @@ const main = async () => {
   await alpAccount.setSimulationMode(false);
 
   // await approve("router", "1000000");
+  // await approve("alpSave", "1000000");
   // //This approval allows the alpLarge vault to spend USDC
   // await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address, CONTRACTS.alpLarge.address, ethers.BigNumber.from(2).pow(256).sub(1)]);
   // //This approval allows the alpSave vault to spend USDC
@@ -29,6 +30,8 @@ const main = async () => {
   // await blockchainCall(CONTRACTS.router, "depositToVault", [CONTRACTS.alpLarge.address, userAddress, ethers.BigNumber.from(1), 0]);
   // const receipt = await alpAccount.buyProduct("alpLarge", 1);
   // console.log({ receipt });
+  const receipt = await alpAccount.buyProduct("alpSave", 1);
+  console.log({ receipt });
 
   const readAcc = new ReadAccount(alpAccount.userAddress || "");
   await readAcc.init();

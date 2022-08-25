@@ -3,11 +3,13 @@ import * as fse from "fs-extra";
 import readline from "readline";
 import * as AWS from "aws-sdk";
 
-import { CONTRACT_VERSION } from "./constants";
+import { config as dotenvConfig } from "dotenv";
+import { resolve } from "path";
+dotenvConfig({ path: resolve(__dirname, "../../.env") });
 
 const awsRegion = "us-east-2";
 const smartContractBucket = "sc-abis";
-const contractVersion = CONTRACT_VERSION;
+const contractVersion = process.env.CONTRACT_VERSION || "stable";
 
 // we won't import the following files
 const EXCLUDED_FILES = ["typechain/hardhat.d.ts"];
