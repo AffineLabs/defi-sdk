@@ -11,8 +11,11 @@ export async function getUserEmergencyWithdrawalQueueRequests(
   product: AlpineProduct,
 ): Promise<EmergencyWithdrawalQueueRequest[]> {
   if (product === "alpSave") {
+    const curBlock = await PROVIDER.getBlock("latest");
     const ewQueueEnqueueEvents: EmergencyWithdrawalQueueEnqueueEvent[] = await CONTRACTS.ewQueue.queryFilter(
       CONTRACTS.ewQueue.filters.EmergencyWithdrawalQueueEnqueue(null, userAddress, userAddress, null),
+      curBlock.number - 4096,
+      curBlock.number,
     );
     const ewQueueHeadPtr = await CONTRACTS.ewQueue.headPtr();
     const ewQueue: EmergencyWithdrawalQueueRequest[] = [];
