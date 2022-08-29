@@ -1,4 +1,4 @@
-import { ethers, utils } from "ethers";
+import { ethers } from "ethers";
 import { init, setProvider, CONTRACTS, userAddress, PROVIDER } from "../cache";
 import { expect } from "chai";
 import { approve, blockchainCall, mintUSDC } from "../AlpineDeFiSDK";
