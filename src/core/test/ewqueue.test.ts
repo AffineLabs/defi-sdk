@@ -2,7 +2,12 @@ import { ethers, utils } from "ethers";
 import { init, setProvider, CONTRACTS, userAddress, PROVIDER } from "../cache";
 import { expect } from "chai";
 import { approve, blockchainCall, mintUSDC, _removeDecimals } from "../AlpineDeFiSDK";
-import { getEmergencyWithdrawalQueueTransfers, getUserEmergencyWithdrawalQueueRequests, txHasEnqueueEvent, vaultWithdrawableAssetAmount } from "../ewqueue";
+import {
+  getEmergencyWithdrawalQueueTransfers,
+  getUserEmergencyWithdrawalQueueRequests,
+  txHasEnqueueEvent,
+  vaultWithdrawableAssetAmount,
+} from "../ewqueue";
 import { SmallTxReceipt } from "../types";
 
 const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
@@ -11,26 +16,26 @@ const oneUSDC = 1000000;
 const halfUSDC = oneUSDC / 2;
 
 function _getMappingStorage(slot: number, key: string): string {
-    const paddedSlot = utils.hexZeroPad(utils.hexValue(slot), 32);
-    const paddedKey = utils.hexZeroPad(key, 32);
-    return utils.keccak256(paddedKey + paddedSlot.slice(2));
+  const paddedSlot = utils.hexZeroPad(utils.hexValue(slot), 32);
+  const paddedKey = utils.hexZeroPad(key, 32);
+  return utils.keccak256(paddedKey + paddedSlot.slice(2));
 }
 
 async function setUSDCBalance(address: string, balance: number) {
-    await PROVIDER.send("anvil_setStorageAt", [
-        CONTRACTS.usdc.address,
-        _getMappingStorage(0, address),
-        utils.hexZeroPad(utils.hexValue(balance), 32)
-    ]);
+  await PROVIDER.send("anvil_setStorageAt", [
+    CONTRACTS.usdc.address,
+    _getMappingStorage(0, address),
+    utils.hexZeroPad(utils.hexValue(balance), 32),
+  ]);
 }
 
 async function setAlpSaveL1LockedValue(value: number) {
-    await PROVIDER.send("anvil_setStorageAt", [
-        CONTRACTS.alpSave.address,
-        // L1TotalLockedValue is found at slot 282 of L2Vault contract.
-        utils.hexValue(282), 
-        utils.hexZeroPad(utils.hexValue(value), 32)
-    ]);
+  await PROVIDER.send("anvil_setStorageAt", [
+    CONTRACTS.alpSave.address,
+    // L1TotalLockedValue is found at slot 282 of L2Vault contract.
+    utils.hexValue(282),
+    utils.hexZeroPad(utils.hexValue(value), 32),
+  ]);
 }
 
 describe("Emergency Withdrawal Queue", async () => {
@@ -55,7 +60,7 @@ describe("Emergency Withdrawal Queue", async () => {
 
     // Withdraw
     await blockchainCall(CONTRACTS.alpSave, "withdraw", [oneUSDC, wallet.address, wallet.address]);
-    
+
     // Get queue stats
     const queue = await getUserEmergencyWithdrawalQueueRequests("alpSave");
     expect(queue.length).eq(1);
@@ -69,7 +74,7 @@ describe("Emergency Withdrawal Queue", async () => {
     await setAlpSaveL1LockedValue(0);
 
     // Dequeue
-    const tx = await blockchainCall(CONTRACTS.ewQueue, "dequeue", []) as SmallTxReceipt;
+    const tx = (await blockchainCall(CONTRACTS.ewQueue, "dequeue", [])) as SmallTxReceipt;
 
     // Check tx led to emergency withdrawal queue enqueue
     const hasEnqueueEvent = await txHasEnqueueEvent(tx.txnHash);
