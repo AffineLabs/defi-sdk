@@ -15,7 +15,7 @@ describe("Portfolio transactions", async () => {
     setProvider(testProvider);
     await init(wallet, undefined);
     await PROVIDER.send("anvil_setBalance", [userAddress, ethers.BigNumber.from(10).pow(18).toHexString()]);
-    await mintUSDC(wallet.address, 10000);
+    await mintUSDC(wallet.address, 10_000);
     await approve("router", "1000000");
     //This approval allows the alpLarge vault to spend USDC
     await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address, CONTRACTS.alpLarge.address, MAX_INT]);

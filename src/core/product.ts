@@ -127,13 +127,23 @@ export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt
 
   const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(alpLarge, "deposit", [amount, userAddress], true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(
+      CONTRACTS.router,
+      "depositToVault",
+      [CONTRACTS.alpLarge.address, userAddress, amount, 0],
+      true,
+    )) as GasInfo;
     return {
       ...basicInfo,
       ...dryRunInfo,
     };
   } else {
-    const receipt = (await blockchainCall(alpLarge, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
+    const receipt = (await blockchainCall(
+      CONTRACTS.router,
+      "depositToVault",
+      [CONTRACTS.alpLarge.address, userAddress, amount, 0],
+      false,
+    )) as SmallTxReceipt;
     const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
     const amountChanged = afterBal.sub(beforeBal);
 
@@ -156,9 +166,9 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
   const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(
-      alpLarge,
+      CONTRACTS.router,
       "withdraw",
-      [usdcToWihdraw, userAddress, userAddress],
+      [CONTRACTS.alpLarge.address, userAddress, usdcToWihdraw, ethers.BigNumber.from(2).pow(256).sub(1)],
       true,
     )) as GasInfo;
     return {
@@ -167,9 +177,9 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
     };
   } else {
     const receipt = (await blockchainCall(
-      alpLarge,
+      CONTRACTS.router,
       "withdraw",
-      [usdcToWihdraw, userAddress, userAddress],
+      [CONTRACTS.alpLarge.address, userAddress, usdcToWihdraw, ethers.BigNumber.from(2).pow(256).sub(1)],
       false,
     )) as SmallTxReceipt;
     const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
