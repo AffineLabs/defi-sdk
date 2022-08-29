@@ -1,6 +1,5 @@
-import { _addDecimals, _removeDecimals } from "./AlpineDeFiSDK";
 import { CONTRACTS, PROVIDER, userAddress } from "./cache";
-import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, TxnReceipt } from "./types";
+import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer } from "./types";
 import {
   EmergencyWithdrawalQueueEnqueueEvent,
   EmergencyWithdrawalQueueDequeueEvent,
@@ -38,9 +37,13 @@ export async function getUserEmergencyWithdrawalQueueRequests(
 
 export async function vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<number> {
   const vaultTVL = await CONTRACTS.alpSave.vaultTVL();
-  const debtToEWQ = await CONTRACTS.ewQueue.totalDebt();
-  if (debtToEWQ.gt(vaultTVL)) return 0;
-  return vaultTVL.sub(debtToEWQ).toNumber();
+  if (product === "alpSave") {
+    const debtToEWQ = await CONTRACTS.ewQueue.totalDebt();
+    if (debtToEWQ.gt(vaultTVL)) return 0;
+    return vaultTVL.sub(debtToEWQ).toNumber();
+  } else {
+    return vaultTVL.toNumber();
+  }
 }
 
 export async function txHasEnqueueEvent(txHash: string): Promise<boolean> {
