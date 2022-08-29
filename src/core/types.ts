@@ -1,4 +1,4 @@
-import { ERC20, Forwarder, L2Vault, Router, TwoAssetBasket } from "../typechain";
+import { ERC20, Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue } from "../typechain";
 import { ethers } from "ethers";
 
 export interface GasInfo {
@@ -39,6 +39,7 @@ export type AlpineContracts = {
   forwarder: Forwarder;
   usdc: ERC20;
   router: Router;
+  ewQueue: EmergencyWithdrawalQueue;
 };
 
 export interface TokenInfo {
@@ -61,4 +62,17 @@ export interface TxnReceipt {
 
 export interface UserBalance {
   balanceUSDC: string;
+}
+
+export interface EmergencyWithdrawalQueueRequest {
+  pos: number;
+  shares: number;
+  sharesValueInAsset: number;
+}
+
+export interface EmergencyWithdrawalQueueTransfer {
+  shares: number;
+  sharesValueInAsset: number;
+  txHash: string;
+  timestamp: Date;
 }

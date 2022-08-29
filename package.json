@@ -13,7 +13,7 @@
     "format": "prettier --check \"src/**/*.{ts,js}\"",
     "format:fix": "prettier --write \"src/**/*.{ts,js}\"",
     "build": "ts-node src/core/typechain.ts",
-    "run-test": "mocha -r ts-node/register --timeout 50000",
+    "run-test": "mocha -r ts-node/register --timeout 100000",
     "test": "ts-node src/core/fork.ts"
   },
   "dependencies": {

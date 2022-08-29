@@ -7,6 +7,7 @@ import {
   MintableToken__factory,
   TwoAssetBasket__factory,
   Router__factory,
+  EmergencyWithdrawalQueue__factory,
 } from "../typechain";
 
 export let CONTRACTS: AlpineContracts;
@@ -42,12 +43,14 @@ export async function getAllContracts(
     Forwarder: forwarder,
     ERC4626Router: router,
   } = allData;
+  const alpSaveContract = L2Vault__factory.connect(alpSave.address, provider);
   return {
-    alpSave: L2Vault__factory.connect(alpSave.address, provider),
+    alpSave: alpSaveContract,
     alpLarge: TwoAssetBasket__factory.connect(alpLarge.address, provider),
     forwarder: Forwarder__factory.connect(forwarder.address, provider),
     usdc: MintableToken__factory.connect(usdc.address, provider),
     router: Router__factory.connect(router.address, provider),
+    ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSaveContract.emergencyWithdrawalQueue(), provider),
   };
 }
 
