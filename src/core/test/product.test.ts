@@ -2,12 +2,13 @@ import { ethers } from "ethers";
 import chai from "chai";
 const { expect } = chai;
 
-import { approve, mintUSDC } from "../AlpineDeFiSDK";
+import { approve, blockchainCall, mintUSDC } from "../AlpineDeFiSDK";
 import { CONTRACTS, init, setProvider } from "../cache";
 import { buyProduct, sellProduct, getTokenInfo } from "../product";
 
 const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
+const MAX_INT = ethers.BigNumber.from(2).pow(256).sub(1);
 
 describe("Buy products", async () => {
   before(async () => {
@@ -38,6 +39,8 @@ describe("Buy products", async () => {
     console.log("alpLarge shares....", res.toString());
     expect(res.gt(0)).to.be.true;
 
+    //This approval allows the alpLarge vault to spend USDC
+    await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address, CONTRACTS.alpLarge.address, MAX_INT]);
     await sellProduct("alpLarge", 1);
     const newBal: ethers.BigNumber = await CONTRACTS.alpLarge.balanceOf(wallet.address);
     console.log("newBal: ", newBal.toString());

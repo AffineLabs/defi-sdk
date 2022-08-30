@@ -163,7 +163,7 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
     tokenAmount: ethers.utils.formatUnits(await sharesFromTokens("alpLarge", usdcToWihdraw), 18),
   };
 
-  const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
+  const beforeBal = await alpLarge.balanceOf(userAddress);
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(
       CONTRACTS.router,
@@ -214,18 +214,21 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
   };
 }
 
-export async function tokensFromShares(product: AlpineProduct, amount: ethers.BigNumber) {
+export async function tokensFromShares(product: AlpineProduct, shareAmount: ethers.BigNumber) {
   if (product === "alpSave") {
     const { alpSave } = CONTRACTS;
-    const tokens: ethers.BigNumber = await alpSave.convertToAssets(amount);
+    const tokens = await alpSave.convertToAssets(shareAmount);
     return tokens;
   } else {
     // alpLarge
     const { alpLarge } = CONTRACTS;
     const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();
     const totalSupply: ethers.BigNumber = await alpLarge.totalSupply();
+
+    if (totalDollars.eq(0)) return shareAmount.mul(100); // $100 usdc per share to start with
+
     // totalDollars / totalShares * numShares
-    const dollars = totalDollars.mul(amount).div(totalSupply);
+    const dollars = totalDollars.mul(shareAmount).div(totalSupply);
     // The token we're talking about is USDC here, which only has 6 decimals.
     return dollars.div(1e2);
   }
@@ -234,7 +237,7 @@ export async function tokensFromShares(product: AlpineProduct, amount: ethers.Bi
 export async function sharesFromTokens(product: AlpineProduct, tokenAmount: ethers.BigNumber) {
   if (product === "alpSave") {
     const { alpSave } = CONTRACTS;
-    const shares: ethers.BigNumber = await alpSave.convertToShares(tokenAmount);
+    const shares = await alpSave.convertToShares(tokenAmount);
     return shares;
   }
 
@@ -242,11 +245,13 @@ export async function sharesFromTokens(product: AlpineProduct, tokenAmount: ethe
     // alpLarge
     const { alpLarge } = CONTRACTS;
     // TODO: let the contract take care of pricing
-    const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();
+    const totalDollars = await alpLarge.valueOfVault();
     console.log({ totalDollars });
+
+    if (totalDollars.eq(0)) return tokenAmount.div(100); // $100 usdc per share to start with
     // totalSupply / totalDollars * dollars
     // dollars given by btc/eth vault actually have 8 decimals
-    const totalSupply: ethers.BigNumber = await alpLarge.totalSupply();
+    const totalSupply = await alpLarge.totalSupply();
     // convert tokenAmount (a USDC amount with 6 decimals) to dollar amount (8 decimals)
     const shares = totalSupply.mul(tokenAmount.mul(1e2)).div(totalDollars);
     return shares;

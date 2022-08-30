@@ -5,7 +5,7 @@ import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
 import detectEthereumProvider from "@metamask/detect-provider";
 
-import { productAllocation } from "../core/types";
+import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, productAllocation } from "../core/types";
 import { portfolioSell, portfolioPurchase } from "../core/portfolio";
 import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct, AlpineContracts } from "../core/types";
@@ -13,6 +13,12 @@ import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
 import { IConnectAccount, MetamaskError } from "../types/account";
 import { CHAIN_ID, DEFAULT_WALLET } from "../core/constants";
+import {
+  getEmergencyWithdrawalQueueTransfers,
+  getUserEmergencyWithdrawalQueueRequests,
+  txHasEnqueueEvent,
+  vaultWithdrawableAssetAmount,
+} from "../core/ewqueue";
 
 class Account {
   magic!: Magic;
@@ -225,6 +231,22 @@ class Account {
    */
   async mintUSDCTokens(to: string, amountUSDC: number) {
     return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
+  }
+
+  async getUserEmergencyWithdrawalQueueRequests(product: AlpineProduct): Promise<EmergencyWithdrawalQueueRequest[]> {
+    return getUserEmergencyWithdrawalQueueRequests(product);
+  }
+
+  async vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<number> {
+    return vaultWithdrawableAssetAmount(product);
+  }
+
+  async txHasEnqueueEvent(txHash: string): Promise<boolean> {
+    return txHasEnqueueEvent(txHash);
+  }
+
+  async getEmergencyWithdrawalQueueTransfers(product: AlpineProduct): Promise<EmergencyWithdrawalQueueTransfer[]> {
+    return getEmergencyWithdrawalQueueTransfers(product);
   }
 
   async isLoggedInToMagic(): Promise<boolean> {
