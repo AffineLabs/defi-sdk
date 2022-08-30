@@ -12,7 +12,7 @@ import { AlpineProduct, AlpineContracts } from "../core/types";
 import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
 import { IConnectAccount, MetamaskError } from "../types/account";
-import { DEFAULT_CHAIN_ID, DEFAULT_NETWORK_PARAMS, DEFAULT_WALLET } from "../core/constants";
+import { CHAIN_ID, DEFAULT_WALLET } from "../core/constants";
 import {
   getEmergencyWithdrawalQueueTransfers,
   getUserEmergencyWithdrawalQueueRequests,
@@ -79,7 +79,7 @@ class Account {
       const magicOptions: MagicSDKAdditionalConfiguration = {
         network: {
           rpcUrl: PROVIDER.connection.url,
-          chainId: 80001,
+          chainId: parseInt(CHAIN_ID, 16),
         },
       };
 
@@ -253,13 +253,45 @@ class Account {
     return this.magic?.user ? await this.magic.user.isLoggedIn() : false;
   }
 
+  /**
+   * Get network params (to be passed to the `wallet_addEthereumChain` rpc method) for the given chain id
+   */
+  private _getNetworkParams() {
+    const testnetParams = {
+      chainId: "0x13881",
+      chainName: "Mumbai Testnet",
+      nativeCurrency: {
+        name: "Matic",
+        symbol: "MATIC",
+        decimals: 18,
+      },
+      rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
+      blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
+    };
+
+    const mainnetParams = {
+      chainId: "0x89",
+      chainName: "Polygon Mainnet",
+      nativeCurrency: {
+        name: "Matic",
+        symbol: "MATIC",
+        decimals: 18,
+      },
+      rpcUrls: ["https://polygon-rpc.com"],
+      blockExplorerUrls: ["https://polygonscan.com"],
+    };
+
+    const params = CHAIN_ID === "0x89" ? mainnetParams : testnetParams;
+    return params;
+  }
+
   async getChainId(): Promise<string> {
     const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
     return await provider.send("eth_chainId", []);
   }
 
   async isConnectedToAllowedNetwork(): Promise<boolean> {
-    return (await this.getChainId()) === DEFAULT_CHAIN_ID;
+    return (await this.getChainId()) === CHAIN_ID;
   }
 
   async switchMetamaskToAllowedNetwork(): Promise<void> {
@@ -267,7 +299,7 @@ class Account {
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     try {
-      await provider.send("wallet_switchEthereumChain", [{ chainId: DEFAULT_CHAIN_ID }]);
+      await provider.send("wallet_switchEthereumChain", [{ chainId: CHAIN_ID }]);
     } catch (error: unknown) {
       const err = error as MetamaskError;
       console.error("Error on switching ethereum chain", error);
@@ -277,7 +309,7 @@ class Account {
          * case - 4902 indicates that the chain has not been added to MetaMask.
          * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
          */
-        await provider.send("wallet_addEthereumChain", [{ ...DEFAULT_NETWORK_PARAMS }]);
+        await provider.send("wallet_addEthereumChain", [{ ...this._getNetworkParams() }]);
       }
     }
   }
