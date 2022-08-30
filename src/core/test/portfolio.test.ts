@@ -27,7 +27,7 @@ describe("Portfolio transactions", async () => {
     await blockchainCall(CONTRACTS.alpSave, "approve", [CONTRACTS.router.address, MAX_INT]);
   });
 
-  it("Portfolio Purchase", async () => {
+  xit("Portfolio Purchase", async () => {
     const coinBalance: productBalances = { alpLarge: ethers.BigNumber.from(0), alpSave: ethers.BigNumber.from(0) };
     const user = userAddress;
     const allocation: productAllocation = { alpLarge: 50, alpSave: 50 };
