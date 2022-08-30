@@ -13,7 +13,12 @@ import * as productActions from "../core/product";
 import { setSimulationMode, PROVIDER } from "../core/cache";
 import { IConnectAccount, MetamaskError } from "../types/account";
 import { DEFAULT_CHAIN_ID, DEFAULT_NETWORK_PARAMS, DEFAULT_WALLET } from "../core/constants";
-import { getEmergencyWithdrawalQueueTransfers, getUserEmergencyWithdrawalQueueRequests, txHasEnqueueEvent, vaultWithdrawableAssetAmount } from "../core/ewqueue";
+import {
+  getEmergencyWithdrawalQueueTransfers,
+  getUserEmergencyWithdrawalQueueRequests,
+  txHasEnqueueEvent,
+  vaultWithdrawableAssetAmount,
+} from "../core/ewqueue";
 
 class Account {
   magic!: Magic;
@@ -228,23 +233,19 @@ class Account {
     return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
   }
 
-  async getUserEmergencyWithdrawalQueueRequests(
-    product: AlpineProduct,
-  ): Promise<EmergencyWithdrawalQueueRequest[]> {
+  async getUserEmergencyWithdrawalQueueRequests(product: AlpineProduct): Promise<EmergencyWithdrawalQueueRequest[]> {
     return getUserEmergencyWithdrawalQueueRequests(product);
   }
 
   async vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<number> {
     return vaultWithdrawableAssetAmount(product);
   }
-  
+
   async txHasEnqueueEvent(txHash: string): Promise<boolean> {
     return txHasEnqueueEvent(txHash);
   }
-  
-  async getEmergencyWithdrawalQueueTransfers(
-    product: AlpineProduct,
-  ): Promise<EmergencyWithdrawalQueueTransfer[]> {
+
+  async getEmergencyWithdrawalQueueTransfers(product: AlpineProduct): Promise<EmergencyWithdrawalQueueTransfer[]> {
     return getEmergencyWithdrawalQueueTransfers(product);
   }
 
