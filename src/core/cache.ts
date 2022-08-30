@@ -9,6 +9,7 @@ import {
   Router__factory,
   EmergencyWithdrawalQueue__factory,
 } from "../typechain";
+import { NETWORK_TYPE } from "./constants";
 
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
@@ -20,7 +21,7 @@ const CONTRACT_VERSION = process.env.CONTRACT_VERSION || "stable";
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(
-  `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+  `https://polygon-${NETWORK_TYPE}.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
 );
 
 /**
