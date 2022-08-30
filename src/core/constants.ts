@@ -1,14 +1,5 @@
-export const CONTRACT_VERSION = "stable";
 export const DEFAULT_WALLET = "magic";
-export const DEFAULT_CHAIN_ID = "0x13881";
-export const DEFAULT_NETWORK_PARAMS = {
-  chainId: DEFAULT_CHAIN_ID,
-  chainName: "Polygon Testnet",
-  nativeCurrency: {
-    name: "Matic",
-    symbol: "MATIC",
-    decimals: 18,
-  },
-  rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
-  blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
-};
+
+// The chain id is a hexadecimal string preceeded by "0x"
+const rawId = process.env.CHAIN_ID || "80001";
+export const CHAIN_ID = `0x${Number(rawId).toString(16)}`;
