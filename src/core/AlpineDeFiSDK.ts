@@ -63,7 +63,7 @@ export async function blockchainCall(
   method: string,
   args: Array<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   simulate = false,
-): Promise<void | SmallTxReceipt | GasInfo> {
+): Promise<SmallTxReceipt | GasInfo> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
 
@@ -74,12 +74,12 @@ export async function blockchainCall(
     const { signature, request } = await getSignature(contract, signer, method, args);
     console.log({ signature, request });
     await sendToForwarder([signature], [request]);
-    return;
+    return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "" };
   }
 
   if (biconomy && contract.address == CONTRACTS.usdc.address) {
     await sendBiconomy(contract, signer, method, args);
-    return;
+    return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "" };
   }
 
   // regular (non-meta) tx
@@ -92,8 +92,7 @@ export async function blockchainCall(
     console.log(`gasEstimate: ${gasEstimate.toString()} and gasPrice: ${gasPrice.toString()}`);
 
     // cost is gas * gasPrice
-    // TODO: remove this hotfix once alchemy/mumbai are more stable
-    const cost = gasEstimate.mul(gasPrice.mul(2));
+    const cost = gasEstimate.mul(gasPrice);
     const txnCost = ethers.utils.formatEther(cost);
     const maticPrice = await getMaticPrice();
     const txnCostUSD = (Number(txnCost) * maticPrice).toString();
@@ -101,9 +100,7 @@ export async function blockchainCall(
     return { txnCost, txnCostUSD };
   }
 
-  // TODO: remove this hotfix once alchemy/mumbai are more stable
-  const gasPrice = await PROVIDER.getGasPrice();
-  const tx: TransactionResponse = await contract[method].apply(null, args.concat({ gasPrice: gasPrice.mul(2) }));
+  const tx: TransactionResponse = await contract[method].apply(null, args);
   const receipt = await tx.wait();
 
   const cost = receipt.gasUsed.mul(receipt.effectiveGasPrice);
