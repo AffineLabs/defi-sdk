@@ -204,7 +204,7 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
       router,
       SIGNER,
       "redeem",
-      [alpLarge.address, userAddress, shares, usdcToWithdraw.mul(95).div(10)],
+      [alpLarge.address, userAddress, shares, usdcToWithdraw.mul(90).div(100)],
       approvalSig.request.nonce + 1,
     );
 
@@ -228,12 +228,7 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
     )) as unknown as SmallTxReceipt;
   } else {
     // just do a normal withdrawal
-    receipt = (await blockchainCall(router, "redeem", [
-      alpLarge.address,
-      userAddress,
-      shares,
-      usdcToWithdraw.mul(95).div(10),
-    ])) as SmallTxReceipt;
+    receipt = (await blockchainCall(router, "redeem", [alpLarge.address, userAddress, shares, 0])) as SmallTxReceipt;
   }
   const afterBal = await alpLarge.balanceOf(userAddress);
   const amountChanged = beforeBal.sub(afterBal);
