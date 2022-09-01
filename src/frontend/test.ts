@@ -1,3 +1,4 @@
+import { getTokenInfo } from "../core/product";
 import { Account, ReadAccount } from "./Account";
 
 const main = async () => {
@@ -8,8 +9,10 @@ const main = async () => {
   await alpAccount.connect({ email, walletType: "metamask" });
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
-  // const router = CONTRACTS.router;
+
   await alpAccount.setSimulationMode(false);
+  console.log("alpLarge info: ", await getTokenInfo("alpLarge"));
+  await alpAccount.sellProduct("alpLarge", 14);
 
   // await approve("router", "1000000");
   // await approve("alpSave", "1000000");
@@ -30,8 +33,6 @@ const main = async () => {
   // await blockchainCall(CONTRACTS.router, "depositToVault", [CONTRACTS.alpLarge.address, userAddress, ethers.BigNumber.from(1), 0]);
   // const receipt = await alpAccount.buyProduct("alpLarge", 1);
   // console.log({ receipt });
-  const receipt = await alpAccount.buyProduct("alpSave", 1);
-  console.log({ receipt });
 
   const readAcc = new ReadAccount(alpAccount.userAddress || "");
   await readAcc.init();
