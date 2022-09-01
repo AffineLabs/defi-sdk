@@ -66,13 +66,13 @@ export interface UserBalance {
 
 export interface EmergencyWithdrawalQueueRequest {
   pos: number;
-  shares: number;
-  sharesValueInAsset: number;
+  shares: string;
+  sharesValueInAsset: string;
 }
 
 export interface EmergencyWithdrawalQueueTransfer {
-  shares: number;
-  sharesValueInAsset: number;
+  shares: string;
+  sharesValueInAsset: string;
   txHash: string;
   timestamp: Date;
 }

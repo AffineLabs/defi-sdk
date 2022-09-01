@@ -5,6 +5,7 @@ import {
   EmergencyWithdrawalQueueDequeueEvent,
 } from "../typechain/src/polygon/EmergencyWithdrawalQueue";
 import { AlpineProduct } from "./types";
+import { _removeDecimals } from "./AlpineDeFiSDK";
 
 export async function getUserEmergencyWithdrawalQueueRequests(
   product: AlpineProduct,
@@ -24,8 +25,8 @@ export async function getUserEmergencyWithdrawalQueueRequests(
         const eventShares = e.args[3];
         ewQueue.push({
           pos: eventPtr.sub(ewQueueHeadPtr).toNumber(),
-          shares: eventShares.toNumber(),
-          sharesValueInAsset: (await CONTRACTS.alpSave.convertToAssets(eventShares)).toNumber(),
+          shares: _removeDecimals(eventShares),
+          sharesValueInAsset: _removeDecimals(await CONTRACTS.alpSave.convertToAssets(eventShares)),
         });
       }
     }
@@ -35,14 +36,14 @@ export async function getUserEmergencyWithdrawalQueueRequests(
   }
 }
 
-export async function vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<number> {
+export async function vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<string> {
   const vaultTVL = await CONTRACTS.alpSave.vaultTVL();
   if (product === "alpSave") {
     const debtToEWQ = await CONTRACTS.ewQueue.totalDebt();
-    if (debtToEWQ.gt(vaultTVL)) return 0;
-    return vaultTVL.sub(debtToEWQ).toNumber();
+    if (debtToEWQ.gt(vaultTVL)) return "0";
+    return _removeDecimals(vaultTVL.sub(debtToEWQ));
   } else {
-    return vaultTVL.toNumber();
+    return _removeDecimals(vaultTVL);
   }
 }
 
@@ -76,10 +77,10 @@ export async function getEmergencyWithdrawalQueueTransfers(
     for (const e of ewQueueDequeueEvents) {
       const eventShares = e.args[3];
       transfers.push({
-        shares: eventShares.toNumber(),
-        sharesValueInAsset: sharePrice.num.toNumber(),
+        shares: _removeDecimals(eventShares),
+        sharesValueInAsset: _removeDecimals(sharePrice.num),
         txHash: e.transactionHash,
-        timestamp: new Date((await e.getBlock()).timestamp),
+        timestamp: new Date((await e.getBlock()).timestamp * 1000),
       });
     }
     return transfers;
