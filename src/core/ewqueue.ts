@@ -52,7 +52,7 @@ export async function txHasEnqueueEvent(txHash: string): Promise<boolean> {
   for (const l of txReceipt.logs) {
     try {
       const logDescription = CONTRACTS.ewQueue.interface.parseLog(l);
-      if (logDescription.name == "EmergencyWithdrawalQueueDequeue") {
+      if (logDescription.name == "EmergencyWithdrawalQueueEnqueue") {
         return true;
       }
     } catch (e) {
