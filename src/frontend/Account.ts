@@ -237,7 +237,7 @@ class Account {
     return getUserEmergencyWithdrawalQueueRequests(product);
   }
 
-  async vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<number> {
+  async vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<string> {
     return vaultWithdrawableAssetAmount(product);
   }
 
