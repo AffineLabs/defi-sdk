@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@biconomy/mexa": "^2.0.32",
+    "@coinbase/wallet-sdk": "^3.5.3",
     "@ethersproject/abstract-provider": "^5.5.1",
     "@ethersproject/abstract-signer": "^5.5.0",
     "@magic-sdk/types": "^7.0.0",

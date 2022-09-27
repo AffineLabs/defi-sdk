@@ -17,7 +17,7 @@ export let userAddress: string;
 export let SIMULATE = false;
 export let BICONOMY: ethers.providers.Web3Provider | undefined;
 
-const CONTRACT_VERSION = process.env.CONTRACT_VERSION || "stable";
+const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(

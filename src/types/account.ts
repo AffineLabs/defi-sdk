@@ -1,6 +1,8 @@
+export type AllowedWallet = "magic" | "metamask" | "coinbase" | "walletConnect";
+
 export interface IConnectAccount {
   email?: string;
-  walletType: "magic" | "metamask";
+  walletType: AllowedWallet;
   network?: "mainnet" | "mumbai";
   shouldRunMagicTestMode?: boolean;
   getMessage?: (address: string) => Promise<string>;

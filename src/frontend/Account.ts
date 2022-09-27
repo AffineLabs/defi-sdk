@@ -1,17 +1,17 @@
-import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
+import { Magic } from "magic-sdk";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
-import detectEthereumProvider from "@metamask/detect-provider";
+// import detectEthereumProvider from "@metamask/detect-provider";
 
 import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, productAllocation } from "../core/types";
 import { portfolioSell, portfolioPurchase } from "../core/portfolio";
 import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct, AlpineContracts } from "../core/types";
 import * as productActions from "../core/product";
-import { setSimulationMode, PROVIDER } from "../core/cache";
-import { IConnectAccount, MetamaskError } from "../types/account";
+import { setSimulationMode } from "../core/cache";
+import { AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
 import { CHAIN_ID, DEFAULT_WALLET } from "../core/constants";
 import {
   getEmergencyWithdrawalQueueTransfers,
@@ -19,13 +19,30 @@ import {
   txHasEnqueueEvent,
   vaultWithdrawableAssetAmount,
 } from "../core/ewqueue";
+import { getExternalProvider, initMagic } from "./wallets";
+
+interface IProvider {
+  isMetaMask?: boolean;
+  isCoinbaseWallet?: boolean;
+  setAppInfo?: (appName: string | undefined, appLogoUrl: string | null | undefined) => void;
+}
+
+interface MetamaskEth extends IProvider {
+  providers?: IProvider[];
+}
+
+declare global {
+  interface Window {
+    ethereum?: MetamaskEth;
+  }
+}
 
 class Account {
   magic!: Magic;
   signer!: ethers.Signer;
   biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
-  walletType: "magic" | "metamask" = DEFAULT_WALLET;
+  walletType: AllowedWallet = DEFAULT_WALLET;
   // if true, send regular transaction, if false, use biconomy
   gas = false;
 
@@ -63,40 +80,40 @@ class Account {
     verify,
     shouldRunMagicTestMode,
   }: IConnectAccount): Promise<void | undefined> {
-    let walletProvider: ethers.providers.Web3Provider;
+    let walletProvider: ethers.providers.Web3Provider | undefined;
     // change to metamask
-    if (walletType === "metamask") {
-      await this._checkIfMetamaskAvailable();
+    if (walletType === "magic" && email) {
+      const { magic, provider } = await initMagic({ email, testMode: Boolean(shouldRunMagicTestMode) });
+
+      if (magic) this.magic = magic;
+      walletProvider = provider;
+    } else if ((walletType === "metamask" || walletType === "coinbase") && window.ethereum) {
+      // await this._checkIfMetamaskAvailable();
       // we know that window.ethereum exists here
-      const metamaskProvider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
-      // MetaMask requires requesting permission to connect users accounts
-      await metamaskProvider.send("eth_requestAccounts", []);
+      const coinbaseProvider = getExternalProvider(walletType) as unknown as IProvider;
 
-      walletProvider = metamaskProvider;
-    } else {
-      if (!email) throw new Error("Email is required for Magic wallet");
-
-      const magicOptions: MagicSDKAdditionalConfiguration = {
-        network: {
-          rpcUrl: PROVIDER.connection.url,
-          chainId: parseInt(CHAIN_ID, 16),
-        },
-      };
-
-      if (shouldRunMagicTestMode) {
-        magicOptions.testMode = true;
-      }
-
-      // the magic api key is public
-      this.magic = new Magic(process.env.MAGIC_API_KEY || "", magicOptions);
-      console.time("login-with-magic");
-      await this.magic.auth.loginWithMagicLink({ email });
-      console.timeEnd("login-with-magic");
-      // change to magic
-      walletProvider = new ethers.providers.Web3Provider(
-        this.magic.rpcProvider as unknown as ethers.providers.ExternalProvider,
+      console.log({ coinbaseProvider });
+      if (coinbaseProvider.setAppInfo)
+        coinbaseProvider.setAppInfo("Affine", "https://cdn.logo.com/hotlink-ok/logo-social.png");
+      const _provider = new ethers.providers.Web3Provider(
+        getExternalProvider(walletType) as ethers.providers.ExternalProvider,
       );
+
+      // console.log(
+      //   { _provider },
+      //   "ppp",
+      //   (_provider as IProvider)?.setAppInfo &&
+      //     (_provider as IProvider).setAppInfo!("Affine", "https://cdn.logo.com/hotlink-ok/logo-social.png"),
+      // );
+
+      // const _provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
+      // MetaMask requires requesting permission to connect users accounts
+      await _provider.send("eth_requestAccounts", []);
+
+      walletProvider = _provider;
     }
+
+    if (!walletProvider) return;
     // console.time("init-Biconomy");
     // await this.initBiconomy(walletProvider);
     // console.timeEnd("init-Biconomy");
@@ -141,7 +158,7 @@ class Account {
   /**
    * Disconnect a user from the magic provider
    */
-  async disconnect(walletType: "magic" | "metamask"): Promise<void> {
+  async disconnect(walletType: AllowedWallet): Promise<void> {
     if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
     this.userAddress = undefined;
   }
@@ -157,20 +174,20 @@ class Account {
   /**
    * This function throws if the window.ethereum object cannot be found
    */
-  async _checkIfMetamaskAvailable() {
-    if (typeof window === undefined || typeof window.ethereum === undefined) {
-      throw new Error("MetaMask is unavailable!!");
-    }
+  // async _checkIfMetamaskAvailable() {
+  //   if (typeof window === undefined || typeof window.ethereum === undefined) {
+  //     throw new Error("MetaMask is unavailable!!");
+  //   }
 
-    const provider = await detectEthereumProvider();
+  //   // const provider = await detectEthereumProvider();
 
-    // If the provider returned by detectEthereumProvider is not the same as
-    // window.ethereum, something is overwriting it, perhaps another wallet.
-    // for more - https://docs.metamask.io/guide/ethereum-provider.html#using-the-provider
-    if (provider !== window.ethereum) {
-      throw new Error("User might have multiple wallets installed");
-    }
-  }
+  //   // If the provider returned by detectEthereumProvider is not the same as
+  //   // window.ethereum, something is overwriting it, perhaps another wallet.
+  //   // for more - https://docs.metamask.io/guide/ethereum-provider.html#using-the-provider
+  //   if (provider !== window.ethereum) {
+  //     throw new Error("User might have multiple wallets installed");
+  //   }
+  // }
 
   /**
    * get the user's public address
@@ -285,8 +302,11 @@ class Account {
     return params;
   }
 
-  async getChainId(): Promise<string> {
-    const provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
+  async getChainId(): Promise<string | undefined> {
+    if (!window.ethereum) return;
+    const provider = new ethers.providers.Web3Provider(
+      getExternalProvider(this.walletType) as ethers.providers.ExternalProvider,
+    );
     return await provider.send("eth_chainId", []);
   }
 
@@ -294,10 +314,13 @@ class Account {
     return (await this.getChainId()) === CHAIN_ID;
   }
 
-  async switchMetamaskToAllowedNetwork(): Promise<void> {
-    if (!window.ethereum) throw new Error("Metamask is not installed!");
+  async switchWalletToAllowedNetwork(wallet?: AllowedWallet): Promise<void> {
+    if (!window.ethereum && (!wallet || this.walletType === "coinbase" || this.walletType === "metamask"))
+      throw new Error("Metamask is not installed!");
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(
+      getExternalProvider(this.walletType) as ethers.providers.ExternalProvider,
+    );
     try {
       await provider.send("wallet_switchEthereumChain", [{ chainId: CHAIN_ID }]);
     } catch (error: unknown) {
