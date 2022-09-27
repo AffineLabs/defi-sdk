@@ -21,22 +21,6 @@ import {
 } from "../core/ewqueue";
 import { getExternalProvider, initMagic } from "./wallets";
 
-interface IProvider {
-  isMetaMask?: boolean;
-  isCoinbaseWallet?: boolean;
-  setAppInfo?: (appName: string | undefined, appLogoUrl: string | null | undefined) => void;
-}
-
-interface MetamaskEth extends IProvider {
-  providers?: IProvider[];
-}
-
-declare global {
-  interface Window {
-    ethereum?: MetamaskEth;
-  }
-}
-
 class Account {
   magic!: Magic;
   signer!: ethers.Signer;
@@ -87,14 +71,9 @@ class Account {
 
       if (magic) this.magic = magic;
       walletProvider = provider;
-    } else if ((walletType === "metamask" || walletType === "coinbase") && window.ethereum) {
+    } else {
       // await this._checkIfMetamaskAvailable();
       // we know that window.ethereum exists here
-      const coinbaseProvider = getExternalProvider(walletType) as unknown as IProvider;
-
-      console.log({ coinbaseProvider });
-      if (coinbaseProvider.setAppInfo)
-        coinbaseProvider.setAppInfo("Affine", "https://cdn.logo.com/hotlink-ok/logo-social.png");
       const _provider = new ethers.providers.Web3Provider(
         getExternalProvider(walletType) as ethers.providers.ExternalProvider,
       );
@@ -102,8 +81,8 @@ class Account {
       // console.log(
       //   { _provider },
       //   "ppp",
-      //   (_provider as IProvider)?.setAppInfo &&
-      //     (_provider as IProvider).setAppInfo!("Affine", "https://cdn.logo.com/hotlink-ok/logo-social.png"),
+      //   (_provider as unknown as CoinbaseWalletProvider).p &&
+      //     (_provider  as unknown as CoinbaseWalletProvider).setAppInfo!("Affine", "https://cdn.logo.com/hotlink-ok/logo-social.png"),
       // );
 
       // const _provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);

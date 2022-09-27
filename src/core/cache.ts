@@ -20,9 +20,8 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
 const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(
-  `https://polygon-${NETWORK_TYPE}.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
-);
+export const RPC_URL = `https://polygon-${NETWORK_TYPE}.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
+export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(RPC_URL);
 
 /**
  * Fet all supported contracts in the alpine protocol

@@ -1,8 +1,10 @@
+import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 import { ethers } from "ethers";
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
-import { PROVIDER } from "../core/cache";
+import { PROVIDER, RPC_URL } from "../core/cache";
 import { CHAIN_ID } from "../core/constants";
-import { AllowedWallet } from "../types/account";
+import { AllowedWallet, EthWalletProvider } from "../types/account";
 
 export const initMagic = async ({
   email,
@@ -41,14 +43,33 @@ export const initMagic = async ({
 export const getExternalProvider = (walletType: AllowedWallet) => {
   if (!window.ethereum) return;
 
-  return (
-    window.ethereum.providers
-      ? window.ethereum.providers.find(
-          p => (walletType === "metamask" && p.isMetaMask) || (walletType === "coinbase" && p.isCoinbaseWallet),
-        )
-      : (walletType === "metamask" && window.ethereum.isMetaMask) ||
-        (walletType === "coinbase" && window.ethereum.isCoinbaseWallet)
-      ? window.ethereum
-      : undefined
-  ) as ethers.providers.ExternalProvider | undefined;
+  switch (walletType) {
+    case "metamask": {
+      const _provider = window.ethereum as EthWalletProvider;
+
+      return _provider.providers
+        ? _provider.providers.find(p => p.isMetaMask)
+        : _provider.isMetaMask
+        ? _provider
+        : undefined;
+    }
+
+    case "coinbase": {
+      const _coinbaseWallet = new CoinbaseWalletSDK({
+        appName: "Affine",
+      });
+      return _coinbaseWallet.makeWeb3Provider(RPC_URL, parseInt(CHAIN_ID, 16));
+    }
+
+    case "walletConnect": {
+      return new WalletConnectProvider({
+        rpc: {
+          [CHAIN_ID]: RPC_URL,
+        },
+      });
+    }
+
+    default:
+      undefined;
+  }
 };

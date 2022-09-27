@@ -14,3 +14,13 @@ export interface MetamaskError {
   message: string;
   stack: string;
 }
+
+export interface IProvider {
+  isMetaMask?: boolean;
+  isCoinbaseWallet?: boolean;
+  setAppInfo?: (appName: string | undefined, appLogoUrl: string | null | undefined) => void;
+}
+
+export interface EthWalletProvider extends IProvider {
+  providers?: IProvider[];
+}
