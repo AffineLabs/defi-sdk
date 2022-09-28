@@ -1,10 +1,11 @@
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import { ethers } from "ethers";
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
 import { PROVIDER, RPC_URL } from "../core/cache";
 import { CHAIN_ID } from "../core/constants";
 import { AllowedWallet, EthWalletProvider } from "../types/account";
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 export const initMagic = async ({
   email,
@@ -40,7 +41,7 @@ export const initMagic = async ({
   return { magic: _magic, provider: _provider };
 };
 
-export const getExternalProvider = (walletType: AllowedWallet) => {
+export const getExternalProvider = async (walletType: AllowedWallet) => {
   if (!window.ethereum) return;
 
   switch (walletType) {
@@ -61,15 +62,33 @@ export const getExternalProvider = (walletType: AllowedWallet) => {
       return _coinbaseWallet.makeWeb3Provider(RPC_URL, parseInt(CHAIN_ID, 16));
     }
 
-    case "walletConnect": {
-      return new WalletConnectProvider({
+    default:
+      return;
+  }
+};
+
+export const getWeb3ModalProvider = async (): Promise<{
+  web3Modal: Web3Modal;
+  provider: ethers.providers.ExternalProvider;
+}> => {
+  const providerOptions = {
+    walletconnect: {
+      package: WalletConnectProvider,
+      options: {
         rpc: {
           [CHAIN_ID]: RPC_URL,
         },
-      });
-    }
+      },
+    },
+  };
 
-    default:
-      undefined;
-  }
+  const web3Modal = new Web3Modal({
+    network: "mainnet", // optional
+    cacheProvider: true, // optional
+    providerOptions, // required
+  });
+
+  const provider = await web3Modal.connect();
+
+  return { web3Modal, provider };
 };

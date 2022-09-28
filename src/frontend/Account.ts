@@ -19,7 +19,8 @@ import {
   txHasEnqueueEvent,
   vaultWithdrawableAssetAmount,
 } from "../core/ewqueue";
-import { getExternalProvider, initMagic } from "./wallets";
+import { getExternalProvider, getWeb3ModalProvider, initMagic } from "./wallets";
+import Web3Modal from "web3modal";
 
 class Account {
   magic!: Magic;
@@ -27,6 +28,7 @@ class Account {
   biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
   walletType: AllowedWallet = DEFAULT_WALLET;
+  web3Modal?: Web3Modal;
   // if true, send regular transaction, if false, use biconomy
   gas = false;
 
@@ -71,25 +73,23 @@ class Account {
 
       if (magic) this.magic = magic;
       walletProvider = provider;
-    } else {
-      // await this._checkIfMetamaskAvailable();
+    } else if (window.ethereum && (walletType === "metamask" || walletType === "coinbase")) {
       // we know that window.ethereum exists here
       const _provider = new ethers.providers.Web3Provider(
-        getExternalProvider(walletType) as ethers.providers.ExternalProvider,
+        (await getExternalProvider(walletType)) as ethers.providers.ExternalProvider,
       );
 
-      // console.log(
-      //   { _provider },
-      //   "ppp",
-      //   (_provider as unknown as CoinbaseWalletProvider).p &&
-      //     (_provider  as unknown as CoinbaseWalletProvider).setAppInfo!("Affine", "https://cdn.logo.com/hotlink-ok/logo-social.png"),
-      // );
-
-      // const _provider = new ethers.providers.Web3Provider(window.ethereum as ethers.providers.ExternalProvider);
-      // MetaMask requires requesting permission to connect users accounts
+      // requires requesting permission to connect users accounts
       await _provider.send("eth_requestAccounts", []);
 
       walletProvider = _provider;
+    } else if (walletType === "web3Modal") {
+      const { provider, web3Modal } = await getWeb3ModalProvider();
+
+      if (provider) {
+        walletProvider = new ethers.providers.Web3Provider(provider);
+      }
+      if (web3Modal) this.web3Modal = web3Modal;
     }
 
     if (!walletProvider) return;
@@ -140,6 +140,10 @@ class Account {
   async disconnect(walletType: AllowedWallet): Promise<void> {
     if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
     this.userAddress = undefined;
+
+    if (this.web3Modal) {
+      await this.web3Modal.clearCachedProvider();
+    }
   }
 
   /**
@@ -149,24 +153,6 @@ class Account {
   isConnected(walletType: string = DEFAULT_WALLET): boolean {
     return Boolean(this.userAddress) && walletType === this.walletType;
   }
-
-  /**
-   * This function throws if the window.ethereum object cannot be found
-   */
-  // async _checkIfMetamaskAvailable() {
-  //   if (typeof window === undefined || typeof window.ethereum === undefined) {
-  //     throw new Error("MetaMask is unavailable!!");
-  //   }
-
-  //   // const provider = await detectEthereumProvider();
-
-  //   // If the provider returned by detectEthereumProvider is not the same as
-  //   // window.ethereum, something is overwriting it, perhaps another wallet.
-  //   // for more - https://docs.metamask.io/guide/ethereum-provider.html#using-the-provider
-  //   if (provider !== window.ethereum) {
-  //     throw new Error("User might have multiple wallets installed");
-  //   }
-  // }
 
   /**
    * get the user's public address
@@ -284,7 +270,7 @@ class Account {
   async getChainId(): Promise<string | undefined> {
     if (!window.ethereum) return;
     const provider = new ethers.providers.Web3Provider(
-      getExternalProvider(this.walletType) as ethers.providers.ExternalProvider,
+      (await getExternalProvider(this.walletType)) as ethers.providers.ExternalProvider,
     );
     return await provider.send("eth_chainId", []);
   }
@@ -298,7 +284,7 @@ class Account {
       throw new Error("Metamask is not installed!");
 
     const provider = new ethers.providers.Web3Provider(
-      getExternalProvider(this.walletType) as ethers.providers.ExternalProvider,
+      (await getExternalProvider(this.walletType)) as ethers.providers.ExternalProvider,
     );
     try {
       await provider.send("wallet_switchEthereumChain", [{ chainId: CHAIN_ID }]);
