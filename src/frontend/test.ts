@@ -72,7 +72,7 @@ const handleButtonClick = () => {
       }
       // await account.connect({ walletType: "metamask" });
       console.log("Metamask connected!!");
-      const isConnected = await account.isConnectedToAllowedNetwork();
+      const isConnected = await account.isConnectedToAllowedNetwork("coinbase");
 
       if (!isConnected) {
         await account.switchWalletToAllowedNetwork("coinbase");

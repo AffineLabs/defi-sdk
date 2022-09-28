@@ -82,6 +82,7 @@ class Account {
 
       walletProvider = _provider;
     } else if (walletType === "walletConnect") {
+      // walletConnect doesn't require window.ethereum to be present always
       const provider = (await getExternalProvider(walletType)) as ethers.providers.ExternalProvider;
 
       if (provider) {
@@ -260,25 +261,25 @@ class Account {
     return params;
   }
 
-  async getChainId(): Promise<string | undefined> {
+  async getChainId(wallet: AllowedWallet): Promise<string | undefined> {
     if (!window.ethereum) return;
-    const provider = new ethers.providers.Web3Provider(
-      (await getExternalProvider(this.walletType)) as ethers.providers.ExternalProvider,
-    );
+    const ethProvider = await getExternalProvider(wallet ?? this.walletType);
+    const provider = new ethers.providers.Web3Provider(ethProvider as ethers.providers.ExternalProvider);
     return await provider.send("eth_chainId", []);
   }
 
-  async isConnectedToAllowedNetwork(): Promise<boolean> {
-    return (await this.getChainId()) === CHAIN_ID;
+  async isConnectedToAllowedNetwork(wallet: AllowedWallet): Promise<boolean> {
+    return (await this.getChainId(wallet)) === CHAIN_ID;
   }
 
-  async switchWalletToAllowedNetwork(wallet?: AllowedWallet): Promise<void> {
+  async switchWalletToAllowedNetwork(wallet: AllowedWallet): Promise<void> {
     if (!window.ethereum && (!wallet || this.walletType === "coinbase" || this.walletType === "metamask"))
       throw new Error("Metamask is not installed!");
 
-    const provider = new ethers.providers.Web3Provider(
-      (await getExternalProvider(this.walletType)) as ethers.providers.ExternalProvider,
-    );
+    const ethProvider = await getExternalProvider(wallet ?? this.walletType);
+    console.log("Eth provider on switchWalletToAllowedNetwork", wallet, ethProvider);
+
+    const provider = new ethers.providers.Web3Provider(ethProvider as ethers.providers.ExternalProvider);
     try {
       await provider.send("wallet_switchEthereumChain", [{ chainId: CHAIN_ID }]);
     } catch (error: unknown) {
