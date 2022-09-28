@@ -1,4 +1,4 @@
-import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
+import CoinbaseWalletSDK, { CoinbaseWalletProvider } from "@coinbase/wallet-sdk";
 import { ethers } from "ethers";
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
 import { PROVIDER, RPC_URL } from "../core/cache";
@@ -6,13 +6,13 @@ import { CHAIN_ID } from "../core/constants";
 import { AllowedWallet, EthWalletProvider } from "../types/account";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
-export const initMagic = async ({
+export async function initMagic({
   email,
   testMode,
 }: {
   email: string;
   testMode: boolean;
-}): Promise<{ magic?: Magic; provider?: ethers.providers.Web3Provider }> => {
+}): Promise<{ magic?: Magic; provider?: ethers.providers.Web3Provider }> {
   let _magic: Magic | undefined, _provider: ethers.providers.Web3Provider | undefined;
   if (email) {
     const magicOptions: MagicSDKAdditionalConfiguration = {
@@ -38,9 +38,11 @@ export const initMagic = async ({
   }
 
   return { magic: _magic, provider: _provider };
-};
+}
 
-export const getExternalProvider = async (walletType: AllowedWallet) => {
+export async function getExternalProvider(
+  walletType: AllowedWallet,
+): Promise<ethers.providers.ExternalProvider | CoinbaseWalletProvider | undefined> {
   if (!window.ethereum) return;
 
   switch (walletType) {
@@ -58,7 +60,7 @@ export const getExternalProvider = async (walletType: AllowedWallet) => {
       const _coinbaseWallet = new CoinbaseWalletSDK({
         appName: "Affine",
       });
-      return _coinbaseWallet.makeWeb3Provider(RPC_URL, parseInt(CHAIN_ID, 16));
+      return _coinbaseWallet.makeWeb3Provider(RPC_URL, parseInt(CHAIN_ID, 16)) as CoinbaseWalletProvider;
     }
 
     case "walletConnect": {
@@ -77,4 +79,4 @@ export const getExternalProvider = async (walletType: AllowedWallet) => {
     default:
       return;
   }
-};
+}
