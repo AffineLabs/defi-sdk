@@ -1,4 +1,4 @@
-export type AllowedWallet = "magic" | "metamask" | "coinbase" | "web3Modal";
+export type AllowedWallet = "magic" | "metamask" | "coinbase" | "walletConnect";
 
 export interface IConnectAccount {
   email?: string;

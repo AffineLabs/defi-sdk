@@ -19,8 +19,7 @@ import {
   txHasEnqueueEvent,
   vaultWithdrawableAssetAmount,
 } from "../core/ewqueue";
-import { getExternalProvider, getWeb3ModalProvider, initMagic } from "./wallets";
-import Web3Modal from "web3modal";
+import { getExternalProvider, initMagic } from "./wallets";
 
 class Account {
   magic!: Magic;
@@ -28,7 +27,6 @@ class Account {
   biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
   walletType: AllowedWallet = DEFAULT_WALLET;
-  web3Modal?: Web3Modal;
   // if true, send regular transaction, if false, use biconomy
   gas = false;
 
@@ -83,13 +81,12 @@ class Account {
       await _provider.send("eth_requestAccounts", []);
 
       walletProvider = _provider;
-    } else if (walletType === "web3Modal") {
-      const { provider, web3Modal } = await getWeb3ModalProvider();
+    } else if (walletType === "walletConnect") {
+      const provider = (await getExternalProvider(walletType)) as ethers.providers.ExternalProvider;
 
       if (provider) {
         walletProvider = new ethers.providers.Web3Provider(provider);
       }
-      if (web3Modal) this.web3Modal = web3Modal;
     }
 
     if (!walletProvider) return;
@@ -140,10 +137,6 @@ class Account {
   async disconnect(walletType: AllowedWallet): Promise<void> {
     if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
     this.userAddress = undefined;
-
-    if (this.web3Modal) {
-      await this.web3Modal.clearCachedProvider();
-    }
   }
 
   /**

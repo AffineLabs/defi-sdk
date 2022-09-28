@@ -4,7 +4,6 @@ import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
 import { PROVIDER, RPC_URL } from "../core/cache";
 import { CHAIN_ID } from "../core/constants";
 import { AllowedWallet, EthWalletProvider } from "../types/account";
-import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 export const initMagic = async ({
@@ -62,33 +61,20 @@ export const getExternalProvider = async (walletType: AllowedWallet) => {
       return _coinbaseWallet.makeWeb3Provider(RPC_URL, parseInt(CHAIN_ID, 16));
     }
 
-    default:
-      return;
-  }
-};
-
-export const getWeb3ModalProvider = async (): Promise<{
-  web3Modal: Web3Modal;
-  provider: ethers.providers.ExternalProvider;
-}> => {
-  const providerOptions = {
-    walletconnect: {
-      package: WalletConnectProvider,
-      options: {
+    case "walletConnect": {
+      const provider = new WalletConnectProvider({
         rpc: {
           [CHAIN_ID]: RPC_URL,
         },
-      },
-    },
-  };
+      });
 
-  const web3Modal = new Web3Modal({
-    network: "mainnet", // optional
-    cacheProvider: true, // optional
-    providerOptions, // required
-  });
+      //  Enable session (triggers QR Code modal)
+      await provider.enable();
 
-  const provider = await web3Modal.connect();
+      return;
+    }
 
-  return { web3Modal, provider };
+    default:
+      return;
+  }
 };
