@@ -73,7 +73,7 @@ export async function getExternalProvider(
       //  Enable session (triggers QR Code modal)
       await provider.enable();
 
-      return;
+      return provider;
     }
 
     default:
