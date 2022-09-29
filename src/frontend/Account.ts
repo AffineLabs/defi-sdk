@@ -20,6 +20,7 @@ import {
   vaultWithdrawableAssetAmount,
 } from "../core/ewqueue";
 import { getExternalProvider, initMagic } from "./wallets";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 class Account {
   magic!: Magic;
@@ -27,6 +28,7 @@ class Account {
   biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
   walletType: AllowedWallet = DEFAULT_WALLET;
+  walletConnectProvider?: WalletConnectProvider;
   // if true, send regular transaction, if false, use biconomy
   gas = false;
 
@@ -83,10 +85,12 @@ class Account {
       walletProvider = _provider;
     } else if (walletType === "walletConnect") {
       // walletConnect doesn't require window.ethereum to be present always
-      const provider = (await getExternalProvider(walletType)) as ethers.providers.ExternalProvider;
+      const provider = (await getExternalProvider(walletType)) as WalletConnectProvider;
+
+      if (provider) this.walletConnectProvider = provider;
 
       if (provider) {
-        walletProvider = new ethers.providers.Web3Provider(provider);
+        walletProvider = new ethers.providers.Web3Provider(provider as ethers.providers.ExternalProvider);
       }
     }
 
@@ -137,6 +141,7 @@ class Account {
    */
   async disconnect(walletType: AllowedWallet): Promise<void> {
     if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
+    if (this.walletConnectProvider?.disconnect) this.walletConnectProvider.disconnect();
     this.userAddress = undefined;
   }
 
@@ -294,6 +299,10 @@ class Account {
         await provider.send("wallet_addEthereumChain", [{ ...this._getNetworkParams() }]);
       }
     }
+  }
+
+  getWalletConnectProvider(): WalletConnectProvider | undefined {
+    return this.walletConnectProvider;
   }
 }
 

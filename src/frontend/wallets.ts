@@ -42,7 +42,7 @@ export async function initMagic({
 
 export async function getExternalProvider(
   walletType: AllowedWallet,
-): Promise<ethers.providers.ExternalProvider | CoinbaseWalletProvider | undefined> {
+): Promise<ethers.providers.ExternalProvider | CoinbaseWalletProvider | WalletConnectProvider | undefined> {
   if (!window.ethereum) return;
 
   switch (walletType) {
