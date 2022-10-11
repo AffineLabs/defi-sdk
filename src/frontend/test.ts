@@ -64,14 +64,19 @@ const handleButtonClick = () => {
       console.log(event.target);
 
       const account = new Account();
+      console.log("Eth", window.ethereum);
       try {
-        await account.switchMetamaskToAllowedNetwork();
+        await account.connect({ walletType: "coinbase" });
       } catch (error) {
         console.log("ERROR ===>", error);
       }
-      await account.connect({ walletType: "metamask" });
+      // await account.connect({ walletType: "metamask" });
       console.log("Metamask connected!!");
-      const isConnected = await account.isConnectedToAllowedNetwork();
+      const isConnected = await account.isConnectedToAllowedNetwork("coinbase");
+
+      if (!isConnected) {
+        await account.switchWalletToAllowedNetwork("coinbase");
+      }
       console.log({ isConnected });
     },
     false,
