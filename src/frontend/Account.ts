@@ -73,7 +73,8 @@ class Account {
 
       if (magic) this.magic = magic;
       walletProvider = provider;
-    } else if (window.ethereum && (walletType === "metamask" || walletType === "coinbase")) {
+    } else if (walletType === "metamask" || walletType === "coinbase") {
+      if (walletType === "metamask" && !window.ethereum) return;
       // we know that window.ethereum exists here
       const _provider = new ethers.providers.Web3Provider(
         (await getExternalProvider(walletType)) as ethers.providers.ExternalProvider,
