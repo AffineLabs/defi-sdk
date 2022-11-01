@@ -35,6 +35,7 @@ export async function getAllContracts(
   const s3Root = `https://sc-abis.s3.us-east-2.amazonaws.com/${version}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
+  // Using this abi so that we mint usdc (the tests run on testnet)
   const erc20Abi = [
     // Read-Only Functions
     "function balanceOf(address owner) view returns (uint256)",
@@ -51,19 +52,19 @@ export async function getAllContracts(
     "event Transfer(address indexed from, address indexed to, uint amount)",
   ];
   const {
-    PolygonAlpSave: alpSave,
+    PolygonAlpSave: alpSaveData,
     PolygonBtcEthVault: alpLarge,
     Forwarder: forwarder,
     ERC4626Router: router,
   } = allData;
-  const alpSaveContract = L2Vault__factory.connect(alpSave.address, provider);
+  const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
   return {
-    alpSave: alpSaveContract,
+    alpSave,
     alpLarge: TwoAssetBasket__factory.connect(alpLarge.address, provider),
     forwarder: Forwarder__factory.connect(forwarder.address, provider),
-    usdc: new ethers.Contract(await alpSaveContract.asset(), erc20Abi, provider),
+    usdc: new ethers.Contract(await alpSave.asset(), erc20Abi, provider),
     router: Router__factory.connect(router.address, provider),
-    ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSaveContract.emergencyWithdrawalQueue(), provider),
+    ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSave.emergencyWithdrawalQueue(), provider),
   };
 }
 

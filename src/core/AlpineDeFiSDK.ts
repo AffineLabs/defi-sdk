@@ -101,7 +101,6 @@ export async function blockchainCall(
 
     return { txnCost, txnCostUSD };
   }
-
   const tx: TransactionResponse = await contract[method].apply(null, args);
   const receipt = await tx.wait();
 
@@ -126,21 +125,12 @@ export async function blockchainCall(
 export async function approve(to: keyof AlpineContracts, amountUSDC: string): Promise<DryRunReceipt | FullTxReceipt> {
   const amount = _addDecimals(amountUSDC, 6);
   const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
+  const approveArgs = [to === "alpLarge" ? CONTRACTS.router.address : CONTRACTS[to].address, amount];
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(
-      CONTRACTS.usdc,
-      "approve",
-      [to === "alpLarge" ? CONTRACTS.router.address : CONTRACTS[to].address, amount],
-      true,
-    )) as GasInfo;
+    const dryRunInfo = (await blockchainCall(CONTRACTS.usdc, "approve", approveArgs, true)) as GasInfo;
     return { ...basicInfo, ...dryRunInfo };
   } else {
-    const receipt = (await blockchainCall(
-      CONTRACTS.usdc,
-      "approve",
-      [to === "alpLarge" ? CONTRACTS.router.address : CONTRACTS[to].address, amount],
-      false,
-    )) as SmallTxReceipt;
+    const receipt = (await blockchainCall(CONTRACTS.usdc, "approve", approveArgs, false)) as SmallTxReceipt;
     return {
       ...basicInfo,
       ...receipt,
@@ -152,7 +142,6 @@ export async function approve(to: keyof AlpineContracts, amountUSDC: string): Pr
  * transfer usdc from user's wallet to another wallet
  * @param {String} to receipient address
  * @param {String} amountUSDC amount in usdc
- * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
  */
 export async function transfer(to: string, amountUSDC: string) {
   const { usdc } = CONTRACTS;
