@@ -28,6 +28,10 @@ yarn install
 
 ## Testing
 
+```sh
+yarn build
+```
+
 ### Configuration
 
 See .env.example for the configuration values you will need.

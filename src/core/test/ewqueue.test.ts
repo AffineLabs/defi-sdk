@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { init, setProvider, CONTRACTS, userAddress, PROVIDER } from "../cache";
 import { expect } from "chai";
-import { approve, blockchainCall, mintUSDC } from "../AlpineDeFiSDK";
+import { approve, blockchainCall, mintUSDC, _removeDecimals } from "../AlpineDeFiSDK";
 import {
   getEmergencyWithdrawalQueueTransfers,
   getUserEmergencyWithdrawalQueueRequests,
@@ -34,18 +34,24 @@ describe("Emergency Withdrawal Queue", async () => {
 
     // Check withdrawable amount
     const withdrawableAmount = await vaultWithdrawableAssetAmount("alpSave");
-    expect(withdrawableAmount).eq(halfUSDC);
+    expect(withdrawableAmount).eq(_removeDecimals(ethers.BigNumber.from(halfUSDC), 6));
 
     // Withdraw
-    await blockchainCall(CONTRACTS.alpSave, "withdraw", [oneUSDC, wallet.address, wallet.address]);
+    const withdrawRes = (await blockchainCall(CONTRACTS.alpSave, "withdraw", [
+      oneUSDC,
+      wallet.address,
+      wallet.address,
+    ])) as SmallTxReceipt;
+    // Check tx led to emergency withdrawal queue enqueue
+    const hasEnqueueEvent = await txHasEnqueueEvent(withdrawRes.txnHash);
+    expect(hasEnqueueEvent).eq(true);
 
     // Get queue stats
     const queue = await getUserEmergencyWithdrawalQueueRequests("alpSave");
     expect(queue.length).eq(1);
     const gotEvent = queue[0];
     expect(gotEvent.pos).eq(0);
-    expect(gotEvent.shares).eq(oneUSDC / 100);
-    expect(gotEvent.sharesValueInAsset).eq(oneUSDC);
+    expect(gotEvent.sharesValueInAsset).eq("1.0");
 
     // Simulate transfer back to L2
     await setUSDCBalance(CONTRACTS.alpSave.address, oneUSDC);
@@ -54,16 +60,11 @@ describe("Emergency Withdrawal Queue", async () => {
     // Dequeue
     const tx = (await blockchainCall(CONTRACTS.ewQueue, "dequeue", [])) as SmallTxReceipt;
 
-    // Check tx led to emergency withdrawal queue enqueue
-    const hasEnqueueEvent = await txHasEnqueueEvent(tx.txnHash);
-    expect(hasEnqueueEvent).eq(true);
-
     // Get tansfers from emergency withdrawal queue.
     const transfers = await getEmergencyWithdrawalQueueTransfers("alpSave");
     expect(transfers.length).eq(1);
     const gotTransfer = transfers[0];
     expect(gotTransfer.txHash).eq(tx.txnHash);
-    expect(gotTransfer.shares).eq(oneUSDC / 100);
-    expect(gotTransfer.sharesValueInAsset).eq(oneUSDC);
+    expect(gotTransfer.sharesValueInAsset).eq("1.0");
   });
 });

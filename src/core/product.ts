@@ -31,33 +31,24 @@ export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt |
   const contracts = CONTRACTS;
   const { usdc, alpSave } = contracts;
   const userAddress = await SIGNER.getAddress();
-  const amount = _addDecimals(amountUSDC.toString());
+  const amount = _addDecimals(amountUSDC.toString(), 6);
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
   const walletBalance = await usdc.balanceOf(userAddress);
   if (walletBalance.lt(amount)) {
-    throw new Error(
-      `Insuffient balance at user wallet. Balance: ${_removeDecimals(walletBalance)}, Requested to buy: ${amountUSDC}`,
-    );
+    throw new Error("Insufficient balance");
   }
 
   // check if user has sufficient allowance
   const allowance = await usdc.allowance(userAddress, alpSave.address);
-
-  // allowance < amount
-  if (allowance.lt(amount)) {
-    throw new Error(
-      `Insufficient allowance. Allowance: ${_removeDecimals(allowance)} USDC, Required: ${amountUSDC} USDC. ` +
-        "Call approve() to increase the allowance.",
-    );
-  }
+  if (allowance.lt(amount)) throw new Error("Insufficient allowance");
 
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(await alpSave.convertToShares(amount)),
+    tokenAmount: _removeDecimals(await alpSave.convertToShares(amount), 16),
   };
 
   if (SIMULATE) {
@@ -81,16 +72,16 @@ export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt 
   const contracts = CONTRACTS;
   const { alpSave } = contracts;
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-  const usdcToWithdraw = _addDecimals(amountUSDC.toString());
+  const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
   const withdrawFeeBps: ethers.BigNumber = await alpSave.withdrawalFee();
   const alpFee = usdcToWithdraw.mul(withdrawFeeBps).div(10_000);
   const alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
 
   const basicInfo = {
-    alpFee: _removeDecimals(alpFee).toString(),
+    alpFee: _removeDecimals(alpFee, 6).toString(),
     alpFeePercent,
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(await alpSave.convertToShares(usdcToWithdraw)),
+    tokenAmount: _removeDecimals(await alpSave.convertToShares(usdcToWithdraw), 16),
   };
   console.log({ basicInfo });
 
@@ -118,7 +109,7 @@ export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt 
 
 export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { alpLarge } = CONTRACTS;
-  const amount = _addDecimals(amountUSDC.toString());
+  const amount = _addDecimals(amountUSDC.toString(), 6);
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
@@ -156,7 +147,7 @@ export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt
 export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { alpLarge, router } = CONTRACTS;
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-  const usdcToWithdraw = _addDecimals(amountUSDC.toString());
+  const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",

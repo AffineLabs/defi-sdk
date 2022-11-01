@@ -25,20 +25,22 @@ export async function getMaticBalance() {
 
 /**
  * Converts a unit amount to equivalent micro unit amount
- * @param {string} amount an amount in unit eg. usdc.
+ * @param {string} amount an amount in whole unit eg. usdc.
+ * @param {number} decimals The amount of decimals this contract has
  * @returns {ethers.BigNumber} equivalent amount in micro unit eg. micro usdc.
  */
-export function _addDecimals(amount: string): ethers.BigNumber {
-  return ethers.utils.parseUnits(amount, 6);
+export function _addDecimals(amount: string, decimals: number): ethers.BigNumber {
+  return ethers.utils.parseUnits(amount, decimals);
 }
 
 /**
  * converts a micro unit amount to equivalent unit amount
  * @param {ethers.BigNumber} amount an amount in micro unit eg. micro usdc.
+ * @param {number} decimals
  * @returns {string} equivalent amount in unit.
  */
-export function _removeDecimals(amount: ethers.BigNumber): string {
-  return ethers.utils.formatUnits(amount, 6);
+export function _removeDecimals(amount: ethers.BigNumber, decimals: number): string {
+  return ethers.utils.formatUnits(amount, decimals);
 }
 
 // get the current matic price in usd
@@ -122,7 +124,7 @@ export async function blockchainCall(
  * @param amountUSDC transaction amount in usdc
  */
 export async function approve(to: keyof AlpineContracts, amountUSDC: string): Promise<DryRunReceipt | FullTxReceipt> {
-  const amount = _addDecimals(amountUSDC);
+  const amount = _addDecimals(amountUSDC, 6);
   const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(
@@ -155,7 +157,7 @@ export async function approve(to: keyof AlpineContracts, amountUSDC: string): Pr
 export async function transfer(to: string, amountUSDC: string) {
   const { usdc } = CONTRACTS;
 
-  const amount = _addDecimals(amountUSDC);
+  const amount = _addDecimals(amountUSDC, 6);
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
@@ -165,11 +167,7 @@ export async function transfer(to: string, amountUSDC: string) {
 
   // balance at wallet < amount requested to transfer
   if (balance.lt(amount)) {
-    throw new Error(
-      "Insuffient balance at user's wallet. " +
-        `Balance: ${_removeDecimals(balance)}, ` +
-        `Requested to transfer: ${_removeDecimals(amount)}`,
-    );
+    throw new Error("Insufficient allowance");
   }
 
   return blockchainCall(usdc, "transfer", [to, amount]);
@@ -177,7 +175,7 @@ export async function transfer(to: string, amountUSDC: string) {
 
 export async function mintUSDC(to: string, amountUSDC: number) {
   const { usdc } = CONTRACTS;
-  const amount = _addDecimals(amountUSDC.toString());
+  const amount = _addDecimals(amountUSDC.toString(), 6);
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
