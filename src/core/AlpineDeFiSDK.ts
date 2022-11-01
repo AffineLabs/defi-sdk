@@ -39,7 +39,7 @@ export function _addDecimals(amount: string, decimals: number): ethers.BigNumber
  * @param {number} decimals
  * @returns {string} equivalent amount in unit.
  */
-export function _removeDecimals(amount: ethers.BigNumber, decimals: number): string {
+export function _removeDecimals(amount: ethers.BigNumber, decimals: ethers.BigNumberish): string {
   return ethers.utils.formatUnits(amount, decimals);
 }
 

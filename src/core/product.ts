@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
 import { _addDecimals, _removeDecimals, blockchainCall, getMaticPrice } from "./AlpineDeFiSDK";
-import { getSignature } from "./biconomy";
 import { CONTRACTS, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
 import { MAX_UINT } from "./constants";
 
@@ -111,19 +110,24 @@ export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt 
 export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { alpLarge, router, usdc } = CONTRACTS;
   const amount = _addDecimals(amountUSDC.toString(), 6);
+  const expectedShares = await sharesFromTokens("alpLarge", amount);
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: ethers.utils.formatUnits(await sharesFromTokens("alpLarge", amount), 18),
+    tokenAmount: _removeDecimals(expectedShares, 18),
   };
 
   const data: string[] = [];
   data.push(router.interface.encodeFunctionData("approve", [usdc.address, alpLarge.address, MAX_UINT]));
-  const depositArgs = [alpLarge.address, userAddress, amount, 0];
-  console.log({ depositArgs });
-  console.log("user approvalL ", await usdc.allowance(userAddress, router.address));
-  data.push(router.interface.encodeFunctionData("depositToVault", [alpLarge.address, userAddress, amount, 0]));
+  data.push(
+    router.interface.encodeFunctionData("depositToVault", [
+      alpLarge.address,
+      userAddress,
+      amount,
+      expectedShares.mul(95).div(100),
+    ]),
+  );
 
   const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
   if (SIMULATE) {
@@ -137,20 +141,20 @@ export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt
     const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
     const amountChanged = afterBal.sub(beforeBal);
 
-    const res = { ...basicInfo, ...receipt, tokenAmount: ethers.utils.formatUnits(amountChanged, 18) };
+    const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, 18) };
     return res;
   }
 }
 
 export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { alpLarge, router } = CONTRACTS;
+  const { alpLarge } = CONTRACTS;
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
   const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: ethers.utils.formatUnits(await sharesFromTokens("alpLarge", usdcToWithdraw), 18),
+    tokenAmount: _removeDecimals(await sharesFromTokens("alpLarge", usdcToWithdraw), 18),
   };
 
   if (SIMULATE) {
@@ -176,7 +180,7 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
       [shares, userAddress, userAddress, usdcToWithdraw.mul(95).div(100)],
       false,
     )) as SmallTxReceipt;
-    const res = { ...basicInfo, ...receipt, tokenAmount: ethers.utils.formatUnits(shares, 18) };
+    const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(shares, 18) };
     return res;
   }
 }
@@ -201,18 +205,18 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
     const amount_decimals = ethers.BigNumber.from(await contract.decimals());
     const equity = amount.mul(num);
     return {
-      amount: ethers.utils.formatUnits(amount, amount_decimals),
-      price: ethers.utils.formatUnits(num, decimals),
-      equity: ethers.utils.formatUnits(equity, amount_decimals.add(decimals)),
+      amount: _removeDecimals(amount, amount_decimals),
+      price: _removeDecimals(num, decimals),
+      equity: _removeDecimals(equity, amount_decimals.add(decimals)),
     };
   }
   // usdc
   const { usdc } = CONTRACTS;
   const amount = await usdc.balanceOf(user);
   return {
-    amount: ethers.utils.formatUnits(amount, 6),
+    amount: _removeDecimals(amount, 6),
     price: "1",
-    equity: ethers.utils.formatUnits(amount, 6),
+    equity: _removeDecimals(amount, 6),
   };
 }
 
