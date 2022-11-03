@@ -40,8 +40,8 @@ describe("Portfolio transactions", async () => {
       const dollarsBalance = await tokensFromShares(product, tokenBalance);
       coinBalance[product] = dollarsBalance;
     }
-    const alpLargeBalance = Number(_removeDecimals(coinBalance.alpLarge));
-    const alpSaveBalance = Number(_removeDecimals(coinBalance.alpSave));
+    const alpLargeBalance = Number(_removeDecimals(coinBalance.alpLarge, 6));
+    const alpSaveBalance = Number(_removeDecimals(coinBalance.alpSave, 6));
     expect(alpLargeBalance > 495);
     expect(alpSaveBalance > 495);
     expect(alpSaveBalance < 530);
@@ -63,8 +63,8 @@ describe("Portfolio transactions", async () => {
       coinBalance[product] = dollarsBalance;
     }
     // We have 500 AlpSave from portfolio purchase and we sell 50 so overall should have <450 alpSave left
-    const alpSaveBalance = Number(_removeDecimals(coinBalance.alpSave));
-    const alpLargeBalance = Number(_removeDecimals(coinBalance.alpLarge));
+    const alpSaveBalance = Number(_removeDecimals(coinBalance.alpSave, 6));
+    const alpLargeBalance = Number(_removeDecimals(coinBalance.alpLarge, 6));
     console.log(alpLargeBalance);
     expect(alpSaveBalance > 445);
     expect(alpLargeBalance > 450);
@@ -84,8 +84,8 @@ describe("Portfolio transactions", async () => {
       total.add(dollarsBalance);
       coinBalance[product] = dollarsBalance;
     }
-    const alpLargeBalance = Number(_removeDecimals(coinBalance.alpLarge));
-    const alpSaveBalance = Number(_removeDecimals(coinBalance.alpSave));
+    const alpLargeBalance = Number(_removeDecimals(coinBalance.alpLarge, 6));
+    const alpSaveBalance = Number(_removeDecimals(coinBalance.alpSave, 6));
     if (alpLargeBalance > alpSaveBalance) expect(alpLargeBalance - alpSaveBalance < 5);
     else expect(alpSaveBalance - alpLargeBalance < 5);
   });

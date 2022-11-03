@@ -6,6 +6,7 @@ import {
 } from "../typechain/src/polygon/EmergencyWithdrawalQueue";
 import { AlpineProduct } from "./types";
 import { _removeDecimals } from "./AlpineDeFiSDK";
+import { contracts } from "../typechain/@opengsn";
 
 export async function getUserEmergencyWithdrawalQueueRequests(
   product: AlpineProduct,
@@ -25,8 +26,8 @@ export async function getUserEmergencyWithdrawalQueueRequests(
         const eventShares = e.args[3];
         ewQueue.push({
           pos: eventPtr.sub(ewQueueHeadPtr).toNumber(),
-          shares: _removeDecimals(eventShares),
-          sharesValueInAsset: _removeDecimals(await CONTRACTS.alpSave.convertToAssets(eventShares)),
+          shares: _removeDecimals(eventShares, 16),
+          sharesValueInAsset: _removeDecimals(await CONTRACTS.alpSave.convertToAssets(eventShares), 6),
         });
       }
     }
@@ -41,9 +42,9 @@ export async function vaultWithdrawableAssetAmount(product: AlpineProduct): Prom
   if (product === "alpSave") {
     const debtToEWQ = await CONTRACTS.ewQueue.totalDebt();
     if (debtToEWQ.gt(vaultTVL)) return "0";
-    return _removeDecimals(vaultTVL.sub(debtToEWQ));
+    return _removeDecimals(vaultTVL.sub(debtToEWQ), 6);
   } else {
-    return _removeDecimals(vaultTVL);
+    return _removeDecimals(vaultTVL, 6);
   }
 }
 
@@ -65,8 +66,8 @@ export async function txHasEnqueueEvent(txHash: string): Promise<boolean> {
 export async function getEmergencyWithdrawalQueueTransfers(
   product: AlpineProduct,
 ): Promise<EmergencyWithdrawalQueueTransfer[]> {
+  const { alpSave } = CONTRACTS;
   if (product === "alpSave") {
-    const sharePrice = await CONTRACTS.alpSave.detailedPrice();
     const curBlock = await PROVIDER.getBlock("latest");
     const ewQueueDequeueEvents: EmergencyWithdrawalQueueDequeueEvent[] = await CONTRACTS.ewQueue.queryFilter(
       CONTRACTS.ewQueue.filters.EmergencyWithdrawalQueueDequeue(null, userAddress, userAddress, null),
@@ -77,8 +78,8 @@ export async function getEmergencyWithdrawalQueueTransfers(
     for (const e of ewQueueDequeueEvents) {
       const eventShares = e.args[3];
       transfers.push({
-        shares: _removeDecimals(eventShares),
-        sharesValueInAsset: _removeDecimals(sharePrice.num),
+        shares: _removeDecimals(eventShares, 16),
+        sharesValueInAsset: _removeDecimals(await alpSave.convertToAssets(eventShares), 6),
         txHash: e.transactionHash,
         timestamp: new Date((await e.getBlock()).timestamp * 1000),
       });

@@ -37,7 +37,7 @@ export type AlpineContracts = {
   alpSave: L2Vault;
   alpLarge: TwoAssetBasket;
   forwarder: Forwarder;
-  usdc: ERC20;
+  usdc: ethers.Contract;
   router: Router;
   ewQueue: EmergencyWithdrawalQueue;
 };

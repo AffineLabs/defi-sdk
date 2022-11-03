@@ -12,7 +12,7 @@ export async function portfolioUpdate(buyAmounts: productAmounts, sellAmounts: p
   for (const product of alpineProducts) {
     const sellAmount = sellAmounts[product];
     if (sellAmount === undefined || Number(sellAmount) === 0) continue;
-    const usdcAmount = _addDecimals(sellAmount.toString());
+    const usdcAmount = _addDecimals(sellAmount.toString(), 6);
     data.push(
       router.interface.encodeFunctionData("withdraw", [
         CONTRACTS[product].address,
@@ -25,7 +25,7 @@ export async function portfolioUpdate(buyAmounts: productAmounts, sellAmounts: p
   for (const product of alpineProducts) {
     const buyAmount = buyAmounts[product];
     if (buyAmount === undefined || Number(buyAmount) === 0) continue;
-    const usdcAmount = _addDecimals(buyAmount.toString());
+    const usdcAmount = _addDecimals(buyAmount.toString(), 6);
     data.push(
       router.interface.encodeFunctionData("depositToVault", [CONTRACTS[product].address, userAddress, usdcAmount, 0]),
     );
@@ -69,10 +69,10 @@ export async function portfolioRebalance(allocations: productAllocation) {
     const currentBalance = coinBalance[product];
     if (idealAmount > currentBalance) {
       const amount = idealAmount.sub(currentBalance);
-      buyAmounts[product] = _removeDecimals(amount);
+      buyAmounts[product] = _removeDecimals(amount, 6);
     } else if (currentBalance > idealAmount) {
       const amount = currentBalance.sub(idealAmount);
-      sellAmounts[product] = _removeDecimals(amount);
+      sellAmounts[product] = _removeDecimals(amount, 6);
     }
   }
   return portfolioUpdate(buyAmounts, sellAmounts);
