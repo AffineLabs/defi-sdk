@@ -254,7 +254,8 @@ export async function sharesFromTokens(product: AlpineProduct, tokenAmount: ethe
     const totalDollars = await alpLarge.valueOfVault();
     console.log({ totalDollars });
 
-    if (totalDollars.eq(0)) return tokenAmount.div(100); // $100 usdc per share to start with
+    // $100 usdc per share to start with
+    if (totalDollars.eq(0)) return tokenAmount.mul(ethers.BigNumber.from(10).pow(18)).div(100e6);
     // totalSupply / totalDollars * dollars
     // dollars given by btc/eth vault actually have 8 decimals
     const totalSupply = await alpLarge.totalSupply();
