@@ -1,20 +1,16 @@
 import { CONTRACTS, PROVIDER, userAddress } from "./cache";
 import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer } from "./types";
-import {
-  EmergencyWithdrawalQueueEnqueueEvent,
-  EmergencyWithdrawalQueueDequeueEvent,
-} from "../typechain/src/polygon/EmergencyWithdrawalQueue";
+import { PushEvent, PopEvent } from "../typechain/src/polygon/EmergencyWithdrawalQueue";
 import { AlpineProduct } from "./types";
 import { _removeDecimals } from "./AlpineDeFiSDK";
-import { contracts } from "../typechain/@opengsn";
 
 export async function getUserEmergencyWithdrawalQueueRequests(
   product: AlpineProduct,
 ): Promise<EmergencyWithdrawalQueueRequest[]> {
   if (product === "alpSave") {
     const curBlock = await PROVIDER.getBlock("latest");
-    const ewQueueEnqueueEvents: EmergencyWithdrawalQueueEnqueueEvent[] = await CONTRACTS.ewQueue.queryFilter(
-      CONTRACTS.ewQueue.filters.EmergencyWithdrawalQueueEnqueue(null, userAddress, userAddress, null),
+    const ewQueueEnqueueEvents: PushEvent[] = await CONTRACTS.ewQueue.queryFilter(
+      CONTRACTS.ewQueue.filters.Push(null, userAddress, userAddress, null),
       curBlock.number - 4096,
       curBlock.number,
     );
@@ -53,7 +49,7 @@ export async function txHasEnqueueEvent(txHash: string): Promise<boolean> {
   for (const l of txReceipt.logs) {
     try {
       const logDescription = CONTRACTS.ewQueue.interface.parseLog(l);
-      if (logDescription.name == "EmergencyWithdrawalQueueEnqueue") {
+      if (logDescription.name == "Push") {
         return true;
       }
     } catch (e) {
@@ -69,8 +65,8 @@ export async function getEmergencyWithdrawalQueueTransfers(
   const { alpSave } = CONTRACTS;
   if (product === "alpSave") {
     const curBlock = await PROVIDER.getBlock("latest");
-    const ewQueueDequeueEvents: EmergencyWithdrawalQueueDequeueEvent[] = await CONTRACTS.ewQueue.queryFilter(
-      CONTRACTS.ewQueue.filters.EmergencyWithdrawalQueueDequeue(null, userAddress, userAddress, null),
+    const ewQueueDequeueEvents: PopEvent[] = await CONTRACTS.ewQueue.queryFilter(
+      CONTRACTS.ewQueue.filters.Pop(null, userAddress, userAddress, null),
       curBlock.number - 512,
       curBlock.number,
     );
