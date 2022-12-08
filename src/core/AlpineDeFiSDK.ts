@@ -102,7 +102,7 @@ export async function blockchainCall(
     return { txnCost, txnCostUSD };
   }
   const tx: TransactionResponse = await contract[method].apply(null, args);
-  const receipt = await tx.wait(2);
+  const receipt = await tx.wait();
 
   const cost = receipt.gasUsed.mul(receipt.effectiveGasPrice);
   const txnCost = ethers.utils.formatEther(cost);
