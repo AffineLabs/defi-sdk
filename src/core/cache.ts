@@ -1,16 +1,17 @@
 import { ethers } from "ethers";
 import axios from "axios";
-import { AlpineContracts } from "./types";
+import { EthContracts, PolygonContracts } from "./types";
 import {
   Forwarder__factory,
   L2Vault__factory,
   TwoAssetBasket__factory,
   Router__factory,
   EmergencyWithdrawalQueue__factory,
+  Vault__factory,
 } from "../typechain";
 import { NETWORK_TYPE } from "./constants";
 
-export let CONTRACTS: AlpineContracts;
+export let CONTRACTS: PolygonContracts | EthContracts;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
 export let SIMULATE = false;
@@ -31,7 +32,7 @@ export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(RPC_URL);
 export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider,
   version: string,
-): Promise<AlpineContracts> {
+): Promise<PolygonContracts | EthContracts> {
   const s3Root = `https://sc-abis.s3.us-east-2.amazonaws.com/${version}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
@@ -56,16 +57,38 @@ export async function getAllContracts(
     PolygonBtcEthVault: alpLarge,
     Forwarder: forwarder,
     ERC4626Router: router,
+    EthUsdcEarn: ethEarnData,
   } = allData;
-  const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
-  return {
-    alpSave,
-    alpLarge: TwoAssetBasket__factory.connect(alpLarge.address, provider),
-    forwarder: Forwarder__factory.connect(forwarder.address, provider),
-    usdc: new ethers.Contract(await alpSave.asset(), erc20Abi, provider),
-    router: Router__factory.connect(router.address, provider),
-    ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSave.emergencyWithdrawalQueue(), provider),
-  };
+
+  const { chainId } = await provider.getNetwork();
+
+  if (chainId === 1 || chainId === 5) {
+    const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
+    return {
+      alpSave,
+      alpLarge: TwoAssetBasket__factory.connect(alpLarge.address, provider),
+      forwarder: Forwarder__factory.connect(forwarder.address, provider),
+      usdc: new ethers.Contract(await alpSave.asset(), erc20Abi, provider),
+      router: Router__factory.connect(router.address, provider),
+      ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSave.emergencyWithdrawalQueue(), provider),
+    };
+  } else if (chainId === 80001 || chainId === 137) {
+    const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
+    return {
+      ethEarn,
+      usdc: new ethers.Contract(await ethEarn.asset(), erc20Abi, provider),
+    };
+  } else {
+    throw Error("Bad chainId");
+  }
+}
+
+export function getEthContracts(): EthContracts {
+  return CONTRACTS as EthContracts;
+}
+
+export function getPolygonContracts(): PolygonContracts {
+  return CONTRACTS as PolygonContracts;
 }
 
 export async function init(

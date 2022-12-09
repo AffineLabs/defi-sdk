@@ -9,8 +9,10 @@ import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types"
 export async function buyProduct(product: AlpineProduct, amount: number) {
   if (product === "alpSave") {
     return buyUsdcShares(amount);
-  } else {
+  } else if (product === "alpLarge") {
     return buyBtCEthShares(amount);
+  } else {
+    return buyEthUsdcShares(amount);
   }
 }
 
@@ -20,6 +22,31 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
   }
   if (product === "alpLarge") {
     return sellBtCEthShares(amount);
+  }
+}
+
+async function buyEthUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const contracts = CONTRACTS;
+  const { ethEarn } = contracts;
+  const userAddress = await SIGNER.getAddress();
+  const amount = _addDecimals(amountUSDC.toString(), 6);
+
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: _removeDecimals(await ethEarn.convertToShares(amount), 18),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(ethEarn, "deposit", [amount, userAddress], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(ethEarn, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
   }
 }
 
@@ -254,7 +281,7 @@ export async function sharesFromTokens(product: AlpineProduct, tokenAmount: ethe
     const totalDollars = await alpLarge.valueOfVault();
     console.log({ totalDollars });
 
-    // $100 usdc per share to start with
+    // $100 usdc per share to start with => usdc * alpLarge / usdc
     if (totalDollars.eq(0)) return tokenAmount.mul(ethers.BigNumber.from(10).pow(18)).div(100e6);
     // totalSupply / totalDollars * dollars
     // dollars given by btc/eth vault actually have 8 decimals

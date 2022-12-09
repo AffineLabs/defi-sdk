@@ -12,16 +12,13 @@ program.parse();
 let [testFiles] = program.args;
 if (!testFiles) testFiles = "test/**/*.test.ts";
 
-// We can't pin a block number because of this issue: https://github.com/trufflesuite/ganache/issues/2122
-// The ganache issue links to this issue: https://github.com/mds1/convex-shutdown-simulation/issues/7, which links to
-// this PR: https://github.com/mds1/convex-shutdown-simulation/pull/4
-// Whether we pin a recent block or use the latest block, the issue persists
 const { result } = concurrently(
   [
-    `anvil --fork-url https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+    `anvil --fork-url https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY} --port 8545`,
+    `anvil --fork-url https://eth-goerli.g.alchemy.comm/v2/${process.env.ALCHEMY_API_KEY} --port 8546`,
     `sleep 5 && yarn run-test src/core/${testFiles}`,
   ],
-  // The ganache process does not exit. The process exits successfully if the `yarn test` process exits correctly
+  // The rpc process does not exit. The process exits successfully if the `yarn test` process exits correctly
   { successCondition: "first", killOthers: ["failure", "success"] },
 );
 

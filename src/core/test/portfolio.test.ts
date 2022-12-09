@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { getTokenInfo, tokensFromShares } from "../product";
-import { init, setProvider, CONTRACTS, userAddress, PROVIDER } from "../cache";
-import { productAllocation, productBalances, alpineProducts } from "../types";
+import { init, setProvider, userAddress, PROVIDER, getPolygonContracts } from "../cache";
+import { productAllocation, productBalances, alpineProducts, PolygonContracts, polygonProducts } from "../types";
 import { portfolioPurchase, portfolioRebalance, portfolioSell } from "../portfolio";
 import { expect } from "chai";
 import { approve, blockchainCall, mintUSDC, _removeDecimals } from "../AlpineDeFiSDK";
@@ -11,20 +11,25 @@ const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(te
 const MAX_INT = ethers.BigNumber.from(2).pow(256).sub(1);
 
 describe("Portfolio transactions", async () => {
+  let contracts: PolygonContracts;
   before(async () => {
     setProvider(testProvider);
     await init(wallet, undefined);
     await PROVIDER.send("anvil_setBalance", [userAddress, ethers.BigNumber.from(10).pow(18).toHexString()]);
     await mintUSDC(wallet.address, 10_000);
+
+    contracts = getPolygonContracts();
+    const { router, alpLarge, usdc, alpSave } = contracts;
+
     await approve("router", "1000000");
     //This approval allows the alpLarge vault to spend USDC
-    await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address, CONTRACTS.alpLarge.address, MAX_INT]);
+    await blockchainCall(router, "approve", [usdc.address, alpLarge.address, MAX_INT]);
     //This approval allows the alpSave vault to spend USDC
-    await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address, CONTRACTS.alpSave.address, MAX_INT]);
+    await blockchainCall(router, "approve", [usdc.address, alpSave.address, MAX_INT]);
     //This approval lets the router burn alpLarge shares
-    await blockchainCall(CONTRACTS.alpLarge, "approve", [CONTRACTS.router.address, MAX_INT]);
+    await blockchainCall(alpLarge, "approve", [router.address, MAX_INT]);
     //This approval lets the router burn alpSave shares
-    await blockchainCall(CONTRACTS.alpSave, "approve", [CONTRACTS.router.address, MAX_INT]);
+    await blockchainCall(alpSave, "approve", [router.address, MAX_INT]);
   });
 
   xit("Portfolio Purchase", async () => {
@@ -34,8 +39,8 @@ describe("Portfolio transactions", async () => {
     const balanceBefore = Number((await getTokenInfo("usdc")).amount);
     await portfolioPurchase(allocation, 1000);
     const balanceAfter = Number((await getTokenInfo("usdc")).amount);
-    for (const product of alpineProducts) {
-      const contract = CONTRACTS[product];
+    for (const product of polygonProducts) {
+      const contract = contracts[product];
       const tokenBalance: ethers.BigNumber = await contract.balanceOf(user);
       const dollarsBalance = await tokensFromShares(product, tokenBalance);
       coinBalance[product] = dollarsBalance;
@@ -56,7 +61,7 @@ describe("Portfolio transactions", async () => {
     const user = userAddress;
     const total: ethers.BigNumber = ethers.BigNumber.from(0);
     for (const product of alpineProducts) {
-      const contract = CONTRACTS[product];
+      const contract = contracts[product];
       const tokenBalance: ethers.BigNumber = await contract.balanceOf(user);
       const dollarsBalance = await tokensFromShares(product, tokenBalance);
       total.add(dollarsBalance);
@@ -77,8 +82,8 @@ describe("Portfolio transactions", async () => {
     const user = userAddress;
     const coinBalance: productBalances = { alpLarge: ethers.BigNumber.from(0), alpSave: ethers.BigNumber.from(0) };
     const total = ethers.BigNumber.from(0);
-    for (const product of alpineProducts) {
-      const contract = CONTRACTS[product];
+    for (const product of polygonProducts) {
+      const contract = contracts[product];
       const tokenBalance: ethers.BigNumber = await contract.balanceOf(user);
       const dollarsBalance = await tokensFromShares(product, tokenBalance);
       total.add(dollarsBalance);
