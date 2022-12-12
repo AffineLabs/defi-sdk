@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { init, setProvider, CONTRACTS, userAddress, PROVIDER } from "../cache";
+import { init, CONTRACTS, userAddress, getProviderByChainId } from "../cache";
 import { expect } from "chai";
 import { approve, blockchainCall, mintUSDC, _removeDecimals } from "../AlpineDeFiSDK";
 import {
@@ -10,6 +10,7 @@ import {
 } from "../ewqueue";
 import { SmallTxReceipt } from "../types";
 import { setUSDCBalance, setAlpSaveL1LockedValue } from "./utils";
+import { DEFAULT_RAW_CHAIN_ID } from "../constants";
 
 const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
@@ -18,9 +19,9 @@ const halfUSDC = oneUSDC / 2;
 
 describe("Emergency Withdrawal Queue", async () => {
   beforeEach(async () => {
-    setProvider(testProvider);
-    await init(wallet, undefined);
-    await PROVIDER.send("anvil_setBalance", [userAddress, ethers.BigNumber.from(10).pow(18).toHexString()]);
+    const _provider = getProviderByChainId(DEFAULT_RAW_CHAIN_ID);
+    await init(wallet, undefined, DEFAULT_RAW_CHAIN_ID);
+    await _provider.send("anvil_setBalance", [userAddress, ethers.BigNumber.from(10).pow(18).toHexString()]);
     await mintUSDC(wallet.address, oneUSDC);
     await approve("alpSave", oneUSDC.toString());
   });

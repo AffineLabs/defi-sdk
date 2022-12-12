@@ -8,7 +8,7 @@ import {
   Router__factory,
   EmergencyWithdrawalQueue__factory,
 } from "../typechain";
-import { NETWORK_TYPE } from "./constants";
+import { AllowedChainId } from "../types/account";
 
 export let CONTRACTS: AlpineContracts;
 export let SIGNER: ethers.Signer;
@@ -19,8 +19,27 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
 const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-export const RPC_URL = `https://polygon-${NETWORK_TYPE}.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
-export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(RPC_URL);
+// export const RPC_URL = `https://polygon-${NETWORK_TYPE}.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
+// export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(RPC_URL);
+
+export function getRpcUrlByChainId(chainId: AllowedChainId): string {
+  switch (chainId) {
+    case "1":
+      return `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}}`;
+    case "5":
+      return `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_API_KEY}}`;
+    case "137":
+      return `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
+    case "80001":
+      return `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
+    default:
+      return "";
+  }
+}
+
+export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.StaticJsonRpcProvider {
+  return new ethers.providers.StaticJsonRpcProvider(getRpcUrlByChainId(chainId));
+}
 
 /**
  * Fet all supported contracts in the alpine protocol
@@ -71,9 +90,10 @@ export async function getAllContracts(
 export async function init(
   signerOrAddress: ethers.Signer | string,
   biconomy: ethers.providers.Web3Provider | undefined,
+  chainId: AllowedChainId,
   contractVersion: string = CONTRACT_VERSION,
 ) {
-  const provider = PROVIDER;
+  const provider = getProviderByChainId(chainId);
   CONTRACTS = await getAllContracts(provider, contractVersion);
 
   if (ethers.Signer.isSigner(signerOrAddress)) {
@@ -84,10 +104,6 @@ export async function init(
   }
 
   BICONOMY = biconomy;
-}
-
-export function setProvider(provider: ethers.providers.StaticJsonRpcProvider) {
-  PROVIDER = provider;
 }
 
 export async function setSimulationMode(mode: boolean) {

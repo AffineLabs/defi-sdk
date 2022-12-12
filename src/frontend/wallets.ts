@@ -1,24 +1,26 @@
 import CoinbaseWalletSDK, { CoinbaseWalletProvider } from "@coinbase/wallet-sdk";
 import { ethers } from "ethers";
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
-import { PROVIDER, RPC_URL } from "../core/cache";
-import { CHAIN_ID } from "../core/constants";
-import { AllowedWallet, EthWalletProvider } from "../types/account";
+import { getProviderByChainId, getRpcUrlByChainId } from "../core/cache";
+import { AllowedChainId, AllowedWallet, EthWalletProvider } from "../types/account";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 export async function initMagic({
   email,
   testMode,
+  chainId,
 }: {
   email: string;
   testMode: boolean;
+  chainId: AllowedChainId;
 }): Promise<{ magic?: Magic; provider?: ethers.providers.Web3Provider }> {
   let _magic: Magic | undefined, _provider: ethers.providers.Web3Provider | undefined;
   if (email) {
+    const PROVIDER = getProviderByChainId(chainId);
     const magicOptions: MagicSDKAdditionalConfiguration = {
       network: {
         rpcUrl: PROVIDER.connection.url,
-        chainId: parseInt(CHAIN_ID, 16),
+        chainId: Number(chainId),
       },
     };
 
@@ -42,6 +44,7 @@ export async function initMagic({
 
 export async function getExternalProvider(
   walletType: AllowedWallet,
+  chainId: AllowedChainId,
 ): Promise<ethers.providers.ExternalProvider | CoinbaseWalletProvider | WalletConnectProvider | undefined> {
   switch (walletType) {
     case "metamask": {
@@ -59,13 +62,13 @@ export async function getExternalProvider(
       const _coinbaseWallet = new CoinbaseWalletSDK({
         appName: "Affine",
       });
-      return _coinbaseWallet.makeWeb3Provider(RPC_URL, parseInt(CHAIN_ID, 16)) as CoinbaseWalletProvider;
+      return _coinbaseWallet.makeWeb3Provider(getRpcUrlByChainId(chainId), Number(chainId)) as CoinbaseWalletProvider;
     }
 
     case "walletConnect": {
       const provider = new WalletConnectProvider({
         rpc: {
-          [CHAIN_ID]: RPC_URL,
+          [chainId]: getRpcUrlByChainId(chainId),
         },
       });
 
