@@ -179,7 +179,7 @@ class Account {
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
   approve(to: keyof AlpineContracts, amountUSDC: string) {
-    return AlpineDeFiSDK.approve(to, amountUSDC);
+    return AlpineDeFiSDK.approve(to, amountUSDC, this.selectedChainId);
   }
 
   portfolioSell(allocations: productAllocation, amount: number) {
@@ -205,7 +205,7 @@ class Account {
    * @param gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
   async transfer(to: string, amountUSDC: string) {
-    return AlpineDeFiSDK.transfer(to, amountUSDC);
+    return AlpineDeFiSDK.transfer(to, amountUSDC, this.selectedChainId);
   }
 
   /**
@@ -214,7 +214,7 @@ class Account {
    * @param {number} amountUSDC amount in usdc
    */
   async mintUSDCTokens(to: string, amountUSDC: number) {
-    return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
+    return AlpineDeFiSDK.mintUSDC(to, amountUSDC, this.selectedChainId);
   }
 
   async getUserEmergencyWithdrawalQueueRequests(product: AlpineProduct): Promise<EmergencyWithdrawalQueueRequest[]> {
@@ -313,6 +313,8 @@ class Account {
     if (!window.ethereum && (!wallet || this.walletType === "coinbase" || this.walletType === "metamask"))
       throw new Error("Metamask is not installed!");
 
+    this.selectedChainId = chainId;
+
     const ethProvider = await getExternalProvider(wallet ?? this.walletType, chainId);
     console.log("Eth provider on switchWalletToAllowedNetwork", wallet, ethProvider);
 
@@ -358,10 +360,10 @@ class ReadAccount {
    * @returns {Promise<String>} the best estimate for gas price in eth
    */
   async getGasPrice(): Promise<string> {
-    return AlpineDeFiSDK.getGasPrice();
+    return AlpineDeFiSDK.getGasPrice(this.chainId);
   }
-  async getMaticBalance() {
-    return AlpineDeFiSDK.getMaticBalance();
+  async getGasBalance() {
+    return AlpineDeFiSDK.getGasBalance(this.chainId);
   }
 
   async getTokenInfo(product: AlpineProduct | "usdc") {

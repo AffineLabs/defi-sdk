@@ -1,3 +1,4 @@
+import { DEFAULT_RAW_CHAIN_ID } from "../core/constants";
 import { getTokenInfo } from "../core/product";
 import { Account, ReadAccount } from "./Account";
 
@@ -34,10 +35,10 @@ const main = async () => {
   // const receipt = await alpAccount.buyProduct("alpLarge", 1);
   // console.log({ receipt });
 
-  const readAcc = new ReadAccount(alpAccount.userAddress || "");
+  const readAcc = new ReadAccount(alpAccount.userAddress || "", DEFAULT_RAW_CHAIN_ID);
   await readAcc.init();
   const gas = await readAcc.getGasPrice();
-  const balance = await readAcc.getMaticBalance();
+  const balance = await readAcc.getGasBalance();
   const infoAlpSave = await readAcc.getTokenInfo("alpSave");
   const infoAlpLarge = await readAcc.getTokenInfo("alpLarge");
   const infoUsdc = await readAcc.getTokenInfo("usdc");
@@ -72,10 +73,10 @@ const handleButtonClick = () => {
       }
       // await account.connect({ walletType: "metamask" });
       console.log("Metamask connected!!");
-      const isConnected = await account.isConnectedToAllowedNetwork("coinbase");
+      const isConnected = await account.isConnectedToAllowedNetwork("coinbase", DEFAULT_RAW_CHAIN_ID);
 
       if (!isConnected) {
-        await account.switchWalletToAllowedNetwork("coinbase");
+        await account.switchWalletToAllowedNetwork("coinbase", DEFAULT_RAW_CHAIN_ID);
       }
       console.log({ isConnected });
     },

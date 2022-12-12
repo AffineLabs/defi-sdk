@@ -4,23 +4,29 @@ import axios from "axios";
 import { DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
-import { CONTRACTS, SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE } from "./cache";
+import { CONTRACTS, SIGNER, BICONOMY, userAddress, SIMULATE, getProviderByChainId } from "./cache";
 import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
+import { AllowedChainId } from "../types/account";
 
 /**
  * Get the current best estimate for gas price
  * @returns the best estimate for gas price in eth
  */
-export async function getGasPrice(): Promise<string> {
-  const gas = await PROVIDER.getGasPrice(); // gas price in wei
+export async function getGasPrice(chainId: AllowedChainId): Promise<string> {
+  const _provider = getProviderByChainId(chainId);
+  const gas = await _provider.getGasPrice(); // gas price in wei
   // return gas price in ether
   return ethers.utils.formatEther(gas);
 }
 
-export async function getMaticBalance() {
-  return ethers.utils.formatEther(await PROVIDER.getBalance(userAddress));
+/**
+ * Should be deprecated
+ */
+export async function getGasBalance(chainId: AllowedChainId) {
+  const _provider = getProviderByChainId(chainId);
+  return ethers.utils.formatEther(await _provider.getBalance(userAddress));
 }
 
 /**
@@ -65,10 +71,11 @@ export async function blockchainCall(
   method: string,
   args: Array<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   simulate = false,
+  chainId: AllowedChainId,
 ): Promise<SmallTxReceipt | GasInfo> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
-
+  const _provider = getProviderByChainId(chainId);
   contract = contract.connect(signer);
 
   if (biconomy && contract.address !== CONTRACTS.usdc.address) {
@@ -88,7 +95,7 @@ export async function blockchainCall(
   if (simulate) {
     const [gasEstimate, gasPrice] = await Promise.all([
       contract.estimateGas[method].apply(null, args),
-      PROVIDER.getGasPrice(),
+      _provider.getGasPrice(),
     ]);
 
     console.log(`gasEstimate: ${gasEstimate.toString()} and gasPrice: ${gasPrice.toString()}`);
@@ -122,15 +129,19 @@ export async function blockchainCall(
  * @param to the receipient contract
  * @param amountUSDC transaction amount in usdc
  */
-export async function approve(to: keyof AlpineContracts, amountUSDC: string): Promise<DryRunReceipt | FullTxReceipt> {
+export async function approve(
+  to: keyof AlpineContracts,
+  amountUSDC: string,
+  chainId: AllowedChainId,
+): Promise<DryRunReceipt | FullTxReceipt> {
   const amount = _addDecimals(amountUSDC, 6);
   const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
   const approveArgs = [to === "alpLarge" ? CONTRACTS.router.address : CONTRACTS[to].address, amount];
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(CONTRACTS.usdc, "approve", approveArgs, true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(CONTRACTS.usdc, "approve", approveArgs, true, chainId)) as GasInfo;
     return { ...basicInfo, ...dryRunInfo };
   } else {
-    const receipt = (await blockchainCall(CONTRACTS.usdc, "approve", approveArgs, false)) as SmallTxReceipt;
+    const receipt = (await blockchainCall(CONTRACTS.usdc, "approve", approveArgs, false, chainId)) as SmallTxReceipt;
     return {
       ...basicInfo,
       ...receipt,
@@ -143,7 +154,7 @@ export async function approve(to: keyof AlpineContracts, amountUSDC: string): Pr
  * @param {String} to receipient address
  * @param {String} amountUSDC amount in usdc
  */
-export async function transfer(to: string, amountUSDC: string) {
+export async function transfer(to: string, amountUSDC: string, chainId: AllowedChainId) {
   const { usdc } = CONTRACTS;
 
   const amount = _addDecimals(amountUSDC, 6);
@@ -159,15 +170,15 @@ export async function transfer(to: string, amountUSDC: string) {
     throw new Error("Insufficient allowance");
   }
 
-  return blockchainCall(usdc, "transfer", [to, amount]);
+  return blockchainCall(usdc, "transfer", [to, amount], undefined, chainId);
 }
 
-export async function mintUSDC(to: string, amountUSDC: number) {
+export async function mintUSDC(to: string, amountUSDC: number, chainId: AllowedChainId) {
   const { usdc } = CONTRACTS;
   const amount = _addDecimals(amountUSDC.toString(), 6);
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
-  return blockchainCall(usdc, "mint", [to, amount]);
+  return blockchainCall(usdc, "mint", [to, amount], undefined, chainId);
 }
