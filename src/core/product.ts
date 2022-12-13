@@ -6,7 +6,7 @@ import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
 
-export async function buyProduct(product: AlpineProduct, amount: number, slippageBps: number = 500) {
+export async function buyProduct(product: AlpineProduct, amount: number, slippageBps = 500) {
   if (product === "alpSave") {
     return buyUsdcShares(amount);
   } else {

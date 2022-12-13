@@ -1,4 +1,4 @@
-import { ERC20, Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue } from "../typechain";
+import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue } from "../typechain";
 import { ethers } from "ethers";
 
 export interface GasInfo {
