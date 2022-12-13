@@ -1,9 +1,11 @@
 import { ethers } from "ethers";
+import { expect } from "chai";
+
 import { getTokenInfo, tokensFromShares } from "../product";
 import { init, setProvider, userAddress, PROVIDER, getPolygonContracts } from "../cache";
-import { productAllocation, productBalances, alpineProducts, PolygonContracts, polygonProducts } from "../types";
+import { productAllocation, productBalances, PolygonContracts, polygonProducts } from "../types";
 import { portfolioPurchase, portfolioRebalance, portfolioSell } from "../portfolio";
-import { expect } from "chai";
+
 import { approve, blockchainCall, mintUSDC, _removeDecimals } from "../AlpineDeFiSDK";
 
 const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");

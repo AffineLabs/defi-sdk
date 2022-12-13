@@ -1,7 +1,7 @@
 import { tokensFromShares } from "./product";
 import { productAllocation, productAmounts, productBalances, polygonProducts } from "./types";
 import { ethers } from "ethers";
-import { CONTRACTS, getPolygonContracts, userAddress } from "./cache";
+import { getPolygonContracts, userAddress } from "./cache";
 import { blockchainCall, _addDecimals, _removeDecimals } from "./AlpineDeFiSDK";
 
 const ALLOCSUM = 100;

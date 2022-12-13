@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ethers } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { BICONOMY, CONTRACTS, getPolygonContracts, SIGNER } from "./cache";
+import { BICONOMY, getPolygonContracts, SIGNER } from "./cache";
 import { CHAIN_ID } from "./constants";
 
 // See https://docs.biconomy.io/products/enable-gasless-transactions/custom-implementation/sdk
