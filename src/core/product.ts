@@ -6,11 +6,11 @@ import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
 
-export async function buyProduct(product: AlpineProduct, amount: number) {
+export async function buyProduct(product: AlpineProduct, amount: number, slippageBps: number = 500) {
   if (product === "alpSave") {
     return buyUsdcShares(amount);
   } else {
-    return buyBtCEthShares(amount);
+    return buyBtCEthShares(amount, slippageBps);
   }
 }
 
@@ -107,10 +107,11 @@ export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt 
   }
 }
 
-export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
+export async function buyBtCEthShares(amountUSDC: number, slippageBps: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { alpLarge, router, usdc } = CONTRACTS;
   const amount = _addDecimals(amountUSDC.toString(), 6);
   const expectedShares = await sharesFromTokens("alpLarge", amount);
+  console.log("expected shares", { expectedShares });
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
@@ -125,9 +126,11 @@ export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt
       alpLarge.address,
       userAddress,
       amount,
-      expectedShares.mul(95).div(100),
+      expectedShares.mul(10_000 - slippageBps).div(10_000),
     ]),
   );
+
+  console.log({ data });
 
   const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
   if (SIMULATE) {
@@ -137,6 +140,7 @@ export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt
       ...dryRunInfo,
     };
   } else {
+    console.log("doing multicall....");
     const receipt = (await blockchainCall(CONTRACTS.router, "multicall", [data], false)) as SmallTxReceipt;
     const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
     const amountChanged = afterBal.sub(beforeBal);
