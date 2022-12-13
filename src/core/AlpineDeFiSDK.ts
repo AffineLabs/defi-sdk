@@ -4,7 +4,7 @@ import axios from "axios";
 import { DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
-import { CONTRACTS, SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE } from "./cache";
+import { CONTRACTS, SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE, getContracts } from "./cache";
 import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
@@ -123,14 +123,17 @@ export async function blockchainCall(
  * @param amountUSDC transaction amount in usdc
  */
 export async function approve(to: keyof AlpineContracts, amountUSDC: string): Promise<DryRunReceipt | FullTxReceipt> {
+  const contracts = getContracts() as AlpineContracts;
+  const { usdc, router } = contracts;
+
   const amount = _addDecimals(amountUSDC, 6);
   const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
-  const approveArgs = [to === "alpLarge" ? CONTRACTS.router.address : CONTRACTS[to].address, amount];
+  const approveArgs = [to === "alpLarge" ? router.address : contracts[to].address, amount];
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(CONTRACTS.usdc, "approve", approveArgs, true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(usdc, "approve", approveArgs, true)) as GasInfo;
     return { ...basicInfo, ...dryRunInfo };
   } else {
-    const receipt = (await blockchainCall(CONTRACTS.usdc, "approve", approveArgs, false)) as SmallTxReceipt;
+    const receipt = (await blockchainCall(usdc, "approve", approveArgs, false)) as SmallTxReceipt;
     return {
       ...basicInfo,
       ...receipt,
@@ -139,9 +142,9 @@ export async function approve(to: keyof AlpineContracts, amountUSDC: string): Pr
 }
 
 /**
- * transfer usdc from user's wallet to another wallet
- * @param {String} to receipient address
- * @param {String} amountUSDC amount in usdc
+ * Transfer usdc from user's wallet to another wallet
+ * @param to receipient address
+ * @param amountUSDC amount in usdc
  */
 export async function transfer(to: string, amountUSDC: string) {
   const { usdc } = CONTRACTS;

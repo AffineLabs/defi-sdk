@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
 import { _addDecimals, _removeDecimals, blockchainCall, getMaticPrice } from "./AlpineDeFiSDK";
-import { CONTRACTS, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
+import { CONTRACTS, getEthContracts, getPolygonContracts, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
 import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
@@ -26,8 +26,7 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
 }
 
 async function buyEthUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const contracts = CONTRACTS;
-  const { ethEarn } = contracts;
+  const { ethEarn } = getEthContracts();
   const userAddress = await SIGNER.getAddress();
   const amount = _addDecimals(amountUSDC.toString(), 6);
 
@@ -55,8 +54,7 @@ async function buyEthUsdcShares(amountUSDC: number): Promise<DryRunReceipt | Ful
  * @param {String} amountUSDC amount in usdc
  */
 export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const contracts = CONTRACTS;
-  const { usdc, alpSave } = contracts;
+  const { usdc, alpSave } = getPolygonContracts();
   const userAddress = await SIGNER.getAddress();
   const amount = _addDecimals(amountUSDC.toString(), 6);
   if (amount.isNegative() || amount.isZero()) {
@@ -95,9 +93,7 @@ export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt |
  * @param amountUSDC amount in usdc to sell
  */
 export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const userAddress = await SIGNER.getAddress();
-  const contracts = CONTRACTS;
-  const { alpSave } = contracts;
+  const { alpSave } = getPolygonContracts();
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
   const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
   const withdrawFeeBps: ethers.BigNumber = await alpSave.withdrawalFee();
@@ -135,7 +131,7 @@ export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt 
 }
 
 export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { alpLarge, router, usdc } = CONTRACTS;
+  const { alpLarge, router, usdc } = getPolygonContracts();
   const amount = _addDecimals(amountUSDC.toString(), 6);
   const expectedShares = await sharesFromTokens("alpLarge", amount);
   const basicInfo = {
@@ -158,13 +154,13 @@ export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt
 
   const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(CONTRACTS.router, "multicall", [data], true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(router, "multicall", [data], true)) as GasInfo;
     return {
       ...basicInfo,
       ...dryRunInfo,
     };
   } else {
-    const receipt = (await blockchainCall(CONTRACTS.router, "multicall", [data], false)) as SmallTxReceipt;
+    const receipt = (await blockchainCall(router, "multicall", [data], false)) as SmallTxReceipt;
     const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
     const amountChanged = afterBal.sub(beforeBal);
 
@@ -174,7 +170,7 @@ export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt
 }
 
 export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { alpLarge } = CONTRACTS;
+  const { alpLarge } = getPolygonContracts();
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
   const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
   const basicInfo = {
@@ -214,7 +210,7 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
 
 // Convert usdc to a share amount to be passed to `redeem` (for alpLarge only)
 async function _convertToShares(amountUSDC: ethers.BigNumber) {
-  const { alpLarge } = CONTRACTS;
+  const { alpLarge } = getPolygonContracts();
   const userShares = await alpLarge.balanceOf(userAddress);
   const shares = await sharesFromTokens("alpLarge", amountUSDC);
   return shares.gt(userShares) ? userShares : shares;
@@ -223,7 +219,7 @@ async function _convertToShares(amountUSDC: ethers.BigNumber) {
 export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<TokenInfo> {
   const user = userAddress;
   if (product === "alpSave" || product === "alpLarge") {
-    const contract = CONTRACTS[product];
+    const contract = getPolygonContracts()[product];
     const amount: ethers.BigNumber = await contract.balanceOf(user);
     // price and number of decimals of each unit of the contract
 
@@ -249,12 +245,12 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
 
 export async function tokensFromShares(product: AlpineProduct, shareAmount: ethers.BigNumber) {
   if (product === "alpSave") {
-    const { alpSave } = CONTRACTS;
+    const { alpSave } = getPolygonContracts();
     const tokens = await alpSave.convertToAssets(shareAmount);
     return tokens;
   } else {
     // alpLarge
-    const { alpLarge } = CONTRACTS;
+    const { alpLarge } = getPolygonContracts();
     const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();
     const totalSupply: ethers.BigNumber = await alpLarge.totalSupply();
 
@@ -269,14 +265,14 @@ export async function tokensFromShares(product: AlpineProduct, shareAmount: ethe
 
 export async function sharesFromTokens(product: AlpineProduct, tokenAmount: ethers.BigNumber) {
   if (product === "alpSave") {
-    const { alpSave } = CONTRACTS;
+    const { alpSave } = getPolygonContracts();
     const shares = await alpSave.convertToShares(tokenAmount);
     return shares;
   }
 
   if (product === "alpLarge") {
     // alpLarge
-    const { alpLarge } = CONTRACTS;
+    const { alpLarge } = getPolygonContracts();
     // TODO: let the contract take care of pricing
     const totalDollars = await alpLarge.valueOfVault();
     console.log({ totalDollars });

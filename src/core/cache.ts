@@ -12,6 +12,7 @@ import {
 import { NETWORK_TYPE } from "./constants";
 
 export let CONTRACTS: PolygonContracts | EthContracts;
+let CHAIN_ID: number;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
 export let SIMULATE = false;
@@ -24,11 +25,10 @@ export const RPC_URL = `https://polygon-${NETWORK_TYPE}.g.alchemy.com/v2/${ALCHE
 export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(RPC_URL);
 
 /**
- * Fet all supported contracts in the alpine protocol
- * @returns an object with all alpine contracts. Currently has
- * `usdc`, `alpSave`, `alpBal` and `alpAggr`.
+ * @param provider The current provider
+ * @param version The addressbook version
+ * @returns A map of contract names to ethers.Contract objects
  */
-
 export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider,
   version: string,
@@ -60,7 +60,7 @@ export async function getAllContracts(
     EthUsdcEarn: ethEarnData,
   } = allData;
 
-  const { chainId } = await provider.getNetwork();
+  const chainId = getChainId();
 
   if (chainId === 1 || chainId === 5) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
@@ -83,10 +83,12 @@ export async function getAllContracts(
   }
 }
 
+export function getContracts(): PolygonContracts | EthContracts {
+  return CONTRACTS;
+}
 export function getEthContracts(): EthContracts {
   return CONTRACTS as EthContracts;
 }
-
 export function getPolygonContracts(): PolygonContracts {
   return CONTRACTS as PolygonContracts;
 }
@@ -95,8 +97,10 @@ export async function init(
   signerOrAddress: ethers.Signer | string,
   biconomy: ethers.providers.Web3Provider | undefined,
   contractVersion: string = CONTRACT_VERSION,
+  chainId = 80001,
 ) {
   const provider = PROVIDER;
+  CHAIN_ID = chainId;
   CONTRACTS = await getAllContracts(provider, contractVersion);
 
   if (ethers.Signer.isSigner(signerOrAddress)) {
@@ -107,6 +111,10 @@ export async function init(
   }
 
   BICONOMY = biconomy;
+}
+
+export function getChainId() {
+  return CHAIN_ID;
 }
 
 export function setProvider(provider: ethers.providers.StaticJsonRpcProvider) {

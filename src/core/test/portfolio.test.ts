@@ -60,7 +60,7 @@ describe("Portfolio transactions", async () => {
     await portfolioSell(allocation, 100);
     const user = userAddress;
     const total: ethers.BigNumber = ethers.BigNumber.from(0);
-    for (const product of alpineProducts) {
+    for (const product of polygonProducts) {
       const contract = contracts[product];
       const tokenBalance: ethers.BigNumber = await contract.balanceOf(user);
       const dollarsBalance = await tokensFromShares(product, tokenBalance);

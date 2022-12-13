@@ -1,5 +1,5 @@
 import { utils } from "ethers";
-import { contracts, getPolygonContracts, PROVIDER } from "../cache";
+import { getPolygonContracts, PROVIDER } from "../cache";
 
 function _getMappingStorage(slot: number, key: string): string {
   const paddedSlot = utils.hexZeroPad(utils.hexValue(slot), 32);
