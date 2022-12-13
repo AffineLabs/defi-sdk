@@ -11,7 +11,7 @@ import {
 } from "../typechain";
 import { NETWORK_TYPE } from "./constants";
 
-export let CONTRACTS: PolygonContracts | EthContracts;
+let CONTRACTS: PolygonContracts | EthContracts;
 let CHAIN_ID: number;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;

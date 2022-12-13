@@ -16,23 +16,6 @@ const main = async () => {
 
   // await approve("router", "1000000");
   // await approve("alpSave", "1000000");
-  // //This approval allows the alpLarge vault to spend USDC
-  // await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address, CONTRACTS.alpLarge.address, ethers.BigNumber.from(2).pow(256).sub(1)]);
-  // //This approval allows the alpSave vault to spend USDC
-  // await blockchainCall(CONTRACTS.router, "approve", [CONTRACTS.usdc.address, CONTRACTS.alpSave.address, MAX_INT]);
-  // //This approval lets the router burn alpLarge shares
-  // await blockchainCall(CONTRACTS.alpLarge, "approve", [CONTRACTS.router.address, ethers.BigNumber.from(2).pow(256).sub(1)]);
-  // //This approval lets the router burn alpSave shares
-  // await blockchainCall(CONTRACTS.alpSave, "approve", [CONTRACTS.router.address, MAX_INT]);
-  // await mintUSDC(alpAccount.userAddress || "", 10000);
-  // let allocation:productAllocation = { alpLarge: 50, alpSave: 50 };
-  // await alpAccount.portfolioPurchase(allocation, 1000);
-  // await alpAccount.portfolioSell(allocation, 100);
-  //// Gassless Tx Test
-  // await alpAccount.setGasMode(false);
-  // await blockchainCall(CONTRACTS.router, "depositToVault", [CONTRACTS.alpLarge.address, userAddress, ethers.BigNumber.from(1), 0]);
-  // const receipt = await alpAccount.buyProduct("alpLarge", 1);
-  // console.log({ receipt });
 
   const readAcc = new ReadAccount(alpAccount.userAddress || "");
   await readAcc.init();

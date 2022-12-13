@@ -3,7 +3,7 @@ import chai from "chai";
 const { expect } = chai;
 
 import { approve, mintUSDC } from "../AlpineDeFiSDK";
-import { CONTRACTS, getEthContracts, getPolygonContracts, init, setProvider } from "../cache";
+import { getContracts, getEthContracts, getPolygonContracts, init, setProvider } from "../cache";
 import { buyProduct, sellProduct, getTokenInfo } from "../product";
 import { EthContracts, PolygonContracts } from "../types";
 
@@ -82,6 +82,7 @@ describe("Product info", async () => {
     await mintUSDC(wallet.address, 100);
   });
   it("Can get token info", async () => {
+    const { usdc } = getContracts();
     const saveInfo = await getTokenInfo("alpSave");
     console.log({ saveInfo });
 
@@ -92,11 +93,9 @@ describe("Product info", async () => {
 
     const usdcInfo = await getTokenInfo("usdc");
     console.log({ usdcInfo });
-    expect(usdcInfo.amount).to.equal(ethers.utils.formatUnits(await CONTRACTS.usdc.balanceOf(wallet.address), 6));
+    expect(usdcInfo.amount).to.equal(ethers.utils.formatUnits(await usdc.balanceOf(wallet.address), 6));
     expect(usdcInfo.price).to.equal("1");
     expect(usdcInfo.equity).to.equal(usdcInfo.amount);
+    expect(usdcInfo.amount).to.equal(ethers.utils.formatUnits(await usdc.balanceOf(wallet.address), 6));
   });
-
-  const usdcInfo = await getTokenInfo("usdc");
-  expect(usdcInfo.amount).to.equal(ethers.utils.formatUnits(await CONTRACTS.usdc.balanceOf(wallet.address), 6));
 });

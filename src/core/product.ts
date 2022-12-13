@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
 import { _addDecimals, _removeDecimals, blockchainCall, getMaticPrice } from "./AlpineDeFiSDK";
-import { CONTRACTS, getEthContracts, getPolygonContracts, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
+import { getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
 import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
@@ -234,7 +234,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
     };
   }
   // usdc
-  const { usdc } = CONTRACTS;
+  const { usdc } = getContracts();
   const amount = await usdc.balanceOf(user);
   return {
     amount: _removeDecimals(amount, 6),
