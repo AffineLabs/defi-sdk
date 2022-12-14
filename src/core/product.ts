@@ -19,9 +19,10 @@ export async function buyProduct(product: AlpineProduct, amount: number) {
 export async function sellProduct(product: AlpineProduct, amount: number) {
   if (product === "alpSave") {
     return sellUsdcShares(amount);
-  }
-  if (product === "alpLarge") {
+  } else if (product === "alpLarge") {
     return sellBtCEthShares(amount);
+  } else {
+    return sellEthUsdcShares(amount);
   }
 }
 
@@ -88,6 +89,45 @@ export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt |
   }
 }
 
+export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { alpLarge, router, usdc } = getPolygonContracts();
+  const amount = _addDecimals(amountUSDC.toString(), 6);
+  const expectedShares = await sharesFromTokens("alpLarge", amount);
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: _removeDecimals(expectedShares, 18),
+  };
+
+  const data: string[] = [];
+  data.push(router.interface.encodeFunctionData("approve", [usdc.address, alpLarge.address, MAX_UINT]));
+  data.push(
+    router.interface.encodeFunctionData("depositToVault", [
+      alpLarge.address,
+      userAddress,
+      amount,
+      expectedShares.mul(95).div(100),
+    ]),
+  );
+
+  const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(router, "multicall", [data], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(router, "multicall", [data], false)) as SmallTxReceipt;
+    const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
+    const amountChanged = afterBal.sub(beforeBal);
+
+    const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, 18) };
+    return res;
+  }
+}
+
 /**
  * sell alp token and withdraw usdc from a vault (to user's wallet by default)
  * @param amountUSDC amount in usdc to sell
@@ -130,42 +170,41 @@ export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt 
   }
 }
 
-export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { alpLarge, router, usdc } = getPolygonContracts();
-  const amount = _addDecimals(amountUSDC.toString(), 6);
-  const expectedShares = await sharesFromTokens("alpLarge", amount);
+/**
+ * Sell from eth vault shares.
+ * @param amountUSDC Smount in usdc to sell
+ */
+export async function sellEthUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { ethEarn } = getEthContracts();
+  // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
+  const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
+
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(expectedShares, 18),
+    tokenAmount: _removeDecimals(await ethEarn.convertToShares(usdcToWithdraw), await ethEarn.decimals()),
   };
 
-  const data: string[] = [];
-  data.push(router.interface.encodeFunctionData("approve", [usdc.address, alpLarge.address, MAX_UINT]));
-  data.push(
-    router.interface.encodeFunctionData("depositToVault", [
-      alpLarge.address,
-      userAddress,
-      amount,
-      expectedShares.mul(95).div(100),
-    ]),
-  );
-
-  const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(router, "multicall", [data], true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(
+      ethEarn,
+      "withdraw",
+      [usdcToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
     return {
       ...basicInfo,
       ...dryRunInfo,
     };
   } else {
-    const receipt = (await blockchainCall(router, "multicall", [data], false)) as SmallTxReceipt;
-    const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
-    const amountChanged = afterBal.sub(beforeBal);
-
-    const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, 18) };
-    return res;
+    const receipt = (await blockchainCall(
+      ethEarn,
+      "withdraw",
+      [usdcToWithdraw, userAddress, userAddress],
+      false,
+    )) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
   }
 }
 
