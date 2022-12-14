@@ -20,7 +20,7 @@ describe("Buy products", async () => {
     contracts = getPolygonContracts();
   });
 
-  xit("Buy/Sell alpSave", async () => {
+  it("Buy/Sell alpSave", async () => {
     const { alpSave } = contracts;
     console.log("APPROVING....");
     await approve("alpSave", "100000");
@@ -34,7 +34,7 @@ describe("Buy products", async () => {
     expect(newBal.lt(res)).to.be.true;
   });
 
-  xit("Buy/Sell alpLarge", async () => {
+  it("Buy/Sell alpLarge", async () => {
     const { alpLarge } = contracts;
     await approve("alpLarge", "100000");
 
@@ -90,7 +90,7 @@ describe("Product info", async () => {
     await init(wallet, undefined);
     await mintUSDC(wallet.address, 100);
   });
-  xit("Can get token info", async () => {
+  it("Can get token info", async () => {
     const { usdc } = getContracts();
     const saveInfo = await getTokenInfo("alpSave");
     console.log({ saveInfo });
