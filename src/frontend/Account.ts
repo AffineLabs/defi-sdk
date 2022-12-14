@@ -179,7 +179,7 @@ class Account {
    * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
   approve(to: keyof AlpineContracts, amountUSDC: string) {
-    return AlpineDeFiSDK.approve(to, amountUSDC, this.selectedChainId);
+    return AlpineDeFiSDK.approve(to, amountUSDC);
   }
 
   portfolioSell(allocations: productAllocation, amount: number) {
@@ -205,7 +205,7 @@ class Account {
    * @param gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
   async transfer(to: string, amountUSDC: string) {
-    return AlpineDeFiSDK.transfer(to, amountUSDC, this.selectedChainId);
+    return AlpineDeFiSDK.transfer(to, amountUSDC);
   }
 
   /**
@@ -214,7 +214,7 @@ class Account {
    * @param {number} amountUSDC amount in usdc
    */
   async mintUSDCTokens(to: string, amountUSDC: number) {
-    return AlpineDeFiSDK.mintUSDC(to, amountUSDC, this.selectedChainId);
+    return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
   }
 
   async getUserEmergencyWithdrawalQueueRequests(product: AlpineProduct): Promise<EmergencyWithdrawalQueueRequest[]> {
@@ -242,7 +242,7 @@ class Account {
    */
   private _getNetworkParams(chainId: AllowedChainId) {
     switch (chainId) {
-      case "1":
+      case 1:
         return {
           chainId: getChainIdFromRaw(chainId),
           chainName: "Ethereum Mainnet",
@@ -254,7 +254,7 @@ class Account {
           rpcUrls: ["https://mainnet.infura.io/v3/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a"],
           blockExplorerUrls: ["https://etherscan.io"],
         };
-      case "5":
+      case 5:
         return {
           chainId: getChainIdFromRaw(chainId),
           chainName: "Goerli Testnet",
@@ -266,7 +266,7 @@ class Account {
           rpcUrls: ["https://goerli.infura.io/v3/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a"],
           blockExplorerUrls: ["https://goerli.etherscan.io"],
         };
-      case "137":
+      case 137:
         return {
           chainId: getChainIdFromRaw(chainId),
           chainName: "Polygon Mainnet",
@@ -278,7 +278,7 @@ class Account {
           rpcUrls: ["https://polygon-rpc.com"],
           blockExplorerUrls: ["https://polygonscan.com"],
         };
-      case "80001":
+      case 80001:
         return {
           chainId: getChainIdFromRaw(chainId),
           chainName: "Mumbai Testnet",
@@ -303,7 +303,7 @@ class Account {
   }
 
   async isConnectedToAllowedNetwork(wallet: AllowedWallet, chainId: AllowedChainId): Promise<boolean> {
-    return (await this.getChainId(wallet)) === chainId;
+    return (await this.getChainId(wallet)) === chainId.toString();
   }
 
   /**
@@ -360,10 +360,10 @@ class ReadAccount {
    * @returns {Promise<String>} the best estimate for gas price in eth
    */
   async getGasPrice(): Promise<string> {
-    return AlpineDeFiSDK.getGasPrice(this.chainId);
+    return AlpineDeFiSDK.getGasPrice();
   }
   async getGasBalance() {
-    return AlpineDeFiSDK.getGasBalance(this.chainId);
+    return AlpineDeFiSDK.getMaticBalance();
   }
 
   async getTokenInfo(product: AlpineProduct | "usdc") {

@@ -1,5 +1,5 @@
 export type AllowedWallet = "magic" | "metamask" | "coinbase" | "walletConnect";
-export type AllowedChainId = "1" | "5" | "137" | "80001";
+export type AllowedChainId = 1 | 5 | 137 | 80001;
 
 export interface IConnectAccount {
   email?: string;
