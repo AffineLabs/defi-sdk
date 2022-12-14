@@ -35,11 +35,11 @@ export async function setAlpLargeBalance(address: string, balance: number) {
 }
 
 export async function setAlpSaveL1LockedValue(value: number) {
-  const contracts = getPolygonContracts();
+  const { alpSave } = getPolygonContracts();
   await PROVIDER.send("anvil_setStorageAt", [
-    contracts.alpSave.address,
-    // L1TotalLockedValue is found at slot 284 of L2Vault contract. (Run `forge inspect L2Vault storage`)
-    utils.hexValue(284),
+    alpSave.address,
+    // L1TotalLockedValue is found at this slot of L2Vault contract. (Run `forge inspect L2Vault storage`)
+    utils.hexValue(385),
     utils.hexZeroPad(utils.hexValue(value), 32),
   ]);
 }

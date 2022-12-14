@@ -6,11 +6,11 @@ import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
 
-export async function buyProduct(product: AlpineProduct, amount: number) {
+export async function buyProduct(product: AlpineProduct, amount: number, slippageBps = 500) {
   if (product === "alpSave") {
     return buyUsdcShares(amount);
   } else if (product === "alpLarge") {
-    return buyBtCEthShares(amount);
+    return buyBtCEthShares(amount, slippageBps);
   } else {
     return buyEthUsdcShares(amount);
   }
@@ -89,7 +89,7 @@ export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt |
   }
 }
 
-export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
+export async function buyBtCEthShares(amountUSDC: number, slippageBps: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { alpLarge, router, usdc } = getPolygonContracts();
   const amount = _addDecimals(amountUSDC.toString(), 6);
   const expectedShares = await sharesFromTokens("alpLarge", amount);
@@ -107,7 +107,7 @@ export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt
       alpLarge.address,
       userAddress,
       amount,
-      expectedShares.mul(95).div(100),
+      expectedShares.mul(10_000 - slippageBps).div(10_000),
     ]),
   );
 
@@ -178,14 +178,12 @@ export async function sellEthUsdcShares(amountUSDC: number): Promise<DryRunRecei
   const { ethEarn } = getEthContracts();
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
   const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
-
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: amountUSDC.toString(),
     tokenAmount: _removeDecimals(await ethEarn.convertToShares(usdcToWithdraw), await ethEarn.decimals()),
   };
-
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(
       ethEarn,

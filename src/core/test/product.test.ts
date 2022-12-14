@@ -39,7 +39,11 @@ describe("Buy products", async () => {
     await approve("alpLarge", "100000");
 
     console.log("buying alpLarge");
-    await buyProduct("alpLarge", 5);
+    await buyProduct(
+      "alpLarge",
+      5,
+      100 * 50, //  50% slippage since testnet sushiswap prices are much greater than mainnet
+    );
     const res: ethers.BigNumber = await alpLarge.balanceOf(wallet.address);
     console.log("alpLarge shares....", res.toString());
     expect(res.gt(0)).to.be.true;
