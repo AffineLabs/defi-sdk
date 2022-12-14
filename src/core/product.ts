@@ -1,25 +1,52 @@
 import { ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
 import { _addDecimals, _removeDecimals, blockchainCall, getMaticPrice } from "./AlpineDeFiSDK";
-import { CONTRACTS, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
+import { getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
 import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
 
-export async function buyProduct(product: AlpineProduct, amount: number) {
+export async function buyProduct(product: AlpineProduct, amount: number, slippageBps = 500) {
   if (product === "alpSave") {
     return buyUsdcShares(amount);
+  } else if (product === "alpLarge") {
+    return buyBtCEthShares(amount, slippageBps);
   } else {
-    return buyBtCEthShares(amount);
+    return buyEthUsdcShares(amount);
   }
 }
 
 export async function sellProduct(product: AlpineProduct, amount: number) {
   if (product === "alpSave") {
     return sellUsdcShares(amount);
-  }
-  if (product === "alpLarge") {
+  } else if (product === "alpLarge") {
     return sellBtCEthShares(amount);
+  } else {
+    return sellEthUsdcShares(amount);
+  }
+}
+
+async function buyEthUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { ethEarn } = getEthContracts();
+  const userAddress = await SIGNER.getAddress();
+  const amount = _addDecimals(amountUSDC.toString(), 6);
+
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: _removeDecimals(await ethEarn.convertToShares(amount), 18),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(ethEarn, "deposit", [amount, userAddress], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(ethEarn, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
   }
 }
 
@@ -28,8 +55,7 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
  * @param {String} amountUSDC amount in usdc
  */
 export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const contracts = CONTRACTS;
-  const { usdc, alpSave } = contracts;
+  const { usdc, alpSave } = getPolygonContracts();
   const userAddress = await SIGNER.getAddress();
   const amount = _addDecimals(amountUSDC.toString(), 6);
   if (amount.isNegative() || amount.isZero()) {
@@ -63,14 +89,51 @@ export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt |
   }
 }
 
+export async function buyBtCEthShares(amountUSDC: number, slippageBps: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { alpLarge, router, usdc } = getPolygonContracts();
+  const amount = _addDecimals(amountUSDC.toString(), 6);
+  const expectedShares = await sharesFromTokens("alpLarge", amount);
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amountUSDC.toString(),
+    tokenAmount: _removeDecimals(expectedShares, 18),
+  };
+
+  const data: string[] = [];
+  data.push(router.interface.encodeFunctionData("approve", [usdc.address, alpLarge.address, MAX_UINT]));
+  data.push(
+    router.interface.encodeFunctionData("depositToVault", [
+      alpLarge.address,
+      userAddress,
+      amount,
+      expectedShares.mul(10_000 - slippageBps).div(10_000),
+    ]),
+  );
+
+  const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(router, "multicall", [data], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(router, "multicall", [data], false)) as SmallTxReceipt;
+    const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
+    const amountChanged = afterBal.sub(beforeBal);
+
+    const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, 18) };
+    return res;
+  }
+}
+
 /**
  * sell alp token and withdraw usdc from a vault (to user's wallet by default)
  * @param amountUSDC amount in usdc to sell
  */
 export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const userAddress = await SIGNER.getAddress();
-  const contracts = CONTRACTS;
-  const { alpSave } = contracts;
+  const { alpSave } = getPolygonContracts();
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
   const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
   const withdrawFeeBps: ethers.BigNumber = await alpSave.withdrawalFee();
@@ -107,47 +170,44 @@ export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt 
   }
 }
 
-export async function buyBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { alpLarge, router, usdc } = CONTRACTS;
-  const amount = _addDecimals(amountUSDC.toString(), 6);
-  const expectedShares = await sharesFromTokens("alpLarge", amount);
+/**
+ * Sell from eth vault shares.
+ * @param amountUSDC Smount in usdc to sell
+ */
+export async function sellEthUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { ethEarn } = getEthContracts();
+  // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
+  const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(expectedShares, 18),
+    tokenAmount: _removeDecimals(await ethEarn.convertToShares(usdcToWithdraw), await ethEarn.decimals()),
   };
-
-  const data: string[] = [];
-  data.push(router.interface.encodeFunctionData("approve", [usdc.address, alpLarge.address, MAX_UINT]));
-  data.push(
-    router.interface.encodeFunctionData("depositToVault", [
-      alpLarge.address,
-      userAddress,
-      amount,
-      expectedShares.mul(95).div(100),
-    ]),
-  );
-
-  const beforeBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(CONTRACTS.router, "multicall", [data], true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(
+      ethEarn,
+      "withdraw",
+      [usdcToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
     return {
       ...basicInfo,
       ...dryRunInfo,
     };
   } else {
-    const receipt = (await blockchainCall(CONTRACTS.router, "multicall", [data], false)) as SmallTxReceipt;
-    const afterBal: ethers.BigNumber = await alpLarge.balanceOf(userAddress);
-    const amountChanged = afterBal.sub(beforeBal);
-
-    const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, 18) };
-    return res;
+    const receipt = (await blockchainCall(
+      ethEarn,
+      "withdraw",
+      [usdcToWithdraw, userAddress, userAddress],
+      false,
+    )) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
   }
 }
 
 export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { alpLarge } = CONTRACTS;
+  const { alpLarge } = getPolygonContracts();
   // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
   const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
   const basicInfo = {
@@ -187,7 +247,7 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
 
 // Convert usdc to a share amount to be passed to `redeem` (for alpLarge only)
 async function _convertToShares(amountUSDC: ethers.BigNumber) {
-  const { alpLarge } = CONTRACTS;
+  const { alpLarge } = getPolygonContracts();
   const userShares = await alpLarge.balanceOf(userAddress);
   const shares = await sharesFromTokens("alpLarge", amountUSDC);
   return shares.gt(userShares) ? userShares : shares;
@@ -196,7 +256,7 @@ async function _convertToShares(amountUSDC: ethers.BigNumber) {
 export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<TokenInfo> {
   const user = userAddress;
   if (product === "alpSave" || product === "alpLarge") {
-    const contract = CONTRACTS[product];
+    const contract = getPolygonContracts()[product];
     const amount: ethers.BigNumber = await contract.balanceOf(user);
     // price and number of decimals of each unit of the contract
 
@@ -211,7 +271,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
     };
   }
   // usdc
-  const { usdc } = CONTRACTS;
+  const { usdc } = getContracts();
   const amount = await usdc.balanceOf(user);
   return {
     amount: _removeDecimals(amount, 6),
@@ -222,12 +282,12 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
 
 export async function tokensFromShares(product: AlpineProduct, shareAmount: ethers.BigNumber) {
   if (product === "alpSave") {
-    const { alpSave } = CONTRACTS;
+    const { alpSave } = getPolygonContracts();
     const tokens = await alpSave.convertToAssets(shareAmount);
     return tokens;
   } else {
     // alpLarge
-    const { alpLarge } = CONTRACTS;
+    const { alpLarge } = getPolygonContracts();
     const totalDollars: ethers.BigNumber = await alpLarge.valueOfVault();
     const totalSupply: ethers.BigNumber = await alpLarge.totalSupply();
 
@@ -242,19 +302,19 @@ export async function tokensFromShares(product: AlpineProduct, shareAmount: ethe
 
 export async function sharesFromTokens(product: AlpineProduct, tokenAmount: ethers.BigNumber) {
   if (product === "alpSave") {
-    const { alpSave } = CONTRACTS;
+    const { alpSave } = getPolygonContracts();
     const shares = await alpSave.convertToShares(tokenAmount);
     return shares;
   }
 
   if (product === "alpLarge") {
     // alpLarge
-    const { alpLarge } = CONTRACTS;
+    const { alpLarge } = getPolygonContracts();
     // TODO: let the contract take care of pricing
     const totalDollars = await alpLarge.valueOfVault();
     console.log({ totalDollars });
 
-    // $100 usdc per share to start with
+    // $100 usdc per share to start with => usdc * alpLarge / usdc
     if (totalDollars.eq(0)) return tokenAmount.mul(ethers.BigNumber.from(10).pow(18)).div(100e6);
     // totalSupply / totalDollars * dollars
     // dollars given by btc/eth vault actually have 8 decimals

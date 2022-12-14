@@ -4,7 +4,7 @@ import axios from "axios";
 import { DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
-import { CONTRACTS, SIGNER, BICONOMY, userAddress, SIMULATE, getProviderByChainId } from "./cache";
+import { SIGNER, BICONOMY, userAddress, SIMULATE, getProviderByChainId, getContracts } from "./cache";
 import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
@@ -76,9 +76,11 @@ export async function blockchainCall(
   const signer = SIGNER;
   const biconomy = BICONOMY;
   const _provider = getProviderByChainId(chainId);
+
+  const { usdc } = getContracts();
   contract = contract.connect(signer);
 
-  if (biconomy && contract.address !== CONTRACTS.usdc.address) {
+  if (biconomy && contract.address !== usdc.address) {
     console.log({ method }, args);
     const { signature, request } = await getSignature(contract, signer, method, args);
     console.log({ signature, request });
@@ -86,7 +88,7 @@ export async function blockchainCall(
     return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "" };
   }
 
-  if (biconomy && contract.address == CONTRACTS.usdc.address) {
+  if (biconomy && contract.address == usdc.address) {
     await sendBiconomy(contract, signer, method, args);
     return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "" };
   }
@@ -109,7 +111,7 @@ export async function blockchainCall(
     return { txnCost, txnCostUSD };
   }
   const tx: TransactionResponse = await contract[method].apply(null, args);
-  const receipt = await tx.wait(2);
+  const receipt = await tx.wait();
 
   const cost = receipt.gasUsed.mul(receipt.effectiveGasPrice);
   const txnCost = ethers.utils.formatEther(cost);
@@ -134,14 +136,17 @@ export async function approve(
   amountUSDC: string,
   chainId: AllowedChainId,
 ): Promise<DryRunReceipt | FullTxReceipt> {
+  const contracts = getContracts() as AlpineContracts;
+  const { usdc, router } = contracts;
+
   const amount = _addDecimals(amountUSDC, 6);
   const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
-  const approveArgs = [to === "alpLarge" ? CONTRACTS.router.address : CONTRACTS[to].address, amount];
+  const approveArgs = [to === "alpLarge" ? router.address : contracts[to].address, amount];
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(CONTRACTS.usdc, "approve", approveArgs, true, chainId)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(usdc, "approve", approveArgs, true, chainId)) as GasInfo;
     return { ...basicInfo, ...dryRunInfo };
   } else {
-    const receipt = (await blockchainCall(CONTRACTS.usdc, "approve", approveArgs, false, chainId)) as SmallTxReceipt;
+    const receipt = (await blockchainCall(usdc, "approve", approveArgs, false, chainId)) as SmallTxReceipt;
     return {
       ...basicInfo,
       ...receipt,
@@ -150,12 +155,12 @@ export async function approve(
 }
 
 /**
- * transfer usdc from user's wallet to another wallet
- * @param {String} to receipient address
- * @param {String} amountUSDC amount in usdc
+ * Transfer usdc from user's wallet to another wallet
+ * @param to receipient address
+ * @param amountUSDC amount in usdc
  */
 export async function transfer(to: string, amountUSDC: string, chainId: AllowedChainId) {
-  const { usdc } = CONTRACTS;
+  const { usdc } = getContracts();
 
   const amount = _addDecimals(amountUSDC, 6);
 
@@ -174,7 +179,7 @@ export async function transfer(to: string, amountUSDC: string, chainId: AllowedC
 }
 
 export async function mintUSDC(to: string, amountUSDC: number, chainId: AllowedChainId) {
-  const { usdc } = CONTRACTS;
+  const { usdc } = getContracts();
   const amount = _addDecimals(amountUSDC.toString(), 6);
 
   if (amount.isNegative() || amount.isZero()) {

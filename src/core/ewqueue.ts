@@ -1,46 +1,45 @@
-import { CONTRACTS, PROVIDER, userAddress } from "./cache";
+import { getPolygonContracts, PROVIDER, userAddress } from "./cache";
 import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer } from "./types";
-import {
-  EmergencyWithdrawalQueueEnqueueEvent,
-  EmergencyWithdrawalQueueDequeueEvent,
-} from "../typechain/src/polygon/EmergencyWithdrawalQueue";
+import { PushEvent, PopEvent } from "../typechain/src/polygon/EmergencyWithdrawalQueue";
 import { AlpineProduct } from "./types";
 import { _removeDecimals } from "./AlpineDeFiSDK";
-import { contracts } from "../typechain/@opengsn";
 
 export async function getUserEmergencyWithdrawalQueueRequests(
   product: AlpineProduct,
 ): Promise<EmergencyWithdrawalQueueRequest[]> {
+  const { alpSave, ewQueue } = getPolygonContracts();
+
   if (product === "alpSave") {
     const curBlock = await PROVIDER.getBlock("latest");
-    const ewQueueEnqueueEvents: EmergencyWithdrawalQueueEnqueueEvent[] = await CONTRACTS.ewQueue.queryFilter(
-      CONTRACTS.ewQueue.filters.EmergencyWithdrawalQueueEnqueue(null, userAddress, userAddress, null),
+    const ewQueueEnqueueEvents: PushEvent[] = await ewQueue.queryFilter(
+      ewQueue.filters.Push(null, userAddress, userAddress, null),
       curBlock.number - 4096,
       curBlock.number,
     );
-    const ewQueueHeadPtr = await CONTRACTS.ewQueue.headPtr();
-    const ewQueue: EmergencyWithdrawalQueueRequest[] = [];
+    const ewQueueHeadPtr = await ewQueue.headPtr();
+    const requests: EmergencyWithdrawalQueueRequest[] = [];
     for (const e of ewQueueEnqueueEvents) {
       const eventPtr = e.args[0];
       if (ewQueueHeadPtr.lte(eventPtr)) {
         const eventShares = e.args[3];
-        ewQueue.push({
+        requests.push({
           pos: eventPtr.sub(ewQueueHeadPtr).toNumber(),
           shares: _removeDecimals(eventShares, 16),
-          sharesValueInAsset: _removeDecimals(await CONTRACTS.alpSave.convertToAssets(eventShares), 6),
+          sharesValueInAsset: _removeDecimals(await alpSave.convertToAssets(eventShares), 6),
         });
       }
     }
-    return ewQueue;
+    return requests;
   } else {
     return [];
   }
 }
 
 export async function vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<string> {
-  const vaultTVL = await CONTRACTS.alpSave.vaultTVL();
+  const { alpSave, ewQueue } = getPolygonContracts();
+  const vaultTVL = await alpSave.vaultTVL();
   if (product === "alpSave") {
-    const debtToEWQ = await CONTRACTS.ewQueue.totalDebt();
+    const debtToEWQ = await ewQueue.totalDebt();
     if (debtToEWQ.gt(vaultTVL)) return "0";
     return _removeDecimals(vaultTVL.sub(debtToEWQ), 6);
   } else {
@@ -49,11 +48,12 @@ export async function vaultWithdrawableAssetAmount(product: AlpineProduct): Prom
 }
 
 export async function txHasEnqueueEvent(txHash: string): Promise<boolean> {
+  const { ewQueue } = getPolygonContracts();
   const txReceipt = await PROVIDER.getTransactionReceipt(txHash);
   for (const l of txReceipt.logs) {
     try {
-      const logDescription = CONTRACTS.ewQueue.interface.parseLog(l);
-      if (logDescription.name == "EmergencyWithdrawalQueueEnqueue") {
+      const logDescription = ewQueue.interface.parseLog(l);
+      if (logDescription.name == "Push") {
         return true;
       }
     } catch (e) {
@@ -66,11 +66,11 @@ export async function txHasEnqueueEvent(txHash: string): Promise<boolean> {
 export async function getEmergencyWithdrawalQueueTransfers(
   product: AlpineProduct,
 ): Promise<EmergencyWithdrawalQueueTransfer[]> {
-  const { alpSave } = CONTRACTS;
+  const { alpSave, ewQueue } = getPolygonContracts();
   if (product === "alpSave") {
     const curBlock = await PROVIDER.getBlock("latest");
-    const ewQueueDequeueEvents: EmergencyWithdrawalQueueDequeueEvent[] = await CONTRACTS.ewQueue.queryFilter(
-      CONTRACTS.ewQueue.filters.EmergencyWithdrawalQueueDequeue(null, userAddress, userAddress, null),
+    const ewQueueDequeueEvents: PopEvent[] = await ewQueue.queryFilter(
+      ewQueue.filters.Pop(null, userAddress, userAddress, null),
       curBlock.number - 512,
       curBlock.number,
     );
