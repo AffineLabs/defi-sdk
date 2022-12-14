@@ -1,4 +1,4 @@
-import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue } from "../typechain";
+import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue, Vault } from "../typechain";
 import { ethers } from "ethers";
 
 export interface GasInfo {
@@ -18,29 +18,41 @@ export interface SmallTxReceipt extends GasInfo {
   txnHash: string;
 }
 
-export const alpineProducts = ["alpSave", "alpLarge"] as const;
+export const alpineProducts = ["alpSave", "alpLarge", "ethEarn"] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
+export const polygonProducts = ["alpSave", "alpLarge"] as const;
+export type PolygonProduct = typeof polygonProducts[number];
+
 export type productAmounts = {
-  [key in AlpineProduct]?: string;
+  [key in PolygonProduct]?: string;
 };
 
 export type productBalances = {
-  [key in AlpineProduct]: ethers.BigNumber;
+  [key in PolygonProduct]: ethers.BigNumber;
 };
 
 export type productAllocation = {
-  [key in AlpineProduct]: number;
+  [key in PolygonProduct]: number;
 };
 
-export type AlpineContracts = {
+export interface AlpineContracts extends PolygonContracts, EthContracts {}
+
+export interface PolygonContracts extends BothContracts {
   alpSave: L2Vault;
   alpLarge: TwoAssetBasket;
   forwarder: Forwarder;
-  usdc: ethers.Contract;
   router: Router;
   ewQueue: EmergencyWithdrawalQueue;
-};
+}
+
+export interface EthContracts extends BothContracts {
+  ethEarn: Vault;
+}
+
+export interface BothContracts {
+  usdc: ethers.Contract;
+}
 
 export interface TokenInfo {
   amount: string; // in base unit

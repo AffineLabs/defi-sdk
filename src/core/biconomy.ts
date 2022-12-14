@@ -1,7 +1,7 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { ethers } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { BICONOMY, CONTRACTS, SIGNER } from "./cache";
+import { BICONOMY, getPolygonContracts, SIGNER } from "./cache";
 import { CHAIN_ID } from "./constants";
 
 // See https://docs.biconomy.io/products/enable-gasless-transactions/custom-implementation/sdk
@@ -105,7 +105,7 @@ export async function getSignature(
   nonce?: number,
 ) {
   const userAddress = await signer.getAddress();
-  const { forwarder } = CONTRACTS;
+  const { forwarder } = getPolygonContracts();
   const domain = {
     chainId: parseInt(CHAIN_ID, 16),
     name: "MinimalForwarder",
@@ -159,7 +159,7 @@ export async function getSignature(
 export async function sendToForwarder(signatures: Array<string>, requests: Array<any>) {
   // Call executeBatch
 
-  const { forwarder } = CONTRACTS;
+  const { forwarder } = getPolygonContracts();
   const encodedCall = (forwarder as any).interface.encodeFunctionData("executeBatch", [
     requests.map(req => [req.from, req.to, req.value, req.gas, req.nonce, req.data]),
     ethers.utils.hexConcat(signatures),

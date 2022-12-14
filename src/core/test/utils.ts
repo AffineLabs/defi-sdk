@@ -1,5 +1,5 @@
 import { utils } from "ethers";
-import { CONTRACTS, PROVIDER } from "../cache";
+import { getPolygonContracts, PROVIDER } from "../cache";
 
 function _getMappingStorage(slot: number, key: string): string {
   const paddedSlot = utils.hexZeroPad(utils.hexValue(slot), 32);
@@ -8,32 +8,36 @@ function _getMappingStorage(slot: number, key: string): string {
 }
 
 export async function setUSDCBalance(address: string, balance: number) {
+  const contracts = getPolygonContracts();
   await PROVIDER.send("anvil_setStorageAt", [
-    CONTRACTS.usdc.address,
+    contracts.usdc.address,
     _getMappingStorage(0, address),
     utils.hexZeroPad(utils.hexValue(balance), 32),
   ]);
 }
 
 export async function setAlpSaveBalance(address: string, balance: number) {
+  const contracts = getPolygonContracts();
   await PROVIDER.send("anvil_setStorageAt", [
-    CONTRACTS.alpSave.address,
+    contracts.alpSave.address,
     _getMappingStorage(51, address),
     utils.hexZeroPad(utils.hexValue(balance), 32),
   ]);
 }
 
 export async function setAlpLargeBalance(address: string, balance: number) {
+  const contracts = getPolygonContracts();
   await PROVIDER.send("anvil_setStorageAt", [
-    CONTRACTS.alpLarge.address,
+    contracts.alpLarge.address,
     _getMappingStorage(51, address),
     utils.hexZeroPad(utils.hexValue(balance), 32),
   ]);
 }
 
 export async function setAlpSaveL1LockedValue(value: number) {
+  const { alpSave } = getPolygonContracts();
   await PROVIDER.send("anvil_setStorageAt", [
-    CONTRACTS.alpSave.address,
+    alpSave.address,
     // L1TotalLockedValue is found at this slot of L2Vault contract. (Run `forge inspect L2Vault storage`)
     utils.hexValue(385),
     utils.hexZeroPad(utils.hexValue(value), 32),
