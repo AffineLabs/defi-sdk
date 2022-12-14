@@ -22,7 +22,7 @@ const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 export const RPC_URL = `https://polygon-${NETWORK_TYPE}.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
-export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(RPC_URL);
+export let PROVIDER = new ethers.providers.JsonRpcProvider(RPC_URL);
 
 /**
  * @param provider The current provider
@@ -62,7 +62,7 @@ export async function getAllContracts(
 
   const chainId = getChainId();
 
-  if (chainId === 1 || chainId === 5) {
+  if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
     return {
       alpSave,
@@ -72,7 +72,7 @@ export async function getAllContracts(
       router: Router__factory.connect(router.address, provider),
       ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSave.emergencyWithdrawalQueue(), provider),
     };
-  } else if (chainId === 80001 || chainId === 137) {
+  } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
     return {
       ethEarn,
@@ -99,16 +99,18 @@ export async function init(
   contractVersion: string = CONTRACT_VERSION,
   chainId = 80001,
 ) {
-  const provider = PROVIDER;
-  CHAIN_ID = chainId;
-  CONTRACTS = await getAllContracts(provider, contractVersion);
-
+  // Use the user's wallet's provider if possible
   if (ethers.Signer.isSigner(signerOrAddress)) {
     SIGNER = signerOrAddress;
+    PROVIDER = SIGNER.provider as ethers.providers.JsonRpcProvider;
     userAddress = await SIGNER.getAddress();
   } else {
     userAddress = signerOrAddress;
   }
+
+  const provider = PROVIDER;
+  CHAIN_ID = chainId;
+  CONTRACTS = await getAllContracts(provider, contractVersion);
 
   BICONOMY = biconomy;
 }
@@ -117,7 +119,7 @@ export function getChainId() {
   return CHAIN_ID;
 }
 
-export function setProvider(provider: ethers.providers.StaticJsonRpcProvider) {
+export function setProvider(provider: ethers.providers.JsonRpcProvider) {
   PROVIDER = provider;
 }
 

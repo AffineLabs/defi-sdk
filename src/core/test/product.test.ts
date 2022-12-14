@@ -7,19 +7,20 @@ import { getContracts, getEthContracts, getPolygonContracts, init, setProvider }
 import { buyProduct, sellProduct, getTokenInfo } from "../product";
 import { EthContracts, PolygonContracts } from "../types";
 
-const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
-const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
-
 describe("Buy products", async () => {
+  let wallet: ethers.Wallet;
   let contracts: PolygonContracts;
   before(async () => {
+    const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+    wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
+
     setProvider(testProvider);
     await init(wallet, undefined);
     await mintUSDC(wallet.address, 100);
     contracts = getPolygonContracts();
   });
 
-  it("Buy/Sell alpSave", async () => {
+  xit("Buy/Sell alpSave", async () => {
     const { alpSave } = contracts;
     console.log("APPROVING....");
     await approve("alpSave", "100000");
@@ -33,7 +34,7 @@ describe("Buy products", async () => {
     expect(newBal.lt(res)).to.be.true;
   });
 
-  it("Buy/Sell alpLarge", async () => {
+  xit("Buy/Sell alpLarge", async () => {
     const { alpLarge } = contracts;
     await approve("alpLarge", "100000");
 
@@ -58,7 +59,7 @@ describe("Buy products Eth", async () => {
   before(async () => {
     testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8546");
     wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
-    await init(wallet, undefined);
+    await init(wallet, undefined, undefined, 5);
     await mintUSDC(wallet.address, 100);
     contracts = getEthContracts();
   });
@@ -77,11 +78,15 @@ describe("Buy products Eth", async () => {
 });
 
 describe("Product info", async () => {
+  let wallet: ethers.Wallet;
   before(async () => {
+    const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+    wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
+
     await init(wallet, undefined);
     await mintUSDC(wallet.address, 100);
   });
-  it("Can get token info", async () => {
+  xit("Can get token info", async () => {
     const { usdc } = getContracts();
     const saveInfo = await getTokenInfo("alpSave");
     console.log({ saveInfo });

@@ -13,9 +13,6 @@ before(async () => {
   await PROVIDER.send("anvil_setBalance", [wallet.address, ethers.BigNumber.from(10).pow(18).toHexString()]);
 });
 it("Mint some usdc", async () => {
-  const blockNum = await testProvider.getBlockNumber();
-  console.log({ blockNum });
-
   const { usdc } = getContracts();
   const beforeBal: ethers.BigNumber = await usdc.balanceOf(wallet.address);
   const oneUSDC = ethers.BigNumber.from(10).pow(6);
