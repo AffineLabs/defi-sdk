@@ -111,7 +111,7 @@ class Account {
     }
 
     console.time("init-contracts");
-    await init(this.signer, this.biconomy, chainId);
+    await init(this.signer, this.biconomy, undefined, chainId);
     console.timeEnd("init-contracts");
   }
 
@@ -152,8 +152,8 @@ class Account {
    * Check if a user is connected to the magic provider
    * @returns Whether the user is connected to the magic provider
    */
-  isConnected(walletType: string = DEFAULT_WALLET): boolean {
-    return Boolean(this.userAddress) && walletType === this.walletType;
+  isConnected(walletType: string = DEFAULT_WALLET, chainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID): boolean {
+    return Boolean(this.userAddress) && walletType === this.walletType && this.selectedChainId === chainId;
   }
 
   /**
@@ -168,7 +168,7 @@ class Account {
     // this.biconomy is created upon connection and will always exist
     this.gas = useGas;
     const biconomyProvider = useGas ? undefined : this.biconomy;
-    return init(this.signer, biconomyProvider, this.selectedChainId);
+    return init(this.signer, biconomyProvider, undefined, this.selectedChainId);
   }
 
   /**
@@ -353,7 +353,7 @@ class ReadAccount {
   }
 
   async init() {
-    return init(this.userAddress, undefined, this.chainId);
+    return init(this.userAddress, undefined, undefined, this.chainId);
   }
   /**
    * get the current best estimate for gas price
@@ -362,7 +362,7 @@ class ReadAccount {
   async getGasPrice(): Promise<string> {
     return AlpineDeFiSDK.getGasPrice();
   }
-  async getGasBalance() {
+  async getMaticBalance() {
     return AlpineDeFiSDK.getMaticBalance();
   }
 
