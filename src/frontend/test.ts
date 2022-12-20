@@ -27,6 +27,7 @@ const main = async () => {
   const infoUsdc = await readAcc.getTokenInfo("usdc");
   console.log({ gas, balance, infoAlpSave, infoAlpLarge, infoUsdc });
 
+  // connect to ethereum
   await alpAccount.connect({ email, walletType: "metamask", chainId: 5 });
   await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
   console.log("wallet: ", await alpAccount.getUserAddress());
