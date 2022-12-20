@@ -31,7 +31,7 @@ const main = async () => {
   await alpAccount.connect({ email, walletType: "metamask", chainId: 5 });
   await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
   console.log("wallet: ", await alpAccount.getUserAddress());
-  const readEthAcc = new ReadAccount(alpAccount.userAddress || "");
+  const readEthAcc = new ReadAccount(alpAccount.userAddress || "", 5);
   await readEthAcc.init();
   const ethGas = await readEthAcc.getGasPrice();
   const ethBalance = await readAcc.getMaticBalance();
