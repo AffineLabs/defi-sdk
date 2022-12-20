@@ -42,7 +42,8 @@ export function getRpcUrlByChainId(chainId: AllowedChainId): string {
 }
 
 export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.StaticJsonRpcProvider {
-  return new ethers.providers.StaticJsonRpcProvider(getRpcUrlByChainId(chainId));
+  PROVIDER = new ethers.providers.StaticJsonRpcProvider(getRpcUrlByChainId(chainId));
+  return PROVIDER;
 }
 
 /**

@@ -331,6 +331,8 @@ class Account {
          * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
          */
         await provider.send("wallet_addEthereumChain", [{ ...this._getNetworkParams(chainId) }]);
+      } else {
+        throw new Error(err.message);
       }
     }
 
@@ -347,7 +349,7 @@ class ReadAccount {
   userAddress: string;
   chainId: AllowedChainId;
 
-  constructor(userAddress: string, chainId: AllowedChainId) {
+  constructor(userAddress: string, chainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID) {
     this.userAddress = userAddress;
     this.chainId = chainId;
   }

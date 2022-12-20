@@ -18,14 +18,26 @@ const main = async () => {
   // await approve("router", "1000000");
   // await approve("alpSave", "1000000");
 
-  const readAcc = new ReadAccount(alpAccount.userAddress || "", DEFAULT_RAW_CHAIN_ID);
+  const readAcc = new ReadAccount(alpAccount.userAddress || "");
   await readAcc.init();
   const gas = await readAcc.getGasPrice();
-  const balance = await readAcc.getGasBalance();
+  const balance = await readAcc.getMaticBalance();
   const infoAlpSave = await readAcc.getTokenInfo("alpSave");
   const infoAlpLarge = await readAcc.getTokenInfo("alpLarge");
   const infoUsdc = await readAcc.getTokenInfo("usdc");
   console.log({ gas, balance, infoAlpSave, infoAlpLarge, infoUsdc });
+
+  await alpAccount.connect({ email, walletType: "metamask", chainId: 5 });
+  await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
+  console.log("wallet: ", await alpAccount.getUserAddress());
+  const readEthAcc = new ReadAccount(alpAccount.userAddress || "");
+  await readEthAcc.init();
+  const ethGas = await readEthAcc.getGasPrice();
+  const ethBalance = await readAcc.getMaticBalance();
+  const infoEthAlpSave = await readAcc.getTokenInfo("alpSave");
+  const infoEthAlpLarge = await readAcc.getTokenInfo("alpLarge");
+  const infoEthUsdc = await readAcc.getTokenInfo("usdc");
+  console.log({ ethGas, ethBalance, infoEthAlpSave, infoEthAlpLarge, infoEthUsdc });
 
   console.log("exiting");
 };
