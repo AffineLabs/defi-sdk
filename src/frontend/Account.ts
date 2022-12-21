@@ -43,8 +43,6 @@ class Account {
    * login with with magic, get provider, signer and set up
    * the smart contracts.
    * @param email user's email address
-   * @param walletType The type of wallet (metamask or magic)
-   * @param network the name of the (polygon) network.
    */
   async connect({
     walletType,
@@ -52,9 +50,10 @@ class Account {
     shouldRunMagicTestMode,
     getMessage,
     verify,
-    chainId = DEFAULT_RAW_CHAIN_ID,
+    chainId,
   }: IConnectAccount): Promise<void> {
-    if (this.isConnected(walletType)) return;
+    console.log("connected: ", this.isConnected(walletType, chainId));
+    if (this.isConnected(walletType, chainId)) return;
 
     this.selectedChainId = chainId;
 
@@ -105,7 +104,7 @@ class Account {
       } catch (error: unknown) {
         const err = error as MetamaskError;
         // case - user is not verified, should disconnect
-        if (this.isConnected(walletType)) await this.disconnect(walletType);
+        if (this.isConnected(walletType, this.selectedChainId)) await this.disconnect(walletType);
         throw new Error(err?.message ?? "Verification failed!");
       }
     }
@@ -152,7 +151,7 @@ class Account {
    * Check if a user is connected to the magic provider
    * @returns Whether the user is connected to the magic provider
    */
-  isConnected(walletType: string = DEFAULT_WALLET, chainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID): boolean {
+  isConnected(walletType: string = DEFAULT_WALLET, chainId: AllowedChainId): boolean {
     return Boolean(this.userAddress) && walletType === this.walletType && this.selectedChainId === chainId;
   }
 
@@ -349,7 +348,7 @@ class ReadAccount {
   userAddress: string;
   chainId: AllowedChainId;
 
-  constructor(userAddress: string, chainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID) {
+  constructor(userAddress: string, chainId: AllowedChainId) {
     this.userAddress = userAddress;
     this.chainId = chainId;
   }

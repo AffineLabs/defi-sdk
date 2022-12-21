@@ -23,15 +23,13 @@ const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 export let PROVIDER: ethers.providers.StaticJsonRpcProvider;
-// export const RPC_URL = `https://polygon-${NETWORK_TYPE}.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
-// export let PROVIDER = new ethers.providers.StaticJsonRpcProvider(RPC_URL);
 
 export function getRpcUrlByChainId(chainId: AllowedChainId): string {
   switch (chainId) {
     case 1:
-      return `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}}`;
+      return `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`;
     case 5:
-      return `https://eth-goerli.g.alchemy.com/v2/${ALCHEMY_API_KEY}}`;
+      return `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`;
     case 137:
       return `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
     case 80001:
@@ -84,6 +82,8 @@ export async function getAllContracts(
 
   const chainId = getChainId();
 
+  console.log({ chainId });
+
   if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
     return {
@@ -121,6 +121,8 @@ export async function init(
   contractVersion: string = CONTRACT_VERSION,
   chainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID,
 ) {
+  CHAIN_ID = chainId;
+
   // Use the user's wallet's provider if possible
   if (ethers.Signer.isSigner(signerOrAddress)) {
     SIGNER = signerOrAddress;
@@ -128,10 +130,10 @@ export async function init(
     userAddress = await SIGNER.getAddress();
   } else {
     userAddress = signerOrAddress;
+    PROVIDER = getProviderByChainId(chainId);
   }
 
   const provider = PROVIDER;
-  CHAIN_ID = chainId;
   CONTRACTS = await getAllContracts(provider, contractVersion);
 
   BICONOMY = biconomy;

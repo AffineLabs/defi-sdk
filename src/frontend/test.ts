@@ -1,5 +1,4 @@
 import { DEFAULT_RAW_CHAIN_ID } from "../core/constants";
-import { getTokenInfo } from "../core/product";
 import { Account, ReadAccount } from "./Account";
 
 const main = async () => {
@@ -7,18 +6,13 @@ const main = async () => {
   const alpAccount = new Account();
   console.time("entire-connect");
 
-  await alpAccount.connect({ email, walletType: "metamask" });
+  // Connect to polygon
+  await alpAccount.connect({ email, walletType: "metamask", chainId: 5 });
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 
-  await alpAccount.setSimulationMode(false);
-  console.log("alpLarge info: ", await getTokenInfo("alpLarge"));
-  await alpAccount.sellProduct("alpLarge", 14);
-
-  // await approve("router", "1000000");
-  // await approve("alpSave", "1000000");
-
-  const readAcc = new ReadAccount(alpAccount.userAddress || "");
+  console.log("read account info: ");
+  const readAcc = new ReadAccount(alpAccount.userAddress || "", DEFAULT_RAW_CHAIN_ID);
   await readAcc.init();
   const gas = await readAcc.getGasPrice();
   const balance = await readAcc.getMaticBalance();
@@ -26,19 +20,20 @@ const main = async () => {
   const infoAlpLarge = await readAcc.getTokenInfo("alpLarge");
   const infoUsdc = await readAcc.getTokenInfo("usdc");
   console.log({ gas, balance, infoAlpSave, infoAlpLarge, infoUsdc });
+  console.log("\n\n\nfinished readAccount");
 
   // connect to ethereum
   await alpAccount.connect({ email, walletType: "metamask", chainId: 5 });
-  await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
+  // await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
   console.log("wallet: ", await alpAccount.getUserAddress());
+
+  // Connect to an ethereum read account
   const readEthAcc = new ReadAccount(alpAccount.userAddress || "", 5);
   await readEthAcc.init();
   const ethGas = await readEthAcc.getGasPrice();
   const ethBalance = await readAcc.getMaticBalance();
-  const infoEthAlpSave = await readAcc.getTokenInfo("alpSave");
-  const infoEthAlpLarge = await readAcc.getTokenInfo("alpLarge");
   const infoEthUsdc = await readAcc.getTokenInfo("usdc");
-  console.log({ ethGas, ethBalance, infoEthAlpSave, infoEthAlpLarge, infoEthUsdc });
+  console.log({ ethGas, ethBalance, infoEthUsdc });
 
   console.log("exiting");
 };
@@ -63,7 +58,7 @@ const handleButtonClick = () => {
       const account = new Account();
       console.log("Eth", window.ethereum);
       try {
-        await account.connect({ walletType: "coinbase" });
+        await account.connect({ walletType: "coinbase", chainId: DEFAULT_RAW_CHAIN_ID });
       } catch (error) {
         console.log("ERROR ===>", error);
       }
