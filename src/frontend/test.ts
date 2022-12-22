@@ -8,20 +8,33 @@ const main = async () => {
   console.time("entire-connect");
 
   // Connect to polygon
-  await alpAccount.connect({ email, walletType: "metamask", chainId: DEFAULT_RAW_CHAIN_ID });
-  console.log("wallet: ", await alpAccount.getUserAddress());
-  console.timeEnd("entire-connect");
+  try {
+    await alpAccount.connect({ email, walletType: "metamask", chainId: DEFAULT_RAW_CHAIN_ID });
+    console.log("wallet: ", await alpAccount.getUserAddress());
+    console.timeEnd("entire-connect");
 
-  console.log("read account info: ");
-  const readAcc = new ReadAccount(alpAccount.userAddress || "", DEFAULT_RAW_CHAIN_ID);
-  await readAcc.init();
-  const gas = await readAcc.getGasPrice();
-  const balance = await readAcc.getMaticBalance();
-  const infoAlpSave = await readAcc.getTokenInfo("alpSave");
-  const infoAlpLarge = await readAcc.getTokenInfo("alpLarge");
-  const infoUsdc = await readAcc.getTokenInfo("usdc");
-  console.log({ gas, balance, infoAlpSave, infoAlpLarge, infoUsdc });
-  console.log("\n\n\nfinished readAccount");
+    console.log("read account info: ");
+  } catch (error) {
+    console.error("Error in connect: ", error);
+  }
+
+  let readAcc: ReadAccount | undefined = undefined;
+  try {
+    readAcc = new ReadAccount(alpAccount.userAddress || "", DEFAULT_RAW_CHAIN_ID);
+    await readAcc.init();
+  } catch (error) {
+    console.error("Error in read account: ", error);
+  }
+
+  if (readAcc) {
+    const gas = await readAcc.getGasPrice();
+    const balance = await readAcc.getMaticBalance();
+    const infoAlpSave = await readAcc.getTokenInfo("alpSave");
+    const infoAlpLarge = await readAcc.getTokenInfo("alpLarge");
+    const infoUsdc = await readAcc.getTokenInfo("usdc");
+    console.log({ gas, balance, infoAlpSave, infoAlpLarge, infoUsdc });
+    console.log("\n\n\nfinished readAccount");
+  }
 
   // connect to ethereum
   console.log("matic bal: ", AlpineDeFiSDK.getMaticBalance());
@@ -33,8 +46,8 @@ const main = async () => {
   const readEthAcc = new ReadAccount(alpAccount.userAddress || "", 5);
   await readEthAcc.init();
   const ethGas = await readEthAcc.getGasPrice();
-  const ethBalance = await readAcc.getMaticBalance();
-  const infoEthUsdc = await readAcc.getTokenInfo("usdc");
+  const ethBalance = await readEthAcc.getMaticBalance();
+  const infoEthUsdc = await readEthAcc.getTokenInfo("usdc");
   console.log({ ethGas, ethBalance, infoEthUsdc });
 
   console.log("exiting");

@@ -70,6 +70,7 @@ class Account {
 
       const _provider = new ethers.providers.Web3Provider(
         (await getExternalProvider(walletType, chainId)) as ethers.providers.ExternalProvider,
+        "any",
       );
 
       // requires requesting permission to connect users accounts
@@ -83,7 +84,7 @@ class Account {
       if (provider) this.walletConnectProvider = provider;
 
       if (provider) {
-        walletProvider = new ethers.providers.Web3Provider(provider as ethers.providers.ExternalProvider);
+        walletProvider = new ethers.providers.Web3Provider(provider as ethers.providers.ExternalProvider, "any");
       }
     }
 

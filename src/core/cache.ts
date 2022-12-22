@@ -124,15 +124,13 @@ export async function init(
   // Use the user's wallet's provider if possible
   if (ethers.Signer.isSigner(signerOrAddress)) {
     SIGNER = signerOrAddress;
-    PROVIDER = SIGNER.provider as ethers.providers.JsonRpcProvider;
     userAddress = await SIGNER.getAddress();
   } else {
     userAddress = signerOrAddress;
-    PROVIDER = getProviderByChainId(chainId);
   }
 
-  const provider = PROVIDER;
-  CONTRACTS = await getAllContracts(provider, contractVersion);
+  PROVIDER = getProviderByChainId(chainId);
+  CONTRACTS = await getAllContracts(PROVIDER, contractVersion);
 
   BICONOMY = biconomy;
 }

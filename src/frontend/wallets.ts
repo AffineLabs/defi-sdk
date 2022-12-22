@@ -33,7 +33,10 @@ export async function initMagic({
       _magic = new Magic(process.env.MAGIC_API_KEY || "", magicOptions);
       await _magic.auth.loginWithMagicLink({ email });
       // change to magic
-      _provider = new ethers.providers.Web3Provider(_magic.rpcProvider as unknown as ethers.providers.ExternalProvider);
+      _provider = new ethers.providers.Web3Provider(
+        _magic.rpcProvider as unknown as ethers.providers.ExternalProvider,
+        "any",
+      );
     } catch (error) {
       console.error({ error });
     }
