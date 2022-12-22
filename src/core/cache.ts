@@ -82,8 +82,6 @@ export async function getAllContracts(
 
   const chainId = getChainId();
 
-  console.log({ chainId });
-
   if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
     return {

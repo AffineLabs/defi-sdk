@@ -1,3 +1,4 @@
+import { AlpineDeFiSDK } from "../core";
 import { DEFAULT_RAW_CHAIN_ID } from "../core/constants";
 import { Account, ReadAccount } from "./Account";
 
@@ -7,7 +8,7 @@ const main = async () => {
   console.time("entire-connect");
 
   // Connect to polygon
-  await alpAccount.connect({ email, walletType: "metamask", chainId: 5 });
+  await alpAccount.connect({ email, walletType: "metamask", chainId: DEFAULT_RAW_CHAIN_ID });
   console.log("wallet: ", await alpAccount.getUserAddress());
   console.timeEnd("entire-connect");
 
@@ -23,9 +24,10 @@ const main = async () => {
   console.log("\n\n\nfinished readAccount");
 
   // connect to ethereum
-  await alpAccount.connect({ email, walletType: "metamask", chainId: 5 });
-  // await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
-  console.log("wallet: ", await alpAccount.getUserAddress());
+  console.log("matic bal: ", AlpineDeFiSDK.getMaticBalance());
+  console.log("connecting to ethereum...");
+  await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
+  console.log("eth bal: ", AlpineDeFiSDK.getMaticBalance());
 
   // Connect to an ethereum read account
   const readEthAcc = new ReadAccount(alpAccount.userAddress || "", 5);

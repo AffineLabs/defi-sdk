@@ -88,9 +88,10 @@ class Account {
     }
 
     if (!walletProvider) return;
-    // console.time("init-Biconomy");
+
+    // One day biconomy will be activated again
     // await this.initBiconomy(walletProvider);
-    // console.timeEnd("init-Biconomy");
+
     this.signer = walletProvider.getSigner();
     this.userAddress = await this.signer.getAddress();
     this.walletType = walletType;
@@ -175,7 +176,6 @@ class Account {
    * the specified amount
    * @param {String} to the receipient address
    * @param {String} amountUSDC transaction amount in usdc
-   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
   approve(to: keyof AlpineContracts, amountUSDC: string) {
     return AlpineDeFiSDK.approve(to, amountUSDC);
@@ -312,12 +312,11 @@ class Account {
     if (!window.ethereum && (!wallet || this.walletType === "coinbase" || this.walletType === "metamask"))
       throw new Error("Metamask is not installed!");
 
-    this.selectedChainId = chainId;
-
     const ethProvider = await getExternalProvider(wallet ?? this.walletType, chainId);
     console.log("Eth provider on switchWalletToAllowedNetwork", wallet, ethProvider);
 
-    const provider = new ethers.providers.Web3Provider(ethProvider as ethers.providers.ExternalProvider);
+    // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
+    const provider = new ethers.providers.Web3Provider(ethProvider as ethers.providers.ExternalProvider, "any");
     try {
       await provider.send("wallet_switchEthereumChain", [{ chainId: getChainIdFromRaw(chainId) }]);
     } catch (error: unknown) {
@@ -337,10 +336,8 @@ class Account {
 
     // update the signer as the chain has changed
     this.signer = provider.getSigner();
-  }
-
-  getWalletConnectProvider(): WalletConnectProvider | undefined {
-    return this.walletConnectProvider;
+    this.selectedChainId = chainId;
+    return init(this.signer, this.biconomy, undefined, this.selectedChainId);
   }
 }
 
