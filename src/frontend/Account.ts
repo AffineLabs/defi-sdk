@@ -309,8 +309,9 @@ class Account {
    * This method will switch the wallet to the given chain id
    */
   async switchWalletToAllowedNetwork(wallet: AllowedWallet, chainId: AllowedChainId): Promise<void> {
-    if (!window.ethereum && (!wallet || this.walletType === "coinbase" || this.walletType === "metamask"))
+    if (!window.ethereum && this.walletType === "metamask") {
       throw new Error("Metamask is not installed!");
+    }
 
     const ethProvider = await getExternalProvider(wallet ?? this.walletType, chainId);
     console.log("Eth provider on switchWalletToAllowedNetwork", wallet, ethProvider);
