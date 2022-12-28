@@ -107,7 +107,7 @@ export async function getSignature(
   const userAddress = await signer.getAddress();
   const { forwarder } = getPolygonContracts();
   const domain = {
-    chainId: parseInt(DEFAULT_RAW_CHAIN_ID.toString(), 16),
+    chainId: DEFAULT_RAW_CHAIN_ID,
     name: "MinimalForwarder",
     verifyingContract: forwarder.address,
     version: "0.0.1",

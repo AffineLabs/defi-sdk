@@ -19,7 +19,7 @@ import {
   txHasEnqueueEvent,
   vaultWithdrawableAssetAmount,
 } from "../core/ewqueue";
-import { getExternalProvider, initMagic } from "./wallets";
+import { getWeb3Provider, initMagic } from "./wallets";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 class Account {
@@ -63,7 +63,7 @@ class Account {
       if (magic) this.magic = magic;
       walletProvider = provider;
     } else {
-      walletProvider = await getExternalProvider(walletType, chainId);
+      walletProvider = await getWeb3Provider(walletType, chainId);
     }
 
     if (!walletProvider) return;
@@ -232,16 +232,19 @@ class Account {
   /**
    * This method will switch the wallet to the given chain id
    */
-  async switchWalletToAllowedNetwork(chainId: AllowedChainId): Promise<void> {
+  async switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void> {
     if (!window.ethereum && this.walletType === "metamask") {
       throw new Error("Metamask is not installed!");
-    } else if (!this.walletProvider) {
-      throw new Error("Wallet provider is not available! Try connecting again...");
     }
 
+    const _provider = await getWeb3Provider(walletType, chainId);
+
+    if (!_provider) {
+      throw new Error("Provider is not available");
+    }
     // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
     try {
-      await this.walletProvider.send("wallet_switchEthereumChain", [{ chainId: getChainIdFromRaw(chainId) }]);
+      await _provider.send("wallet_switchEthereumChain", [{ chainId: getChainIdFromRaw(chainId) }]);
     } catch (error: unknown) {
       const err = error as MetamaskError;
       console.error("Error on switching ethereum chain", error);
@@ -251,7 +254,7 @@ class Account {
          * case - 4902 indicates that the chain has not been added to MetaMask.
          * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
          */
-        await this.walletProvider.send("wallet_addEthereumChain", [
+        await _provider.send("wallet_addEthereumChain", [
           { ...NETWORK_PARAMS[chainId], chainId: getChainIdFromRaw(chainId) },
         ]);
       } else {
@@ -259,8 +262,8 @@ class Account {
       }
     }
 
-    if (chainId !== this.selectedChainId) {
-      this.signer = this.walletProvider.getSigner();
+    if (chainId !== this.selectedChainId && _provider) {
+      this.signer = _provider.getSigner();
       this.selectedChainId = chainId;
       return init(this.signer, this.biconomy, undefined, this.selectedChainId);
     }

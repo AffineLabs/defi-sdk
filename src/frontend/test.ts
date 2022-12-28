@@ -57,9 +57,9 @@ const connectAndWrite = async ({
 const main = async () => {
   const alpAccount = new Account();
 
-  await alpAccount.switchWalletToAllowedNetwork(DEFAULT_RAW_CHAIN_ID);
+  await alpAccount.switchWalletToAllowedNetwork("metamask", DEFAULT_RAW_CHAIN_ID);
   await connectAndWrite({ account: alpAccount, chainId: DEFAULT_RAW_CHAIN_ID });
-  await alpAccount.switchWalletToAllowedNetwork(5);
+  await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
   await connectAndWrite({ account: alpAccount, chainId: 5 });
   console.log("exiting");
 };
@@ -93,7 +93,7 @@ const handleButtonClick = () => {
       const isConnected = await account.isConnectedToTheGivenChainId(DEFAULT_RAW_CHAIN_ID);
 
       if (!isConnected) {
-        await account.switchWalletToAllowedNetwork(DEFAULT_RAW_CHAIN_ID);
+        await account.switchWalletToAllowedNetwork("metamask", DEFAULT_RAW_CHAIN_ID);
       }
       console.log({ isConnected });
     },

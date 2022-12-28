@@ -45,7 +45,7 @@ export async function initMagic({
   return { magic: _magic, provider: _provider };
 }
 
-export async function getExternalProvider(
+export async function getWeb3Provider(
   walletType: AllowedWallet,
   chainId: AllowedChainId,
 ): Promise<ethers.providers.Web3Provider | undefined> {

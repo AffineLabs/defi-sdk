@@ -158,7 +158,6 @@ export async function init(
     userAddress = signerOrAddress;
   }
 
-  PROVIDER = getProviderByChainId(chainId);
   CONTRACTS = await getAllContracts(PROVIDER, contractVersion);
 
   BICONOMY = biconomy;
