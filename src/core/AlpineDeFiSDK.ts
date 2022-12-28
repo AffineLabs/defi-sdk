@@ -19,7 +19,7 @@ export async function getGasPrice(): Promise<string> {
   return ethers.utils.formatEther(gas);
 }
 
-export async function getMaticBalance() {
+export async function getGasBalance() {
   return ethers.utils.formatEther(await PROVIDER.getBalance(userAddress));
 }
 

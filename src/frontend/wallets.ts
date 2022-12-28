@@ -1,7 +1,7 @@
 import CoinbaseWalletSDK, { CoinbaseWalletProvider } from "@coinbase/wallet-sdk";
 import { ethers } from "ethers";
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
-import { getProviderByChainId, getRpcUrlByChainId } from "../core/cache";
+import { getProviderByChainId, NETWORK_PARAMS } from "../core/cache";
 import { AllowedChainId, AllowedWallet, EthWalletProvider } from "../types/account";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
@@ -48,37 +48,52 @@ export async function initMagic({
 export async function getExternalProvider(
   walletType: AllowedWallet,
   chainId: AllowedChainId,
-): Promise<ethers.providers.ExternalProvider | CoinbaseWalletProvider | WalletConnectProvider | undefined> {
+): Promise<ethers.providers.Web3Provider | undefined> {
   switch (walletType) {
     case "metamask": {
-      if (!window.ethereum) return;
+      if (!window.ethereum) throw new Error("Metamask not found");
       const _provider = window.ethereum as EthWalletProvider;
 
-      return _provider.providers
+      const _metamaskProvider = _provider.providers
         ? _provider.providers.find(p => p.isMetaMask)
         : _provider.isMetaMask
         ? _provider
         : undefined;
+
+      if (!_metamaskProvider) return;
+
+      const _web3Provider = new ethers.providers.Web3Provider(_metamaskProvider, "any");
+      await _web3Provider.send("eth_requestAccounts", []);
+      return _web3Provider;
     }
 
     case "coinbase": {
       const _coinbaseWallet = new CoinbaseWalletSDK({
         appName: "Affine",
       });
-      return _coinbaseWallet.makeWeb3Provider(getRpcUrlByChainId(chainId), Number(chainId)) as CoinbaseWalletProvider;
+      const _cbProvider = _coinbaseWallet.makeWeb3Provider(
+        NETWORK_PARAMS[chainId].rpcUrls[0],
+        Number(chainId),
+      ) as CoinbaseWalletProvider;
+      const _web3Provider = new ethers.providers.Web3Provider(
+        _cbProvider as unknown as ethers.providers.ExternalProvider,
+        "any",
+      );
+      await _web3Provider.send("eth_requestAccounts", []);
+      return _web3Provider;
     }
 
     case "walletConnect": {
       const provider = new WalletConnectProvider({
         rpc: {
-          [chainId]: getRpcUrlByChainId(chainId),
+          [chainId]: NETWORK_PARAMS[chainId].rpcUrls[0],
         },
       });
 
       //  Enable session (triggers QR Code modal)
       await provider.enable();
 
-      return provider;
+      return new ethers.providers.Web3Provider(provider as unknown as ethers.providers.ExternalProvider, "any");
     }
 
     default:

@@ -1,5 +1,7 @@
+import { NETWORK_PARAMS } from "../core/cache";
+
 export type AllowedWallet = "magic" | "metamask" | "coinbase" | "walletConnect";
-export type AllowedChainId = 1 | 5 | 137 | 80001;
+export type AllowedChainId = keyof typeof NETWORK_PARAMS;
 
 export interface IConnectAccount {
   email?: string;
@@ -23,5 +25,16 @@ export interface IProvider {
 }
 
 export interface EthWalletProvider extends IProvider {
-  providers?: IProvider[];
+  providers?: EthWalletProvider[];
+}
+
+export interface NetworkParams {
+  chainName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  rpcUrls: string[];
+  blockExplorerUrls?: string[];
 }

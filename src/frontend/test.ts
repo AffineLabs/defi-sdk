@@ -1,55 +1,66 @@
 import { AlpineDeFiSDK } from "../core";
 import { DEFAULT_RAW_CHAIN_ID } from "../core/constants";
+import { AllowedChainId, AllowedWallet } from "../types/account";
 import { Account, ReadAccount } from "./Account";
 
-const main = async () => {
-  const email = process.env.EMAIL || "";
-  const alpAccount = new Account();
-  console.time("entire-connect");
-
-  // Connect to polygon
+const getTokenInfo = async (token: "alpSave" | "alpLarge" | "ethEarn" | "usdc", readAcc: ReadAccount) => {
   try {
-    await alpAccount.connect({ email, walletType: "metamask", chainId: DEFAULT_RAW_CHAIN_ID });
-    console.log("wallet: ", await alpAccount.getUserAddress());
-    console.timeEnd("entire-connect");
+    const _tokenInfo = await readAcc.getTokenInfo(token);
+    console.log(token, " token: ", _tokenInfo);
+  } catch (error) {
+    console.error("Error in getTokenInfo: ", token, error);
+  }
+};
 
-    console.log("read account info: ");
+const connectAndWrite = async ({
+  walletType = "metamask",
+  account,
+  chainId,
+}: {
+  walletType?: AllowedWallet;
+  account: Account;
+  chainId: AllowedChainId;
+}) => {
+  const email = process.env.EMAIL || "";
+  // connect
+  console.time("entire-connect");
+  try {
+    console.log("connecting to", walletType, "on chain", chainId, account);
+    await account.connect({ walletType, chainId, email });
+    console.log("address: ", await account.getUserAddress());
   } catch (error) {
     console.error("Error in connect: ", error);
   }
+  console.timeEnd("entire-connect");
 
+  // read
   let readAcc: ReadAccount | undefined = undefined;
   try {
-    readAcc = new ReadAccount(alpAccount.userAddress || "", DEFAULT_RAW_CHAIN_ID);
+    readAcc = new ReadAccount(account.userAddress || "", chainId);
     await readAcc.init();
+
+    if (readAcc) {
+      const gas = await readAcc.getGasPrice();
+      const balance = await readAcc.getGasBalance();
+      await getTokenInfo("alpSave", readAcc);
+      await getTokenInfo("alpLarge", readAcc);
+      await getTokenInfo("usdc", readAcc);
+      console.log({ gas, balance });
+      console.log("matic bal: ", await AlpineDeFiSDK.getGasBalance());
+      console.log("\n\n\nfinished readAccount");
+    }
   } catch (error) {
     console.error("Error in read account: ", error);
   }
+};
 
-  if (readAcc) {
-    const gas = await readAcc.getGasPrice();
-    const balance = await readAcc.getMaticBalance();
-    const infoAlpSave = await readAcc.getTokenInfo("alpSave");
-    const infoAlpLarge = await readAcc.getTokenInfo("alpLarge");
-    const infoUsdc = await readAcc.getTokenInfo("usdc");
-    console.log({ gas, balance, infoAlpSave, infoAlpLarge, infoUsdc });
-    console.log("\n\n\nfinished readAccount");
-  }
+const main = async () => {
+  const alpAccount = new Account();
 
-  // connect to ethereum
-  console.log("matic bal: ", AlpineDeFiSDK.getMaticBalance());
-  console.log("connecting to ethereum...");
-  await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
-  console.log("eth bal: ", AlpineDeFiSDK.getMaticBalance());
-
-  // Connect to an ethereum read account
-  const readEthAcc = new ReadAccount(alpAccount.userAddress || "", 5);
-  await readEthAcc.init();
-  const ethGas = await readEthAcc.getGasPrice();
-  const ethBalance = await readEthAcc.getMaticBalance();
-  const infoEthUsdc = await readEthAcc.getTokenInfo("usdc");
-  console.log({ ethGas, ethBalance, infoEthUsdc });
-
+  await alpAccount.switchWalletToAllowedNetwork(DEFAULT_RAW_CHAIN_ID);
+  await connectAndWrite({ account: alpAccount, chainId: DEFAULT_RAW_CHAIN_ID });
+  await alpAccount.switchWalletToAllowedNetwork(5);
+  await connectAndWrite({ account: alpAccount, chainId: 5 });
   console.log("exiting");
 };
 
@@ -79,10 +90,10 @@ const handleButtonClick = () => {
       }
       // await account.connect({ walletType: "metamask" });
       console.log("Metamask connected!!");
-      const isConnected = await account.isConnectedToAllowedNetwork("coinbase", DEFAULT_RAW_CHAIN_ID);
+      const isConnected = await account.isConnectedToTheGivenChainId(DEFAULT_RAW_CHAIN_ID);
 
       if (!isConnected) {
-        await account.switchWalletToAllowedNetwork("coinbase", DEFAULT_RAW_CHAIN_ID);
+        await account.switchWalletToAllowedNetwork(DEFAULT_RAW_CHAIN_ID);
       }
       console.log({ isConnected });
     },

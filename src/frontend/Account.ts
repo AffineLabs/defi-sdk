@@ -10,7 +10,7 @@ import { portfolioSell, portfolioPurchase } from "../core/portfolio";
 import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct, AlpineContracts } from "../core/types";
 import * as productActions from "../core/product";
-import { setSimulationMode } from "../core/cache";
+import { NETWORK_PARAMS, setSimulationMode } from "../core/cache";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
 import { DEFAULT_RAW_CHAIN_ID, DEFAULT_WALLET, getChainIdFromRaw } from "../core/constants";
 import {
@@ -28,7 +28,7 @@ class Account {
   biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
   walletType: AllowedWallet = DEFAULT_WALLET;
-  walletConnectProvider?: WalletConnectProvider;
+  walletProvider?: ethers.providers.Web3Provider;
   // if true, send regular transaction, if false, use biconomy
   gas = false;
   selectedChainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID;
@@ -55,37 +55,15 @@ class Account {
     console.log("connected: ", this.isConnected(walletType, chainId));
     if (this.isConnected(walletType, chainId)) return;
 
-    this.selectedChainId = chainId;
-
+    // get wallet provider based on wallet type
     let walletProvider: ethers.providers.Web3Provider | undefined;
-    // change to metamask
     if (walletType === "magic" && email) {
       const { magic, provider } = await initMagic({ email, testMode: Boolean(shouldRunMagicTestMode), chainId });
 
       if (magic) this.magic = magic;
       walletProvider = provider;
-    } else if (walletType === "metamask" || walletType === "coinbase") {
-      // window.ethereum is required for metamask, but not for coinbase
-      if (walletType === "metamask" && !window.ethereum) return;
-
-      const _provider = new ethers.providers.Web3Provider(
-        (await getExternalProvider(walletType, chainId)) as ethers.providers.ExternalProvider,
-        "any",
-      );
-
-      // requires requesting permission to connect users accounts
-      await _provider.send("eth_requestAccounts", []);
-
-      walletProvider = _provider;
-    } else if (walletType === "walletConnect") {
-      // walletConnect doesn't require window.ethereum to be present always
-      const provider = (await getExternalProvider(walletType, chainId)) as WalletConnectProvider;
-
-      if (provider) this.walletConnectProvider = provider;
-
-      if (provider) {
-        walletProvider = new ethers.providers.Web3Provider(provider as ethers.providers.ExternalProvider, "any");
-      }
+    } else {
+      walletProvider = await getExternalProvider(walletType, chainId);
     }
 
     if (!walletProvider) return;
@@ -93,9 +71,11 @@ class Account {
     // One day biconomy will be activated again
     // await this.initBiconomy(walletProvider);
 
+    this.walletProvider = walletProvider;
     this.signer = walletProvider.getSigner();
     this.userAddress = await this.signer.getAddress();
     this.walletType = walletType;
+    this.selectedChainId = chainId;
 
     if (getMessage && verify) {
       // case - user's wallet needs to be verified with nonce
@@ -145,7 +125,10 @@ class Account {
    */
   async disconnect(walletType: AllowedWallet): Promise<void> {
     if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
-    if (this.walletConnectProvider?.disconnect) this.walletConnectProvider.disconnect();
+    if (walletType === "walletConnect" && this.walletProvider) {
+      const walletConnectProvider = this.walletProvider.provider as WalletConnectProvider;
+      await walletConnectProvider.disconnect();
+    }
     this.userAddress = undefined;
   }
 
@@ -237,90 +220,28 @@ class Account {
     return this.magic?.user ? await this.magic.user.isLoggedIn() : false;
   }
 
-  /**
-   * Get network params (to be passed to the `wallet_addEthereumChain` rpc method) for the given chain id
-   */
-  private _getNetworkParams(chainId: AllowedChainId) {
-    switch (chainId) {
-      case 1:
-        return {
-          chainId: getChainIdFromRaw(chainId),
-          chainName: "Ethereum Mainnet",
-          nativeCurrency: {
-            name: "Ether",
-            symbol: "ETH",
-            decimals: 18,
-          },
-          rpcUrls: ["https://mainnet.infura.io/v3/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a"],
-          blockExplorerUrls: ["https://etherscan.io"],
-        };
-      case 5:
-        return {
-          chainId: getChainIdFromRaw(chainId),
-          chainName: "Goerli Testnet",
-          nativeCurrency: {
-            name: "Ether",
-            symbol: "ETH",
-            decimals: 18,
-          },
-          rpcUrls: ["https://goerli.infura.io/v3/1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a"],
-          blockExplorerUrls: ["https://goerli.etherscan.io"],
-        };
-      case 137:
-        return {
-          chainId: getChainIdFromRaw(chainId),
-          chainName: "Polygon Mainnet",
-          nativeCurrency: {
-            name: "Matic",
-            symbol: "MATIC",
-            decimals: 18,
-          },
-          rpcUrls: ["https://polygon-rpc.com"],
-          blockExplorerUrls: ["https://polygonscan.com"],
-        };
-      case 80001:
-        return {
-          chainId: getChainIdFromRaw(chainId),
-          chainName: "Mumbai Testnet",
-          nativeCurrency: {
-            name: "Matic",
-            symbol: "MATIC",
-            decimals: 18,
-          },
-          rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
-          blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
-        };
-      default:
-        throw new Error("Unsupported chain id");
-    }
+  async getChainId(): Promise<string | undefined> {
+    if (!this.walletProvider) return;
+    return await this.walletProvider.getNetwork().then(network => network.chainId.toString());
   }
 
-  async getChainId(wallet: AllowedWallet): Promise<string | undefined> {
-    if (!window.ethereum) return;
-    const ethProvider = await getExternalProvider(wallet ?? this.walletType, this.selectedChainId);
-    const provider = new ethers.providers.Web3Provider(ethProvider as ethers.providers.ExternalProvider);
-    return await provider.send("eth_chainId", []);
-  }
-
-  async isConnectedToAllowedNetwork(wallet: AllowedWallet, chainId: AllowedChainId): Promise<boolean> {
-    return (await this.getChainId(wallet)) === chainId.toString();
+  async isConnectedToTheGivenChainId(chainId: AllowedChainId): Promise<boolean> {
+    return (await this.getChainId()) === chainId.toString();
   }
 
   /**
    * This method will switch the wallet to the given chain id
    */
-  async switchWalletToAllowedNetwork(wallet: AllowedWallet, chainId: AllowedChainId): Promise<void> {
+  async switchWalletToAllowedNetwork(chainId: AllowedChainId): Promise<void> {
     if (!window.ethereum && this.walletType === "metamask") {
       throw new Error("Metamask is not installed!");
+    } else if (!this.walletProvider) {
+      throw new Error("Wallet provider is not available! Try connecting again...");
     }
 
-    const ethProvider = await getExternalProvider(wallet ?? this.walletType, chainId);
-    console.log("Eth provider on switchWalletToAllowedNetwork", wallet, ethProvider);
-
     // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
-    const provider = new ethers.providers.Web3Provider(ethProvider as ethers.providers.ExternalProvider, "any");
     try {
-      await provider.send("wallet_switchEthereumChain", [{ chainId: getChainIdFromRaw(chainId) }]);
+      await this.walletProvider.send("wallet_switchEthereumChain", [{ chainId: getChainIdFromRaw(chainId) }]);
     } catch (error: unknown) {
       const err = error as MetamaskError;
       console.error("Error on switching ethereum chain", error);
@@ -330,16 +251,19 @@ class Account {
          * case - 4902 indicates that the chain has not been added to MetaMask.
          * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
          */
-        await provider.send("wallet_addEthereumChain", [{ ...this._getNetworkParams(chainId) }]);
+        await this.walletProvider.send("wallet_addEthereumChain", [
+          { ...NETWORK_PARAMS[chainId], chainId: getChainIdFromRaw(chainId) },
+        ]);
       } else {
         throw new Error(err.message);
       }
     }
 
-    // update the signer as the chain has changed
-    this.signer = provider.getSigner();
-    this.selectedChainId = chainId;
-    return init(this.signer, this.biconomy, undefined, this.selectedChainId);
+    if (chainId !== this.selectedChainId) {
+      this.signer = this.walletProvider.getSigner();
+      this.selectedChainId = chainId;
+      return init(this.signer, this.biconomy, undefined, this.selectedChainId);
+    }
   }
 }
 
@@ -362,8 +286,8 @@ class ReadAccount {
   async getGasPrice(): Promise<string> {
     return AlpineDeFiSDK.getGasPrice();
   }
-  async getMaticBalance() {
-    return AlpineDeFiSDK.getMaticBalance();
+  async getGasBalance() {
+    return AlpineDeFiSDK.getGasBalance();
   }
 
   async getTokenInfo(product: AlpineProduct | "usdc") {
