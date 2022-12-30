@@ -126,6 +126,12 @@ class Account {
   async disconnect(walletType: AllowedWallet): Promise<void> {
     if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
     if (walletType === "walletConnect" && this.walletProvider) {
+      /**
+       * we need to disconnect the wallet connect provider to close provider session
+       * or this will cause the wallet connect provider to connect to the same session
+       * when the user tries to connect again, For more info,
+       * see: https://docs.walletconnect.com/1.0/quick-start/dapps/web3-provider#provider-methods
+       */
       const walletConnectProvider = this.walletProvider.provider as WalletConnectProvider;
       await walletConnectProvider.disconnect();
     }
