@@ -10,9 +10,9 @@ import { portfolioSell, portfolioPurchase } from "../core/portfolio";
 import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct, AlpineContracts } from "../core/types";
 import * as productActions from "../core/product";
-import { NETWORK_PARAMS, setSimulationMode } from "../core/cache";
+import { setSimulationMode } from "../core/cache";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
-import { DEFAULT_RAW_CHAIN_ID, DEFAULT_WALLET, getChainIdFromRaw } from "../core/constants";
+import { DEFAULT_RAW_CHAIN_ID, DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS } from "../core/constants";
 import {
   getEmergencyWithdrawalQueueTransfers,
   getUserEmergencyWithdrawalQueueRequests,
@@ -222,7 +222,8 @@ class Account {
 
   async getChainId(): Promise<string | undefined> {
     if (!this.walletProvider) return;
-    return await this.walletProvider.getNetwork().then(network => network.chainId.toString());
+    const { chainId } = await this.walletProvider.getNetwork();
+    return chainId.toString();
   }
 
   async isConnectedToTheGivenChainId(chainId: AllowedChainId): Promise<boolean> {
@@ -242,7 +243,6 @@ class Account {
     if (!_provider) {
       throw new Error("Provider is not available");
     }
-    // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
     try {
       await _provider.send("wallet_switchEthereumChain", [{ chainId: getChainIdFromRaw(chainId) }]);
     } catch (error: unknown) {

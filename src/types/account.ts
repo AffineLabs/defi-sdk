@@ -1,4 +1,4 @@
-import { NETWORK_PARAMS } from "../core/cache";
+import { NETWORK_PARAMS } from "../core/constants";
 
 export type AllowedWallet = "magic" | "metamask" | "coinbase" | "walletConnect";
 export type AllowedChainId = keyof typeof NETWORK_PARAMS;

@@ -1,7 +1,7 @@
 import CoinbaseWalletSDK, { CoinbaseWalletProvider } from "@coinbase/wallet-sdk";
 import { ethers } from "ethers";
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
-import { getProviderByChainId, NETWORK_PARAMS } from "../core/cache";
+import { getProviderByChainId, RPC_URLS } from "../core/cache";
 import { AllowedChainId, AllowedWallet, EthWalletProvider } from "../types/account";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
@@ -62,6 +62,7 @@ export async function getWeb3Provider(
 
       if (!_metamaskProvider) return;
 
+      // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
       const _web3Provider = new ethers.providers.Web3Provider(_metamaskProvider, "any");
       await _web3Provider.send("eth_requestAccounts", []);
       return _web3Provider;
@@ -72,9 +73,11 @@ export async function getWeb3Provider(
         appName: "Affine",
       });
       const _cbProvider = _coinbaseWallet.makeWeb3Provider(
-        NETWORK_PARAMS[chainId].rpcUrls[0],
+        RPC_URLS[chainId],
         Number(chainId),
       ) as CoinbaseWalletProvider;
+
+      // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
       const _web3Provider = new ethers.providers.Web3Provider(
         _cbProvider as unknown as ethers.providers.ExternalProvider,
         "any",
@@ -86,13 +89,14 @@ export async function getWeb3Provider(
     case "walletConnect": {
       const provider = new WalletConnectProvider({
         rpc: {
-          [chainId]: NETWORK_PARAMS[chainId].rpcUrls[0],
+          [chainId]: RPC_URLS[chainId],
         },
       });
 
       //  Enable session (triggers QR Code modal)
       await provider.enable();
 
+      // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
       return new ethers.providers.Web3Provider(provider as unknown as ethers.providers.ExternalProvider, "any");
     }
 

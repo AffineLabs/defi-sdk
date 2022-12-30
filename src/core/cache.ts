@@ -9,7 +9,7 @@ import {
   EmergencyWithdrawalQueue__factory,
   Vault__factory,
 } from "../typechain";
-import { AllowedChainId, NetworkParams } from "../types/account";
+import { AllowedChainId } from "../types/account";
 import { DEFAULT_RAW_CHAIN_ID } from "./constants";
 
 let CONTRACTS: PolygonContracts | EthContracts;
@@ -24,51 +24,15 @@ const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 export let PROVIDER: ethers.providers.StaticJsonRpcProvider;
 
-export const NETWORK_PARAMS: { [index: number]: NetworkParams } = {
-  1: {
-    chainName: "Ethereum Mainnet",
-    nativeCurrency: {
-      name: "Ether",
-      symbol: "ETH",
-      decimals: 18,
-    },
-    rpcUrls: [`https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`],
-    blockExplorerUrls: ["https://etherscan.io"],
-  },
-  5: {
-    chainName: "Goerli Testnet",
-    nativeCurrency: {
-      name: "Ether",
-      symbol: "ETH",
-      decimals: 18,
-    },
-    rpcUrls: [`https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`],
-    blockExplorerUrls: ["https://goerli.etherscan.io"],
-  },
-  137: {
-    chainName: "Polygon Mainnet",
-    nativeCurrency: {
-      name: "Matic",
-      symbol: "MATIC",
-      decimals: 18,
-    },
-    rpcUrls: [`https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`],
-    blockExplorerUrls: ["https://polygonscan.com"],
-  },
-  80001: {
-    chainName: "Polygon Mumbai Testnet",
-    nativeCurrency: {
-      name: "Matic",
-      symbol: "MATIC",
-      decimals: 18,
-    },
-    rpcUrls: [`https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`],
-    blockExplorerUrls: ["https://mumbai.polygonscan.com"],
-  },
+export const RPC_URLS: { [index: AllowedChainId]: string } = {
+  1: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+  5: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+  137: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+  80001: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
 };
 
 export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.StaticJsonRpcProvider {
-  PROVIDER = new ethers.providers.StaticJsonRpcProvider(NETWORK_PARAMS[chainId].rpcUrls[0]);
+  PROVIDER = new ethers.providers.StaticJsonRpcProvider(RPC_URLS[chainId]);
   return PROVIDER;
 }
 
