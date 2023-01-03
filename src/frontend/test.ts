@@ -90,7 +90,7 @@ const handleButtonClick = () => {
       }
       // await account.connect({ walletType: "metamask" });
       console.log("Metamask connected!!");
-      const isConnected = await account.isConnectedToTheGivenChainId(DEFAULT_RAW_CHAIN_ID);
+      const isConnected = await account.isConnectedToTheGivenChainId("coinbase", DEFAULT_RAW_CHAIN_ID);
 
       if (!isConnected) {
         await account.switchWalletToAllowedNetwork("metamask", DEFAULT_RAW_CHAIN_ID);
