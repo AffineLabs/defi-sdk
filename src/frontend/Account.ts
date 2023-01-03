@@ -226,14 +226,23 @@ class Account {
     return this.magic?.user ? await this.magic.user.isLoggedIn() : false;
   }
 
-  async getChainId(): Promise<string | undefined> {
-    if (!this.walletProvider) return;
-    const { chainId } = await this.walletProvider.getNetwork();
-    return chainId.toString();
+  async getChainId(walletType: AllowedWallet): Promise<string | undefined> {
+    /**
+     * `provider?.send("eth_chainId", [])` doesn't work for magic, but it works for other wallets
+     * also, this.walletProvider is undefined when the user is not connected
+     */
+    if (walletType !== "magic") {
+      const provider = await getWeb3Provider(walletType, this.selectedChainId);
+      return await provider?.send("eth_chainId", []);
+    } else if (this.walletProvider) {
+      const { chainId } = await this.walletProvider.getNetwork();
+      return chainId.toString();
+    }
+    return;
   }
 
-  async isConnectedToTheGivenChainId(chainId: AllowedChainId): Promise<boolean> {
-    return (await this.getChainId()) === chainId.toString();
+  async isConnectedToTheGivenChainId(walletType: AllowedWallet, chainId: AllowedChainId): Promise<boolean> {
+    return (await this.getChainId(walletType)) === chainId.toString();
   }
 
   /**
