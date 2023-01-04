@@ -2,7 +2,7 @@
 import { ethers } from "ethers";
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { BICONOMY, getPolygonContracts, SIGNER } from "./cache";
-import { CHAIN_ID } from "./constants";
+import { DEFAULT_RAW_CHAIN_ID } from "./constants";
 
 // See https://docs.biconomy.io/products/enable-gasless-transactions/custom-implementation/sdk
 export async function sendBiconomy(contract: ethers.Contract, signer: ethers.Signer, method: string, args: Array<any>) {
@@ -107,7 +107,7 @@ export async function getSignature(
   const userAddress = await signer.getAddress();
   const { forwarder } = getPolygonContracts();
   const domain = {
-    chainId: parseInt(CHAIN_ID, 16),
+    chainId: DEFAULT_RAW_CHAIN_ID,
     name: "MinimalForwarder",
     verifyingContract: forwarder.address,
     version: "0.0.1",

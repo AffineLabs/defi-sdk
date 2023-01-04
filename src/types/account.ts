@@ -1,9 +1,12 @@
+import { NETWORK_PARAMS } from "../core/constants";
+
 export type AllowedWallet = "magic" | "metamask" | "coinbase" | "walletConnect";
+export type AllowedChainId = keyof typeof NETWORK_PARAMS;
 
 export interface IConnectAccount {
   email?: string;
   walletType: AllowedWallet;
-  network?: "mainnet" | "mumbai";
+  chainId: AllowedChainId;
   shouldRunMagicTestMode?: boolean;
   getMessage?: (address: string) => Promise<string>;
   verify?: (message: string, address: string) => Promise<boolean | undefined>;
@@ -22,5 +25,16 @@ export interface IProvider {
 }
 
 export interface EthWalletProvider extends IProvider {
-  providers?: IProvider[];
+  providers?: EthWalletProvider[];
+}
+
+export interface NetworkParams {
+  chainName: string;
+  nativeCurrency: {
+    name: string;
+    symbol: string;
+    decimals: number;
+  };
+  rpcUrls: string[];
+  blockExplorerUrls?: string[];
 }

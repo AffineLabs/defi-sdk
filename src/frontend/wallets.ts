@@ -1,24 +1,26 @@
 import CoinbaseWalletSDK, { CoinbaseWalletProvider } from "@coinbase/wallet-sdk";
 import { ethers } from "ethers";
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
-import { PROVIDER, RPC_URL } from "../core/cache";
-import { CHAIN_ID } from "../core/constants";
-import { AllowedWallet, EthWalletProvider } from "../types/account";
+import { getProviderByChainId, RPC_URLS } from "../core/cache";
+import { AllowedChainId, AllowedWallet, EthWalletProvider } from "../types/account";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 export async function initMagic({
   email,
   testMode,
+  chainId,
 }: {
   email: string;
   testMode: boolean;
+  chainId: AllowedChainId;
 }): Promise<{ magic?: Magic; provider?: ethers.providers.Web3Provider }> {
   let _magic: Magic | undefined, _provider: ethers.providers.Web3Provider | undefined;
   if (email) {
+    const PROVIDER = getProviderByChainId(chainId);
     const magicOptions: MagicSDKAdditionalConfiguration = {
       network: {
         rpcUrl: PROVIDER.connection.url,
-        chainId: parseInt(CHAIN_ID, 16),
+        chainId: Number(chainId),
       },
     };
 
@@ -31,7 +33,10 @@ export async function initMagic({
       _magic = new Magic(process.env.MAGIC_API_KEY || "", magicOptions);
       await _magic.auth.loginWithMagicLink({ email });
       // change to magic
-      _provider = new ethers.providers.Web3Provider(_magic.rpcProvider as unknown as ethers.providers.ExternalProvider);
+      _provider = new ethers.providers.Web3Provider(
+        _magic.rpcProvider as unknown as ethers.providers.ExternalProvider,
+        "any",
+      );
     } catch (error) {
       console.error({ error });
     }
@@ -40,39 +45,59 @@ export async function initMagic({
   return { magic: _magic, provider: _provider };
 }
 
-export async function getExternalProvider(
+export async function getWeb3Provider(
   walletType: AllowedWallet,
-): Promise<ethers.providers.ExternalProvider | CoinbaseWalletProvider | WalletConnectProvider | undefined> {
+  chainId: AllowedChainId,
+): Promise<ethers.providers.Web3Provider | undefined> {
   switch (walletType) {
     case "metamask": {
-      if (!window.ethereum) return;
+      if (!window.ethereum) throw new Error("Metamask not found");
       const _provider = window.ethereum as EthWalletProvider;
 
-      return _provider.providers
+      const _metamaskProvider = _provider.providers
         ? _provider.providers.find(p => p.isMetaMask)
         : _provider.isMetaMask
         ? _provider
         : undefined;
+
+      if (!_metamaskProvider) return;
+
+      // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
+      const _web3Provider = new ethers.providers.Web3Provider(_metamaskProvider, "any");
+      await _web3Provider.send("eth_requestAccounts", []);
+      return _web3Provider;
     }
 
     case "coinbase": {
       const _coinbaseWallet = new CoinbaseWalletSDK({
         appName: "Affine",
       });
-      return _coinbaseWallet.makeWeb3Provider(RPC_URL, parseInt(CHAIN_ID, 16)) as CoinbaseWalletProvider;
+      const _cbProvider = _coinbaseWallet.makeWeb3Provider(
+        RPC_URLS[chainId],
+        Number(chainId),
+      ) as CoinbaseWalletProvider;
+
+      // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
+      const _web3Provider = new ethers.providers.Web3Provider(
+        _cbProvider as unknown as ethers.providers.ExternalProvider,
+        "any",
+      );
+      await _web3Provider.send("eth_requestAccounts", []);
+      return _web3Provider;
     }
 
     case "walletConnect": {
       const provider = new WalletConnectProvider({
         rpc: {
-          [CHAIN_ID]: RPC_URL,
+          [chainId]: RPC_URLS[chainId],
         },
       });
 
       //  Enable session (triggers QR Code modal)
       await provider.enable();
 
-      return provider;
+      // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
+      return new ethers.providers.Web3Provider(provider as unknown as ethers.providers.ExternalProvider, "any");
     }
 
     default:

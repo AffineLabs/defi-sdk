@@ -261,7 +261,6 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
     // price and number of decimals of each unit of the contract
 
     const { num, decimals } = await contract.detailedPrice();
-    console.log({ num, decimals });
     const amount_decimals = ethers.BigNumber.from(await contract.decimals());
     const equity = amount.mul(num);
     return {

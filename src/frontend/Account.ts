@@ -11,15 +11,15 @@ import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct, AlpineContracts } from "../core/types";
 import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
-import { AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
-import { CHAIN_ID, DEFAULT_WALLET } from "../core/constants";
+import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
+import { DEFAULT_RAW_CHAIN_ID, DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS } from "../core/constants";
 import {
   getEmergencyWithdrawalQueueTransfers,
   getUserEmergencyWithdrawalQueueRequests,
   txHasEnqueueEvent,
   vaultWithdrawableAssetAmount,
 } from "../core/ewqueue";
-import { getExternalProvider, initMagic } from "./wallets";
+import { getWeb3Provider, initMagic } from "./wallets";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 
 class Account {
@@ -28,9 +28,10 @@ class Account {
   biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
   walletType: AllowedWallet = DEFAULT_WALLET;
-  walletConnectProvider?: WalletConnectProvider;
+  walletProvider?: ethers.providers.Web3Provider;
   // if true, send regular transaction, if false, use biconomy
   gas = false;
+  selectedChainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID;
 
   /**
    * Creates an alpine account object
@@ -42,68 +43,42 @@ class Account {
    * login with with magic, get provider, signer and set up
    * the smart contracts.
    * @param email user's email address
-   * @param walletType The type of wallet (metamask or magic)
-   * @param network the name of the (polygon) network.
    */
-  async connect(args: IConnectAccount): Promise<void> {
-    if (this.isConnected(args.walletType)) return;
-
-    await this.changeWallet(args);
-
-    console.time("init-contracts");
-    await init(this.signer, this.biconomy);
-    console.timeEnd("init-contracts");
-  }
-
-  async setSimulationMode(mode: boolean) {
-    return setSimulationMode(mode);
-  }
-
-  async changeWallet({
+  async connect({
     walletType,
     email,
+    shouldRunMagicTestMode,
     getMessage,
     verify,
-    shouldRunMagicTestMode,
-  }: IConnectAccount): Promise<void | undefined> {
+    chainId,
+  }: IConnectAccount): Promise<void> {
+    console.log("connected: ", this.isConnected(walletType, chainId));
+    if (this.isConnected(walletType, chainId)) return;
+
+    // get wallet provider based on wallet type
     let walletProvider: ethers.providers.Web3Provider | undefined;
-    // change to metamask
     if (walletType === "magic" && email) {
-      const { magic, provider } = await initMagic({ email, testMode: Boolean(shouldRunMagicTestMode) });
+      const { magic, provider } = await initMagic({ email, testMode: Boolean(shouldRunMagicTestMode), chainId });
 
       if (magic) this.magic = magic;
       walletProvider = provider;
-    } else if (walletType === "metamask" || walletType === "coinbase") {
-      if (walletType === "metamask" && !window.ethereum) return;
-      // we know that window.ethereum exists here
-      const _provider = new ethers.providers.Web3Provider(
-        (await getExternalProvider(walletType)) as ethers.providers.ExternalProvider,
-      );
-
-      // requires requesting permission to connect users accounts
-      await _provider.send("eth_requestAccounts", []);
-
-      walletProvider = _provider;
-    } else if (walletType === "walletConnect") {
-      // walletConnect doesn't require window.ethereum to be present always
-      const provider = (await getExternalProvider(walletType)) as WalletConnectProvider;
-
-      if (provider) this.walletConnectProvider = provider;
-
-      if (provider) {
-        walletProvider = new ethers.providers.Web3Provider(provider as ethers.providers.ExternalProvider);
-      }
+    } else {
+      walletProvider = await getWeb3Provider(walletType, chainId);
     }
 
     if (!walletProvider) return;
-    // console.time("init-Biconomy");
+
+    // One day biconomy will be activated again
     // await this.initBiconomy(walletProvider);
-    // console.timeEnd("init-Biconomy");
+
+    this.walletProvider = walletProvider;
     this.signer = walletProvider.getSigner();
     this.userAddress = await this.signer.getAddress();
     this.walletType = walletType;
+    this.selectedChainId = chainId;
 
     if (getMessage && verify) {
+      // case - user's wallet needs to be verified with nonce
       try {
         const _message = await getMessage(this.userAddress);
         const _signedMessage = await this.signer.signMessage(_message);
@@ -111,10 +86,18 @@ class Account {
       } catch (error: unknown) {
         const err = error as MetamaskError;
         // case - user is not verified, should disconnect
-        if (this.isConnected(walletType)) await this.disconnect(walletType);
+        if (this.isConnected(walletType, this.selectedChainId)) await this.disconnect(walletType);
         throw new Error(err?.message ?? "Verification failed!");
       }
     }
+
+    console.time("init-contracts");
+    await init(this.signer, this.biconomy, undefined, chainId);
+    console.timeEnd("init-contracts");
+  }
+
+  async setSimulationMode(mode: boolean) {
+    return setSimulationMode(mode);
   }
 
   private async initBiconomy(provider: ethers.providers.Web3Provider) {
@@ -142,7 +125,16 @@ class Account {
    */
   async disconnect(walletType: AllowedWallet): Promise<void> {
     if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
-    if (this.walletConnectProvider?.disconnect) this.walletConnectProvider.disconnect();
+    if (walletType === "walletConnect" && this.walletProvider) {
+      /**
+       * we need to disconnect the wallet connect provider to close provider session
+       * or this will cause the wallet connect provider to connect to the same session
+       * when the user tries to connect again, For more info,
+       * see: https://docs.walletconnect.com/1.0/quick-start/dapps/web3-provider#provider-methods
+       */
+      const walletConnectProvider = this.walletProvider.provider as WalletConnectProvider;
+      await walletConnectProvider.disconnect();
+    }
     this.userAddress = undefined;
   }
 
@@ -150,8 +142,8 @@ class Account {
    * Check if a user is connected to the magic provider
    * @returns Whether the user is connected to the magic provider
    */
-  isConnected(walletType: string = DEFAULT_WALLET): boolean {
-    return Boolean(this.userAddress) && walletType === this.walletType;
+  isConnected(walletType: string = DEFAULT_WALLET, chainId: AllowedChainId): boolean {
+    return Boolean(this.userAddress) && walletType === this.walletType && this.selectedChainId === chainId;
   }
 
   /**
@@ -166,7 +158,7 @@ class Account {
     // this.biconomy is created upon connection and will always exist
     this.gas = useGas;
     const biconomyProvider = useGas ? undefined : this.biconomy;
-    return init(this.signer, biconomyProvider);
+    return init(this.signer, biconomyProvider, undefined, this.selectedChainId);
   }
 
   /**
@@ -174,7 +166,6 @@ class Account {
    * the specified amount
    * @param {String} to the receipient address
    * @param {String} amountUSDC transaction amount in usdc
-   * @param {boolean} gas If set to true, the user pays gas. If false, we do a transaction via biconomy
    */
   approve(to: keyof AlpineContracts, amountUSDC: string) {
     return AlpineDeFiSDK.approve(to, amountUSDC);
@@ -235,59 +226,40 @@ class Account {
     return this.magic?.user ? await this.magic.user.isLoggedIn() : false;
   }
 
+  async getChainId(walletType: AllowedWallet): Promise<string | undefined> {
+    /**
+     * `provider?.send("eth_chainId", [])` doesn't work for magic, but it works for other wallets
+     * also, this.walletProvider is undefined when the user is not connected
+     */
+    if (walletType !== "magic") {
+      const provider = await getWeb3Provider(walletType, this.selectedChainId);
+      return await provider?.send("eth_chainId", []);
+    } else if (this.walletProvider) {
+      const { chainId } = await this.walletProvider.getNetwork();
+      return chainId.toString();
+    }
+    return;
+  }
+
+  async isConnectedToTheGivenChainId(walletType: AllowedWallet, chainId: AllowedChainId): Promise<boolean> {
+    return (await this.getChainId(walletType)) === chainId.toString();
+  }
+
   /**
-   * Get network params (to be passed to the `wallet_addEthereumChain` rpc method) for the given chain id
+   * This method will switch the wallet to the given chain id
    */
-  private _getNetworkParams() {
-    const testnetParams = {
-      chainId: "0x13881",
-      chainName: "Mumbai Testnet",
-      nativeCurrency: {
-        name: "Matic",
-        symbol: "MATIC",
-        decimals: 18,
-      },
-      rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
-      blockExplorerUrls: ["https://mumbai.polygonscan.com/"],
-    };
-
-    const mainnetParams = {
-      chainId: "0x89",
-      chainName: "Polygon Mainnet",
-      nativeCurrency: {
-        name: "Matic",
-        symbol: "MATIC",
-        decimals: 18,
-      },
-      rpcUrls: ["https://polygon-rpc.com"],
-      blockExplorerUrls: ["https://polygonscan.com"],
-    };
-
-    const params = CHAIN_ID === "0x89" ? mainnetParams : testnetParams;
-    return params;
-  }
-
-  async getChainId(wallet: AllowedWallet): Promise<string | undefined> {
-    if (!window.ethereum) return;
-    const ethProvider = await getExternalProvider(wallet ?? this.walletType);
-    const provider = new ethers.providers.Web3Provider(ethProvider as ethers.providers.ExternalProvider);
-    return await provider.send("eth_chainId", []);
-  }
-
-  async isConnectedToAllowedNetwork(wallet: AllowedWallet): Promise<boolean> {
-    return (await this.getChainId(wallet)) === CHAIN_ID;
-  }
-
-  async switchWalletToAllowedNetwork(wallet: AllowedWallet): Promise<void> {
-    if (!window.ethereum && (!wallet || this.walletType === "coinbase" || this.walletType === "metamask"))
+  async switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void> {
+    if (!window.ethereum && this.walletType === "metamask") {
       throw new Error("Metamask is not installed!");
+    }
 
-    const ethProvider = await getExternalProvider(wallet ?? this.walletType);
-    console.log("Eth provider on switchWalletToAllowedNetwork", wallet, ethProvider);
+    const _provider = await getWeb3Provider(walletType, chainId);
 
-    const provider = new ethers.providers.Web3Provider(ethProvider as ethers.providers.ExternalProvider);
+    if (!_provider) {
+      throw new Error("Provider is not available");
+    }
     try {
-      await provider.send("wallet_switchEthereumChain", [{ chainId: CHAIN_ID }]);
+      await _provider.send("wallet_switchEthereumChain", [{ chainId: getChainIdFromRaw(chainId) }]);
     } catch (error: unknown) {
       const err = error as MetamaskError;
       console.error("Error on switching ethereum chain", error);
@@ -297,24 +269,33 @@ class Account {
          * case - 4902 indicates that the chain has not been added to MetaMask.
          * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
          */
-        await provider.send("wallet_addEthereumChain", [{ ...this._getNetworkParams() }]);
+        await _provider.send("wallet_addEthereumChain", [
+          { ...NETWORK_PARAMS[chainId], chainId: getChainIdFromRaw(chainId) },
+        ]);
+      } else {
+        throw new Error(err.message);
       }
     }
-  }
 
-  getWalletConnectProvider(): WalletConnectProvider | undefined {
-    return this.walletConnectProvider;
+    if (chainId !== this.selectedChainId && _provider) {
+      this.signer = _provider.getSigner();
+      this.selectedChainId = chainId;
+      return init(this.signer, this.biconomy, undefined, this.selectedChainId);
+    }
   }
 }
 
 class ReadAccount {
   userAddress: string;
-  constructor(userAddress: string) {
+  chainId: AllowedChainId;
+
+  constructor(userAddress: string, chainId: AllowedChainId) {
     this.userAddress = userAddress;
+    this.chainId = chainId;
   }
 
   async init() {
-    return init(this.userAddress, undefined);
+    return init(this.userAddress, undefined, undefined, this.chainId);
   }
   /**
    * get the current best estimate for gas price
@@ -323,8 +304,8 @@ class ReadAccount {
   async getGasPrice(): Promise<string> {
     return AlpineDeFiSDK.getGasPrice();
   }
-  async getMaticBalance() {
-    return AlpineDeFiSDK.getMaticBalance();
+  async getGasBalance() {
+    return AlpineDeFiSDK.getGasBalance();
   }
 
   async getTokenInfo(product: AlpineProduct | "usdc") {

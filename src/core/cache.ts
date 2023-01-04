@@ -9,10 +9,11 @@ import {
   EmergencyWithdrawalQueue__factory,
   Vault__factory,
 } from "../typechain";
-import { NETWORK_TYPE } from "./constants";
+import { AllowedChainId } from "../types/account";
+import { DEFAULT_RAW_CHAIN_ID } from "./constants";
 
 let CONTRACTS: PolygonContracts | EthContracts;
-let CHAIN_ID: number;
+let CHAIN_ID: AllowedChainId;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
 export let SIMULATE = false;
@@ -21,8 +22,19 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
 const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
-export const RPC_URL = `https://polygon-${NETWORK_TYPE}.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
-export let PROVIDER = new ethers.providers.JsonRpcProvider(RPC_URL);
+export let PROVIDER: ethers.providers.StaticJsonRpcProvider;
+
+export const RPC_URLS: { [index: AllowedChainId]: string } = {
+  1: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+  5: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+  137: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+  80001: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+};
+
+export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.StaticJsonRpcProvider {
+  PROVIDER = new ethers.providers.StaticJsonRpcProvider(RPC_URLS[chainId]);
+  return PROVIDER;
+}
 
 /**
  * @param provider The current provider
@@ -97,8 +109,10 @@ export async function init(
   signerOrAddress: ethers.Signer | string,
   biconomy: ethers.providers.Web3Provider | undefined,
   contractVersion: string = CONTRACT_VERSION,
-  chainId = 80001,
+  chainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID,
 ) {
+  CHAIN_ID = chainId;
+
   // Use the user's wallet's provider if possible
   if (ethers.Signer.isSigner(signerOrAddress)) {
     SIGNER = signerOrAddress;
@@ -108,9 +122,7 @@ export async function init(
     userAddress = signerOrAddress;
   }
 
-  const provider = PROVIDER;
-  CHAIN_ID = chainId;
-  CONTRACTS = await getAllContracts(provider, contractVersion);
+  CONTRACTS = await getAllContracts(PROVIDER, contractVersion);
 
   BICONOMY = biconomy;
 }

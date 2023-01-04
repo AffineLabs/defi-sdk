@@ -16,9 +16,9 @@ describe("Balances", async () => {
     await init(wallet, undefined);
   });
 
-  it("getMaticBalance", async () => {
+  it("getGasBalance", async () => {
     const balance = await SIGNER.getBalance();
-    const balStr = await AlpineDeFiSDK.getMaticBalance();
+    const balStr = await AlpineDeFiSDK.getGasBalance();
     expect(ethers.utils.formatEther(balance)).to.equal(balStr);
   });
 });
