@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
+import { L2Vault, TwoAssetBasket, Vault } from "../typechain";
 import { _addDecimals, _removeDecimals, blockchainCall, getMaticPrice } from "./AlpineDeFiSDK";
 import { getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
 import { MAX_UINT } from "./constants";
@@ -255,27 +256,34 @@ async function _convertToShares(amountUSDC: ethers.BigNumber) {
 
 export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<TokenInfo> {
   const user = userAddress;
-  if (product === "alpSave" || product === "alpLarge") {
-    const contract = getPolygonContracts()[product];
-    const amount: ethers.BigNumber = await contract.balanceOf(user);
-    // price and number of decimals of each unit of the contract
 
-    const { num, decimals } = await contract.detailedPrice();
-    const amount_decimals = ethers.BigNumber.from(await contract.decimals());
-    const equity = amount.mul(num);
+  if (product === "usdc") {
+    const { usdc } = getContracts();
+    const amount = await usdc.balanceOf(user);
+    const numUsdc = _removeDecimals(amount, 6);
     return {
-      amount: _removeDecimals(amount, amount_decimals),
-      price: _removeDecimals(num, decimals),
-      equity: _removeDecimals(equity, amount_decimals.add(decimals)),
+      amount: numUsdc,
+      price: "1",
+      equity: numUsdc,
     };
   }
-  // usdc
-  const { usdc } = getContracts();
-  const amount = await usdc.balanceOf(user);
+
+  let contract: L2Vault | TwoAssetBasket | Vault;
+  if (product === "ethEarn") {
+    contract = getEthContracts()[product];
+  } else {
+    contract = getPolygonContracts()[product];
+  }
+
+  const amount = await contract.balanceOf(user);
+  // price number of decimals of the share token
+  const { num, decimals } = await contract.detailedPrice();
+  const amountDecimals = ethers.BigNumber.from(await contract.decimals());
+  const equity = amount.mul(num);
   return {
-    amount: _removeDecimals(amount, 6),
-    price: "1",
-    equity: _removeDecimals(amount, 6),
+    amount: _removeDecimals(amount, amountDecimals),
+    price: _removeDecimals(num, decimals),
+    equity: _removeDecimals(equity, amountDecimals.add(decimals)),
   };
 }
 
