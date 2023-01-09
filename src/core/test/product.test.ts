@@ -79,6 +79,12 @@ describe("Buy products Eth", async () => {
     const newBal = await ethEarn.balanceOf(wallet.address);
     expect(newBal.lt(shares)).to.be.true;
   });
+
+  it("EthEarn info", async () => {
+    const ethInfo = await getTokenInfo("ethEarn");
+    console.log({ ethInfo });
+    expect(Number(ethInfo.amount) * Number(ethInfo.price)).to.closeTo(Number(ethInfo.equity), 1);
+  });
 });
 
 describe("Product info", async () => {
@@ -94,8 +100,8 @@ describe("Product info", async () => {
     const { usdc } = getContracts();
     const saveInfo = await getTokenInfo("alpSave");
     console.log({ saveInfo });
-
     expect(Number(saveInfo.amount) * Number(saveInfo.price)).to.closeTo(Number(saveInfo.equity), 0.1);
+
     const largeInfo = await getTokenInfo("alpLarge");
     console.log({ largeInfo });
     expect(Number(largeInfo.amount) * Number(largeInfo.price)).to.closeTo(Number(largeInfo.equity), 1);
