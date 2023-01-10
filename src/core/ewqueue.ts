@@ -1,8 +1,8 @@
 import { getPolygonContracts, PROVIDER, userAddress } from "./cache";
 import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer } from "./types";
-import { PushEvent, PopEvent } from "../typechain/src/polygon/EmergencyWithdrawalQueue";
 import { AlpineProduct } from "./types";
 import { _removeDecimals } from "./AlpineDeFiSDK";
+import { PopEvent, PushEvent } from "../typechain/EmergencyWithdrawalQueue";
 
 export async function getUserEmergencyWithdrawalQueueRequests(
   product: AlpineProduct,
