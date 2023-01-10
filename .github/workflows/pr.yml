@@ -36,7 +36,7 @@ jobs:
       - name: Install yarn dependencies
         run: yarn --frozen-lockfile
 
-      - name: Import typechain files from the s3 bucket
+      - name: Build typechain files
         run: yarn build
 
       - name: Check Typescript compilation errors
