@@ -38,16 +38,17 @@ const connectAndWrite = async ({
   try {
     readAcc = new ReadAccount(account.userAddress || "", chainId);
     await readAcc.init();
+    const gas = await readAcc.getGasPrice();
+    const balance = await readAcc.getGasBalance();
+    await getTokenInfo("usdc", readAcc);
+    console.log({ gas, balance });
+    console.log("matic bal: ", await AlpineDeFiSDK.getGasBalance());
 
-    if (readAcc) {
-      const gas = await readAcc.getGasPrice();
-      const balance = await readAcc.getGasBalance();
+    if (chainId === 80001 || chainId === 137) {
       await getTokenInfo("alpSave", readAcc);
       await getTokenInfo("alpLarge", readAcc);
-      await getTokenInfo("usdc", readAcc);
-      console.log({ gas, balance });
-      console.log("matic bal: ", await AlpineDeFiSDK.getGasBalance());
-      console.log("\n\n\nfinished readAccount");
+    } else {
+      await getTokenInfo("ethEarn", readAcc);
     }
   } catch (error) {
     console.error("Error in read account: ", error);
