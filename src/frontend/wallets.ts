@@ -90,7 +90,7 @@ export async function getWeb3Provider(
     case "walletConnect": {
       const provider = new WalletConnectProvider({
         rpc: {
-          [chainId]: RPC_URLS[chainId],
+          ...RPC_URLS,
         },
       });
 
