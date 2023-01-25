@@ -287,6 +287,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
   };
 }
 
+// Only used in (unused) portfolio code
 export async function tokensFromShares(product: AlpineProduct, shareAmount: ethers.BigNumber) {
   if (product === "alpSave") {
     const { alpSave } = getPolygonContracts();
@@ -307,6 +308,7 @@ export async function tokensFromShares(product: AlpineProduct, shareAmount: ethe
   }
 }
 
+// Only used for alpLarge conversions
 export async function sharesFromTokens(product: AlpineProduct, tokenAmount: ethers.BigNumber) {
   if (product === "alpSave") {
     const { alpSave } = getPolygonContracts();
