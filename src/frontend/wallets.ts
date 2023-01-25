@@ -71,6 +71,7 @@ export async function getWeb3Provider(
     case "coinbase": {
       const _coinbaseWallet = new CoinbaseWalletSDK({
         appName: "Affine",
+        appLogoUrl: process.env.APP_LOGO_URL,
       });
       const _cbProvider = _coinbaseWallet.makeWeb3Provider(
         RPC_URLS[chainId],
