@@ -45,7 +45,7 @@ export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider,
   version: string,
 ): Promise<PolygonContracts | EthContracts> {
-  const s3Root = `https://sc-abis.s3.us-east-2.amazonaws.com/${version}`;
+  const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${version}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
   // Using this abi so that we mint usdc (the tests run on testnet)
