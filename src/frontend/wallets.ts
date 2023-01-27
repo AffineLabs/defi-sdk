@@ -3,7 +3,9 @@ import { ethers } from "ethers";
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
 import { getProviderByChainId, RPC_URLS } from "../core/cache";
 import { AllowedChainId, AllowedWallet, EthWalletProvider } from "../types/account";
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import { UniversalProvider } from "@walletconnect/universal-provider";
+import WalletConnect from "@walletconnect/client";
+import QRCodeModal from "@walletconnect/qrcode-modal";
 
 export async function initMagic({
   email,
@@ -88,14 +90,10 @@ export async function getWeb3Provider(
     }
 
     case "walletConnect": {
-      const provider = new WalletConnectProvider({
-        rpc: {
-          ...RPC_URLS,
-        },
+      const provider = new WalletConnect({
+        bridge: "https://bridge.walletconnect.org", // Required
+        qrcodeModal: QRCodeModal,
       });
-
-      //  Enable session (triggers QR Code modal)
-      await provider.enable();
 
       // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
       return new ethers.providers.Web3Provider(provider as unknown as ethers.providers.ExternalProvider, "any");

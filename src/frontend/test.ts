@@ -58,10 +58,10 @@ const connectAndWrite = async ({
 const main = async () => {
   const alpAccount = new Account();
 
-  await alpAccount.switchWalletToAllowedNetwork("walletConnect", 137);
+  // await alpAccount.switchWalletToAllowedNetwork("walletConnect", 137);
   await connectAndWrite({ walletType: "walletConnect", account: alpAccount, chainId: 137 });
-  await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
-  await connectAndWrite({ account: alpAccount, chainId: 5 });
+  // await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
+  // await connectAndWrite({ account: alpAccount, chainId: 5 });
   console.log("exiting");
 };
 
