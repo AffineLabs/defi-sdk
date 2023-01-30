@@ -6,6 +6,8 @@ import { AllowedChainId, AllowedWallet, EthWalletProvider } from "../types/accou
 import { UniversalProvider } from "@walletconnect/universal-provider";
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
+import { Web3Modal } from "@web3modal/standalone";
+import { SignClient } from "@walletconnect/sign-client";
 
 export async function initMagic({
   email,
@@ -90,10 +92,56 @@ export async function getWeb3Provider(
     }
 
     case "walletConnect": {
-      const provider = new WalletConnect({
-        bridge: "https://bridge.walletconnect.org", // Required
-        qrcodeModal: QRCodeModal,
+      const PROJECT_ID = "0aea81e348295af75127ce1afe81ba05";
+      const web3Modal = new Web3Modal({
+        projectId: PROJECT_ID,
+        standaloneChains: ["eip155:1"],
       });
+      const signClient = await SignClient.init({ projectId: PROJECT_ID });
+      // const provider = new WalletConnect({
+      //   bridge: "https://bridge.walletconnect.org", // Required
+      //   qrcodeModal: QRCodeModal,
+      // });
+
+      const { uri, approval } = await signClient.connect({
+        requiredNamespaces: {
+          eip155: {
+            methods: ["eth_sign"],
+            chains: ["eip155:1"],
+            events: ["accountsChanged"],
+          },
+        },
+      });
+
+      const provider = await UniversalProvider.init({
+        logger: "info",
+        projectId: PROJECT_ID,
+        metadata: {
+          name: "React App",
+          description: "React App for WalletConnect",
+          url: "https://walletconnect.com/",
+          icons: ["https://avatars.githubusercontent.com/u/37784886"],
+        },
+        client: signClient, // optional instance of @walletconnect/sign-client
+      });
+
+      if (uri) {
+        web3Modal.openModal({ uri, standaloneChains: ["eip155:1"] });
+        await approval();
+        await provider.connect({
+          namespaces: {
+            eip155: {
+              methods: ["eth_sendTransaction", "eth_signTransaction", "eth_sign", "personal_sign", "eth_signTypedData"],
+              chains: ["eip155:1"],
+              events: ["chainChanged", "accountsChanged"],
+              rpcMap: {
+                1: "https://rpc.walletconnect.com?chainId=eip155:1&projectId=" + PROJECT_ID,
+              },
+            },
+          },
+        });
+        web3Modal.closeModal();
+      }
 
       // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
       return new ethers.providers.Web3Provider(provider as unknown as ethers.providers.ExternalProvider, "any");
