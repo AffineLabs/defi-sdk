@@ -8,6 +8,7 @@ import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { Web3Modal } from "@web3modal/standalone";
 import { SignClient } from "@walletconnect/sign-client";
+import { WALLETCONNECT_PROJECT_ID } from "../core/constants";
 
 export async function initMagic({
   email,
@@ -47,6 +48,75 @@ export async function initMagic({
   }
 
   return { magic: _magic, provider: _provider };
+}
+
+export async function getWalletconnectProvider(
+  chainId: AllowedChainId,
+): Promise<ethers.providers.Web3Provider | undefined> {
+  // Setup Modal
+  const modal = new Web3Modal({
+    projectId: WALLETCONNECT_PROJECT_ID,
+    standaloneChains: ["eip155:1", "eip155:137"],
+  });
+
+  // Initialize Universal Provider
+  const universalProvider = await UniversalProvider.init({
+    logger: process.env.NODE_ENV !== "production" ? "debug" : undefined,
+    relayUrl: "wss://relay.walletconnect.com",
+    projectId: WALLETCONNECT_PROJECT_ID,
+  });
+
+  // Open modal on `display_uri` event
+  universalProvider.on("display_uri", async (uri?: string) => {
+    console.log({ uri });
+    modal?.openModal({ uri, standaloneChains: ["eip155:1", "eip155:137"] });
+  });
+
+  // Subscribe to session ping
+  universalProvider.on("session_ping", ({ id, topic }: { id: string; topic: string }) => {
+    console.log("session_ping", { id, topic });
+  });
+
+  // Subscribe to session event
+  universalProvider.on("session_event", ({ event, chainId }: { event: any; chainId: string }) => {
+    console.log("session_event", { event, chainId });
+  });
+
+  // Subscribe to session update
+  universalProvider.on("session_update", ({ topic, params }: { topic: string; params: any }) => {
+    console.log("session_update", { topic, params });
+  });
+
+  // Subscribe to session delete
+  universalProvider.on("session_delete", ({ id, topic }: { id: string; topic: string }) => {
+    console.log("session_delete", { id, topic });
+  });
+
+  // Trigger `display_uri` event
+  await universalProvider.connect({
+    namespaces: {
+      eip155: {
+        methods: ["eth_sendTransaction", "eth_signTransaction", "eth_sign", "personal_sign", "eth_signTypedData"],
+        chains: [`eip155:1`, "eip155:137"],
+        events: ["chainChanged", "accountsChanged"],
+        rpcMap: RPC_URLS,
+      },
+    },
+  });
+
+  universalProvider.setDefaultChain(`eip155:${chainId}`);
+
+  if (universalProvider?.session) {
+    const _web3Provider = new ethers.providers.Web3Provider(
+      universalProvider as unknown as ethers.providers.ExternalProvider,
+      "any",
+    );
+    modal?.closeModal();
+    return _web3Provider;
+  }
+
+  console.log("No session found");
+  return;
 }
 
 export async function getWeb3Provider(
@@ -92,6 +162,7 @@ export async function getWeb3Provider(
     }
 
     case "walletConnect": {
+      return await getWalletconnectProvider(chainId);
       const PROJECT_ID = "0aea81e348295af75127ce1afe81ba05";
       const web3Modal = new Web3Modal({
         projectId: PROJECT_ID,

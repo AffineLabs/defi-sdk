@@ -12,10 +12,12 @@ export function getChainIdFromRaw(chainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID
   return `0x${Number(chainId).toString(16)}`;
 }
 
-export const NETWORK_TYPE: "mumbai" | "mainnet" =
-  process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet" ? "mainnet" : "mumbai";
+export const NETWORK_TYPE: "testnet" | "mainnet" =
+  process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet" ? "mainnet" : "testnet";
 
 export const MAX_UINT = ethers.BigNumber.from(2).pow(256).sub(1);
+
+export const WALLETCONNECT_PROJECT_ID = process.env.WALLETCONNECT_PROJECT_ID;
 
 export const NETWORK_PARAMS: { [index: number]: NetworkParams } = {
   1: {
