@@ -1,5 +1,5 @@
 import { AlpineDeFiSDK } from "../core";
-import { DEFAULT_RAW_CHAIN_ID } from "../core/constants";
+import { ALLOWED_CHAIN_IDS, DEFAULT_RAW_CHAIN_ID } from "../core/constants";
 import { AllowedChainId, AllowedWallet } from "../types/account";
 import { Account, ReadAccount } from "./Account";
 
@@ -57,11 +57,27 @@ const connectAndWrite = async ({
 
 const main = async () => {
   const alpAccount = new Account();
+  const walletType = "walletConnect";
 
-  // await alpAccount.switchWalletToAllowedNetwork("walletConnect", 137);
-  await connectAndWrite({ walletType: "walletConnect", account: alpAccount, chainId: 137 });
-  // await alpAccount.switchWalletToAllowedNetwork("metamask", 5);
-  // await connectAndWrite({ account: alpAccount, chainId: 5 });
+  console.log(
+    "connecting to walletConnect on chain 137",
+    { ALLOWED_CHAIN_IDS },
+    ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
+  );
+  await connectAndWrite({ walletType, account: alpAccount, chainId: 137 });
+  console.log("Now switch to ethereum mainnet");
+  await alpAccount.switchWalletToAllowedNetwork(walletType, 1);
+  const readAcc = new ReadAccount(alpAccount.userAddress || "", 1);
+  console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
+
+  // disconnect
+  try {
+    console.log("disconnecting");
+    await alpAccount.disconnect(walletType);
+    window.localStorage.clear();
+  } catch (error) {
+    console.error("Error in disconnect: ", error);
+  }
   console.log("exiting");
 };
 

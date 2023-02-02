@@ -3,12 +3,12 @@ import { ethers } from "ethers";
 import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
 import { getProviderByChainId, RPC_URLS } from "../core/cache";
 import { AllowedChainId, AllowedWallet, EthWalletProvider } from "../types/account";
-import { UniversalProvider } from "@walletconnect/universal-provider";
+import Provider, { UniversalProvider } from "@walletconnect/universal-provider";
 import WalletConnect from "@walletconnect/client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { Web3Modal } from "@web3modal/standalone";
 import { SignClient } from "@walletconnect/sign-client";
-import { WALLETCONNECT_PROJECT_ID } from "../core/constants";
+import { ALLOWED_CHAIN_IDS, WALLETCONNECT_PROJECT_ID } from "../core/constants";
 
 export async function initMagic({
   email,
@@ -52,11 +52,12 @@ export async function initMagic({
 
 export async function getWalletconnectProvider(
   chainId: AllowedChainId,
+  setWCProvider: (wcProvider: Provider) => void,
 ): Promise<ethers.providers.Web3Provider | undefined> {
   // Setup Modal
   const modal = new Web3Modal({
     projectId: WALLETCONNECT_PROJECT_ID,
-    standaloneChains: ["eip155:1", "eip155:137"],
+    standaloneChains: ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
   });
 
   // Initialize Universal Provider
@@ -69,44 +70,34 @@ export async function getWalletconnectProvider(
   // Open modal on `display_uri` event
   universalProvider.on("display_uri", async (uri?: string) => {
     console.log({ uri });
-    modal?.openModal({ uri, standaloneChains: ["eip155:1", "eip155:137"] });
-  });
-
-  // Subscribe to session ping
-  universalProvider.on("session_ping", ({ id, topic }: { id: string; topic: string }) => {
-    console.log("session_ping", { id, topic });
-  });
-
-  // Subscribe to session event
-  universalProvider.on("session_event", ({ event, chainId }: { event: any; chainId: string }) => {
-    console.log("session_event", { event, chainId });
-  });
-
-  // Subscribe to session update
-  universalProvider.on("session_update", ({ topic, params }: { topic: string; params: any }) => {
-    console.log("session_update", { topic, params });
-  });
-
-  // Subscribe to session delete
-  universalProvider.on("session_delete", ({ id, topic }: { id: string; topic: string }) => {
-    console.log("session_delete", { id, topic });
+    modal?.openModal({ uri, standaloneChains: ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`) });
   });
 
   // Trigger `display_uri` event
   await universalProvider.connect({
     namespaces: {
       eip155: {
-        methods: ["eth_sendTransaction", "eth_signTransaction", "eth_sign", "personal_sign", "eth_signTypedData"],
-        chains: [`eip155:1`, "eip155:137"],
+        methods: [
+          "eth_sendTransaction",
+          "eth_signTransaction",
+          "eth_sign",
+          "personal_sign",
+          "eth_signTypedData",
+          "wallet_switchEthereumChain",
+          "wallet_addEthereumChain",
+        ],
+        chains: ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
         events: ["chainChanged", "accountsChanged"],
         rpcMap: RPC_URLS,
       },
     },
   });
 
-  universalProvider.setDefaultChain(`eip155:${chainId}`);
-
   if (universalProvider?.session) {
+    // we have an active session
+    setWCProvider(universalProvider);
+    universalProvider.setDefaultChain(`eip155:${chainId}`);
+
     const _web3Provider = new ethers.providers.Web3Provider(
       universalProvider as unknown as ethers.providers.ExternalProvider,
       "any",
@@ -122,6 +113,7 @@ export async function getWalletconnectProvider(
 export async function getWeb3Provider(
   walletType: AllowedWallet,
   chainId: AllowedChainId,
+  setWCProvider: (provider: Provider) => void,
 ): Promise<ethers.providers.Web3Provider | undefined> {
   switch (walletType) {
     case "metamask": {
@@ -162,60 +154,7 @@ export async function getWeb3Provider(
     }
 
     case "walletConnect": {
-      return await getWalletconnectProvider(chainId);
-      const PROJECT_ID = "0aea81e348295af75127ce1afe81ba05";
-      const web3Modal = new Web3Modal({
-        projectId: PROJECT_ID,
-        standaloneChains: ["eip155:1"],
-      });
-      const signClient = await SignClient.init({ projectId: PROJECT_ID });
-      // const provider = new WalletConnect({
-      //   bridge: "https://bridge.walletconnect.org", // Required
-      //   qrcodeModal: QRCodeModal,
-      // });
-
-      const { uri, approval } = await signClient.connect({
-        requiredNamespaces: {
-          eip155: {
-            methods: ["eth_sign"],
-            chains: ["eip155:1"],
-            events: ["accountsChanged"],
-          },
-        },
-      });
-
-      const provider = await UniversalProvider.init({
-        logger: "info",
-        projectId: PROJECT_ID,
-        metadata: {
-          name: "React App",
-          description: "React App for WalletConnect",
-          url: "https://walletconnect.com/",
-          icons: ["https://avatars.githubusercontent.com/u/37784886"],
-        },
-        client: signClient, // optional instance of @walletconnect/sign-client
-      });
-
-      if (uri) {
-        web3Modal.openModal({ uri, standaloneChains: ["eip155:1"] });
-        await approval();
-        await provider.connect({
-          namespaces: {
-            eip155: {
-              methods: ["eth_sendTransaction", "eth_signTransaction", "eth_sign", "personal_sign", "eth_signTypedData"],
-              chains: ["eip155:1"],
-              events: ["chainChanged", "accountsChanged"],
-              rpcMap: {
-                1: "https://rpc.walletconnect.com?chainId=eip155:1&projectId=" + PROJECT_ID,
-              },
-            },
-          },
-        });
-        web3Modal.closeModal();
-      }
-
-      // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
-      return new ethers.providers.Web3Provider(provider as unknown as ethers.providers.ExternalProvider, "any");
+      return await getWalletconnectProvider(chainId, setWCProvider);
     }
 
     default:

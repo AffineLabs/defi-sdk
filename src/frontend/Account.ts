@@ -21,6 +21,7 @@ import {
 } from "../core/ewqueue";
 import { getWeb3Provider, initMagic } from "./wallets";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import Provider from "@walletconnect/universal-provider";
 
 class Account {
   magic!: Magic;
@@ -32,6 +33,7 @@ class Account {
   // if true, send regular transaction, if false, use biconomy
   gas = false;
   selectedChainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID;
+  walletConnectProvider?: Provider;
 
   /**
    * Creates an alpine account object
@@ -63,7 +65,7 @@ class Account {
       if (magic) this.magic = magic;
       walletProvider = provider;
     } else {
-      walletProvider = await getWeb3Provider(walletType, chainId);
+      walletProvider = await getWeb3Provider(walletType, chainId, this.setWalletConnectProvider.bind(this));
     }
 
     if (!walletProvider) return;
@@ -232,7 +234,11 @@ class Account {
      * also, this.walletProvider is undefined when the user is not connected
      */
     if (walletType !== "magic") {
-      const provider = await getWeb3Provider(walletType, this.selectedChainId);
+      const provider = await getWeb3Provider(
+        walletType,
+        this.selectedChainId,
+        this.setWalletConnectProvider.bind(this),
+      );
       return await provider?.send("eth_chainId", []);
     } else if (this.walletProvider) {
       const { chainId } = await this.walletProvider.getNetwork();
@@ -245,15 +251,27 @@ class Account {
     return (await this.getChainId(walletType)) === chainId.toString();
   }
 
+  setWalletConnectProvider(provider: Provider) {
+    this.walletConnectProvider = provider;
+  }
+
+  getWalletConnectProvider(): Provider | undefined {
+    return this.walletConnectProvider;
+  }
+
   /**
    * This method will switch the wallet to the given chain id
    */
   async switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void> {
-    if (!window.ethereum && this.walletType === "metamask") {
+    if (!window.ethereum && walletType === "metamask") {
       throw new Error("Metamask is not installed!");
+    } else if (walletType === "walletConnect" && this.walletConnectProvider) {
+      console.log("Switching wallet to allowed network for wallet connect", chainId, this.walletConnectProvider);
+      this.walletConnectProvider.setDefaultChain(`eip155:${chainId}`);
+      return;
     }
 
-    const _provider = await getWeb3Provider(walletType, chainId);
+    const _provider = await getWeb3Provider(walletType, chainId, this.setWalletConnectProvider.bind(this));
 
     if (!_provider) {
       throw new Error("Provider is not available");
