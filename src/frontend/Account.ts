@@ -20,7 +20,6 @@ import {
   vaultWithdrawableAssetAmount,
 } from "../core/ewqueue";
 import { getWeb3Provider, initMagic } from "./wallets";
-import WalletConnectProvider from "@walletconnect/web3-provider";
 import Provider from "@walletconnect/universal-provider";
 
 class Account {
@@ -127,15 +126,18 @@ class Account {
    */
   async disconnect(walletType: AllowedWallet): Promise<void> {
     if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
-    if (walletType === "walletConnect" && this.walletProvider) {
+    if (walletType === "walletConnect" && this.walletConnectProvider) {
       /**
        * we need to disconnect the wallet connect provider to close provider session
        * or this will cause the wallet connect provider to connect to the same session
        * when the user tries to connect again, For more info,
-       * see: https://docs.walletconnect.com/1.0/quick-start/dapps/web3-provider#provider-methods
+       * see: https://docs.walletconnect.com/2.0/specs/clients/sign/client-api
        */
-      const walletConnectProvider = this.walletProvider.provider as WalletConnectProvider;
-      await walletConnectProvider.disconnect();
+      await this.walletConnectProvider.disconnect();
+      if (typeof window !== "undefined") {
+        // clear local storage to remove the wallet connect session + pairings
+        window.localStorage.clear();
+      }
     }
     this.userAddress = undefined;
   }

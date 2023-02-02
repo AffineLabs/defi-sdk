@@ -4,10 +4,7 @@ import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
 import { getProviderByChainId, RPC_URLS } from "../core/cache";
 import { AllowedChainId, AllowedWallet, EthWalletProvider } from "../types/account";
 import Provider, { UniversalProvider } from "@walletconnect/universal-provider";
-import WalletConnect from "@walletconnect/client";
-import QRCodeModal from "@walletconnect/qrcode-modal";
 import { Web3Modal } from "@web3modal/standalone";
-import { SignClient } from "@walletconnect/sign-client";
 import { ALLOWED_CHAIN_IDS, WALLETCONNECT_PROJECT_ID } from "../core/constants";
 
 export async function initMagic({

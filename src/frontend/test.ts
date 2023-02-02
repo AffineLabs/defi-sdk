@@ -74,7 +74,6 @@ const main = async () => {
   try {
     console.log("disconnecting");
     await alpAccount.disconnect(walletType);
-    window.localStorage.clear();
   } catch (error) {
     console.error("Error in disconnect: ", error);
   }
