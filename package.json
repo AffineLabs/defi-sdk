@@ -1,6 +1,6 @@
 {
   "name": "@alpine-ramp/alpine-defi-sdk",
-  "version": "1.1.0-beta",
+  "version": "1.1.8-beta",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/Multiplyr/defi-sdk.git",
@@ -24,7 +24,7 @@
     "@magic-sdk/types": "^7.0.0",
     "@metamask/detect-provider": "^1.2.0",
     "@walletconnect/universal-provider": "^2.3.2",
-    "@web3modal/standalone": "^2.0.0",
+    "@web3modal/standalone": "^2.1.0",
     "axios": "^0.25.0",
     "ethers": "^5.6.5",
     "magic-sdk": "^8.1.1"
@@ -35,6 +35,8 @@
     "@types/mocha": "^9.1.0",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
+    "assert": "^2.0.0",
+    "buffer": "^5.5.0",
     "chai": "^4.3.6",
     "commander": "^9.0.0",
     "concurrently": "^7.0.0",
@@ -44,6 +46,7 @@
     "fs-extra": "^10.1.0",
     "mocha": "^9.2.2",
     "parcel": "^2.2.1",
+    "path-browserify": "^1.0.0",
     "prettier": "2.5.1",
     "ts-node": "^10.8.1",
     "typechain": "^8.1.1",

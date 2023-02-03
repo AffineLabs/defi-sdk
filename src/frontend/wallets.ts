@@ -1,10 +1,9 @@
 import CoinbaseWalletSDK, { CoinbaseWalletProvider } from "@coinbase/wallet-sdk";
 import { ethers } from "ethers";
-import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
+import { Magic } from "magic-sdk";
 import { getProviderByChainId, RPC_URLS } from "../core/cache";
-import { AllowedChainId, AllowedWallet, EthWalletProvider } from "../types/account";
+import { AllowedChainId, AllowedWallet, EthWalletProvider, MagicSDKOptions } from "../types/account";
 import Provider, { UniversalProvider } from "@walletconnect/universal-provider";
-import { Web3Modal } from "@web3modal/standalone";
 import { ALLOWED_CHAIN_IDS, WALLETCONNECT_PROJECT_ID } from "../core/constants";
 
 export async function initMagic({
@@ -19,7 +18,7 @@ export async function initMagic({
   let _magic: Magic | undefined, _provider: ethers.providers.Web3Provider | undefined;
   if (email) {
     const PROVIDER = getProviderByChainId(chainId);
-    const magicOptions: MagicSDKAdditionalConfiguration = {
+    const magicOptions: MagicSDKOptions = {
       network: {
         rpcUrl: PROVIDER.connection.url,
         chainId: Number(chainId),
@@ -52,7 +51,8 @@ export async function getWalletconnectProvider(
   setWCProvider: (wcProvider: Provider) => void,
 ): Promise<ethers.providers.Web3Provider | undefined> {
   // Setup Modal
-  const modal = new Web3Modal({
+  const Web3ModalStandalone = await import("@web3modal/standalone"); // dynamic import to support it on commonjs
+  const modal = new Web3ModalStandalone.Web3Modal({
     projectId: WALLETCONNECT_PROJECT_ID,
     standaloneChains: ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
   });

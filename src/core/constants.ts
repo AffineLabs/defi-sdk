@@ -19,7 +19,7 @@ export const ALLOWED_CHAIN_IDS: AllowedChainId[] = NETWORK_TYPE === "mainnet" ? 
 
 export const MAX_UINT = ethers.BigNumber.from(2).pow(256).sub(1);
 
-export const WALLETCONNECT_PROJECT_ID = process.env.WALLETCONNECT_PROJECT_ID;
+export const WALLETCONNECT_PROJECT_ID = process.env.WALLETCONNECT_PROJECT_ID || "demo-project-id";
 
 export const NETWORK_PARAMS: { [index: number]: NetworkParams } = {
   1: {

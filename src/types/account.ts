@@ -38,3 +38,11 @@ export interface NetworkParams {
   rpcUrls: string[];
   blockExplorerUrls?: string[];
 }
+
+export interface MagicSDKOptions {
+  network?: {
+    rpcUrl: string;
+    chainId: number;
+  };
+  testMode?: boolean;
+}
