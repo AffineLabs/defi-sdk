@@ -12,6 +12,25 @@ const getTokenInfo = async (token: "alpSave" | "alpLarge" | "ethEarn" | "usdc", 
   }
 };
 
+const testRead = async (user: string, chainId: AllowedChainId) => {
+  try {
+    const readAcc = new ReadAccount(user || "", chainId);
+    await readAcc.init();
+    const gas = await readAcc.getGasPrice();
+    const balance = await readAcc.getGasBalance();
+    console.log({ gas, balance });
+    await getTokenInfo("usdc", readAcc);
+
+    if (chainId === 80001 || chainId === 137) {
+      await getTokenInfo("alpSave", readAcc);
+      await getTokenInfo("alpLarge", readAcc);
+    } else {
+      await getTokenInfo("ethEarn", readAcc);
+    }
+  } catch (error) {
+    console.error("Error in read account: ", error);
+  }
+};
 const connectAndWrite = async ({
   walletType = "metamask",
   account,
@@ -21,6 +40,9 @@ const connectAndWrite = async ({
   account: Account;
   chainId: AllowedChainId;
 }) => {
+  // read
+  await testRead("0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D", 80001);
+
   const email = process.env.EMAIL || "";
   // connect
   console.time("entire-connect");
@@ -32,27 +54,7 @@ const connectAndWrite = async ({
     console.error("Error in connect: ", error);
   }
   console.timeEnd("entire-connect");
-
-  // read
-  let readAcc: ReadAccount | undefined = undefined;
-  try {
-    readAcc = new ReadAccount(account.userAddress || "", chainId);
-    await readAcc.init();
-    const gas = await readAcc.getGasPrice();
-    const balance = await readAcc.getGasBalance();
-    await getTokenInfo("usdc", readAcc);
-    console.log({ gas, balance });
-    console.log("matic bal: ", await AlpineDeFiSDK.getGasBalance());
-
-    if (chainId === 80001 || chainId === 137) {
-      await getTokenInfo("alpSave", readAcc);
-      await getTokenInfo("alpLarge", readAcc);
-    } else {
-      await getTokenInfo("ethEarn", readAcc);
-    }
-  } catch (error) {
-    console.error("Error in read account: ", error);
-  }
+  await testRead(account.userAddress || "", chainId);
 };
 
 const main = async () => {
