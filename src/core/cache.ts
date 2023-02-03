@@ -119,6 +119,7 @@ export async function init(
     PROVIDER = SIGNER.provider as ethers.providers.JsonRpcProvider;
     userAddress = await SIGNER.getAddress();
   } else {
+    PROVIDER = getProviderByChainId(chainId);
     userAddress = signerOrAddress;
   }
 
