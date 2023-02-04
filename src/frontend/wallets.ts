@@ -59,7 +59,7 @@ export async function getWalletconnectProvider(
 
   // Initialize Universal Provider
   const universalProvider = await UniversalProvider.init({
-    logger: process.env.NODE_ENV !== "production" ? "debug" : undefined,
+    logger: "debug",
     relayUrl: "wss://relay.walletconnect.com",
     projectId: WALLETCONNECT_PROJECT_ID,
   });
