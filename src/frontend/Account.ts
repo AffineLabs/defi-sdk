@@ -12,7 +12,14 @@ import { AlpineProduct, AlpineContracts } from "../core/types";
 import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
-import { DEFAULT_RAW_CHAIN_ID, DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS } from "../core/constants";
+import {
+  ALLOWED_CHAIN_IDS,
+  DEFAULT_RAW_CHAIN_ID,
+  DEFAULT_WALLET,
+  getChainIdFromRaw,
+  NETWORK_PARAMS,
+  WALLETCONNECT_PROJECT_ID,
+} from "../core/constants";
 import {
   getEmergencyWithdrawalQueueTransfers,
   getUserEmergencyWithdrawalQueueRequests,
@@ -20,7 +27,7 @@ import {
   vaultWithdrawableAssetAmount,
 } from "../core/ewqueue";
 import { getWeb3Provider, initMagic } from "./wallets";
-import Provider from "@walletconnect/universal-provider";
+import Provider, { UniversalProvider } from "@walletconnect/universal-provider";
 
 class Account {
   magic!: Magic;
@@ -33,11 +40,14 @@ class Account {
   gas = false;
   selectedChainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID;
   walletConnectProvider?: Provider;
+  web3ModalInstance?: import("@web3modal/standalone").Web3Modal;
 
   /**
    * Creates an alpine account object
    */
-  // constructor() {}
+  constructor() {
+    this.initWalletConnectProvider();
+  }
 
   /**
    * connect the user account to magic's sdk. In particular,
@@ -64,7 +74,7 @@ class Account {
       if (magic) this.magic = magic;
       walletProvider = provider;
     } else {
-      walletProvider = await getWeb3Provider(walletType, chainId, this.setWalletConnectProvider.bind(this));
+      walletProvider = await getWeb3Provider(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
     }
 
     if (!walletProvider) return;
@@ -239,7 +249,8 @@ class Account {
       const provider = await getWeb3Provider(
         walletType,
         this.selectedChainId,
-        this.setWalletConnectProvider.bind(this),
+        this.walletConnectProvider,
+        this.web3ModalInstance,
       );
       return await provider?.send("eth_chainId", []);
     } else if (this.walletProvider) {
@@ -261,6 +272,10 @@ class Account {
     return this.walletConnectProvider;
   }
 
+  setWeb3ModalInstance(web3ModalInstance: import("@web3modal/standalone").Web3Modal) {
+    this.web3ModalInstance = web3ModalInstance;
+  }
+
   /**
    * This method will switch the wallet to the given chain id
    */
@@ -273,7 +288,7 @@ class Account {
       return;
     }
 
-    const _provider = await getWeb3Provider(walletType, chainId, this.setWalletConnectProvider.bind(this));
+    const _provider = await getWeb3Provider(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
 
     if (!_provider) {
       throw new Error("Provider is not available");
@@ -302,6 +317,68 @@ class Account {
       this.selectedChainId = chainId;
       return init(this.signer, this.biconomy, undefined, this.selectedChainId);
     }
+  }
+
+  async initWalletConnectProvider() {
+    console.log("Initializing wallet connect provider", process.env.NODE_ENV);
+    const Web3Modal = (await import("@web3modal/standalone")).Web3Modal;
+    // Setup Modal
+    const modal = new Web3Modal({
+      // projectId: WALLETCONNECT_PROJECT_ID,
+      standaloneChains: ALLOWED_CHAIN_IDS.map(chainId => `eip155:${chainId}`),
+    });
+
+    modal.setTheme({
+      themeBackground: "themeColor",
+      themeColor: "green",
+      themeMode: "light",
+    });
+
+    // Initialize Universal Provider
+    const universalProvider = await UniversalProvider.init({
+      // logger: "debug",
+      projectId: WALLETCONNECT_PROJECT_ID,
+      metadata: {
+        name: "Affine DeFi",
+        description: "Affine DeFi",
+        url: "https://affinedefi.com",
+        icons: [process.env.APP_LOGO_URL ?? ""],
+      },
+    }).catch((err: Error) => {
+      console.error("Error on initializing wallet connect provider", err);
+    });
+
+    // Open modal on `display_uri` event
+    universalProvider?.on("display_uri", async (uri?: string) => {
+      console.log({ uri, modal });
+      modal?.openModal({ uri });
+    });
+
+    universalProvider?.on("session_delete", () => {
+      console.log("session ended");
+    });
+
+    if (!universalProvider) {
+      console.log("No provider found!!!");
+      return;
+    }
+    this.setWalletConnectProvider(universalProvider);
+    this.setWeb3ModalInstance(modal);
+
+    if (universalProvider?.session) {
+      console.log("We have a session", universalProvider.session, this.walletType);
+    }
+
+    if (universalProvider?.session && this.walletType === "walletConnect") {
+      this.walletConnectProvider = universalProvider;
+      this.walletProvider = new ethers.providers.Web3Provider(universalProvider);
+      this.signer = this.walletProvider.getSigner();
+      this.userAddress = await this.signer.getAddress();
+      const chainId = await this.signer.getChainId();
+      console.log(this.userAddress, chainId, "selectedChainId", this.selectedChainId);
+    }
+
+    console.log("loaded wallet connect provider");
   }
 }
 

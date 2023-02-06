@@ -1,4 +1,3 @@
-import { AlpineDeFiSDK } from "../core";
 import { ALLOWED_CHAIN_IDS, DEFAULT_RAW_CHAIN_ID } from "../core/constants";
 import { AllowedChainId, AllowedWallet } from "../types/account";
 import { Account, ReadAccount } from "./Account";

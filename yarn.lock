@@ -21,7 +21,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.26.0
     "@typescript-eslint/parser": ^5.26.0
     "@walletconnect/universal-provider": ^2.3.2
-    "@web3modal/standalone": ^2.1.0
+    "@web3modal/standalone": 2.0.0
     assert: ^2.0.0
     axios: ^0.25.0
     buffer: ^5.5.0
@@ -3347,35 +3347,35 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3modal/core@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@web3modal/core@npm:2.1.0"
+"@web3modal/core@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@web3modal/core@npm:2.0.0"
   dependencies:
     buffer: 6.0.3
     valtio: 1.9.0
-  checksum: c7d76e5626df5946f9a98ee339073d498a71b8111ee90f1c1955e21cd70fa90d39e70c7b5d7a134421ec870e1e7e361bbc1463bbc2616bec8a539e163ce569b9
+  checksum: 60ecfa0c5caf43c5fde5d9a810e912c5000c3c54be05f1965ea2842d7b7685575aa6d16b8ad65b0401809e5a7a48a23e1fdd1dd8e732da3d9cc0c36c563d8941
   languageName: node
   linkType: hard
 
-"@web3modal/standalone@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@web3modal/standalone@npm:2.1.0"
+"@web3modal/standalone@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@web3modal/standalone@npm:2.0.0"
   dependencies:
-    "@web3modal/core": 2.1.0
-    "@web3modal/ui": 2.1.0
-  checksum: c69d9a8887df22944cc08aacbd88b96f5d8aeb43246172a5e7b09f445c51c42ab7a0162bea3feafc736c8ae26f4a041808151c83afc8a6fdafbcd2b3ac4dccc1
+    "@web3modal/core": 2.0.0
+    "@web3modal/ui": 2.0.0
+  checksum: 73b43ae40460e0b70b8ae7efe47baffb1a091a456f6d42f963423347bd6b9537ddc018816bf780225aac0e4fd66c7cea9d1d825159c02c3aec0184b4666b072c
   languageName: node
   linkType: hard
 
-"@web3modal/ui@npm:2.1.0":
-  version: 2.1.0
-  resolution: "@web3modal/ui@npm:2.1.0"
+"@web3modal/ui@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@web3modal/ui@npm:2.0.0"
   dependencies:
-    "@web3modal/core": 2.1.0
+    "@web3modal/core": 2.0.0
     lit: 2.6.1
     motion: 10.15.5
     qrcode: 1.5.1
-  checksum: 6ee4a6b61ca436d0e51e935f2b62ca985c4b2b5c793ce5a5d39dc32fbbfa175be1493ebb0456907a67d3c6ed8b7c23a32589018f6e14706400cc3e753c4a7308
+  checksum: 4c10091d74030e1dd8d4e3dda33d42bdb73b8644e5db1be30cc8208fd9320e5917e4ee69f35d7043f87524e56fb3bb735844bffcb230995ae6ee832e7c868cf7
   languageName: node
   linkType: hard
 
