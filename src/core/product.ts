@@ -347,7 +347,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
   }
 
   let contract: L2Vault | TwoAssetBasket | Vault;
-  if (product === "ethEarn") {
+  if (product === "ethEarn" || product === "ethWethEarn") {
     contract = getEthContracts()[product];
   } else {
     contract = getPolygonContracts()[product];
