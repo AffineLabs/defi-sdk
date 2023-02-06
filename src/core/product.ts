@@ -48,7 +48,6 @@ async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | Ful
   const allowance = await weth.allowance(userAddress, ethWethEarn.address);
   if (allowance.lt(amount)) throw new Error("Insufficient allowance");
 
-
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
