@@ -48,6 +48,8 @@ export interface PolygonContracts extends BothContracts {
 
 export interface EthContracts extends BothContracts {
   ethEarn: Vault;
+  ethWethEarn: Vault;
+  weth: ethers.Contract;
 }
 
 export interface BothContracts {

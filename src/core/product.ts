@@ -12,8 +12,10 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
     return buyUsdcShares(amount);
   } else if (product === "alpLarge") {
     return buyBtCEthShares(amount, slippageBps);
-  } else {
+  } else if (product == "ethEarn") {
     return buyEthUsdcShares(amount);
+  } else {
+    return buyEthWethShares(amount);
   }
 }
 
@@ -22,8 +24,49 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
     return sellUsdcShares(amount);
   } else if (product === "alpLarge") {
     return sellBtCEthShares(amount);
-  } else {
+  } else if (product == "ethEarn") {
     return sellEthUsdcShares(amount);
+  } else {
+    return sellEthWethShares(amount);
+  }
+}
+
+async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { weth, ethWethEarn } = getEthContracts();
+  const userAddress = await SIGNER.getAddress();
+  const amount = _addDecimals(amountWeth.toString(), 18);
+
+  if (amount.isNegative() || amount.isZero()) {
+    throw new Error("amount must be positive.");
+  }
+  const walletBalance = await weth.balanceOf(userAddress);
+  if (walletBalance.lt(amount)) {
+    throw new Error("Insufficient balance");
+  }
+
+  // check if user has sufficient allowance
+  const allowance = await weth.allowance(userAddress, ethWethEarn.address);
+  if (allowance.lt(amount)) throw new Error("Insufficient allowance");
+
+
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    // TODO: Dollar amount is not right given the amount is weth amount. But populated
+    // for the sake of backward compatibility.
+    dollarAmount: amountWeth.toString(),
+    tokenAmount: _removeDecimals(await ethWethEarn.convertToShares(amount), 18),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(ethWethEarn, "deposit", [amount, userAddress], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(ethWethEarn, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
   }
 }
 
@@ -243,6 +286,42 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
     )) as SmallTxReceipt;
     const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(shares, 18) };
     return res;
+  }
+}
+
+/**
+ * Sell from eth weth vault shares.
+ * @param amountWeth Amount in weth to sell
+ */
+export async function sellEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { ethWethEarn } = getEthContracts();
+  // TODO: this only works if amountWeth has less than 18 decimals. Handle other case
+  const wethToWithdraw = _addDecimals(amountWeth.toString(), 18);
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amountWeth.toString(),
+    tokenAmount: _removeDecimals(await ethWethEarn.convertToShares(wethToWithdraw), await ethWethEarn.decimals()),
+  };
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(
+      ethWethEarn,
+      "withdraw",
+      [wethToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(
+      ethWethEarn,
+      "withdraw",
+      [wethToWithdraw, userAddress, userAddress],
+      false,
+    )) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
   }
 }
 

@@ -179,12 +179,12 @@ class Account {
     return portfolioPurchase(alloctions, amount);
   }
 
-  buyProduct(product: AlpineProduct, dollarAmount: number) {
-    return productActions.buyProduct(product, dollarAmount);
+  buyProduct(product: AlpineProduct, amount: number) {
+    return productActions.buyProduct(product, amount);
   }
 
-  sellProduct(product: AlpineProduct, dollarAmount: number) {
-    return productActions.sellProduct(product, dollarAmount);
+  sellProduct(product: AlpineProduct, amount: number) {
+    return productActions.sellProduct(product, amount);
   }
 
   /**
