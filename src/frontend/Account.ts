@@ -13,7 +13,6 @@ import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
 import {
-  ALLOWED_CHAIN_IDS,
   DEFAULT_RAW_CHAIN_ID,
   DEFAULT_WALLET,
   getChainIdFromRaw,
@@ -45,9 +44,8 @@ class Account {
   /**
    * Creates an alpine account object
    */
-  constructor() {
-    this.initWalletConnectProvider();
-  }
+  // constructor() {
+  // }
 
   /**
    * connect the user account to magic's sdk. In particular,
@@ -272,9 +270,9 @@ class Account {
     return this.walletConnectProvider;
   }
 
-  setWeb3ModalInstance(web3ModalInstance: import("@web3modal/standalone").Web3Modal) {
-    this.web3ModalInstance = web3ModalInstance;
-  }
+  // setWeb3ModalInstance(web3ModalInstance: import("@web3modal/standalone").Web3Modal) {
+  //   this.web3ModalInstance = web3ModalInstance;
+  // }
 
   /**
    * This method will switch the wallet to the given chain id
@@ -319,20 +317,15 @@ class Account {
     }
   }
 
-  async initWalletConnectProvider() {
-    console.log("Initializing wallet connect provider", process.env.NODE_ENV);
-    const Web3Modal = (await import("@web3modal/standalone")).Web3Modal;
-    // Setup Modal
-    const modal = new Web3Modal({
-      // projectId: WALLETCONNECT_PROJECT_ID,
-      standaloneChains: ALLOWED_CHAIN_IDS.map(chainId => `eip155:${chainId}`),
-    });
-
-    modal.setTheme({
-      themeBackground: "themeColor",
-      themeColor: "green",
-      themeMode: "light",
-    });
+  async initWalletConnectProvider(web3Modal: import("@web3modal/standalone").Web3Modal) {
+    // "@web3modal/standalone" is an ESM module, so we can't import it at the top of the file
+    // also, there's issue with bundling it with Next.js, that's why we're initializing it on FE and importing it here
+    // for more, visit - https://nextjs.org/docs/advanced-features/compiler#module-transpilation
+    if (web3Modal) {
+      this.web3ModalInstance = web3Modal;
+    } else if (!this.web3ModalInstance) {
+      throw new Error("Web3 modal instance is not initialized");
+    }
 
     // Initialize Universal Provider
     const universalProvider = await UniversalProvider.init({
@@ -350,8 +343,7 @@ class Account {
 
     // Open modal on `display_uri` event
     universalProvider?.on("display_uri", async (uri?: string) => {
-      console.log({ uri, modal });
-      modal?.openModal({ uri });
+      this.web3ModalInstance?.openModal({ uri });
     });
 
     universalProvider?.on("session_delete", () => {
@@ -363,22 +355,13 @@ class Account {
       return;
     }
     this.setWalletConnectProvider(universalProvider);
-    this.setWeb3ModalInstance(modal);
-
-    if (universalProvider?.session) {
-      console.log("We have a session", universalProvider.session, this.walletType);
-    }
 
     if (universalProvider?.session && this.walletType === "walletConnect") {
       this.walletConnectProvider = universalProvider;
       this.walletProvider = new ethers.providers.Web3Provider(universalProvider);
       this.signer = this.walletProvider.getSigner();
       this.userAddress = await this.signer.getAddress();
-      const chainId = await this.signer.getChainId();
-      console.log(this.userAddress, chainId, "selectedChainId", this.selectedChainId);
     }
-
-    console.log("loaded wallet connect provider");
   }
 }
 

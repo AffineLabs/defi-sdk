@@ -113,6 +113,8 @@ export async function getWalletconnectProvider(
   // return _web3Provider;
 }
 
+// This is for getting the wallet provider (except the Magic one)
+// For WalletConnect, we need to initialize the WalletConnect provider by invoking the Account.initWalletConnectProvider() function
 export async function getWeb3Provider(
   walletType: AllowedWallet,
   chainId: AllowedChainId,
