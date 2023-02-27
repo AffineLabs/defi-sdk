@@ -22,6 +22,7 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
 const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
+
 export let PROVIDER: ethers.providers.StaticJsonRpcProvider;
 
 export const RPC_URLS: { [index: AllowedChainId]: string } = {

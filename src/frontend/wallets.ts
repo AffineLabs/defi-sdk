@@ -1,9 +1,10 @@
 import CoinbaseWalletSDK, { CoinbaseWalletProvider } from "@coinbase/wallet-sdk";
 import { ethers } from "ethers";
-import { Magic, MagicSDKAdditionalConfiguration } from "magic-sdk";
+import { Magic } from "magic-sdk";
 import { getProviderByChainId, RPC_URLS } from "../core/cache";
-import { AllowedChainId, AllowedWallet, EthWalletProvider } from "../types/account";
-import WalletConnectProvider from "@walletconnect/web3-provider";
+import { AllowedChainId, AllowedWallet, EthWalletProvider, MagicSDKOptions } from "../types/account";
+import Provider from "@walletconnect/universal-provider";
+import { ALLOWED_CHAIN_IDS } from "../core/constants";
 
 export async function initMagic({
   email,
@@ -17,7 +18,7 @@ export async function initMagic({
   let _magic: Magic | undefined, _provider: ethers.providers.Web3Provider | undefined;
   if (email) {
     const PROVIDER = getProviderByChainId(chainId);
-    const magicOptions: MagicSDKAdditionalConfiguration = {
+    const magicOptions: MagicSDKOptions = {
       network: {
         rpcUrl: PROVIDER.connection.url,
         chainId: Number(chainId),
@@ -45,9 +46,80 @@ export async function initMagic({
   return { magic: _magic, provider: _provider };
 }
 
+export async function getWalletconnectProvider(
+  chainId: AllowedChainId,
+  wcProvider?: Provider,
+  modal?: import("@web3modal/standalone").Web3Modal,
+): Promise<ethers.providers.Web3Provider | undefined> {
+  console.log("getWalletconnectProvider", chainId, wcProvider, modal);
+  if (!wcProvider || !modal) {
+    throw new Error("WalletConnect provider or Web3Modal is not initialized");
+  }
+  console.log(
+    "triggered display_uri event",
+    ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
+  );
+  await wcProvider
+    .connect({
+      namespaces: {
+        eip155: {
+          methods: ["eth_sendTransaction", "eth_signTransaction", "eth_sign", "personal_sign", "eth_signTypedData"],
+          chains: ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
+          events: ["chainChanged", "accountsChanged"],
+          rpcMap: RPC_URLS,
+        },
+      },
+    })
+    .then(e => console.log(e))
+    .catch((e: Error) => console.error("Error on wcProvider.connect: ", e));
+
+  // choose chain id to trigger the function to
+  console.log("Setting default chain to: ", `eip155:${chainId}`);
+  wcProvider.setDefaultChain(`eip155:${chainId}`);
+
+  modal.closeModal();
+
+  //  Create Web3 Provider
+  const web3Provider = new ethers.providers.Web3Provider(wcProvider);
+  console.log("web3Provider ====>", web3Provider.getSigner());
+  return web3Provider;
+
+  // Trigger `display_uri` event
+  // await wcProvider
+  //   .connect({
+  //     namespaces: {
+  //       eip155: {
+  //         methods: ["eth_sendTransaction", "eth_signTransaction", "eth_sign", "personal_sign", "eth_signTypedData"],
+  //         chains: ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
+  //         events: ["chainChanged", "accountsChanged"],
+  //         rpcMap: RPC_URLS,
+  //       },
+  //     },
+  //   })
+  //   .then(e => console.log(e))
+  //   .catch((e: Error) => console.error("Error on wcProvider.connect: ", e));
+  // console.log("finished triggering display_uri event");
+
+  // wcProvider.setDefaultChain(`eip155:${chainId}`);
+  // console.log("closing modal");
+  // modal.closeModal();
+
+  // console.log("wcProvider ====>", wcProvider);
+
+  // const _web3Provider = new ethers.providers.Web3Provider(
+  //   wcProvider as unknown as ethers.providers.ExternalProvider,
+  //   "any",
+  // );
+  // return _web3Provider;
+}
+
+// This is for getting the wallet provider (except the Magic one)
+// For WalletConnect, we need to initialize the WalletConnect provider by invoking the Account.initWalletConnectProvider() function
 export async function getWeb3Provider(
   walletType: AllowedWallet,
   chainId: AllowedChainId,
+  wcProvider?: Provider,
+  web3modal?: import("@web3modal/standalone").Web3Modal,
 ): Promise<ethers.providers.Web3Provider | undefined> {
   switch (walletType) {
     case "metamask": {
@@ -88,17 +160,7 @@ export async function getWeb3Provider(
     }
 
     case "walletConnect": {
-      const provider = new WalletConnectProvider({
-        rpc: {
-          ...RPC_URLS,
-        },
-      });
-
-      //  Enable session (triggers QR Code modal)
-      await provider.enable();
-
-      // We have to pass "any" if we want to change networks. See https://github.com/ethers-io/ethers.js/issues/1107
-      return new ethers.providers.Web3Provider(provider as unknown as ethers.providers.ExternalProvider, "any");
+      return await getWalletconnectProvider(chainId, wcProvider, web3modal);
     }
 
     default:
