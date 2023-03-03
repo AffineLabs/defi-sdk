@@ -33,11 +33,11 @@ class Account {
   signer!: ethers.Signer;
   biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
-  walletType: AllowedWallet = DEFAULT_WALLET;
+  walletType?: AllowedWallet = DEFAULT_WALLET;
   walletProvider?: ethers.providers.Web3Provider;
   // if true, send regular transaction, if false, use biconomy
   gas = false;
-  selectedChainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID;
+  selectedChainId?: AllowedChainId = DEFAULT_RAW_CHAIN_ID;
   walletConnectProvider?: Provider;
   web3ModalInstance?: import("@web3modal/standalone").Web3Modal;
 
@@ -134,7 +134,7 @@ class Account {
    */
   async disconnect(walletType: AllowedWallet): Promise<void> {
     if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
-    if (walletType === "walletConnect" && this.walletConnectProvider) {
+    else if (walletType === "walletConnect" && this.walletConnectProvider) {
       /**
        * we need to disconnect the wallet connect provider to close provider session
        * or this will cause the wallet connect provider to connect to the same session
@@ -148,6 +148,8 @@ class Account {
       }
     }
     this.userAddress = undefined;
+    this.walletType = undefined;
+    this.selectedChainId = undefined;
   }
 
   /**
@@ -243,7 +245,7 @@ class Account {
      * `provider?.send("eth_chainId", [])` doesn't work for magic, but it works for other wallets
      * also, this.walletProvider is undefined when the user is not connected
      */
-    if (walletType !== "magic") {
+    if (walletType !== "magic" && this.selectedChainId) {
       const provider = await getWeb3Provider(
         walletType,
         this.selectedChainId,
