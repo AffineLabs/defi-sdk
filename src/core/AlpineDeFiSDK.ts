@@ -102,6 +102,9 @@ export async function blockchainCall(
 
     return { txnCost, txnCostUSD };
   }
+
+  const gasLimit = (await contract.estimateGas[method].apply(null, args)).mul(12).div(10);
+  args.push({ gasLimit });
   const tx: TransactionResponse = await contract[method].apply(null, args);
   const receipt = await tx.wait();
 
