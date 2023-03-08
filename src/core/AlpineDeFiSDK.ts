@@ -124,14 +124,19 @@ export async function blockchainCall(
  * approve outgoing transaction with another wallet or smart contract for
  * the specified amount
  * @param to the receipient contract
- * @param amountUSDC transaction amount in usdc
+ * @param amountUSDC (optional) transaction amount in usdc, if not specified then approve max amount
  */
-export async function approve(to: keyof AlpineContracts, amountUSDC: string): Promise<DryRunReceipt | FullTxReceipt> {
+export async function approve(to: keyof AlpineContracts, amountUSDC?: string): Promise<DryRunReceipt | FullTxReceipt> {
   const contracts = getContracts() as AlpineContracts;
   const { usdc, router } = contracts;
-
-  const amount = _addDecimals(amountUSDC, 6);
-  const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
+  const actualAmountInUSDC = amountUSDC ? amountUSDC : ethers.constants.MaxUint256.toString();
+  const amount = _addDecimals(actualAmountInUSDC, 6);
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: actualAmountInUSDC,
+    tokenAmount: actualAmountInUSDC,
+  };
   const approveArgs = [to === "alpLarge" ? router.address : contracts[to].address, amount];
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(usdc, "approve", approveArgs, true)) as GasInfo;
