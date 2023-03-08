@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { AllowedChainId, NetworkParams } from "../types/account";
 
 export const DEFAULT_WALLET = "magic";
@@ -18,6 +18,8 @@ export const NETWORK_TYPE: "testnet" | "mainnet" =
 export const ALLOWED_CHAIN_IDS: AllowedChainId[] = NETWORK_TYPE === "mainnet" ? [1, 137] : [5, 80001];
 
 export const MAX_UINT = ethers.BigNumber.from(2).pow(256).sub(1);
+
+export const MAX_APPROVAL_AMOUNT: BigNumber = ethers.constants.MaxUint256;
 
 export const WALLETCONNECT_PROJECT_ID = process.env.WALLETCONNECT_PROJECT_ID || "demo-project-id";
 

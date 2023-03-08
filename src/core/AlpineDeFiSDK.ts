@@ -8,7 +8,7 @@ import { SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE, getContracts } from 
 import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
-import { MAX_UINT } from "./constants";
+import { MAX_APPROVAL_AMOUNT } from "./constants";
 
 /**
  * Get the current best estimate for gas price
@@ -130,13 +130,13 @@ export async function blockchainCall(
 export async function approve(to: keyof AlpineContracts, amountUSDC?: string): Promise<DryRunReceipt | FullTxReceipt> {
   const contracts = getContracts() as AlpineContracts;
   const { usdc, router } = contracts;
-  const actualAmountInUSDC = amountUSDC ? amountUSDC : MAX_UINT.toString();
-  const amount = _addDecimals(actualAmountInUSDC, 6);
+
+  const amount = amountUSDC ? _addDecimals(amountUSDC, 6) : MAX_APPROVAL_AMOUNT;
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
-    dollarAmount: actualAmountInUSDC,
-    tokenAmount: actualAmountInUSDC,
+    dollarAmount: amountUSDC || MAX_APPROVAL_AMOUNT.toString(),
+    tokenAmount: amountUSDC || MAX_APPROVAL_AMOUNT.toString(),
   };
   const approveArgs = [to === "alpLarge" ? router.address : contracts[to].address, amount];
   if (SIMULATE) {
