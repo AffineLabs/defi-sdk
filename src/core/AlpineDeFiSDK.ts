@@ -8,6 +8,7 @@ import { SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE, getContracts } from 
 import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
+import { MAX_UINT } from "./constants";
 
 /**
  * Get the current best estimate for gas price
@@ -129,7 +130,7 @@ export async function blockchainCall(
 export async function approve(to: keyof AlpineContracts, amountUSDC?: string): Promise<DryRunReceipt | FullTxReceipt> {
   const contracts = getContracts() as AlpineContracts;
   const { usdc, router } = contracts;
-  const actualAmountInUSDC = amountUSDC ? amountUSDC : ethers.constants.MaxUint256.toString();
+  const actualAmountInUSDC = amountUSDC ? amountUSDC : MAX_UINT.toString();
   const amount = _addDecimals(actualAmountInUSDC, 6);
   const basicInfo = {
     alpFee: "0",

@@ -40,7 +40,7 @@ const connectAndWrite = async ({
   chainId: AllowedChainId;
 }) => {
   // read
-  await testRead("0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D", 80001);
+  // await testRead("0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D", 80001);
 
   const email = process.env.EMAIL || "";
   // connect
@@ -58,18 +58,30 @@ const connectAndWrite = async ({
 
 const main = async () => {
   const alpAccount = new Account();
-  const walletType = "walletConnect";
+  const walletType = "metamask";
 
   console.log(
-    "connecting to walletConnect on chain 137",
+    "connecting to walletConnect on chain 80001",
     { ALLOWED_CHAIN_IDS },
     ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
   );
-  await connectAndWrite({ walletType, account: alpAccount, chainId: 137 });
+  await connectAndWrite({ walletType, account: alpAccount, chainId: 80001 });
   console.log("Now switch to ethereum mainnet");
-  await alpAccount.switchWalletToAllowedNetwork(walletType, 1);
-  const readAcc = new ReadAccount(alpAccount.userAddress || "", 1);
+  // await alpAccount.switchWalletToAllowedNetwork(walletType, 5);
+  const readAcc = new ReadAccount(alpAccount.userAddress || "", 80001);
   console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
+
+  await alpAccount.setSimulationMode(false); // turn off simulation mode
+
+  // write
+  try {
+    await alpAccount.approve("alpSave");
+  } catch (error) {
+    console.error("Error in approve: ", error);
+  }
+  console.log("alpSave approved");
+  await alpAccount.buyProduct("alpSave", 10);
+  console.log("alpSave bought");
 
   // disconnect
   try {
