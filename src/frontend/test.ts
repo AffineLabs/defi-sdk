@@ -46,6 +46,10 @@ const connectAndWrite = async ({
   // connect
   console.time("entire-connect");
   try {
+    if (walletType === "metamask") {
+      // switch to the chainId
+      await account.switchWalletToAllowedNetwork(walletType, chainId);
+    }
     console.log("connecting to", walletType, "on chain", chainId, account);
     await account.connect({ walletType, chainId, email });
     console.log("address: ", await account.getUserAddress());
@@ -59,29 +63,30 @@ const connectAndWrite = async ({
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
+  const chainId = 5;
 
   console.log(
-    "connecting to walletConnect on chain 80001",
+    `connecting to ${walletType} on chain ${chainId}`,
     { ALLOWED_CHAIN_IDS },
     ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
   );
-  await connectAndWrite({ walletType, account: alpAccount, chainId: 80001 });
+  await connectAndWrite({ walletType, account: alpAccount, chainId });
   console.log("Now switch to ethereum mainnet");
   // await alpAccount.switchWalletToAllowedNetwork(walletType, 5);
-  const readAcc = new ReadAccount(alpAccount.userAddress || "", 80001);
+  const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
   console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
 
   await alpAccount.setSimulationMode(false); // turn off simulation mode
 
   // write
   try {
-    await alpAccount.approve("alpSave");
+    await alpAccount.approve("ethEarn");
   } catch (error) {
     console.error("Error in approve: ", error);
   }
-  console.log("alpSave approved");
-  await alpAccount.buyProduct("alpSave", 10);
-  console.log("alpSave bought");
+  console.log("ethEarn approved");
+  await alpAccount.buyProduct("ethEarn", 10);
+  console.log("ethEarn bought");
 
   // disconnect
   try {

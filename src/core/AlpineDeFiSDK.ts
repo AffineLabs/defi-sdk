@@ -135,8 +135,8 @@ export async function approve(to: keyof AlpineContracts, amountUSDC?: string): P
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
-    dollarAmount: amountUSDC || MAX_APPROVAL_AMOUNT.toString(),
-    tokenAmount: amountUSDC || MAX_APPROVAL_AMOUNT.toString(),
+    dollarAmount: amountUSDC || _removeDecimals(MAX_APPROVAL_AMOUNT, 6),
+    tokenAmount: amountUSDC || _removeDecimals(MAX_APPROVAL_AMOUNT, 6),
   };
   const approveArgs = [to === "alpLarge" ? router.address : contracts[to].address, amount];
   if (SIMULATE) {
