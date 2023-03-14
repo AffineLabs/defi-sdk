@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import axios from "axios";
 
-import { DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
+import { AlpineProduct, DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
 import { SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE, getContracts } from "./cache";
@@ -9,6 +9,7 @@ import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
 import { MAX_APPROVAL_AMOUNT } from "./constants";
+import { getTokenInfo } from "./product";
 
 /**
  * Get the current best estimate for gas price
@@ -119,6 +120,34 @@ export async function blockchainCall(
     txnCost,
     txnCostUSD,
   };
+}
+
+/**
+ * check if the user has approved the max amount of usdc to the contract
+ * @returns true if the user has approved the max amount of usdc to the contract
+ */
+export async function isMaxUSDCApproved(product: AlpineProduct): Promise<boolean> {
+  const { usdc, alpSave, router, ethEarn } = getContracts() as AlpineContracts;
+
+  const contracts = {
+    alpSave: alpSave,
+    alpLarge: router,
+    ethEarn: ethEarn,
+  };
+
+  const _tokenInfo = await getTokenInfo(product);
+
+  const allowance = await usdc.allowance(userAddress, contracts[product].address);
+
+  const equity = _addDecimals(_tokenInfo.equity, 18);
+
+  /**
+   * we need to subtract current equity from the max approval amount
+   * because the user might have already deposited some amount
+   * and found out 'allowance' decreases by the amount deposited for 'ethEarn' only
+   * thats why we are subtracting the current equity from the max approval amount
+   */
+  return allowance.gte(MAX_APPROVAL_AMOUNT.sub(equity));
 }
 
 /**

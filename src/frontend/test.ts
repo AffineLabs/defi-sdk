@@ -63,7 +63,8 @@ const connectAndWrite = async ({
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
-  const chainId = 5;
+  const chainId = 80001;
+  const _productToBuy = "alpLarge";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -80,13 +81,19 @@ const main = async () => {
 
   // write
   try {
-    await alpAccount.approve("ethEarn");
+    // check if user is approved max amount
+    const isApproved = await alpAccount.isMaxUSDCApproved(_productToBuy);
+
+    console.log("isApproved: ", isApproved);
+
+    // approve max amount if not approved
+    if (!isApproved) await alpAccount.approve(_productToBuy);
+    console.log("approved: ", _productToBuy);
   } catch (error) {
     console.error("Error in approve: ", error);
   }
-  console.log("ethEarn approved");
-  await alpAccount.buyProduct("ethEarn", 10);
-  console.log("ethEarn bought");
+  await alpAccount.buyProduct(_productToBuy, 10);
+  console.log("bought: ", _productToBuy);
 
   // disconnect
   try {
