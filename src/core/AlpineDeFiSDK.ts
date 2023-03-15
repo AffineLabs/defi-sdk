@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, FixedNumber } from "ethers";
 import axios from "axios";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
@@ -32,7 +32,10 @@ export async function getGasBalance() {
  * @returns {ethers.BigNumber} equivalent amount in micro unit eg. micro usdc.
  */
 export function _addDecimals(amount: string, decimals: number): ethers.BigNumber {
-  return ethers.utils.parseUnits(amount, decimals);
+  // we will make it integer at first just to remove the decimal part
+  // then we will parse it to ethers.BigNumber
+  // see - https://docs.ethers.org/v5/troubleshooting/errors/#help-NUMERIC_FAULT-underflow
+  return ethers.utils.parseUnits(parseInt(amount).toString(), decimals);
 }
 
 /**
@@ -42,7 +45,13 @@ export function _addDecimals(amount: string, decimals: number): ethers.BigNumber
  * @returns {string} equivalent amount in unit.
  */
 export function _removeDecimals(amount: ethers.BigNumber, decimals: ethers.BigNumberish): string {
-  return ethers.utils.formatUnits(amount, decimals);
+  try {
+    return ethers.utils.formatUnits(amount, decimals);
+  } catch (error) {
+    // added a fallback for when the amount is too big to be parsed,
+    // and it throws 'fractional component exceeds decimals' error
+    return FixedNumber.fromValue(amount, decimals).toString();
+  }
 }
 
 // get the current matic price in usd
