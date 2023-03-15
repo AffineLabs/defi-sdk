@@ -80,10 +80,28 @@ describe("Buy products Eth", async () => {
     expect(newBal.lt(shares)).to.be.true;
   });
 
+  it("Buy/Sell ethWethEarn", async () => {
+    const { ethWethEarn } = contracts;
+    await approve("ethWethEarn", "100000");
+    await buyProduct("ethWethEarn", 10);
+    const shares = await ethWethEarn.balanceOf(wallet.address);
+    expect(shares.gt(0)).to.be.true;
+
+    await sellProduct("ethWethEarn", 10);
+    const newBal = await ethWethEarn.balanceOf(wallet.address);
+    expect(newBal.lt(shares)).to.be.true;
+  });
+
   it("EthEarn info", async () => {
     const ethInfo = await getTokenInfo("ethEarn");
     console.log({ ethInfo });
     expect(Number(ethInfo.amount) * Number(ethInfo.price)).to.closeTo(Number(ethInfo.equity), 1);
+  });
+
+  it("EthWethEarn info", async () => {
+    const ethWethInfo = await getTokenInfo("ethWethEarn");
+    console.log({ ethWethInfo });
+    expect(Number(ethWethInfo.amount) * Number(ethWethInfo.price)).to.closeTo(Number(ethWethInfo.equity), 1);
   });
 });
 

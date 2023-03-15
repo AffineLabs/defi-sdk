@@ -71,6 +71,7 @@ export async function getAllContracts(
     Forwarder: forwarder,
     ERC4626Router: router,
     EthUsdcEarn: ethEarnData,
+    EthWethEarn: ethWethEarnData,
   } = allData;
 
   const chainId = getChainId();
@@ -87,9 +88,12 @@ export async function getAllContracts(
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
+    const ethWethEarn = Vault__factory.connect(ethWethEarnData.address, provider);
     return {
       ethEarn,
+      ethWethEarn,
       usdc: new ethers.Contract(await ethEarn.asset(), erc20Abi, provider),
+      weth: new ethers.Contract(await ethWethEarn.asset(), erc20Abi, provider),
     };
   } else {
     throw Error("Bad chainId");
