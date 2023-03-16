@@ -40,12 +40,16 @@ const connectAndWrite = async ({
   chainId: AllowedChainId;
 }) => {
   // read
-  await testRead("0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D", 80001);
+  // await testRead("0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D", 80001);
 
   const email = process.env.EMAIL || "";
   // connect
   console.time("entire-connect");
   try {
+    if (walletType === "metamask") {
+      // switch to the chainId
+      await account.switchWalletToAllowedNetwork(walletType, chainId);
+    }
     console.log("connecting to", walletType, "on chain", chainId, account);
     await account.connect({ walletType, chainId, email });
     console.log("address: ", await account.getUserAddress());
@@ -58,18 +62,38 @@ const connectAndWrite = async ({
 
 const main = async () => {
   const alpAccount = new Account();
-  const walletType = "walletConnect";
+  const walletType = "metamask";
+  const chainId = 80001;
+  const _productToBuy = "alpLarge";
 
   console.log(
-    "connecting to walletConnect on chain 137",
+    `connecting to ${walletType} on chain ${chainId}`,
     { ALLOWED_CHAIN_IDS },
     ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
   );
-  await connectAndWrite({ walletType, account: alpAccount, chainId: 137 });
+  await connectAndWrite({ walletType, account: alpAccount, chainId });
   console.log("Now switch to ethereum mainnet");
-  await alpAccount.switchWalletToAllowedNetwork(walletType, 1);
-  const readAcc = new ReadAccount(alpAccount.userAddress || "", 1);
+  // await alpAccount.switchWalletToAllowedNetwork(walletType, 5);
+  const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
   console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
+
+  await alpAccount.setSimulationMode(false); // turn off simulation mode
+
+  // write
+  try {
+    // check if user is approved max amount
+    const isApproved = await alpAccount.isMaxUSDCApproved(_productToBuy);
+
+    console.log("isApproved: ", isApproved);
+
+    // approve max amount if not approved
+    if (!isApproved) await alpAccount.approve(_productToBuy);
+    console.log("approved: ", _productToBuy);
+  } catch (error) {
+    console.error("Error in approve: ", error);
+  }
+  await alpAccount.buyProduct(_productToBuy, 10);
+  console.log("bought: ", _productToBuy);
 
   // disconnect
   try {

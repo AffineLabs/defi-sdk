@@ -1,13 +1,14 @@
 import { ethers } from "ethers";
 import axios from "axios";
 
-import { DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
+import { AlpineProduct, DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 
 import { SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE, getContracts } from "./cache";
 import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
+import { MAX_APPROVAL_AMOUNT } from "./constants";
 
 /**
  * Get the current best estimate for gas price
@@ -30,6 +31,9 @@ export async function getGasBalance() {
  * @returns {ethers.BigNumber} equivalent amount in micro unit eg. micro usdc.
  */
 export function _addDecimals(amount: string, decimals: number): ethers.BigNumber {
+  // we will make it integer at first just to remove the decimal part
+  // then we will parse it to ethers.BigNumber
+  // see - https://docs.ethers.org/v5/troubleshooting/errors/#help-NUMERIC_FAULT-underflow
   return ethers.utils.parseUnits(amount, decimals);
 }
 
@@ -121,17 +125,44 @@ export async function blockchainCall(
 }
 
 /**
+ * check if the user has approved the max amount of usdc to the contract
+ * @returns true if the user has approved the max amount of usdc to the contract
+ */
+export async function isMaxUSDCApproved(product: AlpineProduct): Promise<boolean> {
+  const { usdc, alpSave, router, ethEarn } = getContracts() as AlpineContracts;
+
+  const contracts = {
+    alpSave: alpSave,
+    alpLarge: router,
+    ethEarn: ethEarn,
+  };
+
+  const allowance = await usdc.allowance(userAddress, contracts[product].address);
+  /**
+   * user might have already deposited some amount
+   * and found out 'allowance' decreases by the amount deposited for 'ethEarn' only
+   * thats why we are dividing the max approval amount by 2 and comparing it with the allowance
+   */
+  return allowance.gte(MAX_APPROVAL_AMOUNT.div(2));
+}
+
+/**
  * approve outgoing transaction with another wallet or smart contract for
  * the specified amount
  * @param to the receipient contract
- * @param amountUSDC transaction amount in usdc
+ * @param amountUSDC (optional) transaction amount in usdc, if not specified then approve max amount
  */
-export async function approve(to: keyof AlpineContracts, amountUSDC: string): Promise<DryRunReceipt | FullTxReceipt> {
+export async function approve(to: keyof AlpineContracts, amountUSDC?: string): Promise<DryRunReceipt | FullTxReceipt> {
   const contracts = getContracts() as AlpineContracts;
   const { usdc, router } = contracts;
 
-  const amount = _addDecimals(amountUSDC, 6);
-  const basicInfo = { alpFee: "0", alpFeePercent: "0", dollarAmount: amountUSDC, tokenAmount: amountUSDC };
+  const amount = amountUSDC ? _addDecimals(amountUSDC, 6) : MAX_APPROVAL_AMOUNT;
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amountUSDC || _removeDecimals(MAX_APPROVAL_AMOUNT, 6),
+    tokenAmount: amountUSDC || _removeDecimals(MAX_APPROVAL_AMOUNT, 6),
+  };
   const approveArgs = [to === "alpLarge" ? router.address : contracts[to].address, amount];
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(usdc, "approve", approveArgs, true)) as GasInfo;

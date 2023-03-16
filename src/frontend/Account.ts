@@ -175,13 +175,17 @@ class Account {
     return init(this.signer, biconomyProvider, undefined, this.selectedChainId);
   }
 
+  async isMaxUSDCApproved(product: AlpineProduct): Promise<boolean> {
+    return AlpineDeFiSDK.isMaxUSDCApproved(product);
+  }
+
   /**
    * approve outgoing transaction with another wallet or smart contract for
    * the specified amount
    * @param {String} to the receipient address
    * @param {String} amountUSDC transaction amount in usdc
    */
-  approve(to: keyof AlpineContracts, amountUSDC: string) {
+  approve(to: keyof AlpineContracts, amountUSDC?: string) {
     return AlpineDeFiSDK.approve(to, amountUSDC);
   }
 
