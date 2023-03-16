@@ -1,4 +1,4 @@
-import { ethers, FixedNumber } from "ethers";
+import { ethers } from "ethers";
 import axios from "axios";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
@@ -9,7 +9,6 @@ import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
 import { MAX_APPROVAL_AMOUNT } from "./constants";
-import { getTokenInfo } from "./product";
 
 /**
  * Get the current best estimate for gas price
@@ -45,13 +44,7 @@ export function _addDecimals(amount: string, decimals: number): ethers.BigNumber
  * @returns {string} equivalent amount in unit.
  */
 export function _removeDecimals(amount: ethers.BigNumber, decimals: ethers.BigNumberish): string {
-  try {
-    return ethers.utils.formatUnits(amount, decimals);
-  } catch (error) {
-    // added a fallback for when the amount is too big to be parsed,
-    // and it throws 'fractional component exceeds decimals' error
-    return FixedNumber.fromValue(amount, decimals).toString();
-  }
+  return ethers.utils.formatUnits(amount, decimals);
 }
 
 // get the current matic price in usd
@@ -144,19 +137,13 @@ export async function isMaxUSDCApproved(product: AlpineProduct): Promise<boolean
     ethEarn: ethEarn,
   };
 
-  const _tokenInfo = await getTokenInfo(product);
-
   const allowance = await usdc.allowance(userAddress, contracts[product].address);
-
-  const equity = _addDecimals(_tokenInfo.equity, 18);
-
   /**
-   * we need to subtract current equity from the max approval amount
-   * because the user might have already deposited some amount
+   * user might have already deposited some amount
    * and found out 'allowance' decreases by the amount deposited for 'ethEarn' only
-   * thats why we are subtracting the current equity from the max approval amount
+   * thats why we are dividing the max approval amount by 2 and comparing it with the allowance
    */
-  return allowance.gte(MAX_APPROVAL_AMOUNT.sub(equity));
+  return allowance.gte(MAX_APPROVAL_AMOUNT.div(2));
 }
 
 /**
