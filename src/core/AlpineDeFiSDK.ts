@@ -34,7 +34,7 @@ export function _addDecimals(amount: string, decimals: number): ethers.BigNumber
   // we will make it integer at first just to remove the decimal part
   // then we will parse it to ethers.BigNumber
   // see - https://docs.ethers.org/v5/troubleshooting/errors/#help-NUMERIC_FAULT-underflow
-  return ethers.utils.parseUnits(parseInt(amount).toString(), decimals);
+  return ethers.utils.parseUnits(amount, decimals);
 }
 
 /**
