@@ -6,12 +6,13 @@ import { approve, mintUSDC } from "../AlpineDeFiSDK";
 import { getContracts, getEthContracts, getPolygonContracts, init, setProvider } from "../cache";
 import { buyProduct, sellProduct, getTokenInfo } from "../product";
 import { EthContracts, PolygonContracts } from "../types";
+import { getTestProvider } from "./utils";
 
 describe("Buy products", async () => {
   let wallet: ethers.Wallet;
   let contracts: PolygonContracts;
   before(async () => {
-    const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
+    const testProvider = getTestProvider("poly");
     wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
 
     setProvider(testProvider);

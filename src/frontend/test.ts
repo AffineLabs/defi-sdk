@@ -1,4 +1,5 @@
 import { ALLOWED_CHAIN_IDS, DEFAULT_RAW_CHAIN_ID } from "../core/constants";
+import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet } from "../types/account";
 import { Account, ReadAccount } from "./Account";
 
@@ -39,9 +40,6 @@ const connectAndWrite = async ({
   account: Account;
   chainId: AllowedChainId;
 }) => {
-  // read
-  // await testRead("0x69b3ce79B05E57Fc31156fEa323Bd96E6304852D", 80001);
-
   const email = process.env.EMAIL || "";
   // connect
   console.time("entire-connect");
@@ -63,8 +61,8 @@ const connectAndWrite = async ({
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
-  const chainId = 80001;
-  const _productToBuy = "alpLarge";
+  const chainId = 5;
+  const _productToBuy: AlpineProduct = "ethWethEarn";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -72,7 +70,6 @@ const main = async () => {
     ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
   );
   await connectAndWrite({ walletType, account: alpAccount, chainId });
-  console.log("Now switch to ethereum mainnet");
   // await alpAccount.switchWalletToAllowedNetwork(walletType, 5);
   const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
   console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
@@ -83,7 +80,6 @@ const main = async () => {
   try {
     // check if user is approved max amount
     const isApproved = await alpAccount.isMaxUSDCApproved(_productToBuy);
-
     console.log("isApproved: ", isApproved);
 
     // approve max amount if not approved
@@ -92,7 +88,7 @@ const main = async () => {
   } catch (error) {
     console.error("Error in approve: ", error);
   }
-  await alpAccount.buyProduct(_productToBuy, 10);
+  await alpAccount.buyProduct(_productToBuy, 0.1);
   console.log("bought: ", _productToBuy);
 
   // disconnect
