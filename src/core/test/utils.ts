@@ -1,4 +1,4 @@
-import { utils } from "ethers";
+import { ethers, utils } from "ethers";
 import { getPolygonContracts, PROVIDER } from "../cache";
 
 function _getMappingStorage(slot: number, key: string): string {
@@ -42,4 +42,13 @@ export async function setAlpSaveL1LockedValue(value: number) {
     utils.hexValue(385),
     utils.hexZeroPad(utils.hexValue(value), 32),
   ]);
+}
+
+export function getTestProvider(network: "poly" | "eth") {
+  const url = network === "poly" ? "http://localhost:8545" : "http://localhost:8546";
+  const testProvider = new ethers.providers.StaticJsonRpcProvider({
+    url,
+    throttleLimit: 10,
+  });
+  return testProvider;
 }

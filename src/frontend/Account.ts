@@ -185,7 +185,7 @@ class Account {
    * @param {String} to the receipient address
    * @param {String} amountUSDC transaction amount in usdc
    */
-  approve(to: keyof AlpineContracts, amountUSDC?: string) {
+  approve(to: AlpineProduct, amountUSDC?: string) {
     return AlpineDeFiSDK.approve(to, amountUSDC);
   }
 

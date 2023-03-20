@@ -129,15 +129,20 @@ export async function blockchainCall(
  * @returns true if the user has approved the max amount of usdc to the contract
  */
 export async function isMaxUSDCApproved(product: AlpineProduct): Promise<boolean> {
-  const { usdc, alpSave, router, ethEarn } = getContracts() as AlpineContracts;
+  const { usdc, weth, alpSave, router, ethEarn, ethWethEarn } = getContracts() as AlpineContracts;
 
-  const contracts = {
-    alpSave: alpSave,
+  let asset = usdc;
+  if (product === "ethWethEarn") {
+    asset = weth;
+  }
+  const productToSpender = {
+    alpSave,
     alpLarge: router,
-    ethEarn: ethEarn,
+    ethEarn,
+    ethWethEarn,
   };
 
-  const allowance = await usdc.allowance(userAddress, contracts[product].address);
+  const allowance = await asset.allowance(userAddress, productToSpender[product].address);
   /**
    * user might have already deposited some amount
    * and found out 'allowance' decreases by the amount deposited for 'ethEarn' only
@@ -152,23 +157,29 @@ export async function isMaxUSDCApproved(product: AlpineProduct): Promise<boolean
  * @param to the receipient contract
  * @param amountUSDC (optional) transaction amount in usdc, if not specified then approve max amount
  */
-export async function approve(to: keyof AlpineContracts, amountUSDC?: string): Promise<DryRunReceipt | FullTxReceipt> {
+export async function approve(product: AlpineProduct, amountAsset?: string): Promise<DryRunReceipt | FullTxReceipt> {
   const contracts = getContracts() as AlpineContracts;
-  const { usdc, router } = contracts;
+  const { usdc, router, weth } = contracts;
 
-  const amount = amountUSDC ? _addDecimals(amountUSDC, 6) : MAX_APPROVAL_AMOUNT;
+  let asset = usdc;
+  if (product === "ethWethEarn") {
+    asset = weth;
+  }
+  const decimals = await asset.decimals();
+
+  const amount = amountAsset ? _addDecimals(amountAsset, decimals) : MAX_APPROVAL_AMOUNT;
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
-    dollarAmount: amountUSDC || _removeDecimals(MAX_APPROVAL_AMOUNT, 6),
-    tokenAmount: amountUSDC || _removeDecimals(MAX_APPROVAL_AMOUNT, 6),
+    dollarAmount: amountAsset || _removeDecimals(MAX_APPROVAL_AMOUNT, decimals),
+    tokenAmount: amountAsset || _removeDecimals(MAX_APPROVAL_AMOUNT, decimals),
   };
-  const approveArgs = [to === "alpLarge" ? router.address : contracts[to].address, amount];
+  const approveArgs = [product === "alpLarge" ? router.address : contracts[product].address, amount];
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(usdc, "approve", approveArgs, true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(asset, "approve", approveArgs, true)) as GasInfo;
     return { ...basicInfo, ...dryRunInfo };
   } else {
-    const receipt = (await blockchainCall(usdc, "approve", approveArgs, false)) as SmallTxReceipt;
+    const receipt = (await blockchainCall(asset, "approve", approveArgs, false)) as SmallTxReceipt;
     return {
       ...basicInfo,
       ...receipt,

@@ -23,7 +23,7 @@ describe("Portfolio transactions", async () => {
     contracts = getPolygonContracts();
     const { router, alpLarge, usdc, alpSave } = contracts;
 
-    await approve("router", "1000000");
+    // await approve("router", "1000000");
     //This approval allows the alpLarge vault to spend USDC
     await blockchainCall(router, "approve", [usdc.address, alpLarge.address, MAX_INT]);
     //This approval allows the alpSave vault to spend USDC

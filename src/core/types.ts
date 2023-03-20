@@ -36,7 +36,9 @@ export type productAllocation = {
   [key in PolygonProduct]: number;
 };
 
-export interface AlpineContracts extends PolygonContracts, EthContracts {}
+export interface BothContracts {
+  usdc: ethers.Contract;
+}
 
 export interface PolygonContracts extends BothContracts {
   alpSave: L2Vault;
@@ -52,9 +54,7 @@ export interface EthContracts extends BothContracts {
   weth: ethers.Contract;
 }
 
-export interface BothContracts {
-  usdc: ethers.Contract;
-}
+export interface AlpineContracts extends PolygonContracts, EthContracts {}
 
 export interface TokenInfo {
   amount: string; // in base unit

@@ -33,20 +33,17 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
 
 async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { weth, ethWethEarn } = getEthContracts();
-  const userAddress = await SIGNER.getAddress();
   const amount = _addDecimals(amountWeth.toString(), 18);
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
+  console.log("weth", weth.address);
   const walletBalance = await weth.balanceOf(userAddress);
+  console.log("walletBalance", walletBalance.toString());
   if (walletBalance.lt(amount)) {
     throw new Error("Insufficient balance");
   }
-
-  // check if user has sufficient allowance
-  const allowance = await weth.allowance(userAddress, ethWethEarn.address);
-  if (allowance.lt(amount)) throw new Error("Insufficient allowance");
 
   const basicInfo = {
     alpFee: "0",
