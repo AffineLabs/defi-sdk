@@ -8,7 +8,7 @@ import { ethers } from "ethers";
 import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, productAllocation } from "../core/types";
 import { portfolioSell, portfolioPurchase } from "../core/portfolio";
 import { AlpineDeFiSDK, init } from "../core";
-import { AlpineProduct, AlpineContracts } from "../core/types";
+import { AlpineProduct } from "../core/types";
 import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
@@ -61,9 +61,6 @@ class Account {
     verify,
     chainId,
   }: IConnectAccount): Promise<void> {
-    console.log("connected: ", this.isConnected(walletType, chainId));
-    if (this.isConnected(walletType, chainId)) return;
-
     // get wallet provider based on wallet type
     let walletProvider: ethers.providers.Web3Provider | undefined;
     if (walletType === "magic" && email) {
