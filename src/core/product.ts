@@ -33,7 +33,9 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
 
 async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { weth, ethWethEarn, router } = getEthContracts();
-  const amount = _addDecimals(amountWeth.toString(), 18);
+  const shareDecimals = await ethWethEarn.decimals();
+  const ethDecimals = 18;
+  const amount = _addDecimals(amountWeth.toString(), ethDecimals);
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
@@ -49,7 +51,7 @@ async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | Ful
     // TODO: Dollar amount is not right given the amount is weth amount. But populated
     // for the sake of backward compatibility.
     dollarAmount: amountWeth.toString(),
-    tokenAmount: _removeDecimals(await ethWethEarn.convertToShares(amount), 18),
+    tokenAmount: _removeDecimals(await ethWethEarn.convertToShares(amount), shareDecimals),
   };
 
   const data: string[] = [];
@@ -70,7 +72,7 @@ async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | Ful
     const afterBal: ethers.BigNumber = await ethWethEarn.balanceOf(userAddress);
     const amountChanged = afterBal.sub(beforeBal);
 
-    const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, await ethWethEarn.decimals()) };
+    const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, shareDecimals) };
     return res;
   }
 }
@@ -299,9 +301,10 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
  * @param amountWeth Amount in weth to sell
  */
 export async function sellEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { ethWethEarn } = getEthContracts();
+  const { ethWethEarn, weth } = getEthContracts();
+
   // TODO: this only works if amountWeth has less than 18 decimals. Handle other case
-  const wethToWithdraw = _addDecimals(amountWeth.toString(), 18);
+  const wethToWithdraw = _addDecimals(amountWeth.toString(), await weth.decimals());
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
