@@ -53,7 +53,7 @@ async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | Ful
   };
 
   const data: string[] = [];
-  data.push(router.interface.encodeFunctionData("depositNative", []));
+  data.push(router.interface.encodeFunctionData("depositNative"));
   data.push(router.interface.encodeFunctionData("approve", [weth.address, ethWethEarn.address, MAX_UINT]));
   data.push(router.interface.encodeFunctionData("deposit", [ethWethEarn.address, userAddress, amount, 0]));
 
