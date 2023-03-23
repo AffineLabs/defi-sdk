@@ -52,6 +52,7 @@ export interface EthContracts extends BothContracts {
   ethEarn: Vault;
   ethWethEarn: Vault;
   weth: ethers.Contract;
+  router: Router;
 }
 
 export interface AlpineContracts extends PolygonContracts, EthContracts {}
