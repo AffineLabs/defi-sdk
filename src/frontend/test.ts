@@ -61,8 +61,8 @@ const connectAndWrite = async ({
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
-  const chainId = 80001 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "alpSave";
+  const chainId = 5 as AllowedChainId;
+  const _productToBuy: AlpineProduct = "ethWethEarn";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -73,7 +73,7 @@ const main = async () => {
   const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
   console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
 
-  await alpAccount.setSimulationMode(true); // turn off simulation mode
+  await alpAccount.setSimulationMode(false);
 
   // write
   try {
