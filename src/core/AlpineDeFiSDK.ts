@@ -1,5 +1,4 @@
-import { ethers } from "ethers";
-// import axios from "axios";
+import { ethers, PayableOverrides } from "ethers";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
@@ -69,6 +68,7 @@ export async function blockchainCall(
   method: string,
   args: Array<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   simulate = false,
+  value?: ethers.BigNumberish,
 ): Promise<SmallTxReceipt | GasInfo> {
   const signer = SIGNER;
   const biconomy = BICONOMY;
@@ -90,6 +90,13 @@ export async function blockchainCall(
   }
 
   // regular (non-meta) tx
+
+  let overrides: PayableOverrides = { value };
+  args.push(overrides);
+  const gasLimit = (await contract.estimateGas[method].apply(null, args)).mul(12).div(10);
+  overrides = { value, gasLimit };
+  args[args.length - 1] = overrides;
+
   if (simulate) {
     const [gasEstimate, gasPrice] = await Promise.all([
       contract.estimateGas[method].apply(null, args),
@@ -107,8 +114,6 @@ export async function blockchainCall(
     return { txnCost, txnCostUSD };
   }
 
-  const gasLimit = (await contract.estimateGas[method].apply(null, args)).mul(12).div(10);
-  args.push({ gasLimit });
   const tx: TransactionResponse = await contract[method].apply(null, args);
   const receipt = await tx.wait();
 
@@ -129,17 +134,15 @@ export async function blockchainCall(
  * @returns true if the user has approved the max amount of usdc to the contract
  */
 export async function isMaxUSDCApproved(product: AlpineProduct): Promise<boolean> {
-  const { usdc, weth, alpSave, router, ethEarn, ethWethEarn } = getContracts() as AlpineContracts;
+  const { usdc, alpSave, router, ethEarn } = getContracts() as AlpineContracts;
 
-  let asset = usdc;
-  if (product === "ethWethEarn") {
-    asset = weth;
-  }
+  if (product === "ethWethEarn") return true;
+
+  const asset = usdc;
   const productToSpender = {
     alpSave,
     alpLarge: router,
     ethEarn,
-    ethWethEarn,
   };
 
   const allowance = await asset.allowance(userAddress, productToSpender[product].address);
