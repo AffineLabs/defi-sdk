@@ -32,15 +32,15 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
 }
 
 async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { weth, ethWethEarn } = getEthContracts();
-  const amount = _addDecimals(amountWeth.toString(), 18);
+  const { weth, ethWethEarn, router } = getEthContracts();
+  const shareDecimals = await ethWethEarn.decimals();
+  const ethDecimals = 18;
+  const amount = _addDecimals(amountWeth.toString(), ethDecimals);
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
   }
-  console.log("weth", weth.address);
-  const walletBalance = await weth.balanceOf(userAddress);
-  console.log("walletBalance", walletBalance.toString());
+  const walletBalance = await PROVIDER.getBalance(userAddress);
   if (walletBalance.lt(amount)) {
     throw new Error("Insufficient balance");
   }
@@ -51,18 +51,29 @@ async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | Ful
     // TODO: Dollar amount is not right given the amount is weth amount. But populated
     // for the sake of backward compatibility.
     dollarAmount: amountWeth.toString(),
-    tokenAmount: _removeDecimals(await ethWethEarn.convertToShares(amount), 18),
+    tokenAmount: _removeDecimals(await ethWethEarn.convertToShares(amount), shareDecimals),
   };
 
+  const data: string[] = [];
+  data.push(router.interface.encodeFunctionData("depositNative"));
+  data.push(router.interface.encodeFunctionData("approve", [weth.address, ethWethEarn.address, MAX_UINT]));
+  data.push(router.interface.encodeFunctionData("deposit", [ethWethEarn.address, userAddress, amount, 0]));
+
+  const beforeBal: ethers.BigNumber = await ethWethEarn.balanceOf(userAddress);
+  console.log({ amount });
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(ethWethEarn, "deposit", [amount, userAddress], true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(router, "multicall", [data], true, amount)) as GasInfo;
     return {
       ...basicInfo,
       ...dryRunInfo,
     };
   } else {
-    const receipt = (await blockchainCall(ethWethEarn, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
+    const receipt = (await blockchainCall(router, "multicall", [data], false, amount)) as SmallTxReceipt;
+    const afterBal: ethers.BigNumber = await ethWethEarn.balanceOf(userAddress);
+    const amountChanged = afterBal.sub(beforeBal);
+
+    const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, shareDecimals) };
+    return res;
   }
 }
 
@@ -290,9 +301,10 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
  * @param amountWeth Amount in weth to sell
  */
 export async function sellEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { ethWethEarn } = getEthContracts();
+  const { ethWethEarn, weth } = getEthContracts();
+
   // TODO: this only works if amountWeth has less than 18 decimals. Handle other case
-  const wethToWithdraw = _addDecimals(amountWeth.toString(), 18);
+  const wethToWithdraw = _addDecimals(amountWeth.toString(), await weth.decimals());
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",

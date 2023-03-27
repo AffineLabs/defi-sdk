@@ -72,6 +72,7 @@ export async function getAllContracts(
     ERC4626Router: router,
     EthUsdcEarn: ethEarnData,
     EthWethEarn: ethWethEarnData,
+    EthRouter: ethRouter,
   } = allData;
 
   const chainId = getChainId();
@@ -94,6 +95,7 @@ export async function getAllContracts(
       ethWethEarn,
       usdc: new ethers.Contract(await ethEarn.asset(), erc20Abi, provider),
       weth: new ethers.Contract(await ethWethEarn.asset(), erc20Abi, provider),
+      router: Router__factory.connect(ethRouter.address, provider),
     };
   } else {
     throw Error("Bad chainId");

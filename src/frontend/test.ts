@@ -70,11 +70,10 @@ const main = async () => {
     ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
   );
   await connectAndWrite({ walletType, account: alpAccount, chainId });
-  // await alpAccount.switchWalletToAllowedNetwork(walletType, 5);
   const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
   console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
 
-  await alpAccount.setSimulationMode(false); // turn off simulation mode
+  await alpAccount.setSimulationMode(true); // turn off simulation mode
 
   // write
   try {
@@ -88,7 +87,9 @@ const main = async () => {
   } catch (error) {
     console.error("Error in approve: ", error);
   }
-  await alpAccount.buyProduct(_productToBuy, 0.1);
+  // const res = await alpAccount.buyProduct(_productToBuy, 0.1);
+  const res = await alpAccount.sellProduct(_productToBuy, 0.1);
+  console.log({ res });
   console.log("bought: ", _productToBuy);
 
   // disconnect
