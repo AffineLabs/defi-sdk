@@ -61,8 +61,8 @@ const connectAndWrite = async ({
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
-  const chainId = 5;
-  const _productToBuy: AlpineProduct = "ethWethEarn";
+  const chainId = 80001 as AllowedChainId;
+  const _productToBuy: AlpineProduct = "alpSave";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -74,7 +74,7 @@ const main = async () => {
   const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
   console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
 
-  await alpAccount.setSimulationMode(false); // turn off simulation mode
+  await alpAccount.setSimulationMode(true); // turn off simulation mode
 
   // write
   try {
@@ -83,12 +83,16 @@ const main = async () => {
     console.log("isApproved: ", isApproved);
 
     // approve max amount if not approved
-    if (!isApproved) await alpAccount.approve(_productToBuy);
+    if (!isApproved) {
+      const res = await alpAccount.approve(_productToBuy);
+      console.log("approve res: ", res);
+    }
     console.log("approved: ", _productToBuy);
   } catch (error) {
     console.error("Error in approve: ", error);
   }
-  await alpAccount.buyProduct(_productToBuy, 0.1);
+  const buyResponse = await alpAccount.buyProduct(_productToBuy, 0.1);
+  console.log("buy response: ", buyResponse);
   console.log("bought: ", _productToBuy);
 
   // disconnect

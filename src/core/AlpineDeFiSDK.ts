@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import axios from "axios";
+// import axios from "axios";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
@@ -50,11 +50,11 @@ export function _removeDecimals(amount: ethers.BigNumber, decimals: ethers.BigNu
 // get the current matic price in usd
 // we are using coingecko API to get the latest price
 export async function getMaticPrice(): Promise<number> {
-  const apiAddress = "https://api.coingecko.com/api/v3/simple/price?ids=matic-network&vs_currencies=usd";
-  const { data: maticData } = await axios.get(apiAddress);
-  const maticPrices = maticData["matic-network"];
-  const usdMaticPrice: number = maticPrices["usd"];
-  return usdMaticPrice;
+  // const apiAddress = "https://api.coingecko.com/api/v3/simple/price?ids=matic-network&vs_currencies=usd";
+  // const { data: maticData } = await axios.get(apiAddress);
+  // const maticPrices = maticData["matic-network"];
+  // const usdMaticPrice: number = maticPrices["usd"];
+  return 1.077;
 }
 
 /**
