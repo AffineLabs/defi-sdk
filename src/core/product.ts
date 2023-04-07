@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
 import { L2Vault, TwoAssetBasket, Vault } from "../typechain";
-import { _addDecimals, _removeDecimals, blockchainCall, getMaticPrice } from "./AlpineDeFiSDK";
+import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
 import { getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
 import { MAX_UINT } from "./constants";
 
@@ -272,10 +272,8 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
     const gasEstimate = ethers.BigNumber.from(100e3);
     const gasPrice = await PROVIDER.getGasPrice();
     const txnCost = ethers.utils.formatEther(gasEstimate.mul(gasPrice));
-    const maticPrice = await getMaticPrice();
     const dryRunInfo: GasInfo = {
       txnCost,
-      txnCostUSD: (Number(txnCost) * maticPrice).toString(),
     };
     return {
       ...basicInfo,
