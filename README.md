@@ -20,25 +20,27 @@ See instructions for installation [here](https://github.com/gakonst/foundry#inst
 
 ### Node
 
-- Install nvm with these [instructions](https://github.com/nvm-sh/nvm#install--update-script). Then run
+Install nvm with these [instructions](https://github.com/nvm-sh/nvm#install--update-script). Then run
 
 ```sh
 nvm use
 ```
 
-- Install yarn with
+Install yarn with
 
 ```sh
 npm install -g yarn
 ```
 
-- Install the dependencies:
+Install the dependencies:
 
 ```sh
 yarn install
 ```
 
-- Build the typechain files
+Install pre-commit hooks: `yarn husky install`
+
+Build the typechain files
 
 ```sh
 yarn build
