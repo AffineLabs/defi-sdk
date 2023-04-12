@@ -21,4 +21,3 @@ Object.defineProperty(exports, "ReadAccount", { enumerable: true, get: function 
 const core_1 = require("./core");
 Object.defineProperty(exports, "AlpineDeFiSDK", { enumerable: true, get: function () { return core_1.AlpineDeFiSDK; } });
 __exportStar(require("./core/types"), exports);
-require("./typechain");

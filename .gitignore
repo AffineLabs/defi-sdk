@@ -150,4 +150,7 @@ typings/
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Ignore typechain except in dist/ folder
 typechain
+!dist/typechain
