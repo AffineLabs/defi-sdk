@@ -103,7 +103,6 @@ typings/
 # Nuxt.js build / generate output
 
 .nuxt
-dist
 
 # Gatsby files
 
@@ -151,4 +150,7 @@ dist
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Ignore typechain except in dist/ folder
 typechain
+!dist/typechain
