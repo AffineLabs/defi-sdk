@@ -41,3 +41,15 @@ export async function redeemWithdrawRequest(reqInfo: SSVWithdrawalRequestInfo): 
   const txReceipt = await blockchainCall(withdrawalEscrow, "redeem", [SIGNER.getAddress(), reqInfo.epoch]);
   return txReceipt;
 }
+
+export async function getAssets(): Promise<number> {
+  const { withdrawalEscrow } = getEthContracts();
+  const withdrawalRequests = await withdrawalEscrow.queryFilter(
+    withdrawalEscrow.filters.WithdrawalRequest(SIGNER.getAddress(), null, null),
+  );
+  const epochs = withdrawalRequests.map(req => req.args[1]);
+
+  const assets = await withdrawalEscrow.getAssets(SIGNER.getAddress(), epochs);
+
+  return assets.toNumber();
+}
