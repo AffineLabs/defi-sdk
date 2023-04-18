@@ -8,6 +8,7 @@ import {
   Router__factory,
   EmergencyWithdrawalQueue__factory,
   Vault__factory,
+  SingleStrategyWithdrawalEscrow__factory,
 } from "../typechain";
 import { AllowedChainId } from "../types/account";
 import { DEFAULT_RAW_CHAIN_ID } from "./constants";
@@ -90,9 +91,12 @@ export async function getAllContracts(
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
     const ethWethEarn = Vault__factory.connect(ethWethEarnData.address, provider);
+    /// TODO: Fix the withdrawal address
+    const withdrawalEscrow = SingleStrategyWithdrawalEscrow__factory.connect(ethWethEarnData.address, provider);
     return {
       ethEarn,
       ethWethEarn,
+      withdrawalEscrow,
       usdc: new ethers.Contract(await ethEarn.asset(), erc20Abi, provider),
       weth: new ethers.Contract(await ethWethEarn.asset(), erc20Abi, provider),
       router: Router__factory.connect(ethRouter.address, provider),

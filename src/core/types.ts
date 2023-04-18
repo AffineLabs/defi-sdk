@@ -1,4 +1,12 @@
-import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue, Vault } from "../typechain";
+import {
+  Forwarder,
+  L2Vault,
+  Router,
+  TwoAssetBasket,
+  EmergencyWithdrawalQueue,
+  Vault,
+  SingleStrategyWithdrawalEscrow,
+} from "../typechain";
 import { ethers } from "ethers";
 
 export interface GasInfo {
@@ -52,6 +60,7 @@ export interface EthContracts extends BothContracts {
   ethEarn: Vault;
   ethWethEarn: Vault;
   weth: ethers.Contract;
+  withdrawalEscrow: SingleStrategyWithdrawalEscrow;
   router: Router;
 }
 
@@ -90,4 +99,12 @@ export interface EmergencyWithdrawalQueueTransfer {
   sharesValueInAsset: string;
   txHash: string;
   timestamp: Date;
+}
+
+export interface SSVWithdrawalRequestInfo {
+  epoch: number;
+  token: number;
+  value: number;
+  claimed: boolean;
+  claimable: boolean;
 }
