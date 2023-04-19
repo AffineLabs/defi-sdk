@@ -5,7 +5,8 @@ import {
   TwoAssetBasket,
   EmergencyWithdrawalQueue,
   Vault,
-  SingleStrategyWithdrawalEscrow,
+  StrategyVault,
+  WithdrawalEscrow,
 } from "../typechain";
 import { ethers } from "ethers";
 
@@ -60,7 +61,8 @@ export interface EthContracts extends BothContracts {
   ethEarn: Vault;
   ethWethEarn: Vault;
   weth: ethers.Contract;
-  withdrawalEscrow: SingleStrategyWithdrawalEscrow;
+  ssvEthUSDEarn: StrategyVault;
+  withdrawalEscrow: WithdrawalEscrow;
   router: Router;
 }
 

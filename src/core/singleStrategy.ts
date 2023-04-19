@@ -3,12 +3,12 @@ import { SSVWithdrawalRequestInfo } from "./types";
 import { blockchainCall } from "./AlpineDeFiSDK";
 
 export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]> {
-  const { withdrawalEscrow } = getEthContracts();
+  const { withdrawalEscrow, ssvEthUSDEarn } = getEthContracts();
   const withdrawalRequests = await withdrawalEscrow.queryFilter(
     withdrawalEscrow.filters.WithdrawalRequest(SIGNER.getAddress(), null, null),
   );
 
-  const currentEpoch = await withdrawalEscrow.currentEpoch();
+  const currentEpoch = await ssvEthUSDEarn.epoch();
 
   let ret: SSVWithdrawalRequestInfo[] = [];
 
@@ -52,4 +52,9 @@ export async function getAssets(): Promise<number> {
   const assets = await withdrawalEscrow.getAssets(SIGNER.getAddress(), epochs);
 
   return assets.toNumber();
+}
+
+export async function isLiquidToWithdraw() {
+  const { ssvEthUSDEarn } = getEthContracts();
+  return ssvEthUSDEarn.epochEnded();
 }
