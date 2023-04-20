@@ -4,20 +4,24 @@ import type { DeltaNeutralLpV3, DeltaNeutralLpV3Interface } from "../DeltaNeutra
 export declare class DeltaNeutralLpV3__factory {
     static readonly abi: readonly [{
         readonly inputs: readonly [{
-            readonly internalType: "contract AffineVault";
+            readonly internalType: "contract BaseVault";
             readonly name: "_vault";
             readonly type: "address";
         }, {
-            readonly internalType: "contract ILendingPool";
-            readonly name: "_lendingPool";
+            readonly internalType: "uint256";
+            readonly name: "_slippageTolerance";
+            readonly type: "uint256";
+        }, {
+            readonly internalType: "contract ILendingPoolAddressesProviderRegistry";
+            readonly name: "_registry";
             readonly type: "address";
         }, {
             readonly internalType: "contract ERC20";
-            readonly name: "_borrow";
+            readonly name: "_borrowAsset";
             readonly type: "address";
         }, {
             readonly internalType: "contract AggregatorV3Interface";
-            readonly name: "_borrowFeed";
+            readonly name: "_borrowAssetFeed";
             readonly type: "address";
         }, {
             readonly internalType: "contract ISwapRouter";
@@ -31,22 +35,6 @@ export declare class DeltaNeutralLpV3__factory {
             readonly internalType: "contract IUniswapV3Pool";
             readonly name: "_pool";
             readonly type: "address";
-        }, {
-            readonly internalType: "contract IUniPositionValue";
-            readonly name: "_positionValue";
-            readonly type: "address";
-        }, {
-            readonly internalType: "address[]";
-            readonly name: "strategists";
-            readonly type: "address[]";
-        }, {
-            readonly internalType: "uint256";
-            readonly name: "_assetToDepositRatioBps";
-            readonly type: "uint256";
-        }, {
-            readonly internalType: "uint256";
-            readonly name: "_collateralToBorrowRatioBps";
-            readonly type: "uint256";
         }];
         readonly stateMutability: "nonpayable";
         readonly type: "constructor";
@@ -237,16 +225,6 @@ export declare class DeltaNeutralLpV3__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "MAX_BPS";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
         readonly name: "STRATEGIST_ROLE";
         readonly outputs: readonly [{
             readonly internalType: "bytes32";
@@ -277,16 +255,6 @@ export declare class DeltaNeutralLpV3__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "assetToDepositRatioBps";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
         readonly name: "balanceOfAsset";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
@@ -297,7 +265,7 @@ export declare class DeltaNeutralLpV3__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "borrow";
+        readonly name: "borrowAsset";
         readonly outputs: readonly [{
             readonly internalType: "contract ERC20";
             readonly name: "";
@@ -317,16 +285,6 @@ export declare class DeltaNeutralLpV3__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "collateralToBorrowRatioBps";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
         readonly name: "currentPosition";
         readonly outputs: readonly [{
             readonly internalType: "uint32";
@@ -337,21 +295,11 @@ export declare class DeltaNeutralLpV3__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "decimalAdjust";
+        readonly name: "debtToken";
         readonly outputs: readonly [{
-            readonly internalType: "uint256";
+            readonly internalType: "contract ERC20";
             readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "decimalAdjustSign";
-        readonly outputs: readonly [{
-            readonly internalType: "bool";
-            readonly name: "";
-            readonly type: "bool";
+            readonly type: "address";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -486,30 +434,6 @@ export declare class DeltaNeutralLpV3__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "positionFees";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "assets";
-            readonly type: "uint256";
-        }, {
-            readonly internalType: "uint256";
-            readonly name: "borrows";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "positionValue";
-        readonly outputs: readonly [{
-            readonly internalType: "contract IUniPositionValue";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
         readonly inputs: readonly [{
             readonly internalType: "bytes32";
             readonly name: "role";
@@ -544,6 +468,16 @@ export declare class DeltaNeutralLpV3__factory {
             readonly internalType: "contract ISwapRouter";
             readonly name: "";
             readonly type: "address";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "slippageTolerance";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -613,7 +547,7 @@ export declare class DeltaNeutralLpV3__factory {
         readonly inputs: readonly [];
         readonly name: "vault";
         readonly outputs: readonly [{
-            readonly internalType: "contract AffineVault";
+            readonly internalType: "contract BaseVault";
             readonly name: "";
             readonly type: "address";
         }];

@@ -4,24 +4,14 @@ import type { Listener, Provider } from "@ethersproject/providers";
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "./common";
 export interface IUniPositionValueInterface extends utils.Interface {
     functions: {
-        "fees(address,uint256)": FunctionFragment;
-        "principal(address,uint256,uint160)": FunctionFragment;
         "total(address,uint256,uint160)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "fees" | "principal" | "total"): FunctionFragment;
-    encodeFunctionData(functionFragment: "fees", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
-    encodeFunctionData(functionFragment: "principal", values: [
-        PromiseOrValue<string>,
-        PromiseOrValue<BigNumberish>,
-        PromiseOrValue<BigNumberish>
-    ]): string;
+    getFunction(nameOrSignatureOrTopic: "total"): FunctionFragment;
     encodeFunctionData(functionFragment: "total", values: [
         PromiseOrValue<string>,
         PromiseOrValue<BigNumberish>,
         PromiseOrValue<BigNumberish>
     ]): string;
-    decodeFunctionResult(functionFragment: "fees", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "principal", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "total", data: BytesLike): Result;
     events: {};
 }
@@ -40,20 +30,6 @@ export interface IUniPositionValue extends BaseContract {
     once: OnEvent<this>;
     removeListener: OnEvent<this>;
     functions: {
-        fees(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[
-            BigNumber,
-            BigNumber
-        ] & {
-            amount0: BigNumber;
-            amount1: BigNumber;
-        }>;
-        principal(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, sqrtRatioX96: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[
-            BigNumber,
-            BigNumber
-        ] & {
-            amount0: BigNumber;
-            amount1: BigNumber;
-        }>;
         total(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, sqrtRatioX96: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[
             BigNumber,
             BigNumber
@@ -62,20 +38,6 @@ export interface IUniPositionValue extends BaseContract {
             amount1: BigNumber;
         }>;
     };
-    fees(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[
-        BigNumber,
-        BigNumber
-    ] & {
-        amount0: BigNumber;
-        amount1: BigNumber;
-    }>;
-    principal(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, sqrtRatioX96: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[
-        BigNumber,
-        BigNumber
-    ] & {
-        amount0: BigNumber;
-        amount1: BigNumber;
-    }>;
     total(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, sqrtRatioX96: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[
         BigNumber,
         BigNumber
@@ -84,20 +46,6 @@ export interface IUniPositionValue extends BaseContract {
         amount1: BigNumber;
     }>;
     callStatic: {
-        fees(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[
-            BigNumber,
-            BigNumber
-        ] & {
-            amount0: BigNumber;
-            amount1: BigNumber;
-        }>;
-        principal(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, sqrtRatioX96: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[
-            BigNumber,
-            BigNumber
-        ] & {
-            amount0: BigNumber;
-            amount1: BigNumber;
-        }>;
         total(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, sqrtRatioX96: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[
             BigNumber,
             BigNumber
@@ -108,13 +56,9 @@ export interface IUniPositionValue extends BaseContract {
     };
     filters: {};
     estimateGas: {
-        fees(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
-        principal(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, sqrtRatioX96: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         total(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, sqrtRatioX96: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     };
     populateTransaction: {
-        fees(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        principal(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, sqrtRatioX96: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         total(positionManager: PromiseOrValue<string>, tokenId: PromiseOrValue<BigNumberish>, sqrtRatioX96: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
     };
 }

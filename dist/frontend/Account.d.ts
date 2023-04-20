@@ -1,6 +1,6 @@
 import { Magic } from "magic-sdk";
 import { ethers } from "ethers";
-import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, productAllocation } from "../core/types";
+import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, SSVWithdrawalRequestInfo, productAllocation } from "../core/types";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet, IConnectAccount } from "../types/account";
 import Provider from "@walletconnect/universal-provider";
@@ -81,6 +81,11 @@ declare class Account {
      */
     switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void>;
     initWalletConnectProvider(web3Modal: import("@web3modal/standalone").Web3Modal): Promise<void>;
+    isStrategyLiquid(): Promise<any>;
+    getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]>;
+    redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<any>;
+    getTotalWithdrawableAssets(): Promise<number>;
+    lastEpochBeginUTCTime(): Promise<number>;
 }
 declare class ReadAccount {
     userAddress: string;

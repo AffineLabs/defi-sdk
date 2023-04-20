@@ -9,23 +9,28 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "contract AffineVault",
+                internalType: "contract BaseVault",
                 name: "_vault",
                 type: "address",
             },
             {
-                internalType: "contract ILendingPool",
-                name: "_lendingPool",
+                internalType: "uint256",
+                name: "_slippageTolerance",
+                type: "uint256",
+            },
+            {
+                internalType: "contract ILendingPoolAddressesProviderRegistry",
+                name: "_registry",
                 type: "address",
             },
             {
                 internalType: "contract ERC20",
-                name: "_borrow",
+                name: "_borrowAsset",
                 type: "address",
             },
             {
                 internalType: "contract AggregatorV3Interface",
-                name: "_borrowFeed",
+                name: "_borrowAssetFeed",
                 type: "address",
             },
             {
@@ -42,26 +47,6 @@ const _abi = [
                 internalType: "contract IUniswapV3Pool",
                 name: "_pool",
                 type: "address",
-            },
-            {
-                internalType: "contract IUniPositionValue",
-                name: "_positionValue",
-                type: "address",
-            },
-            {
-                internalType: "address[]",
-                name: "strategists",
-                type: "address[]",
-            },
-            {
-                internalType: "uint256",
-                name: "_assetToDepositRatioBps",
-                type: "uint256",
-            },
-            {
-                internalType: "uint256",
-                name: "_collateralToBorrowRatioBps",
-                type: "uint256",
             },
         ],
         stateMutability: "nonpayable",
@@ -297,19 +282,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "MAX_BPS",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
         name: "STRATEGIST_ROLE",
         outputs: [
             {
@@ -349,19 +321,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "assetToDepositRatioBps",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
         name: "balanceOfAsset",
         outputs: [
             {
@@ -375,7 +334,7 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "borrow",
+        name: "borrowAsset",
         outputs: [
             {
                 internalType: "contract ERC20",
@@ -401,19 +360,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "collateralToBorrowRatioBps",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
         name: "currentPosition",
         outputs: [
             {
@@ -427,25 +373,12 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "decimalAdjust",
+        name: "debtToken",
         outputs: [
             {
-                internalType: "uint256",
+                internalType: "contract ERC20",
                 name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "decimalAdjustSign",
-        outputs: [
-            {
-                internalType: "bool",
-                name: "",
-                type: "bool",
+                type: "address",
             },
         ],
         stateMutability: "view",
@@ -623,37 +556,6 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [],
-        name: "positionFees",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "assets",
-                type: "uint256",
-            },
-            {
-                internalType: "uint256",
-                name: "borrows",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "positionValue",
-        outputs: [
-            {
-                internalType: "contract IUniPositionValue",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
         inputs: [
             {
                 internalType: "bytes32",
@@ -697,6 +599,19 @@ const _abi = [
                 internalType: "contract ISwapRouter",
                 name: "",
                 type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "slippageTolerance",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
             },
         ],
         stateMutability: "view",
@@ -788,7 +703,7 @@ const _abi = [
         name: "vault",
         outputs: [
             {
-                internalType: "contract AffineVault",
+                internalType: "contract BaseVault",
                 name: "",
                 type: "address",
             },

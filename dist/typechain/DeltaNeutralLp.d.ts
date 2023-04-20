@@ -6,13 +6,12 @@ export interface DeltaNeutralLpInterface extends utils.Interface {
     functions: {
         "DEFAULT_ADMIN_ROLE()": FunctionFragment;
         "STRATEGIST_ROLE()": FunctionFragment;
-        "V3ROUTER()": FunctionFragment;
         "aToken()": FunctionFragment;
         "abPair()": FunctionFragment;
         "asset()": FunctionFragment;
         "balanceOfAsset()": FunctionFragment;
-        "borrow()": FunctionFragment;
-        "borrowFeed()": FunctionFragment;
+        "borrowAsset()": FunctionFragment;
+        "borrowAssetFeed()": FunctionFragment;
         "canStartNewPos()": FunctionFragment;
         "claimAndSellSushi(uint256)": FunctionFragment;
         "currentPosition()": FunctionFragment;
@@ -23,9 +22,9 @@ export interface DeltaNeutralLpInterface extends utils.Interface {
         "grantRole(bytes32,address)": FunctionFragment;
         "hasRole(bytes32,address)": FunctionFragment;
         "invest(uint256)": FunctionFragment;
+        "longPercentage()": FunctionFragment;
         "masterChef()": FunctionFragment;
         "masterChefPid()": FunctionFragment;
-        "poolFee()": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
         "revokeRole(bytes32,address)": FunctionFragment;
         "router()": FunctionFragment;
@@ -37,16 +36,15 @@ export interface DeltaNeutralLpInterface extends utils.Interface {
         "useMasterChefV2()": FunctionFragment;
         "vault()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "STRATEGIST_ROLE" | "V3ROUTER" | "aToken" | "abPair" | "asset" | "balanceOfAsset" | "borrow" | "borrowFeed" | "canStartNewPos" | "claimAndSellSushi" | "currentPosition" | "debtToken" | "divest" | "endPosition" | "getRoleAdmin" | "grantRole" | "hasRole" | "invest" | "masterChef" | "masterChefPid" | "poolFee" | "renounceRole" | "revokeRole" | "router" | "startPosition" | "supportsInterface" | "sushiToken" | "sweep" | "totalLockedValue" | "useMasterChefV2" | "vault"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "STRATEGIST_ROLE" | "aToken" | "abPair" | "asset" | "balanceOfAsset" | "borrowAsset" | "borrowAssetFeed" | "canStartNewPos" | "claimAndSellSushi" | "currentPosition" | "debtToken" | "divest" | "endPosition" | "getRoleAdmin" | "grantRole" | "hasRole" | "invest" | "longPercentage" | "masterChef" | "masterChefPid" | "renounceRole" | "revokeRole" | "router" | "startPosition" | "supportsInterface" | "sushiToken" | "sweep" | "totalLockedValue" | "useMasterChefV2" | "vault"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "STRATEGIST_ROLE", values?: undefined): string;
-    encodeFunctionData(functionFragment: "V3ROUTER", values?: undefined): string;
     encodeFunctionData(functionFragment: "aToken", values?: undefined): string;
     encodeFunctionData(functionFragment: "abPair", values?: undefined): string;
     encodeFunctionData(functionFragment: "asset", values?: undefined): string;
     encodeFunctionData(functionFragment: "balanceOfAsset", values?: undefined): string;
-    encodeFunctionData(functionFragment: "borrow", values?: undefined): string;
-    encodeFunctionData(functionFragment: "borrowFeed", values?: undefined): string;
+    encodeFunctionData(functionFragment: "borrowAsset", values?: undefined): string;
+    encodeFunctionData(functionFragment: "borrowAssetFeed", values?: undefined): string;
     encodeFunctionData(functionFragment: "canStartNewPos", values?: undefined): string;
     encodeFunctionData(functionFragment: "claimAndSellSushi", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "currentPosition", values?: undefined): string;
@@ -57,9 +55,9 @@ export interface DeltaNeutralLpInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "grantRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "hasRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "invest", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "longPercentage", values?: undefined): string;
     encodeFunctionData(functionFragment: "masterChef", values?: undefined): string;
     encodeFunctionData(functionFragment: "masterChefPid", values?: undefined): string;
-    encodeFunctionData(functionFragment: "poolFee", values?: undefined): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "revokeRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "router", values?: undefined): string;
@@ -72,13 +70,12 @@ export interface DeltaNeutralLpInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "vault", values?: undefined): string;
     decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "STRATEGIST_ROLE", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "V3ROUTER", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "aToken", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "abPair", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "balanceOfAsset", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "borrow", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "borrowFeed", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "borrowAsset", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "borrowAssetFeed", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "canStartNewPos", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "claimAndSellSushi", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "currentPosition", data: BytesLike): Result;
@@ -89,9 +86,9 @@ export interface DeltaNeutralLpInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "invest", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "longPercentage", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "masterChef", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "masterChefPid", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "poolFee", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
@@ -217,15 +214,14 @@ export interface DeltaNeutralLp extends BaseContract {
     functions: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
-        V3ROUTER(overrides?: CallOverrides): Promise<[string]>;
         aToken(overrides?: CallOverrides): Promise<[string]>;
         abPair(overrides?: CallOverrides): Promise<[string]>;
         asset(overrides?: CallOverrides): Promise<[string]>;
         balanceOfAsset(overrides?: CallOverrides): Promise<[BigNumber] & {
             assets: BigNumber;
         }>;
-        borrow(overrides?: CallOverrides): Promise<[string]>;
-        borrowFeed(overrides?: CallOverrides): Promise<[string]>;
+        borrowAsset(overrides?: CallOverrides): Promise<[string]>;
+        borrowAssetFeed(overrides?: CallOverrides): Promise<[string]>;
         canStartNewPos(overrides?: CallOverrides): Promise<[boolean]>;
         claimAndSellSushi(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -246,9 +242,9 @@ export interface DeltaNeutralLp extends BaseContract {
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        longPercentage(overrides?: CallOverrides): Promise<[BigNumber]>;
         masterChef(overrides?: CallOverrides): Promise<[string]>;
         masterChefPid(overrides?: CallOverrides): Promise<[BigNumber]>;
-        poolFee(overrides?: CallOverrides): Promise<[number]>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -270,13 +266,12 @@ export interface DeltaNeutralLp extends BaseContract {
     };
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
     STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
-    V3ROUTER(overrides?: CallOverrides): Promise<string>;
     aToken(overrides?: CallOverrides): Promise<string>;
     abPair(overrides?: CallOverrides): Promise<string>;
     asset(overrides?: CallOverrides): Promise<string>;
     balanceOfAsset(overrides?: CallOverrides): Promise<BigNumber>;
-    borrow(overrides?: CallOverrides): Promise<string>;
-    borrowFeed(overrides?: CallOverrides): Promise<string>;
+    borrowAsset(overrides?: CallOverrides): Promise<string>;
+    borrowAssetFeed(overrides?: CallOverrides): Promise<string>;
     canStartNewPos(overrides?: CallOverrides): Promise<boolean>;
     claimAndSellSushi(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
@@ -297,9 +292,9 @@ export interface DeltaNeutralLp extends BaseContract {
     invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    longPercentage(overrides?: CallOverrides): Promise<BigNumber>;
     masterChef(overrides?: CallOverrides): Promise<string>;
     masterChefPid(overrides?: CallOverrides): Promise<BigNumber>;
-    poolFee(overrides?: CallOverrides): Promise<number>;
     renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -321,13 +316,12 @@ export interface DeltaNeutralLp extends BaseContract {
     callStatic: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
-        V3ROUTER(overrides?: CallOverrides): Promise<string>;
         aToken(overrides?: CallOverrides): Promise<string>;
         abPair(overrides?: CallOverrides): Promise<string>;
         asset(overrides?: CallOverrides): Promise<string>;
         balanceOfAsset(overrides?: CallOverrides): Promise<BigNumber>;
-        borrow(overrides?: CallOverrides): Promise<string>;
-        borrowFeed(overrides?: CallOverrides): Promise<string>;
+        borrowAsset(overrides?: CallOverrides): Promise<string>;
+        borrowAssetFeed(overrides?: CallOverrides): Promise<string>;
         canStartNewPos(overrides?: CallOverrides): Promise<boolean>;
         claimAndSellSushi(slippageBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         currentPosition(overrides?: CallOverrides): Promise<number>;
@@ -338,9 +332,9 @@ export interface DeltaNeutralLp extends BaseContract {
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+        longPercentage(overrides?: CallOverrides): Promise<BigNumber>;
         masterChef(overrides?: CallOverrides): Promise<string>;
         masterChefPid(overrides?: CallOverrides): Promise<BigNumber>;
-        poolFee(overrides?: CallOverrides): Promise<number>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         router(overrides?: CallOverrides): Promise<string>;
@@ -367,13 +361,12 @@ export interface DeltaNeutralLp extends BaseContract {
     estimateGas: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
-        V3ROUTER(overrides?: CallOverrides): Promise<BigNumber>;
         aToken(overrides?: CallOverrides): Promise<BigNumber>;
         abPair(overrides?: CallOverrides): Promise<BigNumber>;
         asset(overrides?: CallOverrides): Promise<BigNumber>;
         balanceOfAsset(overrides?: CallOverrides): Promise<BigNumber>;
-        borrow(overrides?: CallOverrides): Promise<BigNumber>;
-        borrowFeed(overrides?: CallOverrides): Promise<BigNumber>;
+        borrowAsset(overrides?: CallOverrides): Promise<BigNumber>;
+        borrowAssetFeed(overrides?: CallOverrides): Promise<BigNumber>;
         canStartNewPos(overrides?: CallOverrides): Promise<BigNumber>;
         claimAndSellSushi(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -394,9 +387,9 @@ export interface DeltaNeutralLp extends BaseContract {
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        longPercentage(overrides?: CallOverrides): Promise<BigNumber>;
         masterChef(overrides?: CallOverrides): Promise<BigNumber>;
         masterChefPid(overrides?: CallOverrides): Promise<BigNumber>;
-        poolFee(overrides?: CallOverrides): Promise<BigNumber>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -419,13 +412,12 @@ export interface DeltaNeutralLp extends BaseContract {
     populateTransaction: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        V3ROUTER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         aToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         abPair(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         balanceOfAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        borrow(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        borrowFeed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        borrowAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        borrowAssetFeed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         canStartNewPos(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         claimAndSellSushi(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -446,9 +438,9 @@ export interface DeltaNeutralLp extends BaseContract {
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
+        longPercentage(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         masterChef(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         masterChefPid(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        poolFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;

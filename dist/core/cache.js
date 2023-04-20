@@ -57,7 +57,7 @@ function getAllContracts(provider, version) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLarge, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, } = allData;
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLarge, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
@@ -73,9 +73,14 @@ function getAllContracts(provider, version) {
         else if (chainId === 1 || chainId === 5) {
             const ethEarn = typechain_1.Vault__factory.connect(ethEarnData.address, provider);
             const ethWethEarn = typechain_1.Vault__factory.connect(ethWethEarnData.address, provider);
+            const ssvEthUSDEarn = typechain_1.StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
+            /// TODO: Fix the withdrawal address
+            const withdrawalEscrow = typechain_1.WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
             return {
                 ethEarn,
                 ethWethEarn,
+                ssvEthUSDEarn,
+                withdrawalEscrow,
                 usdc: new ethers_1.ethers.Contract(yield ethEarn.asset(), erc20Abi, provider),
                 weth: new ethers_1.ethers.Contract(yield ethWethEarn.asset(), erc20Abi, provider),
                 router: typechain_1.Router__factory.connect(ethRouter.address, provider),
