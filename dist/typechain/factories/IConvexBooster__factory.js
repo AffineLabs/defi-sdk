@@ -94,19 +94,6 @@ const _abi = [
         stateMutability: "nonpayable",
         type: "function",
     },
-    {
-        inputs: [],
-        name: "poolLength",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
 ];
 class IConvexBooster__factory {
     static createInterface() {

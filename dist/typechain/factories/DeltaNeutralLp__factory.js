@@ -9,83 +9,54 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "contract AffineVault",
+                internalType: "contract BaseVault",
                 name: "_vault",
                 type: "address",
             },
             {
-                components: [
-                    {
-                        internalType: "contract ILendingPool",
-                        name: "pool",
-                        type: "address",
-                    },
-                    {
-                        internalType: "contract ERC20",
-                        name: "borrow",
-                        type: "address",
-                    },
-                    {
-                        internalType: "contract AggregatorV3Interface",
-                        name: "priceFeed",
-                        type: "address",
-                    },
-                    {
-                        internalType: "uint256",
-                        name: "assetToDepositRatioBps",
-                        type: "uint256",
-                    },
-                    {
-                        internalType: "uint256",
-                        name: "collateralToBorrowRatioBps",
-                        type: "uint256",
-                    },
-                ],
-                internalType: "struct LendingInfo",
-                name: "lendingInfo",
-                type: "tuple",
+                internalType: "uint256",
+                name: "_longPct",
+                type: "uint256",
             },
             {
-                components: [
-                    {
-                        internalType: "contract IUniswapV2Router02",
-                        name: "router",
-                        type: "address",
-                    },
-                    {
-                        internalType: "contract IMasterChef",
-                        name: "masterChef",
-                        type: "address",
-                    },
-                    {
-                        internalType: "uint256",
-                        name: "masterChefPid",
-                        type: "uint256",
-                    },
-                    {
-                        internalType: "bool",
-                        name: "useMasterChefV2",
-                        type: "bool",
-                    },
-                    {
-                        internalType: "contract ERC20",
-                        name: "sushiToken",
-                        type: "address",
-                    },
-                    {
-                        internalType: "contract IUniswapV3Pool",
-                        name: "pool",
-                        type: "address",
-                    },
-                ],
-                internalType: "struct LpInfo",
-                name: "lpInfo",
-                type: "tuple",
+                internalType: "contract ILendingPoolAddressesProviderRegistry",
+                name: "_registry",
+                type: "address",
             },
             {
-                internalType: "address[]",
-                name: "strategists",
-                type: "address[]",
+                internalType: "contract ERC20",
+                name: "_borrowAsset",
+                type: "address",
+            },
+            {
+                internalType: "contract AggregatorV3Interface",
+                name: "_borrowAssetFeed",
+                type: "address",
+            },
+            {
+                internalType: "contract IUniswapV2Router02",
+                name: "_router",
+                type: "address",
+            },
+            {
+                internalType: "contract IMasterChef",
+                name: "_masterChef",
+                type: "address",
+            },
+            {
+                internalType: "uint256",
+                name: "_masterChefPid",
+                type: "uint256",
+            },
+            {
+                internalType: "bool",
+                name: "_useMasterChefV2",
+                type: "bool",
+            },
+            {
+                internalType: "contract ERC20",
+                name: "_sushiToken",
+                type: "address",
             },
         ],
         stateMutability: "nonpayable",
@@ -303,38 +274,12 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "MAX_BPS",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
         name: "STRATEGIST_ROLE",
         outputs: [
             {
                 internalType: "bytes32",
                 name: "",
                 type: "bytes32",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "V3ROUTER",
-        outputs: [
-            {
-                internalType: "contract ISwapRouter",
-                name: "",
-                type: "address",
             },
         ],
         stateMutability: "view",
@@ -381,19 +326,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "assetToDepositRatioBps",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
         name: "balanceOfAsset",
         outputs: [
             {
@@ -407,7 +339,7 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "borrow",
+        name: "borrowAsset",
         outputs: [
             {
                 internalType: "contract ERC20",
@@ -420,7 +352,7 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "borrowFeed",
+        name: "borrowAssetFeed",
         outputs: [
             {
                 internalType: "contract AggregatorV3Interface",
@@ -459,19 +391,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "collateralToBorrowRatioBps",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
         name: "currentPosition",
         outputs: [
             {
@@ -491,32 +410,6 @@ const _abi = [
                 internalType: "contract ERC20",
                 name: "",
                 type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "decimalAdjust",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "decimalAdjustSign",
-        outputs: [
-            {
-                internalType: "bool",
-                name: "",
-                type: "bool",
             },
         ],
         stateMutability: "view",
@@ -630,6 +523,19 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "longPercentage",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "masterChef",
         outputs: [
             {
@@ -649,19 +555,6 @@ const _abi = [
                 internalType: "uint256",
                 name: "",
                 type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "poolFee",
-        outputs: [
-            {
-                internalType: "uint24",
-                name: "",
-                type: "uint24",
             },
         ],
         stateMutability: "view",
@@ -718,11 +611,6 @@ const _abi = [
     },
     {
         inputs: [
-            {
-                internalType: "uint256",
-                name: "assets",
-                type: "uint256",
-            },
             {
                 internalType: "uint256",
                 name: "slippageToleranceBps",
@@ -810,7 +698,7 @@ const _abi = [
         name: "vault",
         outputs: [
             {
-                internalType: "contract AffineVault",
+                internalType: "contract BaseVault",
                 name: "",
                 type: "address",
             },

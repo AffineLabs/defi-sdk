@@ -4,33 +4,21 @@ import type { ConvexStrategy, ConvexStrategyInterface } from "../ConvexStrategy"
 export declare class ConvexStrategy__factory {
     static readonly abi: readonly [{
         readonly inputs: readonly [{
-            readonly internalType: "contract AffineVault";
+            readonly internalType: "contract BaseVault";
             readonly name: "_vault";
             readonly type: "address";
         }, {
-            readonly internalType: "int128";
-            readonly name: "_assetIndex";
-            readonly type: "int128";
-        }, {
-            readonly internalType: "bool";
-            readonly name: "_isMetaPool";
-            readonly type: "bool";
-        }, {
             readonly internalType: "contract ICurvePool";
             readonly name: "_curvePool";
-            readonly type: "address";
-        }, {
-            readonly internalType: "contract I3CrvMetaPoolZap";
-            readonly name: "_zapper";
             readonly type: "address";
         }, {
             readonly internalType: "uint256";
             readonly name: "_convexPid";
             readonly type: "uint256";
         }, {
-            readonly internalType: "address[]";
-            readonly name: "strategists";
-            readonly type: "address[]";
+            readonly internalType: "contract IConvexBooster";
+            readonly name: "_convexBooster";
+            readonly type: "address";
         }];
         readonly stateMutability: "nonpayable";
         readonly type: "constructor";
@@ -96,6 +84,16 @@ export declare class ConvexStrategy__factory {
         readonly type: "event";
     }, {
         readonly inputs: readonly [];
+        readonly name: "ASSET_INDEX";
+        readonly outputs: readonly [{
+            readonly internalType: "int128";
+            readonly name: "";
+            readonly type: "int128";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "CRV";
         readonly outputs: readonly [{
             readonly internalType: "contract ERC20";
@@ -116,16 +114,6 @@ export declare class ConvexStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "CVX_BOOSTER";
-        readonly outputs: readonly [{
-            readonly internalType: "contract IConvexBooster";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
         readonly name: "DEFAULT_ADMIN_ROLE";
         readonly outputs: readonly [{
             readonly internalType: "bytes32";
@@ -136,9 +124,19 @@ export declare class ConvexStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
+        readonly name: "MIN_TOKEN_AMT";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "ROUTER";
         readonly outputs: readonly [{
-            readonly internalType: "contract ISwapRouter";
+            readonly internalType: "contract IUniswapV2Router02";
             readonly name: "";
             readonly type: "address";
         }];
@@ -146,7 +144,7 @@ export declare class ConvexStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "STRATEGIST_ROLE";
+        readonly name: "STRATEGIST";
         readonly outputs: readonly [{
             readonly internalType: "bytes32";
             readonly name: "";
@@ -161,16 +159,6 @@ export declare class ConvexStrategy__factory {
             readonly internalType: "contract ERC20";
             readonly name: "";
             readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "assetIndex";
-        readonly outputs: readonly [{
-            readonly internalType: "int128";
-            readonly name: "";
-            readonly type: "int128";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -203,6 +191,16 @@ export declare class ConvexStrategy__factory {
         readonly name: "claimRewards";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "convexBooster";
+        readonly outputs: readonly [{
+            readonly internalType: "contract IConvexBooster";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -329,16 +327,6 @@ export declare class ConvexStrategy__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "pendingRewards";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "pendingCrv";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
         readonly inputs: readonly [{
             readonly internalType: "bytes32";
             readonly name: "role";
@@ -363,30 +351,6 @@ export declare class ConvexStrategy__factory {
             readonly type: "address";
         }];
         readonly name: "revokeRole";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "minAssetsFromCrv";
-            readonly type: "uint256";
-        }, {
-            readonly internalType: "uint256";
-            readonly name: "minAssetsFromCvx";
-            readonly type: "uint256";
-        }];
-        readonly name: "sellRewards";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "address";
-            readonly name: "newStrategy";
-            readonly type: "address";
-        }];
-        readonly name: "sendAllTokens";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
@@ -428,7 +392,7 @@ export declare class ConvexStrategy__factory {
         readonly inputs: readonly [];
         readonly name: "vault";
         readonly outputs: readonly [{
-            readonly internalType: "contract AffineVault";
+            readonly internalType: "contract BaseVault";
             readonly name: "";
             readonly type: "address";
         }];
@@ -443,26 +407,6 @@ export declare class ConvexStrategy__factory {
         readonly name: "withdrawAssets";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "numLpTokens";
-            readonly type: "uint256";
-        }];
-        readonly name: "withdrawFromConvex";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "zapper";
-        readonly outputs: readonly [{
-            readonly internalType: "contract I3CrvMetaPoolZap";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
         readonly type: "function";
     }];
     static createInterface(): ConvexStrategyInterface;
