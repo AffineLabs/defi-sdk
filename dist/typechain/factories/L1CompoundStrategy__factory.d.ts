@@ -4,7 +4,7 @@ import type { L1CompoundStrategy, L1CompoundStrategyInterface } from "../L1Compo
 export declare class L1CompoundStrategy__factory {
     static readonly abi: readonly [{
         readonly inputs: readonly [{
-            readonly internalType: "contract BaseVault";
+            readonly internalType: "contract AffineVault";
             readonly name: "_vault";
             readonly type: "address";
         }, {
@@ -310,7 +310,7 @@ export declare class L1CompoundStrategy__factory {
         readonly inputs: readonly [];
         readonly name: "vault";
         readonly outputs: readonly [{
-            readonly internalType: "contract BaseVault";
+            readonly internalType: "contract AffineVault";
             readonly name: "";
             readonly type: "address";
         }];

@@ -5,6 +5,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrVal
 export interface IConvexRewardsInterface extends utils.Interface {
     functions: {
         "balanceOf(address)": FunctionFragment;
+        "earned(address)": FunctionFragment;
         "getReward()": FunctionFragment;
         "stake(uint256)": FunctionFragment;
         "stakeFor(address,uint256)": FunctionFragment;
@@ -12,8 +13,9 @@ export interface IConvexRewardsInterface extends utils.Interface {
         "withdrawAllAndUnwrap(bool)": FunctionFragment;
         "withdrawAndUnwrap(uint256,bool)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "balanceOf" | "getReward" | "stake" | "stakeFor" | "withdraw" | "withdrawAllAndUnwrap" | "withdrawAndUnwrap"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "balanceOf" | "earned" | "getReward" | "stake" | "stakeFor" | "withdraw" | "withdrawAllAndUnwrap" | "withdrawAndUnwrap"): FunctionFragment;
     encodeFunctionData(functionFragment: "balanceOf", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "earned", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "getReward", values?: undefined): string;
     encodeFunctionData(functionFragment: "stake", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "stakeFor", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
@@ -21,6 +23,7 @@ export interface IConvexRewardsInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "withdrawAllAndUnwrap", values: [PromiseOrValue<boolean>]): string;
     encodeFunctionData(functionFragment: "withdrawAndUnwrap", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<boolean>]): string;
     decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "earned", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getReward", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "stake", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "stakeFor", data: BytesLike): Result;
@@ -47,6 +50,7 @@ export interface IConvexRewards extends BaseContract {
         balanceOf(_account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        earned(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
         getReward(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -62,13 +66,14 @@ export interface IConvexRewards extends BaseContract {
         withdrawAllAndUnwrap(claim: PromiseOrValue<boolean>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        withdrawAndUnwrap(_amount: PromiseOrValue<BigNumberish>, _claim: PromiseOrValue<boolean>, overrides?: Overrides & {
+        withdrawAndUnwrap(amount: PromiseOrValue<BigNumberish>, claim: PromiseOrValue<boolean>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
     };
     balanceOf(_account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    earned(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     getReward(overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -84,23 +89,25 @@ export interface IConvexRewards extends BaseContract {
     withdrawAllAndUnwrap(claim: PromiseOrValue<boolean>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    withdrawAndUnwrap(_amount: PromiseOrValue<BigNumberish>, _claim: PromiseOrValue<boolean>, overrides?: Overrides & {
+    withdrawAndUnwrap(amount: PromiseOrValue<BigNumberish>, claim: PromiseOrValue<boolean>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     callStatic: {
         balanceOf(_account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        earned(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         getReward(overrides?: CallOverrides): Promise<boolean>;
         stake(_amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         stakeFor(_account: PromiseOrValue<string>, _amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         withdraw(_amount: PromiseOrValue<BigNumberish>, _claim: PromiseOrValue<boolean>, overrides?: CallOverrides): Promise<boolean>;
         withdrawAllAndUnwrap(claim: PromiseOrValue<boolean>, overrides?: CallOverrides): Promise<void>;
-        withdrawAndUnwrap(_amount: PromiseOrValue<BigNumberish>, _claim: PromiseOrValue<boolean>, overrides?: CallOverrides): Promise<boolean>;
+        withdrawAndUnwrap(amount: PromiseOrValue<BigNumberish>, claim: PromiseOrValue<boolean>, overrides?: CallOverrides): Promise<boolean>;
     };
     filters: {};
     estimateGas: {
         balanceOf(_account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        earned(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         getReward(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -116,7 +123,7 @@ export interface IConvexRewards extends BaseContract {
         withdrawAllAndUnwrap(claim: PromiseOrValue<boolean>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        withdrawAndUnwrap(_amount: PromiseOrValue<BigNumberish>, _claim: PromiseOrValue<boolean>, overrides?: Overrides & {
+        withdrawAndUnwrap(amount: PromiseOrValue<BigNumberish>, claim: PromiseOrValue<boolean>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
     };
@@ -124,6 +131,7 @@ export interface IConvexRewards extends BaseContract {
         balanceOf(_account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
+        earned(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         getReward(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -139,7 +147,7 @@ export interface IConvexRewards extends BaseContract {
         withdrawAllAndUnwrap(claim: PromiseOrValue<boolean>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        withdrawAndUnwrap(_amount: PromiseOrValue<BigNumberish>, _claim: PromiseOrValue<boolean>, overrides?: Overrides & {
+        withdrawAndUnwrap(amount: PromiseOrValue<BigNumberish>, claim: PromiseOrValue<boolean>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
     };

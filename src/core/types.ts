@@ -27,7 +27,7 @@ export interface SmallTxReceipt extends GasInfo {
   txnHash: string;
 }
 
-export const alpineProducts = ["alpSave", "alpLarge", "ethEarn", "ethWethEarn"] as const;
+export const alpineProducts = ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn"] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
 export const polygonProducts = ["alpSave", "alpLarge"] as const;

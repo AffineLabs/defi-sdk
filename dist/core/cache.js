@@ -74,7 +74,6 @@ function getAllContracts(provider, version) {
             const ethEarn = typechain_1.Vault__factory.connect(ethEarnData.address, provider);
             const ethWethEarn = typechain_1.Vault__factory.connect(ethWethEarnData.address, provider);
             const ssvEthUSDEarn = typechain_1.StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
-            /// TODO: Fix the withdrawal address
             const withdrawalEscrow = typechain_1.WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
             return {
                 ethEarn,

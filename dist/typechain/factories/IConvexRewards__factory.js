@@ -26,6 +26,25 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [
+            {
+                internalType: "address",
+                name: "account",
+                type: "address",
+            },
+        ],
+        name: "earned",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
         inputs: [],
         name: "getReward",
         outputs: [
@@ -122,12 +141,12 @@ const _abi = [
         inputs: [
             {
                 internalType: "uint256",
-                name: "_amount",
+                name: "amount",
                 type: "uint256",
             },
             {
                 internalType: "bool",
-                name: "_claim",
+                name: "claim",
                 type: "bool",
             },
         ],

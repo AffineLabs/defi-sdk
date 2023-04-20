@@ -16,7 +16,7 @@ export interface SmallTxReceipt extends GasInfo {
     blockNumber: string;
     txnHash: string;
 }
-export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn"];
+export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn"];
 export type AlpineProduct = typeof alpineProducts[number];
 export declare const polygonProducts: readonly ["alpSave", "alpLarge"];
 export type PolygonProduct = typeof polygonProducts[number];

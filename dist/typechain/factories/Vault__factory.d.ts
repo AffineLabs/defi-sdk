@@ -90,6 +90,31 @@ export declare class Vault__factory {
     }, {
         readonly anonymous: false;
         readonly inputs: readonly [{
+            readonly indexed: false;
+            readonly internalType: "uint256";
+            readonly name: "oldFee";
+            readonly type: "uint256";
+        }, {
+            readonly indexed: false;
+            readonly internalType: "uint256";
+            readonly name: "newFee";
+            readonly type: "uint256";
+        }];
+        readonly name: "ManagementFeeSet";
+        readonly type: "event";
+    }, {
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: false;
+            readonly internalType: "address";
+            readonly name: "account";
+            readonly type: "address";
+        }];
+        readonly name: "Paused";
+        readonly type: "event";
+    }, {
+        readonly anonymous: false;
+        readonly inputs: readonly [{
             readonly indexed: true;
             readonly internalType: "address";
             readonly name: "caller";
@@ -250,6 +275,16 @@ export declare class Vault__factory {
     }, {
         readonly anonymous: false;
         readonly inputs: readonly [{
+            readonly indexed: false;
+            readonly internalType: "address";
+            readonly name: "account";
+            readonly type: "address";
+        }];
+        readonly name: "Unpaused";
+        readonly type: "event";
+    }, {
+        readonly anonymous: false;
+        readonly inputs: readonly [{
             readonly indexed: true;
             readonly internalType: "address";
             readonly name: "caller";
@@ -281,6 +316,21 @@ export declare class Vault__factory {
         readonly anonymous: false;
         readonly inputs: readonly [{
             readonly indexed: false;
+            readonly internalType: "uint256";
+            readonly name: "oldFee";
+            readonly type: "uint256";
+        }, {
+            readonly indexed: false;
+            readonly internalType: "uint256";
+            readonly name: "newFee";
+            readonly type: "uint256";
+        }];
+        readonly name: "WithdrawalFeeSet";
+        readonly type: "event";
+    }, {
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: false;
             readonly internalType: "contract BaseStrategy[20]";
             readonly name: "newQueue";
             readonly type: "address[20]";
@@ -290,6 +340,16 @@ export declare class Vault__factory {
     }, {
         readonly inputs: readonly [];
         readonly name: "DEFAULT_ADMIN_ROLE";
+        readonly outputs: readonly [{
+            readonly internalType: "bytes32";
+            readonly name: "";
+            readonly type: "bytes32";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "GUARDIAN_ROLE";
         readonly outputs: readonly [{
             readonly internalType: "bytes32";
             readonly name: "";
@@ -466,6 +526,16 @@ export declare class Vault__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "amount";
+            readonly type: "uint256";
+        }];
+        readonly name: "depositIntoStrategies";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [];
         readonly name: "detailedPrice";
         readonly outputs: readonly [{
@@ -617,6 +687,16 @@ export declare class Vault__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [];
+        readonly name: "initialSharesPerAsset";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "pure";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_governance";
@@ -625,6 +705,14 @@ export declare class Vault__factory {
             readonly internalType: "address";
             readonly name: "vaultAsset";
             readonly type: "address";
+        }, {
+            readonly internalType: "string";
+            readonly name: "_name";
+            readonly type: "string";
+        }, {
+            readonly internalType: "string";
+            readonly name: "_symbol";
+            readonly type: "string";
         }];
         readonly name: "initialize";
         readonly outputs: readonly [];
@@ -643,6 +731,16 @@ export declare class Vault__factory {
     }, {
         readonly inputs: readonly [];
         readonly name: "lockedProfit";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "managementFee";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "";
@@ -735,12 +833,42 @@ export declare class Vault__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [{
+            readonly internalType: "bytes[]";
+            readonly name: "data";
+            readonly type: "bytes[]";
+        }];
+        readonly name: "multicall";
+        readonly outputs: readonly [{
+            readonly internalType: "bytes[]";
+            readonly name: "results";
+            readonly type: "bytes[]";
+        }];
+        readonly stateMutability: "payable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [];
         readonly name: "name";
         readonly outputs: readonly [{
             readonly internalType: "string";
             readonly name: "";
             readonly type: "string";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "pause";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "paused";
+        readonly outputs: readonly [{
+            readonly internalType: "bool";
+            readonly name: "";
+            readonly type: "bool";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -789,7 +917,7 @@ export declare class Vault__factory {
     }, {
         readonly inputs: readonly [{
             readonly internalType: "uint256";
-            readonly name: "assets";
+            readonly name: "assetsToUser";
             readonly type: "uint256";
         }];
         readonly name: "previewWithdraw";
@@ -863,6 +991,26 @@ export declare class Vault__factory {
             readonly type: "address";
         }];
         readonly name: "revokeRole";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "feeBps";
+            readonly type: "uint256";
+        }];
+        readonly name: "setManagementFee";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "feeBps";
+            readonly type: "uint256";
+        }];
+        readonly name: "setWithdrawalFee";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
@@ -1003,6 +1151,12 @@ export declare class Vault__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [];
+        readonly name: "unpause";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [{
             readonly internalType: "contract BaseStrategy[]";
             readonly name: "strategyList";
@@ -1047,6 +1201,16 @@ export declare class Vault__factory {
             readonly type: "uint256";
         }];
         readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "withdrawalFee";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [{

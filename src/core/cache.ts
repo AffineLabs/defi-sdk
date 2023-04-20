@@ -94,7 +94,6 @@ export async function getAllContracts(
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
     const ethWethEarn = Vault__factory.connect(ethWethEarnData.address, provider);
     const ssvEthUSDEarn = StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
-    /// TODO: Fix the withdrawal address
     const withdrawalEscrow = WithdrawalEscrow__factory.connect(await ssvEthUSDEarn.debtEscrow(), provider);
     return {
       ethEarn,

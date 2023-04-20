@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
-import { L2Vault, TwoAssetBasket, Vault } from "../typechain";
+import { L2Vault, StrategyVault, TwoAssetBasket, Vault } from "../typechain";
 import { _addDecimals, _removeDecimals, blockchainCall, getMaticPrice } from "./AlpineDeFiSDK";
 import { getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
 import { MAX_UINT } from "./constants";
@@ -355,8 +355,8 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
     };
   }
 
-  let contract: L2Vault | TwoAssetBasket | Vault;
-  if (product === "ethEarn" || product === "ethWethEarn") {
+  let contract: L2Vault | TwoAssetBasket | Vault | StrategyVault;
+  if (product === "ethEarn" || product === "ethWethEarn" || product === "ssvEthUSDEarn") {
     contract = getEthContracts()[product];
   } else {
     contract = getPolygonContracts()[product];

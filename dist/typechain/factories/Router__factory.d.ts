@@ -11,6 +11,10 @@ export declare class Router__factory {
             readonly internalType: "address";
             readonly name: "forwarder";
             readonly type: "address";
+        }, {
+            readonly internalType: "contract IWETH";
+            readonly name: "_weth";
+            readonly type: "address";
         }];
         readonly stateMutability: "nonpayable";
         readonly type: "constructor";
@@ -94,6 +98,12 @@ export declare class Router__factory {
             readonly name: "sharesOut";
             readonly type: "uint256";
         }];
+        readonly stateMutability: "payable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "depositNative";
+        readonly outputs: readonly [];
         readonly stateMutability: "payable";
         readonly type: "function";
     }, {
@@ -271,6 +281,16 @@ export declare class Router__factory {
             readonly internalType: "string";
             readonly name: "";
             readonly type: "string";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "weth";
+        readonly outputs: readonly [{
+            readonly internalType: "contract IWETH";
+            readonly name: "";
+            readonly type: "address";
         }];
         readonly stateMutability: "view";
         readonly type: "function";

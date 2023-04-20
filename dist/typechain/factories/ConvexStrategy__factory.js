@@ -9,13 +9,28 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "contract BaseVault",
+                internalType: "contract AffineVault",
                 name: "_vault",
                 type: "address",
             },
             {
+                internalType: "int128",
+                name: "_assetIndex",
+                type: "int128",
+            },
+            {
+                internalType: "bool",
+                name: "_isMetaPool",
+                type: "bool",
+            },
+            {
                 internalType: "contract ICurvePool",
                 name: "_curvePool",
+                type: "address",
+            },
+            {
+                internalType: "contract I3CrvMetaPoolZap",
+                name: "_zapper",
                 type: "address",
             },
             {
@@ -24,9 +39,9 @@ const _abi = [
                 type: "uint256",
             },
             {
-                internalType: "contract IConvexBooster",
-                name: "_convexBooster",
-                type: "address",
+                internalType: "address[]",
+                name: "strategists",
+                type: "address[]",
             },
         ],
         stateMutability: "nonpayable",
@@ -109,19 +124,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "ASSET_INDEX",
-        outputs: [
-            {
-                internalType: "int128",
-                name: "",
-                type: "int128",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
         name: "CRV",
         outputs: [
             {
@@ -148,6 +150,19 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "CVX_BOOSTER",
+        outputs: [
+            {
+                internalType: "contract IConvexBooster",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "DEFAULT_ADMIN_ROLE",
         outputs: [
             {
@@ -161,23 +176,10 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "MIN_TOKEN_AMT",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
         name: "ROUTER",
         outputs: [
             {
-                internalType: "contract IUniswapV2Router02",
+                internalType: "contract ISwapRouter",
                 name: "",
                 type: "address",
             },
@@ -187,7 +189,7 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "STRATEGIST",
+        name: "STRATEGIST_ROLE",
         outputs: [
             {
                 internalType: "bytes32",
@@ -206,6 +208,19 @@ const _abi = [
                 internalType: "contract ERC20",
                 name: "",
                 type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "assetIndex",
+        outputs: [
+            {
+                internalType: "int128",
+                name: "",
+                type: "int128",
             },
         ],
         stateMutability: "view",
@@ -247,19 +262,6 @@ const _abi = [
         name: "claimRewards",
         outputs: [],
         stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "convexBooster",
-        outputs: [
-            {
-                internalType: "contract IConvexBooster",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
         type: "function",
     },
     {
@@ -426,6 +428,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "pendingRewards",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "pendingCrv",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "bytes32",
@@ -457,6 +472,37 @@ const _abi = [
             },
         ],
         name: "revokeRole",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "minAssetsFromCrv",
+                type: "uint256",
+            },
+            {
+                internalType: "uint256",
+                name: "minAssetsFromCvx",
+                type: "uint256",
+            },
+        ],
+        name: "sellRewards",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "newStrategy",
+                type: "address",
+            },
+        ],
+        name: "sendAllTokens",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -511,7 +557,7 @@ const _abi = [
         name: "vault",
         outputs: [
             {
-                internalType: "contract BaseVault",
+                internalType: "contract AffineVault",
                 name: "",
                 type: "address",
             },
@@ -530,6 +576,32 @@ const _abi = [
         name: "withdrawAssets",
         outputs: [],
         stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "numLpTokens",
+                type: "uint256",
+            },
+        ],
+        name: "withdrawFromConvex",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "zapper",
+        outputs: [
+            {
+                internalType: "contract I3CrvMetaPoolZap",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
         type: "function",
     },
 ];

@@ -318,7 +318,7 @@ function getTokenInfo(product) {
             };
         }
         let contract;
-        if (product === "ethEarn" || product === "ethWethEarn") {
+        if (product === "ethEarn" || product === "ethWethEarn" || product === "ssvEthUSDEarn") {
             contract = (0, cache_1.getEthContracts)()[product];
         }
         else {
