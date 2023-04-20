@@ -353,6 +353,20 @@ export declare class AffineVault__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [{
+            readonly internalType: "bytes[]";
+            readonly name: "data";
+            readonly type: "bytes[]";
+        }];
+        readonly name: "multicall";
+        readonly outputs: readonly [{
+            readonly internalType: "bytes[]";
+            readonly name: "results";
+            readonly type: "bytes[]";
+        }];
+        readonly stateMutability: "payable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [];
         readonly name: "rebalance";
         readonly outputs: readonly [];

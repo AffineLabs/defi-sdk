@@ -9,7 +9,7 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "contract BaseVault",
+                internalType: "contract AffineVault",
                 name: "_vault",
                 type: "address",
             },
@@ -406,7 +406,7 @@ const _abi = [
         name: "vault",
         outputs: [
             {
-                internalType: "contract BaseVault",
+                internalType: "contract AffineVault",
                 name: "",
                 type: "address",
             },

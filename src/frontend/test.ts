@@ -75,33 +75,12 @@ const main = async () => {
 
   await alpAccount.setSimulationMode(false);
 
-  // write
-  try {
-    // check if user is approved max amount
-    const isApproved = await alpAccount.isMaxUSDCApproved(_productToBuy);
-    console.log("isApproved: ", isApproved);
-
-    // approve max amount if not approved
-    if (!isApproved) {
-      const res = await alpAccount.approve(_productToBuy);
-      console.log("approve res: ", res);
-    }
-    console.log("approved: ", _productToBuy);
-  } catch (error) {
-    console.error("Error in approve: ", error);
-  }
-  // const res = await alpAccount.buyProduct(_productToBuy, 0.1);
-  const res = await alpAccount.sellProduct(_productToBuy, 0.1);
+  const res = await alpAccount.isStrategyLiquid();
   console.log({ res });
-  console.log("bought: ", _productToBuy);
-
-  // disconnect
-  try {
-    console.log("disconnecting");
-    await alpAccount.disconnect(walletType);
-  } catch (error) {
-    console.error("Error in disconnect: ", error);
-  }
+  const requests = await alpAccount.getWithdrawalRequest();
+  console.log({ requests });
+  const allAssets = await alpAccount.getTotalWithdrawableAssets();
+  console.log({ allAssets });
   console.log("exiting");
 };
 

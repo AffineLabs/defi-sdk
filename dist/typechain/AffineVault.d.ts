@@ -1,4 +1,4 @@
-import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, ContractTransaction, Overrides, PopulatedTransaction, Signer, utils } from "ethers";
+import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, ContractTransaction, Overrides, PayableOverrides, PopulatedTransaction, Signer, utils } from "ethers";
 import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "./common";
@@ -18,6 +18,7 @@ export interface AffineVaultInterface extends utils.Interface {
         "lastHarvest()": FunctionFragment;
         "lockedProfit()": FunctionFragment;
         "maxLockedProfit()": FunctionFragment;
+        "multicall(bytes[])": FunctionFragment;
         "rebalance()": FunctionFragment;
         "removeStrategy(address)": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
@@ -31,7 +32,7 @@ export interface AffineVaultInterface extends utils.Interface {
         "vaultTVL()": FunctionFragment;
         "withdrawalQueue(uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "asset" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "rebalance" | "removeStrategy" | "renounceRole" | "revokeRole" | "setWithdrawalQueue" | "strategies" | "supportsInterface" | "totalBps" | "totalStrategyHoldings" | "updateStrategyAllocations" | "vaultTVL" | "withdrawalQueue"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "asset" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "multicall" | "rebalance" | "removeStrategy" | "renounceRole" | "revokeRole" | "setWithdrawalQueue" | "strategies" | "supportsInterface" | "totalBps" | "totalStrategyHoldings" | "updateStrategyAllocations" | "vaultTVL" | "withdrawalQueue"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
     encodeFunctionData(functionFragment: "LOCK_INTERVAL", values?: undefined): string;
@@ -46,6 +47,7 @@ export interface AffineVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "lastHarvest", values?: undefined): string;
     encodeFunctionData(functionFragment: "lockedProfit", values?: undefined): string;
     encodeFunctionData(functionFragment: "maxLockedProfit", values?: undefined): string;
+    encodeFunctionData(functionFragment: "multicall", values: [PromiseOrValue<BytesLike>[]]): string;
     encodeFunctionData(functionFragment: "rebalance", values?: undefined): string;
     encodeFunctionData(functionFragment: "removeStrategy", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
@@ -72,6 +74,7 @@ export interface AffineVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "lastHarvest", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "lockedProfit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "maxLockedProfit", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "rebalance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "removeStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
@@ -254,6 +257,9 @@ export interface AffineVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<[BigNumber]>;
         lockedProfit(overrides?: CallOverrides): Promise<[BigNumber]>;
         maxLockedProfit(overrides?: CallOverrides): Promise<[BigNumber]>;
+        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         rebalance(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -307,6 +313,9 @@ export interface AffineVault extends BaseContract {
     lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
     lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
     maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
+    multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     rebalance(overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -354,6 +363,7 @@ export interface AffineVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
         lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
         maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
+        multicall(data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<string[]>;
         rebalance(overrides?: CallOverrides): Promise<void>;
         removeStrategy(strategy: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
@@ -424,6 +434,9 @@ export interface AffineVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
         lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
         maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
+        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         rebalance(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -470,6 +483,9 @@ export interface AffineVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         lockedProfit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         maxLockedProfit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         rebalance(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;

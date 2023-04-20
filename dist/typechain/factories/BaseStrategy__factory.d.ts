@@ -70,7 +70,7 @@ export declare class BaseStrategy__factory {
         readonly inputs: readonly [];
         readonly name: "vault";
         readonly outputs: readonly [{
-            readonly internalType: "contract BaseVault";
+            readonly internalType: "contract AffineVault";
             readonly name: "";
             readonly type: "address";
         }];

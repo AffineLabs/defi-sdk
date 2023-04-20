@@ -69,6 +69,16 @@ export declare class IConvexBooster__factory {
         }];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "poolLength";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
     }];
     static createInterface(): IConvexBoosterInterface;
     static connect(address: string, signerOrProvider: Signer | Provider): IConvexBooster;

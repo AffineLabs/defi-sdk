@@ -117,6 +117,38 @@ const _abi = [
         anonymous: false,
         inputs: [
             {
+                indexed: false,
+                internalType: "uint256",
+                name: "oldFee",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "newFee",
+                type: "uint256",
+            },
+        ],
+        name: "ManagementFeeSet",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "address",
+                name: "account",
+                type: "address",
+            },
+        ],
+        name: "Paused",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
                 indexed: true,
                 internalType: "address",
                 name: "caller",
@@ -319,6 +351,19 @@ const _abi = [
         anonymous: false,
         inputs: [
             {
+                indexed: false,
+                internalType: "address",
+                name: "account",
+                type: "address",
+            },
+        ],
+        name: "Unpaused",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
                 indexed: true,
                 internalType: "address",
                 name: "caller",
@@ -357,6 +402,25 @@ const _abi = [
         inputs: [
             {
                 indexed: false,
+                internalType: "uint256",
+                name: "oldFee",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "newFee",
+                type: "uint256",
+            },
+        ],
+        name: "WithdrawalFeeSet",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
                 internalType: "contract BaseStrategy[20]",
                 name: "newQueue",
                 type: "address[20]",
@@ -368,6 +432,19 @@ const _abi = [
     {
         inputs: [],
         name: "DEFAULT_ADMIN_ROLE",
+        outputs: [
+            {
+                internalType: "bytes32",
+                name: "",
+                type: "bytes32",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "GUARDIAN_ROLE",
         outputs: [
             {
                 internalType: "bytes32",
@@ -602,6 +679,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "amount",
+                type: "uint256",
+            },
+        ],
+        name: "depositIntoStrategies",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
         inputs: [],
         name: "detailedPrice",
         outputs: [
@@ -801,6 +891,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "initialSharesPerAsset",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "pure",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "address",
@@ -811,6 +914,16 @@ const _abi = [
                 internalType: "address",
                 name: "vaultAsset",
                 type: "address",
+            },
+            {
+                internalType: "string",
+                name: "_name",
+                type: "string",
+            },
+            {
+                internalType: "string",
+                name: "_symbol",
+                type: "string",
             },
         ],
         name: "initialize",
@@ -834,6 +947,19 @@ const _abi = [
     {
         inputs: [],
         name: "lockedProfit",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "managementFee",
         outputs: [
             {
                 internalType: "uint256",
@@ -958,6 +1084,25 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [
+            {
+                internalType: "bytes[]",
+                name: "data",
+                type: "bytes[]",
+            },
+        ],
+        name: "multicall",
+        outputs: [
+            {
+                internalType: "bytes[]",
+                name: "results",
+                type: "bytes[]",
+            },
+        ],
+        stateMutability: "payable",
+        type: "function",
+    },
+    {
         inputs: [],
         name: "name",
         outputs: [
@@ -965,6 +1110,26 @@ const _abi = [
                 internalType: "string",
                 name: "",
                 type: "string",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "pause",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "paused",
+        outputs: [
+            {
+                internalType: "bool",
+                name: "",
+                type: "bool",
             },
         ],
         stateMutability: "view",
@@ -1031,7 +1196,7 @@ const _abi = [
         inputs: [
             {
                 internalType: "uint256",
-                name: "assets",
+                name: "assetsToUser",
                 type: "uint256",
             },
         ],
@@ -1127,6 +1292,32 @@ const _abi = [
             },
         ],
         name: "revokeRole",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "feeBps",
+                type: "uint256",
+            },
+        ],
+        name: "setManagementFee",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "feeBps",
+                type: "uint256",
+            },
+        ],
+        name: "setWithdrawalFee",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -1311,6 +1502,13 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "unpause",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "contract BaseStrategy[]",
@@ -1368,6 +1566,19 @@ const _abi = [
             },
         ],
         stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "withdrawalFee",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
         type: "function",
     },
     {

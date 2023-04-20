@@ -5,14 +5,18 @@ import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrVal
 export interface DeltaNeutralLpV3Interface extends utils.Interface {
     functions: {
         "DEFAULT_ADMIN_ROLE()": FunctionFragment;
+        "MAX_BPS()": FunctionFragment;
         "STRATEGIST_ROLE()": FunctionFragment;
         "aToken()": FunctionFragment;
         "asset()": FunctionFragment;
+        "assetToDepositRatioBps()": FunctionFragment;
         "balanceOfAsset()": FunctionFragment;
-        "borrowAsset()": FunctionFragment;
+        "borrow()": FunctionFragment;
         "canStartNewPos()": FunctionFragment;
+        "collateralToBorrowRatioBps()": FunctionFragment;
         "currentPosition()": FunctionFragment;
-        "debtToken()": FunctionFragment;
+        "decimalAdjust()": FunctionFragment;
+        "decimalAdjustSign()": FunctionFragment;
         "divest(uint256)": FunctionFragment;
         "endPosition(uint256)": FunctionFragment;
         "getRoleAdmin(bytes32)": FunctionFragment;
@@ -24,27 +28,32 @@ export interface DeltaNeutralLpV3Interface extends utils.Interface {
         "lpManager()": FunctionFragment;
         "pool()": FunctionFragment;
         "poolFee()": FunctionFragment;
+        "positionFees()": FunctionFragment;
+        "positionValue()": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
         "revokeRole(bytes32,address)": FunctionFragment;
         "router()": FunctionFragment;
-        "slippageTolerance()": FunctionFragment;
-        "startPosition(int24,int24,uint256)": FunctionFragment;
+        "startPosition(uint256,int24,int24,uint256)": FunctionFragment;
         "supportsInterface(bytes4)": FunctionFragment;
         "sweep(address)": FunctionFragment;
         "totalLockedValue()": FunctionFragment;
         "valueOfLpPosition()": FunctionFragment;
         "vault()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "STRATEGIST_ROLE" | "aToken" | "asset" | "balanceOfAsset" | "borrowAsset" | "canStartNewPos" | "currentPosition" | "debtToken" | "divest" | "endPosition" | "getRoleAdmin" | "grantRole" | "hasRole" | "invest" | "lpId" | "lpLiquidity" | "lpManager" | "pool" | "poolFee" | "renounceRole" | "revokeRole" | "router" | "slippageTolerance" | "startPosition" | "supportsInterface" | "sweep" | "totalLockedValue" | "valueOfLpPosition" | "vault"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "MAX_BPS" | "STRATEGIST_ROLE" | "aToken" | "asset" | "assetToDepositRatioBps" | "balanceOfAsset" | "borrow" | "canStartNewPos" | "collateralToBorrowRatioBps" | "currentPosition" | "decimalAdjust" | "decimalAdjustSign" | "divest" | "endPosition" | "getRoleAdmin" | "grantRole" | "hasRole" | "invest" | "lpId" | "lpLiquidity" | "lpManager" | "pool" | "poolFee" | "positionFees" | "positionValue" | "renounceRole" | "revokeRole" | "router" | "startPosition" | "supportsInterface" | "sweep" | "totalLockedValue" | "valueOfLpPosition" | "vault"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "MAX_BPS", values?: undefined): string;
     encodeFunctionData(functionFragment: "STRATEGIST_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "aToken", values?: undefined): string;
     encodeFunctionData(functionFragment: "asset", values?: undefined): string;
+    encodeFunctionData(functionFragment: "assetToDepositRatioBps", values?: undefined): string;
     encodeFunctionData(functionFragment: "balanceOfAsset", values?: undefined): string;
-    encodeFunctionData(functionFragment: "borrowAsset", values?: undefined): string;
+    encodeFunctionData(functionFragment: "borrow", values?: undefined): string;
     encodeFunctionData(functionFragment: "canStartNewPos", values?: undefined): string;
+    encodeFunctionData(functionFragment: "collateralToBorrowRatioBps", values?: undefined): string;
     encodeFunctionData(functionFragment: "currentPosition", values?: undefined): string;
-    encodeFunctionData(functionFragment: "debtToken", values?: undefined): string;
+    encodeFunctionData(functionFragment: "decimalAdjust", values?: undefined): string;
+    encodeFunctionData(functionFragment: "decimalAdjustSign", values?: undefined): string;
     encodeFunctionData(functionFragment: "divest", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "endPosition", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "getRoleAdmin", values: [PromiseOrValue<BytesLike>]): string;
@@ -56,11 +65,13 @@ export interface DeltaNeutralLpV3Interface extends utils.Interface {
     encodeFunctionData(functionFragment: "lpManager", values?: undefined): string;
     encodeFunctionData(functionFragment: "pool", values?: undefined): string;
     encodeFunctionData(functionFragment: "poolFee", values?: undefined): string;
+    encodeFunctionData(functionFragment: "positionFees", values?: undefined): string;
+    encodeFunctionData(functionFragment: "positionValue", values?: undefined): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "revokeRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "router", values?: undefined): string;
-    encodeFunctionData(functionFragment: "slippageTolerance", values?: undefined): string;
     encodeFunctionData(functionFragment: "startPosition", values: [
+        PromiseOrValue<BigNumberish>,
         PromiseOrValue<BigNumberish>,
         PromiseOrValue<BigNumberish>,
         PromiseOrValue<BigNumberish>
@@ -71,14 +82,18 @@ export interface DeltaNeutralLpV3Interface extends utils.Interface {
     encodeFunctionData(functionFragment: "valueOfLpPosition", values?: undefined): string;
     encodeFunctionData(functionFragment: "vault", values?: undefined): string;
     decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "MAX_BPS", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "STRATEGIST_ROLE", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "aToken", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "assetToDepositRatioBps", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "balanceOfAsset", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "borrowAsset", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "borrow", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "canStartNewPos", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "collateralToBorrowRatioBps", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "currentPosition", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "debtToken", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "decimalAdjust", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "decimalAdjustSign", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "divest", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "endPosition", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
@@ -90,10 +105,11 @@ export interface DeltaNeutralLpV3Interface extends utils.Interface {
     decodeFunctionResult(functionFragment: "lpManager", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "pool", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "poolFee", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "positionFees", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "positionValue", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "slippageTolerance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "startPosition", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "sweep", data: BytesLike): Result;
@@ -220,16 +236,20 @@ export interface DeltaNeutralLpV3 extends BaseContract {
     removeListener: OnEvent<this>;
     functions: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+        MAX_BPS(overrides?: CallOverrides): Promise<[BigNumber]>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
         aToken(overrides?: CallOverrides): Promise<[string]>;
         asset(overrides?: CallOverrides): Promise<[string]>;
+        assetToDepositRatioBps(overrides?: CallOverrides): Promise<[BigNumber]>;
         balanceOfAsset(overrides?: CallOverrides): Promise<[BigNumber] & {
             assets: BigNumber;
         }>;
-        borrowAsset(overrides?: CallOverrides): Promise<[string]>;
+        borrow(overrides?: CallOverrides): Promise<[string]>;
         canStartNewPos(overrides?: CallOverrides): Promise<[boolean]>;
+        collateralToBorrowRatioBps(overrides?: CallOverrides): Promise<[BigNumber]>;
         currentPosition(overrides?: CallOverrides): Promise<[number]>;
-        debtToken(overrides?: CallOverrides): Promise<[string]>;
+        decimalAdjust(overrides?: CallOverrides): Promise<[BigNumber]>;
+        decimalAdjustSign(overrides?: CallOverrides): Promise<[boolean]>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -249,6 +269,14 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         lpManager(overrides?: CallOverrides): Promise<[string]>;
         pool(overrides?: CallOverrides): Promise<[string]>;
         poolFee(overrides?: CallOverrides): Promise<[number]>;
+        positionFees(overrides?: CallOverrides): Promise<[
+            BigNumber,
+            BigNumber
+        ] & {
+            assets: BigNumber;
+            borrows: BigNumber;
+        }>;
+        positionValue(overrides?: CallOverrides): Promise<[string]>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -256,8 +284,7 @@ export interface DeltaNeutralLpV3 extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         router(overrides?: CallOverrides): Promise<[string]>;
-        slippageTolerance(overrides?: CallOverrides): Promise<[BigNumber]>;
-        startPosition(tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        startPosition(assets: PromiseOrValue<BigNumberish>, tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[boolean]>;
@@ -271,14 +298,18 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         vault(overrides?: CallOverrides): Promise<[string]>;
     };
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+    MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
     STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
     aToken(overrides?: CallOverrides): Promise<string>;
     asset(overrides?: CallOverrides): Promise<string>;
+    assetToDepositRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
     balanceOfAsset(overrides?: CallOverrides): Promise<BigNumber>;
-    borrowAsset(overrides?: CallOverrides): Promise<string>;
+    borrow(overrides?: CallOverrides): Promise<string>;
     canStartNewPos(overrides?: CallOverrides): Promise<boolean>;
+    collateralToBorrowRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
     currentPosition(overrides?: CallOverrides): Promise<number>;
-    debtToken(overrides?: CallOverrides): Promise<string>;
+    decimalAdjust(overrides?: CallOverrides): Promise<BigNumber>;
+    decimalAdjustSign(overrides?: CallOverrides): Promise<boolean>;
     divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -298,6 +329,14 @@ export interface DeltaNeutralLpV3 extends BaseContract {
     lpManager(overrides?: CallOverrides): Promise<string>;
     pool(overrides?: CallOverrides): Promise<string>;
     poolFee(overrides?: CallOverrides): Promise<number>;
+    positionFees(overrides?: CallOverrides): Promise<[
+        BigNumber,
+        BigNumber
+    ] & {
+        assets: BigNumber;
+        borrows: BigNumber;
+    }>;
+    positionValue(overrides?: CallOverrides): Promise<string>;
     renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -305,8 +344,7 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     router(overrides?: CallOverrides): Promise<string>;
-    slippageTolerance(overrides?: CallOverrides): Promise<BigNumber>;
-    startPosition(tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+    startPosition(assets: PromiseOrValue<BigNumberish>, tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
@@ -318,14 +356,18 @@ export interface DeltaNeutralLpV3 extends BaseContract {
     vault(overrides?: CallOverrides): Promise<string>;
     callStatic: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
+        MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
         aToken(overrides?: CallOverrides): Promise<string>;
         asset(overrides?: CallOverrides): Promise<string>;
+        assetToDepositRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
         balanceOfAsset(overrides?: CallOverrides): Promise<BigNumber>;
-        borrowAsset(overrides?: CallOverrides): Promise<string>;
+        borrow(overrides?: CallOverrides): Promise<string>;
         canStartNewPos(overrides?: CallOverrides): Promise<boolean>;
+        collateralToBorrowRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
         currentPosition(overrides?: CallOverrides): Promise<number>;
-        debtToken(overrides?: CallOverrides): Promise<string>;
+        decimalAdjust(overrides?: CallOverrides): Promise<BigNumber>;
+        decimalAdjustSign(overrides?: CallOverrides): Promise<boolean>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         endPosition(slippageBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
@@ -337,11 +379,18 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         lpManager(overrides?: CallOverrides): Promise<string>;
         pool(overrides?: CallOverrides): Promise<string>;
         poolFee(overrides?: CallOverrides): Promise<number>;
+        positionFees(overrides?: CallOverrides): Promise<[
+            BigNumber,
+            BigNumber
+        ] & {
+            assets: BigNumber;
+            borrows: BigNumber;
+        }>;
+        positionValue(overrides?: CallOverrides): Promise<string>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         router(overrides?: CallOverrides): Promise<string>;
-        slippageTolerance(overrides?: CallOverrides): Promise<BigNumber>;
-        startPosition(tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+        startPosition(assets: PromiseOrValue<BigNumberish>, tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
         sweep(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         totalLockedValue(overrides?: CallOverrides): Promise<BigNumber>;
@@ -362,14 +411,18 @@ export interface DeltaNeutralLpV3 extends BaseContract {
     };
     estimateGas: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+        MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
         aToken(overrides?: CallOverrides): Promise<BigNumber>;
         asset(overrides?: CallOverrides): Promise<BigNumber>;
+        assetToDepositRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
         balanceOfAsset(overrides?: CallOverrides): Promise<BigNumber>;
-        borrowAsset(overrides?: CallOverrides): Promise<BigNumber>;
+        borrow(overrides?: CallOverrides): Promise<BigNumber>;
         canStartNewPos(overrides?: CallOverrides): Promise<BigNumber>;
+        collateralToBorrowRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
         currentPosition(overrides?: CallOverrides): Promise<BigNumber>;
-        debtToken(overrides?: CallOverrides): Promise<BigNumber>;
+        decimalAdjust(overrides?: CallOverrides): Promise<BigNumber>;
+        decimalAdjustSign(overrides?: CallOverrides): Promise<BigNumber>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -389,6 +442,8 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         lpManager(overrides?: CallOverrides): Promise<BigNumber>;
         pool(overrides?: CallOverrides): Promise<BigNumber>;
         poolFee(overrides?: CallOverrides): Promise<BigNumber>;
+        positionFees(overrides?: CallOverrides): Promise<BigNumber>;
+        positionValue(overrides?: CallOverrides): Promise<BigNumber>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -396,8 +451,7 @@ export interface DeltaNeutralLpV3 extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         router(overrides?: CallOverrides): Promise<BigNumber>;
-        slippageTolerance(overrides?: CallOverrides): Promise<BigNumber>;
-        startPosition(tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        startPosition(assets: PromiseOrValue<BigNumberish>, tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -410,14 +464,18 @@ export interface DeltaNeutralLpV3 extends BaseContract {
     };
     populateTransaction: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        MAX_BPS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         aToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        assetToDepositRatioBps(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         balanceOfAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        borrowAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        borrow(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         canStartNewPos(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        collateralToBorrowRatioBps(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         currentPosition(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        debtToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        decimalAdjust(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        decimalAdjustSign(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -437,6 +495,8 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         lpManager(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         pool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         poolFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        positionFees(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        positionValue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -444,8 +504,7 @@ export interface DeltaNeutralLpV3 extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        slippageTolerance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        startPosition(tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        startPosition(assets: PromiseOrValue<BigNumberish>, tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;

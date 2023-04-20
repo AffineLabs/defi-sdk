@@ -32,14 +32,17 @@ export interface IConvexBoosterInterface extends utils.Interface {
         "crv()": FunctionFragment;
         "depositAll(uint256,bool)": FunctionFragment;
         "poolInfo(uint256)": FunctionFragment;
+        "poolLength()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "crv" | "depositAll" | "poolInfo"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "crv" | "depositAll" | "poolInfo" | "poolLength"): FunctionFragment;
     encodeFunctionData(functionFragment: "crv", values?: undefined): string;
     encodeFunctionData(functionFragment: "depositAll", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<boolean>]): string;
     encodeFunctionData(functionFragment: "poolInfo", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "poolLength", values?: undefined): string;
     decodeFunctionResult(functionFragment: "crv", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "depositAll", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "poolInfo", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "poolLength", data: BytesLike): Result;
     events: {};
 }
 export interface IConvexBooster extends BaseContract {
@@ -66,6 +69,9 @@ export interface IConvexBooster extends BaseContract {
         poolInfo(_pid: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        poolLength(overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
     };
     crv(overrides?: Overrides & {
         from?: PromiseOrValue<string>;
@@ -76,10 +82,14 @@ export interface IConvexBooster extends BaseContract {
     poolInfo(_pid: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    poolLength(overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     callStatic: {
         crv(overrides?: CallOverrides): Promise<string>;
         depositAll(_pid: PromiseOrValue<BigNumberish>, _stake: PromiseOrValue<boolean>, overrides?: CallOverrides): Promise<boolean>;
         poolInfo(_pid: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<IConvexBooster.PoolInfoStructOutput>;
+        poolLength(overrides?: CallOverrides): Promise<BigNumber>;
     };
     filters: {};
     estimateGas: {
@@ -92,6 +102,9 @@ export interface IConvexBooster extends BaseContract {
         poolInfo(_pid: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        poolLength(overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
     };
     populateTransaction: {
         crv(overrides?: Overrides & {
@@ -101,6 +114,9 @@ export interface IConvexBooster extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         poolInfo(_pid: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        poolLength(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
     };

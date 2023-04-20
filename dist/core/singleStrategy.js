@@ -15,13 +15,14 @@ const AlpineDeFiSDK_1 = require("./AlpineDeFiSDK");
 function getWithdrawalRequest() {
     return __awaiter(this, void 0, void 0, function* () {
         const { withdrawalEscrow, ssvEthUSDEarn } = (0, cache_1.getEthContracts)();
-        const withdrawalRequests = yield withdrawalEscrow.queryFilter(withdrawalEscrow.filters.WithdrawalRequest(cache_1.SIGNER.getAddress(), null, null));
         const currentEpoch = yield ssvEthUSDEarn.epoch();
-        let ret = [];
-        for (let req of withdrawalRequests) {
+        const withdrawalRequests = yield withdrawalEscrow.queryFilter(withdrawalEscrow.filters.WithdrawalRequest(cache_1.userAddress, null, null));
+        console.log({ withdrawalRequests });
+        const ret = [];
+        for (const req of withdrawalRequests) {
             if (req.args[1] < currentEpoch) {
-                const shares = yield withdrawalEscrow.withdrawableShares(cache_1.SIGNER.getAddress(), req.args[1]);
-                const assets = yield withdrawalEscrow.withdrawableAssets(cache_1.SIGNER.getAddress(), req.args[1]);
+                const shares = yield withdrawalEscrow.withdrawableShares(cache_1.userAddress, req.args[1]);
+                const assets = yield withdrawalEscrow.withdrawableAssets(cache_1.userAddress, req.args[1]);
                 ret.push({
                     epoch: req.args[1].toNumber(),
                     token: shares.toNumber(),
@@ -47,7 +48,7 @@ exports.getWithdrawalRequest = getWithdrawalRequest;
 function redeemWithdrawRequest(reqInfo) {
     return __awaiter(this, void 0, void 0, function* () {
         const { withdrawalEscrow } = (0, cache_1.getEthContracts)();
-        const txReceipt = yield (0, AlpineDeFiSDK_1.blockchainCall)(withdrawalEscrow, "redeem", [cache_1.SIGNER.getAddress(), reqInfo.epoch]);
+        const txReceipt = yield (0, AlpineDeFiSDK_1.blockchainCall)(withdrawalEscrow, "redeem", [cache_1.userAddress, reqInfo.epoch]);
         return txReceipt;
     });
 }
@@ -55,9 +56,9 @@ exports.redeemWithdrawRequest = redeemWithdrawRequest;
 function getAssets() {
     return __awaiter(this, void 0, void 0, function* () {
         const { withdrawalEscrow } = (0, cache_1.getEthContracts)();
-        const withdrawalRequests = yield withdrawalEscrow.queryFilter(withdrawalEscrow.filters.WithdrawalRequest(cache_1.SIGNER.getAddress(), null, null));
+        const withdrawalRequests = yield withdrawalEscrow.queryFilter(withdrawalEscrow.filters.WithdrawalRequest(cache_1.userAddress, null, null));
         const epochs = withdrawalRequests.map(req => req.args[1]);
-        const assets = yield withdrawalEscrow.getAssets(cache_1.SIGNER.getAddress(), epochs);
+        const assets = yield withdrawalEscrow.getAssets(cache_1.userAddress, epochs);
         return assets.toNumber();
     });
 }

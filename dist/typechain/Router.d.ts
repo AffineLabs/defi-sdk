@@ -7,6 +7,7 @@ export interface RouterInterface extends utils.Interface {
         "approve(address,address,uint256)": FunctionFragment;
         "deposit(address,address,uint256,uint256)": FunctionFragment;
         "depositMax(address,address,uint256)": FunctionFragment;
+        "depositNative()": FunctionFragment;
         "depositToVault(address,address,uint256,uint256)": FunctionFragment;
         "isTrustedForwarder(address)": FunctionFragment;
         "mint(address,address,uint256,uint256)": FunctionFragment;
@@ -16,10 +17,11 @@ export interface RouterInterface extends utils.Interface {
         "redeemToDeposit(address,address,address,uint256,uint256)": FunctionFragment;
         "trustedForwarder()": FunctionFragment;
         "versionRecipient()": FunctionFragment;
+        "weth()": FunctionFragment;
         "withdraw(address,address,uint256,uint256)": FunctionFragment;
         "withdrawToDeposit(address,address,address,uint256,uint256,uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "approve" | "deposit" | "depositMax" | "depositToVault" | "isTrustedForwarder" | "mint" | "multicall" | "redeem" | "redeemMax" | "redeemToDeposit" | "trustedForwarder" | "versionRecipient" | "withdraw" | "withdrawToDeposit"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "approve" | "deposit" | "depositMax" | "depositNative" | "depositToVault" | "isTrustedForwarder" | "mint" | "multicall" | "redeem" | "redeemMax" | "redeemToDeposit" | "trustedForwarder" | "versionRecipient" | "weth" | "withdraw" | "withdrawToDeposit"): FunctionFragment;
     encodeFunctionData(functionFragment: "approve", values: [
         PromiseOrValue<string>,
         PromiseOrValue<string>,
@@ -36,6 +38,7 @@ export interface RouterInterface extends utils.Interface {
         PromiseOrValue<string>,
         PromiseOrValue<BigNumberish>
     ]): string;
+    encodeFunctionData(functionFragment: "depositNative", values?: undefined): string;
     encodeFunctionData(functionFragment: "depositToVault", values: [
         PromiseOrValue<string>,
         PromiseOrValue<string>,
@@ -70,6 +73,7 @@ export interface RouterInterface extends utils.Interface {
     ]): string;
     encodeFunctionData(functionFragment: "trustedForwarder", values?: undefined): string;
     encodeFunctionData(functionFragment: "versionRecipient", values?: undefined): string;
+    encodeFunctionData(functionFragment: "weth", values?: undefined): string;
     encodeFunctionData(functionFragment: "withdraw", values: [
         PromiseOrValue<string>,
         PromiseOrValue<string>,
@@ -87,6 +91,7 @@ export interface RouterInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "depositMax", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "depositNative", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "depositToVault", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "isTrustedForwarder", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
@@ -96,6 +101,7 @@ export interface RouterInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "redeemToDeposit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "trustedForwarder", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "versionRecipient", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "weth", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawToDeposit", data: BytesLike): Result;
     events: {};
@@ -124,6 +130,9 @@ export interface Router extends BaseContract {
         depositMax(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        depositNative(overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         depositToVault(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -145,6 +154,7 @@ export interface Router extends BaseContract {
         }): Promise<ContractTransaction>;
         trustedForwarder(overrides?: CallOverrides): Promise<[string]>;
         versionRecipient(overrides?: CallOverrides): Promise<[string]>;
+        weth(overrides?: CallOverrides): Promise<[string]>;
         withdraw(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -159,6 +169,9 @@ export interface Router extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     depositMax(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    depositNative(overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     depositToVault(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
@@ -182,6 +195,7 @@ export interface Router extends BaseContract {
     }): Promise<ContractTransaction>;
     trustedForwarder(overrides?: CallOverrides): Promise<string>;
     versionRecipient(overrides?: CallOverrides): Promise<string>;
+    weth(overrides?: CallOverrides): Promise<string>;
     withdraw(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -192,6 +206,7 @@ export interface Router extends BaseContract {
         approve(token: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         deposit(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         depositMax(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        depositNative(overrides?: CallOverrides): Promise<void>;
         depositToVault(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
         mint(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, maxAmountIn: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -201,6 +216,7 @@ export interface Router extends BaseContract {
         redeemToDeposit(fromVault: PromiseOrValue<string>, toVault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         trustedForwarder(overrides?: CallOverrides): Promise<string>;
         versionRecipient(overrides?: CallOverrides): Promise<string>;
+        weth(overrides?: CallOverrides): Promise<string>;
         withdraw(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         withdrawToDeposit(fromVault: PromiseOrValue<string>, toVault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesIn: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     };
@@ -213,6 +229,9 @@ export interface Router extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         depositMax(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        depositNative(overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         depositToVault(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
@@ -236,6 +255,7 @@ export interface Router extends BaseContract {
         }): Promise<BigNumber>;
         trustedForwarder(overrides?: CallOverrides): Promise<BigNumber>;
         versionRecipient(overrides?: CallOverrides): Promise<BigNumber>;
+        weth(overrides?: CallOverrides): Promise<BigNumber>;
         withdraw(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -251,6 +271,9 @@ export interface Router extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         depositMax(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        depositNative(overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         depositToVault(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
@@ -274,6 +297,7 @@ export interface Router extends BaseContract {
         }): Promise<PopulatedTransaction>;
         trustedForwarder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         versionRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        weth(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         withdraw(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;

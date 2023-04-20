@@ -1,21 +1,24 @@
-import { SIGNER, getEthContracts } from "./cache";
+import { userAddress, getEthContracts } from "./cache";
 import { SSVWithdrawalRequestInfo } from "./types";
 import { blockchainCall } from "./AlpineDeFiSDK";
 
 export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]> {
   const { withdrawalEscrow, ssvEthUSDEarn } = getEthContracts();
-  const withdrawalRequests = await withdrawalEscrow.queryFilter(
-    withdrawalEscrow.filters.WithdrawalRequest(SIGNER.getAddress(), null, null),
-  );
 
   const currentEpoch = await ssvEthUSDEarn.epoch();
 
-  let ret: SSVWithdrawalRequestInfo[] = [];
+  const withdrawalRequests = await withdrawalEscrow.queryFilter(
+    withdrawalEscrow.filters.WithdrawalRequest(userAddress, null, null),
+  );
 
-  for (let req of withdrawalRequests) {
+  console.log({ withdrawalRequests });
+
+  const ret: SSVWithdrawalRequestInfo[] = [];
+
+  for (const req of withdrawalRequests) {
     if (req.args[1] < currentEpoch) {
-      const shares = await withdrawalEscrow.withdrawableShares(SIGNER.getAddress(), req.args[1]);
-      const assets = await withdrawalEscrow.withdrawableAssets(SIGNER.getAddress(), req.args[1]);
+      const shares = await withdrawalEscrow.withdrawableShares(userAddress, req.args[1]);
+      const assets = await withdrawalEscrow.withdrawableAssets(userAddress, req.args[1]);
       ret.push({
         epoch: req.args[1].toNumber(),
         token: shares.toNumber(),
@@ -38,18 +41,18 @@ export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]
 
 export async function redeemWithdrawRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<any> {
   const { withdrawalEscrow } = getEthContracts();
-  const txReceipt = await blockchainCall(withdrawalEscrow, "redeem", [SIGNER.getAddress(), reqInfo.epoch]);
+  const txReceipt = await blockchainCall(withdrawalEscrow, "redeem", [userAddress, reqInfo.epoch]);
   return txReceipt;
 }
 
 export async function getAssets(): Promise<number> {
   const { withdrawalEscrow } = getEthContracts();
   const withdrawalRequests = await withdrawalEscrow.queryFilter(
-    withdrawalEscrow.filters.WithdrawalRequest(SIGNER.getAddress(), null, null),
+    withdrawalEscrow.filters.WithdrawalRequest(userAddress, null, null),
   );
   const epochs = withdrawalRequests.map(req => req.args[1]);
 
-  const assets = await withdrawalEscrow.getAssets(SIGNER.getAddress(), epochs);
+  const assets = await withdrawalEscrow.getAssets(userAddress, epochs);
 
   return assets.toNumber();
 }

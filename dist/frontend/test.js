@@ -69,33 +69,12 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const readAcc = new Account_1.ReadAccount(alpAccount.userAddress || "", chainId);
     console.log("usdc bal on ETH: ", yield readAcc.getTokenInfo("usdc"));
     yield alpAccount.setSimulationMode(false);
-    // write
-    try {
-        // check if user is approved max amount
-        const isApproved = yield alpAccount.isMaxUSDCApproved(_productToBuy);
-        console.log("isApproved: ", isApproved);
-        // approve max amount if not approved
-        if (!isApproved) {
-            const res = yield alpAccount.approve(_productToBuy);
-            console.log("approve res: ", res);
-        }
-        console.log("approved: ", _productToBuy);
-    }
-    catch (error) {
-        console.error("Error in approve: ", error);
-    }
-    // const res = await alpAccount.buyProduct(_productToBuy, 0.1);
-    const res = yield alpAccount.sellProduct(_productToBuy, 0.1);
+    const res = yield alpAccount.isStrategyLiquid();
     console.log({ res });
-    console.log("bought: ", _productToBuy);
-    // disconnect
-    try {
-        console.log("disconnecting");
-        yield alpAccount.disconnect(walletType);
-    }
-    catch (error) {
-        console.error("Error in disconnect: ", error);
-    }
+    const requests = yield alpAccount.getWithdrawalRequest();
+    console.log({ requests });
+    const allAssets = yield alpAccount.getTotalWithdrawableAssets();
+    console.log({ allAssets });
     console.log("exiting");
 });
 const handleButtonClick = () => {
