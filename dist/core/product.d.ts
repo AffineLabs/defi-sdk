@@ -1,7 +1,8 @@
 import { ethers } from "ethers";
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
-export declare function buyProduct(product: AlpineProduct, amount: number, slippageBps?: number): Promise<DryRunReceipt | FullTxReceipt>;
-export declare function sellProduct(product: AlpineProduct, amount: number): Promise<DryRunReceipt | FullTxReceipt>;
+export declare function buyProduct(product: AlpineProduct, amount: number, slippageBps?: number): Promise<DryRunReceipt | undefined>;
+export declare function sellProduct(product: AlpineProduct, amount: number): Promise<DryRunReceipt | undefined>;
+export declare function buyLockedShares(rawAmount: number): Promise<DryRunReceipt | FullTxReceipt>;
 /**
  * Deposit usdc to a vault, and get alp tokens in return
  * @param {String} amountUSDC amount in usdc
@@ -24,6 +25,7 @@ export declare function sellBtCEthShares(amountUSDC: number): Promise<DryRunRece
  * @param amountWeth Amount in weth to sell
  */
 export declare function sellEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt>;
+export declare function sellLockedShares(rawAmount: number): Promise<DryRunReceipt | FullTxReceipt>;
 export declare function getTokenInfo(product: AlpineProduct | "usdc"): Promise<TokenInfo>;
 export declare function tokensFromShares(product: AlpineProduct, shareAmount: ethers.BigNumber): Promise<ethers.BigNumber>;
 export declare function sharesFromTokens(product: AlpineProduct, tokenAmount: ethers.BigNumber): Promise<ethers.BigNumber>;

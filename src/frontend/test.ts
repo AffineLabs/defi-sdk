@@ -58,11 +58,25 @@ const connectAndWrite = async ({
   await testRead(account.userAddress || "", chainId);
 };
 
+const buy = async (alpAccount: Account, product: AlpineProduct) => {
+  // check if user is approved max amount
+  const isApproved = await alpAccount.isMaxUSDCApproved(product);
+  console.log("isApproved: ", isApproved);
+
+  // approve max amount if not approved
+  if (!isApproved) {
+    const res = await alpAccount.approve(product);
+    console.log("approve res: ", res);
+  }
+  console.log("approved: ", product);
+  await alpAccount.buyProduct(product, 1);
+};
+
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
   const chainId = 5 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "ethWethEarn";
+  const _productToBuy: AlpineProduct = "ssvEthUSDEarn";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -81,6 +95,10 @@ const main = async () => {
   console.log({ requests });
   const allAssets = await alpAccount.getTotalWithdrawableAssets();
   console.log({ allAssets });
+
+  // await buy(alpAccount, _productToBuy);
+  await alpAccount.sellProduct("ssvEthUSDEarn", 1);
+
   console.log("exiting");
 };
 

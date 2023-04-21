@@ -14,8 +14,10 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
     return buyBtCEthShares(amount, slippageBps);
   } else if (product == "ethEarn") {
     return buyEthUsdcShares(amount);
-  } else {
+  } else if (product == "ethWethEarn") {
     return buyEthWethShares(amount);
+  } else if (product == "ssvEthUSDEarn") {
+    return buyLockedShares(amount);
   }
 }
 
@@ -26,8 +28,33 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
     return sellBtCEthShares(amount);
   } else if (product == "ethEarn") {
     return sellEthUsdcShares(amount);
-  } else {
+  } else if (product == "ethWethEarn") {
     return sellEthWethShares(amount);
+  } else if (product == "ssvEthUSDEarn") {
+    return sellLockedShares(amount);
+  }
+}
+
+export async function buyLockedShares(rawAmount: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { ssvEthUSDEarn: vault } = getEthContracts();
+  const amount = _addDecimals(rawAmount.toString(), 6);
+
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amount.toString(),
+    tokenAmount: _removeDecimals(await vault.convertToShares(amount), 18),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(vault, "deposit", [amount, userAddress], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(vault, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
   }
 }
 
@@ -327,6 +354,38 @@ export async function sellEthWethShares(amountWeth: number): Promise<DryRunRecei
       ethWethEarn,
       "withdraw",
       [wethToWithdraw, userAddress, userAddress],
+      false,
+    )) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
+}
+
+export async function sellLockedShares(rawAmount: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { ssvEthUSDEarn: vault } = getEthContracts();
+
+  const assetsToWithdraw = _addDecimals(rawAmount.toString(), 6);
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: rawAmount.toString(),
+    tokenAmount: _removeDecimals(await vault.convertToShares(assetsToWithdraw), await vault.decimals()),
+  };
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(
+      vault,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(
+      vault,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
       false,
     )) as SmallTxReceipt;
     return { ...basicInfo, ...receipt };
