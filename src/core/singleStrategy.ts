@@ -1,17 +1,15 @@
 import { userAddress, getEthContracts } from "./cache";
-import { SSVWithdrawalRequestInfo } from "./types";
-import { blockchainCall } from "./AlpineDeFiSDK";
+import { FullTxReceipt, SSVWithdrawalRequestInfo, SmallTxReceipt, TxnReceipt } from "./types";
+import { blockchainCall, _removeDecimals } from "./AlpineDeFiSDK";
 
 export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]> {
-  const { withdrawalEscrow, ssvEthUSDEarn } = getEthContracts();
+  const { withdrawalEscrow, ssvEthUSDEarn, usdc } = getEthContracts();
 
   const currentEpoch = await ssvEthUSDEarn.epoch();
 
   const withdrawalRequests = await withdrawalEscrow.queryFilter(
     withdrawalEscrow.filters.WithdrawalRequest(userAddress, null, null),
   );
-
-  console.log({ withdrawalRequests });
 
   const ret: SSVWithdrawalRequestInfo[] = [];
 
@@ -21,16 +19,16 @@ export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]
       const assets = await withdrawalEscrow.withdrawableAssets(userAddress, req.args[1]);
       ret.push({
         epoch: req.args[1].toNumber(),
-        token: shares.toNumber(),
-        value: assets.toNumber(),
+        token: _removeDecimals(shares, await ssvEthUSDEarn.decimals()),
+        value: _removeDecimals(assets, await usdc.decimals()),
         claimed: shares.eq(0),
         claimable: shares.gt(0),
       });
     } else {
       ret.push({
         epoch: req.args[1].toNumber(),
-        token: req.args[2].toNumber(),
-        value: 0,
+        token: _removeDecimals(req.args[2], await ssvEthUSDEarn.decimals()),
+        value: "0",
         claimed: false,
         claimable: false,
       });
@@ -39,10 +37,19 @@ export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]
   return ret;
 }
 
-export async function redeemWithdrawRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<any> {
+export async function redeemWithdrawRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<FullTxReceipt> {
   const { withdrawalEscrow } = getEthContracts();
-  const txReceipt = await blockchainCall(withdrawalEscrow, "redeem", [userAddress, reqInfo.epoch]);
-  return txReceipt;
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: reqInfo.value,
+    tokenAmount: reqInfo.token,
+  };
+  const txReceipt = (await blockchainCall(withdrawalEscrow, "redeem", [userAddress, reqInfo.epoch])) as SmallTxReceipt;
+  return {
+    ...txReceipt,
+    ...basicInfo,
+  };
 }
 
 export async function getAssets(): Promise<number> {
@@ -60,4 +67,9 @@ export async function getAssets(): Promise<number> {
 export async function isLiquidToWithdraw() {
   const { ssvEthUSDEarn } = getEthContracts();
   return ssvEthUSDEarn.epochEnded();
+}
+
+export async function epochStartTime(): Promise<number> {
+  const { ssvEthUSDEarn } = getEthContracts();
+  return (await ssvEthUSDEarn.epochStartTime()).toNumber();
 }

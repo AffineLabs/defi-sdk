@@ -40,7 +40,7 @@
     "chai": "^4.3.6",
     "commander": "^9.0.0",
     "concurrently": "^7.0.0",
-    "contracts": "https://github.com/AffineLabs/contracts.git#1bd4449b024f57eee3db068c375dd2bbabcdca6a",
+    "contracts": "https://github.com/AffineLabs/contracts.git#bd609c2a6688b9bfa0675a328985abd7e7a7505e",
     "dotenv": "^16.0.0",
     "eslint": "^8.16.0",
     "fs-extra": "^10.1.0",

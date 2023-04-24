@@ -391,8 +391,8 @@ class Account {
     return lockedWithdrawal.getAssets();
   }
 
-  async lastEpochBeginUTCTime() {
-    return Math.floor(Date.now() / 1000);
+  async lastEpochBeginUTCTime(): Promise<number> {
+    return lockedWithdrawal.epochStartTime();
   }
 }
 

@@ -105,8 +105,8 @@ export interface EmergencyWithdrawalQueueTransfer {
 
 export interface SSVWithdrawalRequestInfo {
   epoch: number;
-  token: number;
-  value: number;
+  token: string;
+  value: string;
   claimed: boolean;
   claimable: boolean;
 }
