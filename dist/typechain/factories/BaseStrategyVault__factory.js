@@ -264,6 +264,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "epochStartTime",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "bytes32",
@@ -434,6 +447,19 @@ const _abi = [
             },
         ],
         name: "revokeRole",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "contract WithdrawalEscrow",
+                name: "escrow",
+                type: "address",
+            },
+        ],
+        name: "setDebtEscrow",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",

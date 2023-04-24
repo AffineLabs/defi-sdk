@@ -97,6 +97,7 @@ export { MockEpochStrategy__factory } from "./MockEpochStrategy__factory";
 export { Multicallable__factory } from "./Multicallable__factory";
 export { PausableUpgradeable__factory } from "./PausableUpgradeable__factory";
 export { Router__factory } from "./Router__factory";
+export { SSVDeltaNeutralLp__factory } from "./SSVDeltaNeutralLp__factory";
 export { SmartWallet__factory } from "./SmartWallet__factory";
 export { StrategyVault__factory } from "./StrategyVault__factory";
 export { TwoAssetBasket__factory } from "./TwoAssetBasket__factory";

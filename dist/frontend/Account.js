@@ -398,7 +398,7 @@ class Account {
     }
     lastEpochBeginUTCTime() {
         return __awaiter(this, void 0, void 0, function* () {
-            return Math.floor(Date.now() / 1000);
+            return lockedWithdrawal.epochStartTime();
         });
     }
 }

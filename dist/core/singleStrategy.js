@@ -9,15 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isLiquidToWithdraw = exports.getAssets = exports.redeemWithdrawRequest = exports.getWithdrawalRequest = void 0;
+exports.epochStartTime = exports.isLiquidToWithdraw = exports.getAssets = exports.redeemWithdrawRequest = exports.getWithdrawalRequest = void 0;
 const cache_1 = require("./cache");
 const AlpineDeFiSDK_1 = require("./AlpineDeFiSDK");
 function getWithdrawalRequest() {
     return __awaiter(this, void 0, void 0, function* () {
-        const { withdrawalEscrow, ssvEthUSDEarn } = (0, cache_1.getEthContracts)();
+        const { withdrawalEscrow, ssvEthUSDEarn, usdc } = (0, cache_1.getEthContracts)();
         const currentEpoch = yield ssvEthUSDEarn.epoch();
         const withdrawalRequests = yield withdrawalEscrow.queryFilter(withdrawalEscrow.filters.WithdrawalRequest(cache_1.userAddress, null, null));
-        console.log({ withdrawalRequests });
         const ret = [];
         for (const req of withdrawalRequests) {
             if (req.args[1] < currentEpoch) {
@@ -25,8 +24,8 @@ function getWithdrawalRequest() {
                 const assets = yield withdrawalEscrow.withdrawableAssets(cache_1.userAddress, req.args[1]);
                 ret.push({
                     epoch: req.args[1].toNumber(),
-                    token: shares.toNumber(),
-                    value: assets.toNumber(),
+                    token: (0, AlpineDeFiSDK_1._removeDecimals)(shares, yield ssvEthUSDEarn.decimals()),
+                    value: (0, AlpineDeFiSDK_1._removeDecimals)(assets, yield usdc.decimals()),
                     claimed: shares.eq(0),
                     claimable: shares.gt(0),
                 });
@@ -34,8 +33,8 @@ function getWithdrawalRequest() {
             else {
                 ret.push({
                     epoch: req.args[1].toNumber(),
-                    token: req.args[2].toNumber(),
-                    value: 0,
+                    token: (0, AlpineDeFiSDK_1._removeDecimals)(req.args[2], yield ssvEthUSDEarn.decimals()),
+                    value: "0",
                     claimed: false,
                     claimable: false,
                 });
@@ -48,8 +47,14 @@ exports.getWithdrawalRequest = getWithdrawalRequest;
 function redeemWithdrawRequest(reqInfo) {
     return __awaiter(this, void 0, void 0, function* () {
         const { withdrawalEscrow } = (0, cache_1.getEthContracts)();
-        const txReceipt = yield (0, AlpineDeFiSDK_1.blockchainCall)(withdrawalEscrow, "redeem", [cache_1.userAddress, reqInfo.epoch]);
-        return txReceipt;
+        const basicInfo = {
+            alpFee: "0",
+            alpFeePercent: "0",
+            dollarAmount: reqInfo.value,
+            tokenAmount: reqInfo.token,
+        };
+        const txReceipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(withdrawalEscrow, "redeem", [cache_1.userAddress, reqInfo.epoch]));
+        return Object.assign(Object.assign({}, txReceipt), basicInfo);
     });
 }
 exports.redeemWithdrawRequest = redeemWithdrawRequest;
@@ -70,3 +75,10 @@ function isLiquidToWithdraw() {
     });
 }
 exports.isLiquidToWithdraw = isLiquidToWithdraw;
+function epochStartTime() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { ssvEthUSDEarn } = (0, cache_1.getEthContracts)();
+        return (yield ssvEthUSDEarn.epochStartTime()).toNumber();
+    });
+}
+exports.epochStartTime = epochStartTime;

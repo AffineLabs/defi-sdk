@@ -205,6 +205,16 @@ export declare class BaseStrategyVault__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [];
+        readonly name: "epochStartTime";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [{
             readonly internalType: "bytes32";
             readonly name: "role";
@@ -335,6 +345,16 @@ export declare class BaseStrategyVault__factory {
             readonly type: "address";
         }];
         readonly name: "revokeRole";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "contract WithdrawalEscrow";
+            readonly name: "escrow";
+            readonly type: "address";
+        }];
+        readonly name: "setDebtEscrow";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";

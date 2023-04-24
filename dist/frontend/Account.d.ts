@@ -83,7 +83,7 @@ declare class Account {
     initWalletConnectProvider(web3Modal: import("@web3modal/standalone").Web3Modal): Promise<void>;
     isStrategyLiquid(): Promise<boolean>;
     getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]>;
-    redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<any>;
+    redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<import("../core/types").FullTxReceipt>;
     getTotalWithdrawableAssets(): Promise<number>;
     lastEpochBeginUTCTime(): Promise<number>;
 }

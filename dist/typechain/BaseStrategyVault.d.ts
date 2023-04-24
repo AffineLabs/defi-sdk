@@ -13,6 +13,7 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
         "endEpoch()": FunctionFragment;
         "epoch()": FunctionFragment;
         "epochEnded()": FunctionFragment;
+        "epochStartTime()": FunctionFragment;
         "getRoleAdmin(bytes32)": FunctionFragment;
         "governance()": FunctionFragment;
         "grantRole(bytes32,address)": FunctionFragment;
@@ -24,13 +25,14 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
         "multicall(bytes[])": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
         "revokeRole(bytes32,address)": FunctionFragment;
+        "setDebtEscrow(address)": FunctionFragment;
         "setStrategy(address)": FunctionFragment;
         "strategy()": FunctionFragment;
         "strategyTVL()": FunctionFragment;
         "supportsInterface(bytes4)": FunctionFragment;
         "vaultTVL()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "asset" | "beginEpoch" | "debtEscrow" | "endEpoch" | "epoch" | "epochEnded" | "getRoleAdmin" | "governance" | "grantRole" | "harvest" | "hasRole" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "multicall" | "renounceRole" | "revokeRole" | "setStrategy" | "strategy" | "strategyTVL" | "supportsInterface" | "vaultTVL"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "asset" | "beginEpoch" | "debtEscrow" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "harvest" | "hasRole" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "multicall" | "renounceRole" | "revokeRole" | "setDebtEscrow" | "setStrategy" | "strategy" | "strategyTVL" | "supportsInterface" | "vaultTVL"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
     encodeFunctionData(functionFragment: "LOCK_INTERVAL", values?: undefined): string;
@@ -40,6 +42,7 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "endEpoch", values?: undefined): string;
     encodeFunctionData(functionFragment: "epoch", values?: undefined): string;
     encodeFunctionData(functionFragment: "epochEnded", values?: undefined): string;
+    encodeFunctionData(functionFragment: "epochStartTime", values?: undefined): string;
     encodeFunctionData(functionFragment: "getRoleAdmin", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "governance", values?: undefined): string;
     encodeFunctionData(functionFragment: "grantRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
@@ -51,6 +54,7 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "multicall", values: [PromiseOrValue<BytesLike>[]]): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "revokeRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "setDebtEscrow", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "setStrategy", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "strategy", values?: undefined): string;
     encodeFunctionData(functionFragment: "strategyTVL", values?: undefined): string;
@@ -65,6 +69,7 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "endEpoch", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "epoch", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "epochEnded", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "epochStartTime", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "governance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
@@ -76,6 +81,7 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setDebtEscrow", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "strategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "strategyTVL", data: BytesLike): Result;
@@ -196,6 +202,7 @@ export interface BaseStrategyVault extends BaseContract {
         }): Promise<ContractTransaction>;
         epoch(overrides?: CallOverrides): Promise<[BigNumber]>;
         epochEnded(overrides?: CallOverrides): Promise<[boolean]>;
+        epochStartTime(overrides?: CallOverrides): Promise<[BigNumber]>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string]>;
         governance(overrides?: CallOverrides): Promise<[string]>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
@@ -215,6 +222,9 @@ export interface BaseStrategyVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         setStrategy(newStrategy: PromiseOrValue<string>, overrides?: Overrides & {
@@ -238,6 +248,7 @@ export interface BaseStrategyVault extends BaseContract {
     }): Promise<ContractTransaction>;
     epoch(overrides?: CallOverrides): Promise<BigNumber>;
     epochEnded(overrides?: CallOverrides): Promise<boolean>;
+    epochStartTime(overrides?: CallOverrides): Promise<BigNumber>;
     getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
     governance(overrides?: CallOverrides): Promise<string>;
     grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
@@ -259,6 +270,9 @@ export interface BaseStrategyVault extends BaseContract {
     revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     setStrategy(newStrategy: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -276,6 +290,7 @@ export interface BaseStrategyVault extends BaseContract {
         endEpoch(overrides?: CallOverrides): Promise<void>;
         epoch(overrides?: CallOverrides): Promise<BigNumber>;
         epochEnded(overrides?: CallOverrides): Promise<boolean>;
+        epochStartTime(overrides?: CallOverrides): Promise<BigNumber>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
         governance(overrides?: CallOverrides): Promise<string>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
@@ -287,6 +302,7 @@ export interface BaseStrategyVault extends BaseContract {
         multicall(data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<string[]>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+        setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         setStrategy(newStrategy: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         strategy(overrides?: CallOverrides): Promise<string>;
         strategyTVL(overrides?: CallOverrides): Promise<BigNumber>;
@@ -325,6 +341,7 @@ export interface BaseStrategyVault extends BaseContract {
         }): Promise<BigNumber>;
         epoch(overrides?: CallOverrides): Promise<BigNumber>;
         epochEnded(overrides?: CallOverrides): Promise<BigNumber>;
+        epochStartTime(overrides?: CallOverrides): Promise<BigNumber>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
         governance(overrides?: CallOverrides): Promise<BigNumber>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
@@ -344,6 +361,9 @@ export interface BaseStrategyVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         setStrategy(newStrategy: PromiseOrValue<string>, overrides?: Overrides & {
@@ -368,6 +388,7 @@ export interface BaseStrategyVault extends BaseContract {
         }): Promise<PopulatedTransaction>;
         epoch(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         epochEnded(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        epochStartTime(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         governance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
@@ -387,6 +408,9 @@ export interface BaseStrategyVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         setStrategy(newStrategy: PromiseOrValue<string>, overrides?: Overrides & {
