@@ -28,7 +28,7 @@ __metadata:
     chai: ^4.3.6
     commander: ^9.0.0
     concurrently: ^7.0.0
-    contracts: "https://github.com/AffineLabs/contracts.git#bd609c2a6688b9bfa0675a328985abd7e7a7505e"
+    contracts: "https://github.com/AffineLabs/contracts.git#e213476d685699d559a90a7f26e443ec9b58ad1a"
     dotenv: ^16.0.0
     eslint: ^8.16.0
     ethers: 5.7.2
@@ -4400,9 +4400,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"contracts@https://github.com/AffineLabs/contracts.git#bd609c2a6688b9bfa0675a328985abd7e7a7505e":
+"contracts@https://github.com/AffineLabs/contracts.git#e213476d685699d559a90a7f26e443ec9b58ad1a":
   version: 0.0.1
-  resolution: "contracts@https://github.com/AffineLabs/contracts.git#commit=bd609c2a6688b9bfa0675a328985abd7e7a7505e"
+  resolution: "contracts@https://github.com/AffineLabs/contracts.git#commit=e213476d685699d559a90a7f26e443ec9b58ad1a"
   dependencies:
     "@certusone/wormhole-sdk": ^0.1.4
     "@improbable-eng/grpc-web-node-http-transport": ^0.15.0
@@ -4415,7 +4415,7 @@ __metadata:
     axios: ^0.26.1
     solady: ^0.0.27
     solmate: "npm:@rari-capital/solmate@6.4.0"
-  checksum: 526acd49bdd3c2024c6d8ba045e4e1322694871fed793d3fd3bacc3f3d9e34b91efa8a663feb8c2926a07d0ef0cbed7e4101454e4fb0b266dada22cf8bbd4b93
+  checksum: 3392b170652e96fc25d34dae8197a4a35a70a1aa5c02d6037ee5cdaf056270668e6e88a7ef5a0e96af92f1374716ae66cda0284347d20e63743ca36e16695bb3
   languageName: node
   linkType: hard
 

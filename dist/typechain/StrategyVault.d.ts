@@ -65,6 +65,7 @@ export interface StrategyVaultInterface extends utils.Interface {
         "redeem(uint256,address,address)": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
         "revokeRole(bytes32,address)": FunctionFragment;
+        "setAssetLimit(uint256)": FunctionFragment;
         "setDebtEscrow(address)": FunctionFragment;
         "setManagementFee(uint256)": FunctionFragment;
         "setStrategy(address)": FunctionFragment;
@@ -73,6 +74,7 @@ export interface StrategyVaultInterface extends utils.Interface {
         "strategyTVL()": FunctionFragment;
         "supportsInterface(bytes4)": FunctionFragment;
         "symbol()": FunctionFragment;
+        "tearDown(address[])": FunctionFragment;
         "totalAssets()": FunctionFragment;
         "totalSupply()": FunctionFragment;
         "transfer(address,uint256)": FunctionFragment;
@@ -82,7 +84,7 @@ export interface StrategyVaultInterface extends utils.Interface {
         "withdraw(uint256,address,address)": FunctionFragment;
         "withdrawalFee()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "allowance" | "approve" | "asset" | "balanceOf" | "beginEpoch" | "convertToAssets" | "convertToShares" | "debtEscrow" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "multicall" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "redeem" | "renounceRole" | "revokeRole" | "setDebtEscrow" | "setManagementFee" | "setStrategy" | "setWithdrawalFee" | "strategy" | "strategyTVL" | "supportsInterface" | "symbol" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "vaultTVL" | "withdraw" | "withdrawalFee"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "allowance" | "approve" | "asset" | "balanceOf" | "beginEpoch" | "convertToAssets" | "convertToShares" | "debtEscrow" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "multicall" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "redeem" | "renounceRole" | "revokeRole" | "setAssetLimit" | "setDebtEscrow" | "setManagementFee" | "setStrategy" | "setWithdrawalFee" | "strategy" | "strategyTVL" | "supportsInterface" | "symbol" | "tearDown" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "vaultTVL" | "withdraw" | "withdrawalFee"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "GUARDIAN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
@@ -143,6 +145,7 @@ export interface StrategyVaultInterface extends utils.Interface {
     ]): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "revokeRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "setAssetLimit", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "setDebtEscrow", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "setManagementFee", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "setStrategy", values: [PromiseOrValue<string>]): string;
@@ -151,6 +154,7 @@ export interface StrategyVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "strategyTVL", values?: undefined): string;
     encodeFunctionData(functionFragment: "supportsInterface", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
+    encodeFunctionData(functionFragment: "tearDown", values: [PromiseOrValue<string>[]]): string;
     encodeFunctionData(functionFragment: "totalAssets", values?: undefined): string;
     encodeFunctionData(functionFragment: "totalSupply", values?: undefined): string;
     encodeFunctionData(functionFragment: "transfer", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
@@ -218,6 +222,7 @@ export interface StrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setAssetLimit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setDebtEscrow", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setManagementFee", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setStrategy", data: BytesLike): Result;
@@ -226,6 +231,7 @@ export interface StrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "strategyTVL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "tearDown", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "totalAssets", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "totalSupply", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
@@ -544,6 +550,9 @@ export interface StrategyVault extends BaseContract {
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        setAssetLimit(_assetLimit: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -560,6 +569,9 @@ export interface StrategyVault extends BaseContract {
         strategyTVL(overrides?: CallOverrides): Promise<[BigNumber]>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[boolean]>;
         symbol(overrides?: CallOverrides): Promise<[string]>;
+        tearDown(users: PromiseOrValue<string>[], overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
         totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -660,6 +672,9 @@ export interface StrategyVault extends BaseContract {
     revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    setAssetLimit(_assetLimit: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -676,6 +691,9 @@ export interface StrategyVault extends BaseContract {
     strategyTVL(overrides?: CallOverrides): Promise<BigNumber>;
     supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
     symbol(overrides?: CallOverrides): Promise<string>;
+    tearDown(users: PromiseOrValue<string>[], overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
     transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -744,6 +762,7 @@ export interface StrategyVault extends BaseContract {
         redeem(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+        setAssetLimit(_assetLimit: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         setManagementFee(feeBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         setStrategy(newStrategy: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
@@ -752,6 +771,7 @@ export interface StrategyVault extends BaseContract {
         strategyTVL(overrides?: CallOverrides): Promise<BigNumber>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
         symbol(overrides?: CallOverrides): Promise<string>;
+        tearDown(users: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<void>;
         totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
         totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
@@ -881,6 +901,9 @@ export interface StrategyVault extends BaseContract {
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        setAssetLimit(_assetLimit: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -897,6 +920,9 @@ export interface StrategyVault extends BaseContract {
         strategyTVL(overrides?: CallOverrides): Promise<BigNumber>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
         symbol(overrides?: CallOverrides): Promise<BigNumber>;
+        tearDown(users: PromiseOrValue<string>[], overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
         totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -998,6 +1024,9 @@ export interface StrategyVault extends BaseContract {
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
+        setAssetLimit(_assetLimit: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -1014,6 +1043,9 @@ export interface StrategyVault extends BaseContract {
         strategyTVL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        tearDown(users: PromiseOrValue<string>[], overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
