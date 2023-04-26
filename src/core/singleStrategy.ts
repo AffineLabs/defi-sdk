@@ -15,7 +15,8 @@ export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]
   const ret: SSVWithdrawalRequestInfo[] = [];
 
   for (const req of withdrawalRequests) {
-    if (req.args[1] < currentEpoch || (req.args[1] == currentEpoch && epochEnded)) {
+    console.log("current epoch ", req.args[1], currentEpoch, epochEnded);
+    if (req.args[1] < currentEpoch || (req.args[1] === currentEpoch && epochEnded === true)) {
       const shares = await withdrawalEscrow.withdrawableShares(userAddress, req.args[1]);
       const assets = await withdrawalEscrow.withdrawableAssets(userAddress, req.args[1]);
       ret.push({

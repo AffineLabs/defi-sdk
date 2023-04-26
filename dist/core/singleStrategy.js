@@ -20,7 +20,8 @@ function getWithdrawalRequest() {
         const withdrawalRequests = yield withdrawalEscrow.queryFilter(withdrawalEscrow.filters.WithdrawalRequest(cache_1.userAddress, null, null));
         const ret = [];
         for (const req of withdrawalRequests) {
-            if (req.args[1] < currentEpoch || (req.args[1] == currentEpoch && epochEnded)) {
+            console.log("current epoch ", req.args[1], currentEpoch, epochEnded);
+            if (req.args[1] < currentEpoch || (req.args[1] === currentEpoch && epochEnded === true)) {
                 const shares = yield withdrawalEscrow.withdrawableShares(cache_1.userAddress, req.args[1]);
                 const assets = yield withdrawalEscrow.withdrawableAssets(cache_1.userAddress, req.args[1]);
                 ret.push({
