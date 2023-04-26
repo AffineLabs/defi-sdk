@@ -21,7 +21,11 @@ function getWithdrawalRequest() {
         const ret = [];
         for (const req of withdrawalRequests) {
             console.log("current epoch ", req.args[1], currentEpoch, epochEnded);
-            if (req.args[1] < currentEpoch || (req.args[1] === currentEpoch && epochEnded === true)) {
+            console.log("check ==> 1 ", req.args[1] === currentEpoch);
+            console.log("check ==> 2 ", epochEnded === true);
+            console.log("check ==> 3 ", req.args[1].eq(currentEpoch));
+            console.log("check ==> 4 ", epochEnded == true);
+            if (req.args[1] < currentEpoch || (req.args[1].eq(currentEpoch) && epochEnded === true)) {
                 const shares = yield withdrawalEscrow.withdrawableShares(cache_1.userAddress, req.args[1]);
                 const assets = yield withdrawalEscrow.withdrawableAssets(cache_1.userAddress, req.args[1]);
                 ret.push({
