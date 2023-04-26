@@ -20,12 +20,7 @@ function getWithdrawalRequest() {
         const withdrawalRequests = yield withdrawalEscrow.queryFilter(withdrawalEscrow.filters.WithdrawalRequest(cache_1.userAddress, null, null));
         const ret = [];
         for (const req of withdrawalRequests) {
-            console.log("current epoch ", req.args[1], currentEpoch, epochEnded);
-            console.log("check ==> 1 ", req.args[1] === currentEpoch);
-            console.log("check ==> 2 ", epochEnded === true);
-            console.log("check ==> 3 ", req.args[1].eq(currentEpoch));
-            console.log("check ==> 4 ", epochEnded == true);
-            if (req.args[1] < currentEpoch || (req.args[1].eq(currentEpoch) && epochEnded === true)) {
+            if (req.args[1].lt(currentEpoch) || (req.args[1].eq(currentEpoch) && epochEnded === true)) {
                 const shares = yield withdrawalEscrow.withdrawableShares(cache_1.userAddress, req.args[1]);
                 const assets = yield withdrawalEscrow.withdrawableAssets(cache_1.userAddress, req.args[1]);
                 ret.push({
@@ -66,11 +61,11 @@ function redeemWithdrawRequest(reqInfo) {
 exports.redeemWithdrawRequest = redeemWithdrawRequest;
 function getAssets() {
     return __awaiter(this, void 0, void 0, function* () {
-        const { withdrawalEscrow } = (0, cache_1.getEthContracts)();
+        const { withdrawalEscrow, usdc } = (0, cache_1.getEthContracts)();
         const withdrawalRequests = yield withdrawalEscrow.queryFilter(withdrawalEscrow.filters.WithdrawalRequest(cache_1.userAddress, null, null));
         const epochs = withdrawalRequests.map(req => req.args[1]);
         const assets = yield withdrawalEscrow.getAssets(cache_1.userAddress, epochs);
-        return assets.toNumber();
+        return (0, AlpineDeFiSDK_1._removeDecimals)(assets, yield usdc.decimals());
     });
 }
 exports.getAssets = getAssets;

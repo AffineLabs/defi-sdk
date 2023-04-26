@@ -84,7 +84,7 @@ declare class Account {
     isStrategyLiquid(): Promise<boolean>;
     getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]>;
     redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<import("../core/types").FullTxReceipt>;
-    getTotalWithdrawableAssets(): Promise<number>;
+    getTotalWithdrawableAssets(): Promise<string>;
     lastEpochBeginUTCTime(): Promise<number>;
 }
 declare class ReadAccount {

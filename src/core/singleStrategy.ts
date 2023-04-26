@@ -15,12 +15,7 @@ export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]
   const ret: SSVWithdrawalRequestInfo[] = [];
 
   for (const req of withdrawalRequests) {
-    console.log("current epoch ", req.args[1], currentEpoch, epochEnded);
-    console.log("check ==> 1 ", req.args[1] === currentEpoch);
-    console.log("check ==> 2 ", epochEnded === true);
-    console.log("check ==> 3 ", req.args[1].eq(currentEpoch));
-    console.log("check ==> 4 ", epochEnded == true);
-    if (req.args[1] < currentEpoch || (req.args[1].eq(currentEpoch) && epochEnded === true)) {
+    if (req.args[1].lt(currentEpoch) || (req.args[1].eq(currentEpoch) && epochEnded === true)) {
       const shares = await withdrawalEscrow.withdrawableShares(userAddress, req.args[1]);
       const assets = await withdrawalEscrow.withdrawableAssets(userAddress, req.args[1]);
       ret.push({
@@ -58,8 +53,8 @@ export async function redeemWithdrawRequest(reqInfo: SSVWithdrawalRequestInfo): 
   };
 }
 
-export async function getAssets(): Promise<number> {
-  const { withdrawalEscrow } = getEthContracts();
+export async function getAssets(): Promise<string> {
+  const { withdrawalEscrow, usdc } = getEthContracts();
   const withdrawalRequests = await withdrawalEscrow.queryFilter(
     withdrawalEscrow.filters.WithdrawalRequest(userAddress, null, null),
   );
@@ -67,7 +62,7 @@ export async function getAssets(): Promise<number> {
 
   const assets = await withdrawalEscrow.getAssets(userAddress, epochs);
 
-  return assets.toNumber();
+  return _removeDecimals(assets, await usdc.decimals());
 }
 
 export async function isLiquidToWithdraw() {
