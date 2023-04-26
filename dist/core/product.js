@@ -62,7 +62,7 @@ function buyLockedShares(rawAmount) {
             alpFee: "0",
             alpFeePercent: "0",
             dollarAmount: amount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(amount), 18),
+            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(amount), 14),
         };
         if (cache_1.SIMULATE) {
             const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [amount, cache_1.userAddress], true));
