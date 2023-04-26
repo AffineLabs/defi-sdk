@@ -6,6 +6,7 @@ export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]
   const { withdrawalEscrow, ssvEthUSDEarn, usdc } = getEthContracts();
 
   const currentEpoch = await ssvEthUSDEarn.epoch();
+  const epochEnded = await ssvEthUSDEarn.epochEnded();
 
   const withdrawalRequests = await withdrawalEscrow.queryFilter(
     withdrawalEscrow.filters.WithdrawalRequest(userAddress, null, null),
@@ -14,7 +15,7 @@ export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]
   const ret: SSVWithdrawalRequestInfo[] = [];
 
   for (const req of withdrawalRequests) {
-    if (req.args[1] < currentEpoch) {
+    if (req.args[1] < currentEpoch || (req.args[1] == currentEpoch && epochEnded)) {
       const shares = await withdrawalEscrow.withdrawableShares(userAddress, req.args[1]);
       const assets = await withdrawalEscrow.withdrawableAssets(userAddress, req.args[1]);
       ret.push({

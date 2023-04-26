@@ -1250,19 +1250,6 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "uint256",
-                name: "_assetLimit",
-                type: "uint256",
-            },
-        ],
-        name: "setAssetLimit",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
                 internalType: "contract WithdrawalEscrow",
                 name: "escrow",
                 type: "address",
@@ -1368,19 +1355,6 @@ const _abi = [
             },
         ],
         stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "address[]",
-                name: "users",
-                type: "address[]",
-            },
-        ],
-        name: "tearDown",
-        outputs: [],
-        stateMutability: "nonpayable",
         type: "function",
     },
     {

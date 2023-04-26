@@ -959,16 +959,6 @@ export declare class StrategyVault__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "_assetLimit";
-            readonly type: "uint256";
-        }];
-        readonly name: "setAssetLimit";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
             readonly internalType: "contract WithdrawalEscrow";
             readonly name: "escrow";
             readonly type: "address";
@@ -1050,16 +1040,6 @@ export declare class StrategyVault__factory {
             readonly type: "string";
         }];
         readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "address[]";
-            readonly name: "users";
-            readonly type: "address[]";
-        }];
-        readonly name: "tearDown";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
