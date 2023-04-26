@@ -43,7 +43,7 @@ export async function buyLockedShares(rawAmount: number): Promise<DryRunReceipt 
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: amount.toString(),
-    tokenAmount: _removeDecimals(await vault.convertToShares(amount), 18),
+    tokenAmount: _removeDecimals(await vault.convertToShares(amount), 14),
   };
 
   if (SIMULATE) {
