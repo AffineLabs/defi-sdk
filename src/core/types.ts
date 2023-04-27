@@ -12,7 +12,7 @@ import { ethers } from "ethers";
 
 export interface GasInfo {
   txnCost: string;
-  txnCostUSD: string;
+  gasPrice: string;
 }
 export interface DryRunReceipt extends GasInfo {
   alpFee: string;

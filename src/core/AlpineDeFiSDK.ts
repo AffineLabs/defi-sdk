@@ -48,13 +48,13 @@ export function _removeDecimals(amount: ethers.BigNumber, decimals: ethers.BigNu
 
 // get the current matic price in usd
 // we are using coingecko API to get the latest price
-export async function getMaticPrice(): Promise<number> {
-  // const apiAddress = "https://api.coingecko.com/api/v3/simple/price?ids=matic-network&vs_currencies=usd";
-  // const { data: maticData } = await axios.get(apiAddress);
-  // const maticPrices = maticData["matic-network"];
-  // const usdMaticPrice: number = maticPrices["usd"];
-  return 1.077;
-}
+// export async function getMaticPrice(): Promise<number> {
+//   // const apiAddress = "https://api.coingecko.com/api/v3/simple/price?ids=matic-network&vs_currencies=usd";
+//   // const { data: maticData } = await axios.get(apiAddress);
+//   // const maticPrices = maticData["matic-network"];
+//   // const usdMaticPrice: number = maticPrices["usd"];
+//   return 1.077;
+// }
 
 /**
  * Call a smart contract method with arguments
@@ -81,12 +81,12 @@ export async function blockchainCall(
     const { signature, request } = await getSignature(contract, signer, method, args);
     console.log({ signature, request });
     await sendToForwarder([signature], [request]);
-    return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "" };
+    return { blockNumber: "", txnHash: "", txnCost: "", gasPrice: "" };
   }
 
   if (biconomy && contract.address == usdc.address) {
     await sendBiconomy(contract, signer, method, args);
-    return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "" };
+    return { blockNumber: "", txnHash: "", txnCost: "", gasPrice: "" };
   }
 
   // regular (non-meta) tx
@@ -108,10 +108,8 @@ export async function blockchainCall(
     // cost is gas * gasPrice
     const cost = gasEstimate.mul(gasPrice);
     const txnCost = ethers.utils.formatEther(cost);
-    const maticPrice = await getMaticPrice();
-    const txnCostUSD = (Number(txnCost) * maticPrice).toString();
 
-    return { txnCost, txnCostUSD };
+    return { txnCost, gasPrice: ethers.utils.formatEther(gasPrice) };
   }
 
   const tx: TransactionResponse = await contract[method].apply(null, args);
@@ -119,13 +117,11 @@ export async function blockchainCall(
 
   const cost = receipt.gasUsed.mul(receipt.effectiveGasPrice);
   const txnCost = ethers.utils.formatEther(cost);
-  const maticPrice = await getMaticPrice();
-  const txnCostUSD = (Number(txnCost) * maticPrice).toString();
   return {
     blockNumber: receipt.blockNumber.toString(),
     txnHash: receipt.transactionHash,
     txnCost,
-    txnCostUSD,
+    gasPrice: ethers.utils.formatEther(receipt.effectiveGasPrice),
   };
 }
 

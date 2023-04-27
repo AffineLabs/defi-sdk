@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mintUSDC = exports.transfer = exports.approve = exports.isMaxUSDCApproved = exports.blockchainCall = exports.getMaticPrice = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
+exports.mintUSDC = exports.transfer = exports.approve = exports.isMaxUSDCApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
 const ethers_1 = require("ethers");
 const cache_1 = require("./cache");
 const biconomy_1 = require("./biconomy");
@@ -57,16 +57,13 @@ function _removeDecimals(amount, decimals) {
 exports._removeDecimals = _removeDecimals;
 // get the current matic price in usd
 // we are using coingecko API to get the latest price
-function getMaticPrice() {
-    return __awaiter(this, void 0, void 0, function* () {
-        // const apiAddress = "https://api.coingecko.com/api/v3/simple/price?ids=matic-network&vs_currencies=usd";
-        // const { data: maticData } = await axios.get(apiAddress);
-        // const maticPrices = maticData["matic-network"];
-        // const usdMaticPrice: number = maticPrices["usd"];
-        return 1.077;
-    });
-}
-exports.getMaticPrice = getMaticPrice;
+// export async function getMaticPrice(): Promise<number> {
+//   // const apiAddress = "https://api.coingecko.com/api/v3/simple/price?ids=matic-network&vs_currencies=usd";
+//   // const { data: maticData } = await axios.get(apiAddress);
+//   // const maticPrices = maticData["matic-network"];
+//   // const usdMaticPrice: number = maticPrices["usd"];
+//   return 1.077;
+// }
 /**
  * Call a smart contract method with arguments
  * @param {ethers.Contract} contract smart contract
@@ -86,11 +83,11 @@ simulate = false, value) {
             const { signature, request } = yield (0, biconomy_1.getSignature)(contract, signer, method, args);
             console.log({ signature, request });
             yield (0, biconomy_1.sendToForwarder)([signature], [request]);
-            return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "" };
+            return { blockNumber: "", txnHash: "", txnCost: "", gasPrice: "" };
         }
         if (biconomy && contract.address == usdc.address) {
             yield (0, biconomy_1.sendBiconomy)(contract, signer, method, args);
-            return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "" };
+            return { blockNumber: "", txnHash: "", txnCost: "", gasPrice: "" };
         }
         // regular (non-meta) tx
         let overrides = { value };
@@ -107,21 +104,17 @@ simulate = false, value) {
             // cost is gas * gasPrice
             const cost = gasEstimate.mul(gasPrice);
             const txnCost = ethers_1.ethers.utils.formatEther(cost);
-            const maticPrice = yield getMaticPrice();
-            const txnCostUSD = (Number(txnCost) * maticPrice).toString();
-            return { txnCost, txnCostUSD };
+            return { txnCost, gasPrice: ethers_1.ethers.utils.formatEther(gasPrice) };
         }
         const tx = yield contract[method].apply(null, args);
         const receipt = yield tx.wait();
         const cost = receipt.gasUsed.mul(receipt.effectiveGasPrice);
         const txnCost = ethers_1.ethers.utils.formatEther(cost);
-        const maticPrice = yield getMaticPrice();
-        const txnCostUSD = (Number(txnCost) * maticPrice).toString();
         return {
             blockNumber: receipt.blockNumber.toString(),
             txnHash: receipt.transactionHash,
             txnCost,
-            txnCostUSD,
+            gasPrice: ethers_1.ethers.utils.formatEther(receipt.effectiveGasPrice),
         };
     });
 }
