@@ -1,7 +1,7 @@
 import { Signer } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { AffineVault, AffineVaultInterface } from "../AffineVault";
-export declare class AffineVault__factory {
+import type { BaseStrategyVault, BaseStrategyVaultInterface } from "../BaseStrategyVault";
+export declare class BaseStrategyVault__factory {
     static readonly abi: readonly [{
         readonly anonymous: false;
         readonly inputs: readonly [{
@@ -9,11 +9,6 @@ export declare class AffineVault__factory {
             readonly internalType: "address";
             readonly name: "user";
             readonly type: "address";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "contract BaseStrategy[]";
-            readonly name: "strategies";
-            readonly type: "address[]";
         }];
         readonly name: "Harvest";
         readonly type: "event";
@@ -41,16 +36,6 @@ export declare class AffineVault__factory {
             readonly type: "uint256";
         }];
         readonly name: "Liquidation";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: true;
-            readonly internalType: "address";
-            readonly name: "caller";
-            readonly type: "address";
-        }];
-        readonly name: "Rebalance";
         readonly type: "event";
     }, {
         readonly anonymous: false;
@@ -115,36 +100,6 @@ export declare class AffineVault__factory {
     }, {
         readonly anonymous: false;
         readonly inputs: readonly [{
-            readonly indexed: true;
-            readonly internalType: "contract BaseStrategy";
-            readonly name: "strategy";
-            readonly type: "address";
-        }];
-        readonly name: "StrategyAdded";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: false;
-            readonly internalType: "contract BaseStrategy[]";
-            readonly name: "strategyList";
-            readonly type: "address[]";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "uint16[]";
-            readonly name: "strategyBps";
-            readonly type: "uint16[]";
-        }];
-        readonly name: "StrategyAllocsUpdated";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: true;
-            readonly internalType: "contract BaseStrategy";
-            readonly name: "strategy";
-            readonly type: "address";
-        }, {
             readonly indexed: false;
             readonly internalType: "uint256";
             readonly name: "assets";
@@ -155,21 +110,6 @@ export declare class AffineVault__factory {
     }, {
         readonly anonymous: false;
         readonly inputs: readonly [{
-            readonly indexed: true;
-            readonly internalType: "contract BaseStrategy";
-            readonly name: "strategy";
-            readonly type: "address";
-        }];
-        readonly name: "StrategyRemoved";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: true;
-            readonly internalType: "contract BaseStrategy";
-            readonly name: "strategy";
-            readonly type: "address";
-        }, {
             readonly indexed: false;
             readonly internalType: "uint256";
             readonly name: "assetsRequested";
@@ -181,16 +121,6 @@ export declare class AffineVault__factory {
             readonly type: "uint256";
         }];
         readonly name: "StrategyWithdrawal";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: false;
-            readonly internalType: "contract BaseStrategy[20]";
-            readonly name: "newQueue";
-            readonly type: "address[20]";
-        }];
-        readonly name: "WithdrawalQueueSet";
         readonly type: "event";
     }, {
         readonly inputs: readonly [];
@@ -223,26 +153,64 @@ export declare class AffineVault__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [{
-            readonly internalType: "contract BaseStrategy";
-            readonly name: "strategy";
-            readonly type: "address";
-        }, {
-            readonly internalType: "uint16";
-            readonly name: "tvlBps";
-            readonly type: "uint16";
-        }];
-        readonly name: "addStrategy";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
         readonly inputs: readonly [];
         readonly name: "asset";
         readonly outputs: readonly [{
             readonly internalType: "address";
             readonly name: "";
             readonly type: "address";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "beginEpoch";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "debtEscrow";
+        readonly outputs: readonly [{
+            readonly internalType: "contract WithdrawalEscrow";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "endEpoch";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "epoch";
+        readonly outputs: readonly [{
+            readonly internalType: "uint248";
+            readonly name: "";
+            readonly type: "uint248";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "epochEnded";
+        readonly outputs: readonly [{
+            readonly internalType: "bool";
+            readonly name: "";
+            readonly type: "bool";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "epochStartTime";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -257,16 +225,6 @@ export declare class AffineVault__factory {
             readonly internalType: "bytes32";
             readonly name: "";
             readonly type: "bytes32";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "getWithdrawalQueue";
-        readonly outputs: readonly [{
-            readonly internalType: "contract BaseStrategy[20]";
-            readonly name: "";
-            readonly type: "address[20]";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -295,11 +253,7 @@ export declare class AffineVault__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [{
-            readonly internalType: "contract BaseStrategy[]";
-            readonly name: "strategyList";
-            readonly type: "address[]";
-        }];
+        readonly inputs: readonly [];
         readonly name: "harvest";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
@@ -367,22 +321,6 @@ export declare class AffineVault__factory {
         readonly stateMutability: "payable";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "rebalance";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "contract BaseStrategy";
-            readonly name: "strategy";
-            readonly type: "address";
-        }];
-        readonly name: "removeStrategy";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
         readonly inputs: readonly [{
             readonly internalType: "bytes32";
             readonly name: "role";
@@ -412,33 +350,41 @@ export declare class AffineVault__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
-            readonly internalType: "contract BaseStrategy[20]";
-            readonly name: "newQueue";
-            readonly type: "address[20]";
+            readonly internalType: "contract WithdrawalEscrow";
+            readonly name: "escrow";
+            readonly type: "address";
         }];
-        readonly name: "setWithdrawalQueue";
+        readonly name: "setDebtEscrow";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
             readonly internalType: "contract BaseStrategy";
+            readonly name: "newStrategy";
+            readonly type: "address";
+        }];
+        readonly name: "setStrategy";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "strategy";
+        readonly outputs: readonly [{
+            readonly internalType: "contract BaseStrategy";
             readonly name: "";
             readonly type: "address";
         }];
-        readonly name: "strategies";
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "strategyTVL";
         readonly outputs: readonly [{
-            readonly internalType: "bool";
-            readonly name: "isActive";
-            readonly type: "bool";
-        }, {
-            readonly internalType: "uint16";
-            readonly name: "tvlBps";
-            readonly type: "uint16";
-        }, {
-            readonly internalType: "uint232";
-            readonly name: "balance";
-            readonly type: "uint232";
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -458,40 +404,6 @@ export declare class AffineVault__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "totalBps";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "totalStrategyHoldings";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "contract BaseStrategy[]";
-            readonly name: "strategyList";
-            readonly type: "address[]";
-        }, {
-            readonly internalType: "uint16[]";
-            readonly name: "strategyBps";
-            readonly type: "uint16[]";
-        }];
-        readonly name: "updateStrategyAllocations";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
         readonly name: "vaultTVL";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
@@ -500,21 +412,7 @@ export declare class AffineVault__factory {
         }];
         readonly stateMutability: "view";
         readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly name: "withdrawalQueue";
-        readonly outputs: readonly [{
-            readonly internalType: "contract BaseStrategy";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
     }];
-    static createInterface(): AffineVaultInterface;
-    static connect(address: string, signerOrProvider: Signer | Provider): AffineVault;
+    static createInterface(): BaseStrategyVaultInterface;
+    static connect(address: string, signerOrProvider: Signer | Provider): BaseStrategyVault;
 }

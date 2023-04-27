@@ -251,10 +251,9 @@ function sellBtCEthShares(amountUSDC) {
             const gasEstimate = ethers_1.ethers.BigNumber.from(100e3);
             const gasPrice = yield cache_1.PROVIDER.getGasPrice();
             const txnCost = ethers_1.ethers.utils.formatEther(gasEstimate.mul(gasPrice));
-            const maticPrice = yield (0, AlpineDeFiSDK_1.getMaticPrice)();
             const dryRunInfo = {
                 txnCost,
-                txnCostUSD: (Number(txnCost) * maticPrice).toString(),
+                gasPrice: ethers_1.ethers.utils.formatEther(gasPrice),
             };
             return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
         }

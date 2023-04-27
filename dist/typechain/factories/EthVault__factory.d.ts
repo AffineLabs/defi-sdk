@@ -1,7 +1,7 @@
 import { Signer } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { Vault, VaultInterface } from "../Vault";
-export declare class Vault__factory {
+import type { EthVault, EthVaultInterface } from "../EthVault";
+export declare class EthVault__factory {
     static readonly abi: readonly [{
         readonly anonymous: false;
         readonly inputs: readonly [{
@@ -1181,6 +1181,16 @@ export declare class Vault__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [];
+        readonly name: "weth";
+        readonly outputs: readonly [{
+            readonly internalType: "contract IWETH";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "pure";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "assets";
@@ -1226,7 +1236,10 @@ export declare class Vault__factory {
         }];
         readonly stateMutability: "view";
         readonly type: "function";
+    }, {
+        readonly stateMutability: "payable";
+        readonly type: "receive";
     }];
-    static createInterface(): VaultInterface;
-    static connect(address: string, signerOrProvider: Signer | Provider): Vault;
+    static createInterface(): EthVaultInterface;
+    static connect(address: string, signerOrProvider: Signer | Provider): EthVault;
 }

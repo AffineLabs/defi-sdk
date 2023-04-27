@@ -1,52 +1,70 @@
 import { Signer } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { DeltaNeutralLpV3, DeltaNeutralLpV3Interface } from "../DeltaNeutralLpV3";
-export declare class DeltaNeutralLpV3__factory {
+import type { SSVDeltaNeutralLp, SSVDeltaNeutralLpInterface } from "../SSVDeltaNeutralLp";
+export declare class SSVDeltaNeutralLp__factory {
     static readonly abi: readonly [{
         readonly inputs: readonly [{
-            readonly internalType: "contract AffineVault";
+            readonly internalType: "contract StrategyVault";
             readonly name: "_vault";
             readonly type: "address";
         }, {
-            readonly internalType: "contract ILendingPool";
-            readonly name: "_lendingPool";
-            readonly type: "address";
+            readonly components: readonly [{
+                readonly internalType: "contract ILendingPool";
+                readonly name: "pool";
+                readonly type: "address";
+            }, {
+                readonly internalType: "contract ERC20";
+                readonly name: "borrow";
+                readonly type: "address";
+            }, {
+                readonly internalType: "contract AggregatorV3Interface";
+                readonly name: "priceFeed";
+                readonly type: "address";
+            }, {
+                readonly internalType: "uint256";
+                readonly name: "assetToDepositRatioBps";
+                readonly type: "uint256";
+            }, {
+                readonly internalType: "uint256";
+                readonly name: "collateralToBorrowRatioBps";
+                readonly type: "uint256";
+            }];
+            readonly internalType: "struct LendingInfo";
+            readonly name: "lendingInfo";
+            readonly type: "tuple";
         }, {
-            readonly internalType: "contract ERC20";
-            readonly name: "_borrow";
-            readonly type: "address";
-        }, {
-            readonly internalType: "contract AggregatorV3Interface";
-            readonly name: "_borrowFeed";
-            readonly type: "address";
-        }, {
-            readonly internalType: "contract ISwapRouter";
-            readonly name: "_router";
-            readonly type: "address";
-        }, {
-            readonly internalType: "contract INonfungiblePositionManager";
-            readonly name: "_lpManager";
-            readonly type: "address";
-        }, {
-            readonly internalType: "contract IUniswapV3Pool";
-            readonly name: "_pool";
-            readonly type: "address";
-        }, {
-            readonly internalType: "contract IUniPositionValue";
-            readonly name: "_positionValue";
-            readonly type: "address";
+            readonly components: readonly [{
+                readonly internalType: "contract IUniswapV2Router02";
+                readonly name: "router";
+                readonly type: "address";
+            }, {
+                readonly internalType: "contract IMasterChef";
+                readonly name: "masterChef";
+                readonly type: "address";
+            }, {
+                readonly internalType: "uint256";
+                readonly name: "masterChefPid";
+                readonly type: "uint256";
+            }, {
+                readonly internalType: "bool";
+                readonly name: "useMasterChefV2";
+                readonly type: "bool";
+            }, {
+                readonly internalType: "contract ERC20";
+                readonly name: "sushiToken";
+                readonly type: "address";
+            }, {
+                readonly internalType: "contract IUniswapV3Pool";
+                readonly name: "pool";
+                readonly type: "address";
+            }];
+            readonly internalType: "struct LpInfo";
+            readonly name: "lpInfo";
+            readonly type: "tuple";
         }, {
             readonly internalType: "address[]";
             readonly name: "strategists";
             readonly type: "address[]";
-        }, {
-            readonly internalType: "uint256";
-            readonly name: "_assetToDepositRatioBps";
-            readonly type: "uint256";
-        }, {
-            readonly internalType: "uint256";
-            readonly name: "_collateralToBorrowRatioBps";
-            readonly type: "uint256";
         }];
         readonly stateMutability: "nonpayable";
         readonly type: "constructor";
@@ -60,22 +78,17 @@ export declare class DeltaNeutralLpV3__factory {
         }, {
             readonly indexed: false;
             readonly internalType: "uint256";
-            readonly name: "assetsFromUni";
+            readonly name: "assetsFromSushi";
             readonly type: "uint256";
         }, {
             readonly indexed: false;
             readonly internalType: "uint256";
-            readonly name: "borrowsFromUni";
+            readonly name: "borrowsFromSushi";
             readonly type: "uint256";
         }, {
             readonly indexed: false;
             readonly internalType: "uint256";
-            readonly name: "assetFees";
-            readonly type: "uint256";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "borrowFees";
+            readonly name: "assetsFromRewards";
             readonly type: "uint256";
         }, {
             readonly indexed: false;
@@ -139,23 +152,13 @@ export declare class DeltaNeutralLpV3__factory {
             readonly type: "uint256[2]";
         }, {
             readonly indexed: false;
-            readonly internalType: "int24";
-            readonly name: "tickLow";
-            readonly type: "int24";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "int24";
-            readonly name: "tickHigh";
-            readonly type: "int24";
-        }, {
-            readonly indexed: false;
             readonly internalType: "uint256";
-            readonly name: "assetsToUni";
+            readonly name: "assetsToSushi";
             readonly type: "uint256";
         }, {
             readonly indexed: false;
             readonly internalType: "uint256";
-            readonly name: "borrowsToUni";
+            readonly name: "borrowsToSushi";
             readonly type: "uint256";
         }, {
             readonly indexed: false;
@@ -257,7 +260,27 @@ export declare class DeltaNeutralLpV3__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
+        readonly name: "V3ROUTER";
+        readonly outputs: readonly [{
+            readonly internalType: "contract ISwapRouter";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "aToken";
+        readonly outputs: readonly [{
+            readonly internalType: "contract ERC20";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "abPair";
         readonly outputs: readonly [{
             readonly internalType: "contract ERC20";
             readonly name: "";
@@ -307,6 +330,16 @@ export declare class DeltaNeutralLpV3__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
+        readonly name: "borrowFeed";
+        readonly outputs: readonly [{
+            readonly internalType: "contract AggregatorV3Interface";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "canStartNewPos";
         readonly outputs: readonly [{
             readonly internalType: "bool";
@@ -314,6 +347,16 @@ export declare class DeltaNeutralLpV3__factory {
             readonly type: "bool";
         }];
         readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "slippageBps";
+            readonly type: "uint256";
+        }];
+        readonly name: "claimAndSellSushi";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -332,6 +375,16 @@ export declare class DeltaNeutralLpV3__factory {
             readonly internalType: "uint32";
             readonly name: "";
             readonly type: "uint32";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "debtToken";
+        readonly outputs: readonly [{
+            readonly internalType: "contract ERC20";
+            readonly name: "";
+            readonly type: "address";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -372,7 +425,7 @@ export declare class DeltaNeutralLpV3__factory {
     }, {
         readonly inputs: readonly [{
             readonly internalType: "uint256";
-            readonly name: "slippageBps";
+            readonly name: "slippageToleranceBps";
             readonly type: "uint256";
         }];
         readonly name: "endPosition";
@@ -437,41 +490,21 @@ export declare class DeltaNeutralLpV3__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "lpId";
+        readonly name: "masterChef";
+        readonly outputs: readonly [{
+            readonly internalType: "contract IMasterChef";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "masterChefPid";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "";
             readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "lpLiquidity";
-        readonly outputs: readonly [{
-            readonly internalType: "uint128";
-            readonly name: "";
-            readonly type: "uint128";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "lpManager";
-        readonly outputs: readonly [{
-            readonly internalType: "contract INonfungiblePositionManager";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "pool";
-        readonly outputs: readonly [{
-            readonly internalType: "contract IUniswapV3Pool";
-            readonly name: "";
-            readonly type: "address";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -482,30 +515,6 @@ export declare class DeltaNeutralLpV3__factory {
             readonly internalType: "uint24";
             readonly name: "";
             readonly type: "uint24";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "positionFees";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "assets";
-            readonly type: "uint256";
-        }, {
-            readonly internalType: "uint256";
-            readonly name: "borrows";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "positionValue";
-        readonly outputs: readonly [{
-            readonly internalType: "contract IUniPositionValue";
-            readonly name: "";
-            readonly type: "address";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -541,7 +550,7 @@ export declare class DeltaNeutralLpV3__factory {
         readonly inputs: readonly [];
         readonly name: "router";
         readonly outputs: readonly [{
-            readonly internalType: "contract ISwapRouter";
+            readonly internalType: "contract IUniswapV2Router02";
             readonly name: "";
             readonly type: "address";
         }];
@@ -553,14 +562,6 @@ export declare class DeltaNeutralLpV3__factory {
             readonly name: "assets";
             readonly type: "uint256";
         }, {
-            readonly internalType: "int24";
-            readonly name: "tickLow";
-            readonly type: "int24";
-        }, {
-            readonly internalType: "int24";
-            readonly name: "tickHigh";
-            readonly type: "int24";
-        }, {
             readonly internalType: "uint256";
             readonly name: "slippageToleranceBps";
             readonly type: "uint256";
@@ -568,6 +569,16 @@ export declare class DeltaNeutralLpV3__factory {
         readonly name: "startPosition";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "strategyVault";
+        readonly outputs: readonly [{
+            readonly internalType: "contract StrategyVault";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
@@ -580,6 +591,16 @@ export declare class DeltaNeutralLpV3__factory {
             readonly internalType: "bool";
             readonly name: "";
             readonly type: "bool";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "sushiToken";
+        readonly outputs: readonly [{
+            readonly internalType: "contract ERC20";
+            readonly name: "";
+            readonly type: "address";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -605,11 +626,11 @@ export declare class DeltaNeutralLpV3__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "valueOfLpPosition";
+        readonly name: "useMasterChefV2";
         readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "assetsLp";
-            readonly type: "uint256";
+            readonly internalType: "bool";
+            readonly name: "";
+            readonly type: "bool";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -624,6 +645,6 @@ export declare class DeltaNeutralLpV3__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    static createInterface(): DeltaNeutralLpV3Interface;
-    static connect(address: string, signerOrProvider: Signer | Provider): DeltaNeutralLpV3;
+    static createInterface(): SSVDeltaNeutralLpInterface;
+    static connect(address: string, signerOrProvider: Signer | Provider): SSVDeltaNeutralLp;
 }

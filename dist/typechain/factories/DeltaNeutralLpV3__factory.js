@@ -705,6 +705,11 @@ const _abi = [
     {
         inputs: [
             {
+                internalType: "uint256",
+                name: "assets",
+                type: "uint256",
+            },
+            {
                 internalType: "int24",
                 name: "tickLow",
                 type: "int24",

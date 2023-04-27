@@ -2,19 +2,67 @@ import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, C
 import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "./common";
-export interface DeltaNeutralLpV3Interface extends utils.Interface {
+export type LendingInfoStruct = {
+    pool: PromiseOrValue<string>;
+    borrow: PromiseOrValue<string>;
+    priceFeed: PromiseOrValue<string>;
+    assetToDepositRatioBps: PromiseOrValue<BigNumberish>;
+    collateralToBorrowRatioBps: PromiseOrValue<BigNumberish>;
+};
+export type LendingInfoStructOutput = [
+    string,
+    string,
+    string,
+    BigNumber,
+    BigNumber
+] & {
+    pool: string;
+    borrow: string;
+    priceFeed: string;
+    assetToDepositRatioBps: BigNumber;
+    collateralToBorrowRatioBps: BigNumber;
+};
+export type LpInfoStruct = {
+    router: PromiseOrValue<string>;
+    masterChef: PromiseOrValue<string>;
+    masterChefPid: PromiseOrValue<BigNumberish>;
+    useMasterChefV2: PromiseOrValue<boolean>;
+    sushiToken: PromiseOrValue<string>;
+    pool: PromiseOrValue<string>;
+};
+export type LpInfoStructOutput = [
+    string,
+    string,
+    BigNumber,
+    boolean,
+    string,
+    string
+] & {
+    router: string;
+    masterChef: string;
+    masterChefPid: BigNumber;
+    useMasterChefV2: boolean;
+    sushiToken: string;
+    pool: string;
+};
+export interface SSVDeltaNeutralLpInterface extends utils.Interface {
     functions: {
         "DEFAULT_ADMIN_ROLE()": FunctionFragment;
         "MAX_BPS()": FunctionFragment;
         "STRATEGIST_ROLE()": FunctionFragment;
+        "V3ROUTER()": FunctionFragment;
         "aToken()": FunctionFragment;
+        "abPair()": FunctionFragment;
         "asset()": FunctionFragment;
         "assetToDepositRatioBps()": FunctionFragment;
         "balanceOfAsset()": FunctionFragment;
         "borrow()": FunctionFragment;
+        "borrowFeed()": FunctionFragment;
         "canStartNewPos()": FunctionFragment;
+        "claimAndSellSushi(uint256)": FunctionFragment;
         "collateralToBorrowRatioBps()": FunctionFragment;
         "currentPosition()": FunctionFragment;
+        "debtToken()": FunctionFragment;
         "decimalAdjust()": FunctionFragment;
         "decimalAdjustSign()": FunctionFragment;
         "divest(uint256)": FunctionFragment;
@@ -23,35 +71,38 @@ export interface DeltaNeutralLpV3Interface extends utils.Interface {
         "grantRole(bytes32,address)": FunctionFragment;
         "hasRole(bytes32,address)": FunctionFragment;
         "invest(uint256)": FunctionFragment;
-        "lpId()": FunctionFragment;
-        "lpLiquidity()": FunctionFragment;
-        "lpManager()": FunctionFragment;
-        "pool()": FunctionFragment;
+        "masterChef()": FunctionFragment;
+        "masterChefPid()": FunctionFragment;
         "poolFee()": FunctionFragment;
-        "positionFees()": FunctionFragment;
-        "positionValue()": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
         "revokeRole(bytes32,address)": FunctionFragment;
         "router()": FunctionFragment;
-        "startPosition(uint256,int24,int24,uint256)": FunctionFragment;
+        "startPosition(uint256,uint256)": FunctionFragment;
+        "strategyVault()": FunctionFragment;
         "supportsInterface(bytes4)": FunctionFragment;
+        "sushiToken()": FunctionFragment;
         "sweep(address)": FunctionFragment;
         "totalLockedValue()": FunctionFragment;
-        "valueOfLpPosition()": FunctionFragment;
+        "useMasterChefV2()": FunctionFragment;
         "vault()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "MAX_BPS" | "STRATEGIST_ROLE" | "aToken" | "asset" | "assetToDepositRatioBps" | "balanceOfAsset" | "borrow" | "canStartNewPos" | "collateralToBorrowRatioBps" | "currentPosition" | "decimalAdjust" | "decimalAdjustSign" | "divest" | "endPosition" | "getRoleAdmin" | "grantRole" | "hasRole" | "invest" | "lpId" | "lpLiquidity" | "lpManager" | "pool" | "poolFee" | "positionFees" | "positionValue" | "renounceRole" | "revokeRole" | "router" | "startPosition" | "supportsInterface" | "sweep" | "totalLockedValue" | "valueOfLpPosition" | "vault"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "MAX_BPS" | "STRATEGIST_ROLE" | "V3ROUTER" | "aToken" | "abPair" | "asset" | "assetToDepositRatioBps" | "balanceOfAsset" | "borrow" | "borrowFeed" | "canStartNewPos" | "claimAndSellSushi" | "collateralToBorrowRatioBps" | "currentPosition" | "debtToken" | "decimalAdjust" | "decimalAdjustSign" | "divest" | "endPosition" | "getRoleAdmin" | "grantRole" | "hasRole" | "invest" | "masterChef" | "masterChefPid" | "poolFee" | "renounceRole" | "revokeRole" | "router" | "startPosition" | "strategyVault" | "supportsInterface" | "sushiToken" | "sweep" | "totalLockedValue" | "useMasterChefV2" | "vault"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "MAX_BPS", values?: undefined): string;
     encodeFunctionData(functionFragment: "STRATEGIST_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "V3ROUTER", values?: undefined): string;
     encodeFunctionData(functionFragment: "aToken", values?: undefined): string;
+    encodeFunctionData(functionFragment: "abPair", values?: undefined): string;
     encodeFunctionData(functionFragment: "asset", values?: undefined): string;
     encodeFunctionData(functionFragment: "assetToDepositRatioBps", values?: undefined): string;
     encodeFunctionData(functionFragment: "balanceOfAsset", values?: undefined): string;
     encodeFunctionData(functionFragment: "borrow", values?: undefined): string;
+    encodeFunctionData(functionFragment: "borrowFeed", values?: undefined): string;
     encodeFunctionData(functionFragment: "canStartNewPos", values?: undefined): string;
+    encodeFunctionData(functionFragment: "claimAndSellSushi", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "collateralToBorrowRatioBps", values?: undefined): string;
     encodeFunctionData(functionFragment: "currentPosition", values?: undefined): string;
+    encodeFunctionData(functionFragment: "debtToken", values?: undefined): string;
     encodeFunctionData(functionFragment: "decimalAdjust", values?: undefined): string;
     encodeFunctionData(functionFragment: "decimalAdjustSign", values?: undefined): string;
     encodeFunctionData(functionFragment: "divest", values: [PromiseOrValue<BigNumberish>]): string;
@@ -60,38 +111,36 @@ export interface DeltaNeutralLpV3Interface extends utils.Interface {
     encodeFunctionData(functionFragment: "grantRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "hasRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "invest", values: [PromiseOrValue<BigNumberish>]): string;
-    encodeFunctionData(functionFragment: "lpId", values?: undefined): string;
-    encodeFunctionData(functionFragment: "lpLiquidity", values?: undefined): string;
-    encodeFunctionData(functionFragment: "lpManager", values?: undefined): string;
-    encodeFunctionData(functionFragment: "pool", values?: undefined): string;
+    encodeFunctionData(functionFragment: "masterChef", values?: undefined): string;
+    encodeFunctionData(functionFragment: "masterChefPid", values?: undefined): string;
     encodeFunctionData(functionFragment: "poolFee", values?: undefined): string;
-    encodeFunctionData(functionFragment: "positionFees", values?: undefined): string;
-    encodeFunctionData(functionFragment: "positionValue", values?: undefined): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "revokeRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "router", values?: undefined): string;
-    encodeFunctionData(functionFragment: "startPosition", values: [
-        PromiseOrValue<BigNumberish>,
-        PromiseOrValue<BigNumberish>,
-        PromiseOrValue<BigNumberish>,
-        PromiseOrValue<BigNumberish>
-    ]): string;
+    encodeFunctionData(functionFragment: "startPosition", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "strategyVault", values?: undefined): string;
     encodeFunctionData(functionFragment: "supportsInterface", values: [PromiseOrValue<BytesLike>]): string;
+    encodeFunctionData(functionFragment: "sushiToken", values?: undefined): string;
     encodeFunctionData(functionFragment: "sweep", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "totalLockedValue", values?: undefined): string;
-    encodeFunctionData(functionFragment: "valueOfLpPosition", values?: undefined): string;
+    encodeFunctionData(functionFragment: "useMasterChefV2", values?: undefined): string;
     encodeFunctionData(functionFragment: "vault", values?: undefined): string;
     decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "MAX_BPS", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "STRATEGIST_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "V3ROUTER", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "aToken", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "abPair", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "assetToDepositRatioBps", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "balanceOfAsset", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "borrow", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "borrowFeed", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "canStartNewPos", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "claimAndSellSushi", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "collateralToBorrowRatioBps", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "currentPosition", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "debtToken", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "decimalAdjust", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "decimalAdjustSign", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "divest", data: BytesLike): Result;
@@ -100,25 +149,23 @@ export interface DeltaNeutralLpV3Interface extends utils.Interface {
     decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "invest", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "lpId", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "lpLiquidity", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "lpManager", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "pool", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "masterChef", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "masterChefPid", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "poolFee", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "positionFees", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "positionValue", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "router", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "startPosition", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "strategyVault", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "sushiToken", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "sweep", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "totalLockedValue", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "valueOfLpPosition", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "useMasterChefV2", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
     events: {
-        "PositionEnd(uint32,uint256,uint256,uint256,uint256,uint256[2],bool,uint256,uint256,uint256,uint256,uint256)": EventFragment;
-        "PositionStart(uint32,uint256,uint256,uint256[2],int24,int24,uint256,uint256,uint256)": EventFragment;
+        "PositionEnd(uint32,uint256,uint256,uint256,uint256[2],bool,uint256,uint256,uint256,uint256,uint256)": EventFragment;
+        "PositionStart(uint32,uint256,uint256,uint256[2],uint256,uint256,uint256)": EventFragment;
         "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
         "RoleGranted(bytes32,address,address)": EventFragment;
         "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -131,10 +178,9 @@ export interface DeltaNeutralLpV3Interface extends utils.Interface {
 }
 export interface PositionEndEventObject {
     position: number;
-    assetsFromUni: BigNumber;
-    borrowsFromUni: BigNumber;
-    assetFees: BigNumber;
-    borrowFees: BigNumber;
+    assetsFromSushi: BigNumber;
+    borrowsFromSushi: BigNumber;
+    assetsFromRewards: BigNumber;
     borrowPrices: [BigNumber, BigNumber];
     assetSold: boolean;
     assetsOrBorrowsSold: BigNumber;
@@ -145,7 +191,6 @@ export interface PositionEndEventObject {
 }
 export type PositionEndEvent = TypedEvent<[
     number,
-    BigNumber,
     BigNumber,
     BigNumber,
     BigNumber,
@@ -166,10 +211,8 @@ export interface PositionStartEventObject {
     assetCollateral: BigNumber;
     borrows: BigNumber;
     borrowPrices: [BigNumber, BigNumber];
-    tickLow: number;
-    tickHigh: number;
-    assetsToUni: BigNumber;
-    borrowsToUni: BigNumber;
+    assetsToSushi: BigNumber;
+    borrowsToSushi: BigNumber;
     timestamp: BigNumber;
 }
 export type PositionStartEvent = TypedEvent<[
@@ -180,8 +223,6 @@ export type PositionStartEvent = TypedEvent<[
         BigNumber,
         BigNumber
     ],
-    number,
-    number,
     BigNumber,
     BigNumber,
     BigNumber
@@ -220,11 +261,11 @@ export type RoleRevokedEvent = TypedEvent<[
     string
 ], RoleRevokedEventObject>;
 export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
-export interface DeltaNeutralLpV3 extends BaseContract {
+export interface SSVDeltaNeutralLp extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;
     deployed(): Promise<this>;
-    interface: DeltaNeutralLpV3Interface;
+    interface: SSVDeltaNeutralLpInterface;
     queryFilter<TEvent extends TypedEvent>(event: TypedEventFilter<TEvent>, fromBlockOrBlockhash?: string | number | undefined, toBlock?: string | number | undefined): Promise<Array<TEvent>>;
     listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>;
     listeners(eventName?: string): Array<Listener>;
@@ -238,22 +279,29 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
         MAX_BPS(overrides?: CallOverrides): Promise<[BigNumber]>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
+        V3ROUTER(overrides?: CallOverrides): Promise<[string]>;
         aToken(overrides?: CallOverrides): Promise<[string]>;
+        abPair(overrides?: CallOverrides): Promise<[string]>;
         asset(overrides?: CallOverrides): Promise<[string]>;
         assetToDepositRatioBps(overrides?: CallOverrides): Promise<[BigNumber]>;
         balanceOfAsset(overrides?: CallOverrides): Promise<[BigNumber] & {
             assets: BigNumber;
         }>;
         borrow(overrides?: CallOverrides): Promise<[string]>;
+        borrowFeed(overrides?: CallOverrides): Promise<[string]>;
         canStartNewPos(overrides?: CallOverrides): Promise<[boolean]>;
+        claimAndSellSushi(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         collateralToBorrowRatioBps(overrides?: CallOverrides): Promise<[BigNumber]>;
         currentPosition(overrides?: CallOverrides): Promise<[number]>;
+        debtToken(overrides?: CallOverrides): Promise<[string]>;
         decimalAdjust(overrides?: CallOverrides): Promise<[BigNumber]>;
         decimalAdjustSign(overrides?: CallOverrides): Promise<[boolean]>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        endPosition(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        endPosition(slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string]>;
@@ -264,19 +312,9 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        lpId(overrides?: CallOverrides): Promise<[BigNumber]>;
-        lpLiquidity(overrides?: CallOverrides): Promise<[BigNumber]>;
-        lpManager(overrides?: CallOverrides): Promise<[string]>;
-        pool(overrides?: CallOverrides): Promise<[string]>;
+        masterChef(overrides?: CallOverrides): Promise<[string]>;
+        masterChefPid(overrides?: CallOverrides): Promise<[BigNumber]>;
         poolFee(overrides?: CallOverrides): Promise<[number]>;
-        positionFees(overrides?: CallOverrides): Promise<[
-            BigNumber,
-            BigNumber
-        ] & {
-            assets: BigNumber;
-            borrows: BigNumber;
-        }>;
-        positionValue(overrides?: CallOverrides): Promise<[string]>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -284,36 +322,43 @@ export interface DeltaNeutralLpV3 extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         router(overrides?: CallOverrides): Promise<[string]>;
-        startPosition(assets: PromiseOrValue<BigNumberish>, tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        startPosition(assets: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        strategyVault(overrides?: CallOverrides): Promise<[string]>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[boolean]>;
+        sushiToken(overrides?: CallOverrides): Promise<[string]>;
         sweep(token: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         totalLockedValue(overrides?: CallOverrides): Promise<[BigNumber]>;
-        valueOfLpPosition(overrides?: CallOverrides): Promise<[BigNumber] & {
-            assetsLp: BigNumber;
-        }>;
+        useMasterChefV2(overrides?: CallOverrides): Promise<[boolean]>;
         vault(overrides?: CallOverrides): Promise<[string]>;
     };
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
     MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
     STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+    V3ROUTER(overrides?: CallOverrides): Promise<string>;
     aToken(overrides?: CallOverrides): Promise<string>;
+    abPair(overrides?: CallOverrides): Promise<string>;
     asset(overrides?: CallOverrides): Promise<string>;
     assetToDepositRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
     balanceOfAsset(overrides?: CallOverrides): Promise<BigNumber>;
     borrow(overrides?: CallOverrides): Promise<string>;
+    borrowFeed(overrides?: CallOverrides): Promise<string>;
     canStartNewPos(overrides?: CallOverrides): Promise<boolean>;
+    claimAndSellSushi(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     collateralToBorrowRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
     currentPosition(overrides?: CallOverrides): Promise<number>;
+    debtToken(overrides?: CallOverrides): Promise<string>;
     decimalAdjust(overrides?: CallOverrides): Promise<BigNumber>;
     decimalAdjustSign(overrides?: CallOverrides): Promise<boolean>;
     divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    endPosition(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+    endPosition(slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
@@ -324,19 +369,9 @@ export interface DeltaNeutralLpV3 extends BaseContract {
     invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    lpId(overrides?: CallOverrides): Promise<BigNumber>;
-    lpLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
-    lpManager(overrides?: CallOverrides): Promise<string>;
-    pool(overrides?: CallOverrides): Promise<string>;
+    masterChef(overrides?: CallOverrides): Promise<string>;
+    masterChefPid(overrides?: CallOverrides): Promise<BigNumber>;
     poolFee(overrides?: CallOverrides): Promise<number>;
-    positionFees(overrides?: CallOverrides): Promise<[
-        BigNumber,
-        BigNumber
-    ] & {
-        assets: BigNumber;
-        borrows: BigNumber;
-    }>;
-    positionValue(overrides?: CallOverrides): Promise<string>;
     renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -344,64 +379,63 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     router(overrides?: CallOverrides): Promise<string>;
-    startPosition(assets: PromiseOrValue<BigNumberish>, tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+    startPosition(assets: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    strategyVault(overrides?: CallOverrides): Promise<string>;
     supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
+    sushiToken(overrides?: CallOverrides): Promise<string>;
     sweep(token: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     totalLockedValue(overrides?: CallOverrides): Promise<BigNumber>;
-    valueOfLpPosition(overrides?: CallOverrides): Promise<BigNumber>;
+    useMasterChefV2(overrides?: CallOverrides): Promise<boolean>;
     vault(overrides?: CallOverrides): Promise<string>;
     callStatic: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
         MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
+        V3ROUTER(overrides?: CallOverrides): Promise<string>;
         aToken(overrides?: CallOverrides): Promise<string>;
+        abPair(overrides?: CallOverrides): Promise<string>;
         asset(overrides?: CallOverrides): Promise<string>;
         assetToDepositRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
         balanceOfAsset(overrides?: CallOverrides): Promise<BigNumber>;
         borrow(overrides?: CallOverrides): Promise<string>;
+        borrowFeed(overrides?: CallOverrides): Promise<string>;
         canStartNewPos(overrides?: CallOverrides): Promise<boolean>;
+        claimAndSellSushi(slippageBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         collateralToBorrowRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
         currentPosition(overrides?: CallOverrides): Promise<number>;
+        debtToken(overrides?: CallOverrides): Promise<string>;
         decimalAdjust(overrides?: CallOverrides): Promise<BigNumber>;
         decimalAdjustSign(overrides?: CallOverrides): Promise<boolean>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
-        endPosition(slippageBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+        endPosition(slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
-        lpId(overrides?: CallOverrides): Promise<BigNumber>;
-        lpLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
-        lpManager(overrides?: CallOverrides): Promise<string>;
-        pool(overrides?: CallOverrides): Promise<string>;
+        masterChef(overrides?: CallOverrides): Promise<string>;
+        masterChefPid(overrides?: CallOverrides): Promise<BigNumber>;
         poolFee(overrides?: CallOverrides): Promise<number>;
-        positionFees(overrides?: CallOverrides): Promise<[
-            BigNumber,
-            BigNumber
-        ] & {
-            assets: BigNumber;
-            borrows: BigNumber;
-        }>;
-        positionValue(overrides?: CallOverrides): Promise<string>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         router(overrides?: CallOverrides): Promise<string>;
-        startPosition(assets: PromiseOrValue<BigNumberish>, tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+        startPosition(assets: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+        strategyVault(overrides?: CallOverrides): Promise<string>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
+        sushiToken(overrides?: CallOverrides): Promise<string>;
         sweep(token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         totalLockedValue(overrides?: CallOverrides): Promise<BigNumber>;
-        valueOfLpPosition(overrides?: CallOverrides): Promise<BigNumber>;
+        useMasterChefV2(overrides?: CallOverrides): Promise<boolean>;
         vault(overrides?: CallOverrides): Promise<string>;
     };
     filters: {
-        "PositionEnd(uint32,uint256,uint256,uint256,uint256,uint256[2],bool,uint256,uint256,uint256,uint256,uint256)"(position?: PromiseOrValue<BigNumberish> | null, assetsFromUni?: null, borrowsFromUni?: null, assetFees?: null, borrowFees?: null, borrowPrices?: null, assetSold?: null, assetsOrBorrowsSold?: null, assetsOrBorrowsReceived?: null, assetCollateral?: null, borrowDebtPaid?: null, timestamp?: null): PositionEndEventFilter;
-        PositionEnd(position?: PromiseOrValue<BigNumberish> | null, assetsFromUni?: null, borrowsFromUni?: null, assetFees?: null, borrowFees?: null, borrowPrices?: null, assetSold?: null, assetsOrBorrowsSold?: null, assetsOrBorrowsReceived?: null, assetCollateral?: null, borrowDebtPaid?: null, timestamp?: null): PositionEndEventFilter;
-        "PositionStart(uint32,uint256,uint256,uint256[2],int24,int24,uint256,uint256,uint256)"(position?: PromiseOrValue<BigNumberish> | null, assetCollateral?: null, borrows?: null, borrowPrices?: null, tickLow?: null, tickHigh?: null, assetsToUni?: null, borrowsToUni?: null, timestamp?: null): PositionStartEventFilter;
-        PositionStart(position?: PromiseOrValue<BigNumberish> | null, assetCollateral?: null, borrows?: null, borrowPrices?: null, tickLow?: null, tickHigh?: null, assetsToUni?: null, borrowsToUni?: null, timestamp?: null): PositionStartEventFilter;
+        "PositionEnd(uint32,uint256,uint256,uint256,uint256[2],bool,uint256,uint256,uint256,uint256,uint256)"(position?: PromiseOrValue<BigNumberish> | null, assetsFromSushi?: null, borrowsFromSushi?: null, assetsFromRewards?: null, borrowPrices?: null, assetSold?: null, assetsOrBorrowsSold?: null, assetsOrBorrowsReceived?: null, assetCollateral?: null, borrowDebtPaid?: null, timestamp?: null): PositionEndEventFilter;
+        PositionEnd(position?: PromiseOrValue<BigNumberish> | null, assetsFromSushi?: null, borrowsFromSushi?: null, assetsFromRewards?: null, borrowPrices?: null, assetSold?: null, assetsOrBorrowsSold?: null, assetsOrBorrowsReceived?: null, assetCollateral?: null, borrowDebtPaid?: null, timestamp?: null): PositionEndEventFilter;
+        "PositionStart(uint32,uint256,uint256,uint256[2],uint256,uint256,uint256)"(position?: PromiseOrValue<BigNumberish> | null, assetCollateral?: null, borrows?: null, borrowPrices?: null, assetsToSushi?: null, borrowsToSushi?: null, timestamp?: null): PositionStartEventFilter;
+        PositionStart(position?: PromiseOrValue<BigNumberish> | null, assetCollateral?: null, borrows?: null, borrowPrices?: null, assetsToSushi?: null, borrowsToSushi?: null, timestamp?: null): PositionStartEventFilter;
         "RoleAdminChanged(bytes32,bytes32,bytes32)"(role?: PromiseOrValue<BytesLike> | null, previousAdminRole?: PromiseOrValue<BytesLike> | null, newAdminRole?: PromiseOrValue<BytesLike> | null): RoleAdminChangedEventFilter;
         RoleAdminChanged(role?: PromiseOrValue<BytesLike> | null, previousAdminRole?: PromiseOrValue<BytesLike> | null, newAdminRole?: PromiseOrValue<BytesLike> | null): RoleAdminChangedEventFilter;
         "RoleGranted(bytes32,address,address)"(role?: PromiseOrValue<BytesLike> | null, account?: PromiseOrValue<string> | null, sender?: PromiseOrValue<string> | null): RoleGrantedEventFilter;
@@ -413,20 +447,27 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
         MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+        V3ROUTER(overrides?: CallOverrides): Promise<BigNumber>;
         aToken(overrides?: CallOverrides): Promise<BigNumber>;
+        abPair(overrides?: CallOverrides): Promise<BigNumber>;
         asset(overrides?: CallOverrides): Promise<BigNumber>;
         assetToDepositRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
         balanceOfAsset(overrides?: CallOverrides): Promise<BigNumber>;
         borrow(overrides?: CallOverrides): Promise<BigNumber>;
+        borrowFeed(overrides?: CallOverrides): Promise<BigNumber>;
         canStartNewPos(overrides?: CallOverrides): Promise<BigNumber>;
+        claimAndSellSushi(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         collateralToBorrowRatioBps(overrides?: CallOverrides): Promise<BigNumber>;
         currentPosition(overrides?: CallOverrides): Promise<BigNumber>;
+        debtToken(overrides?: CallOverrides): Promise<BigNumber>;
         decimalAdjust(overrides?: CallOverrides): Promise<BigNumber>;
         decimalAdjustSign(overrides?: CallOverrides): Promise<BigNumber>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        endPosition(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        endPosition(slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -437,13 +478,9 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        lpId(overrides?: CallOverrides): Promise<BigNumber>;
-        lpLiquidity(overrides?: CallOverrides): Promise<BigNumber>;
-        lpManager(overrides?: CallOverrides): Promise<BigNumber>;
-        pool(overrides?: CallOverrides): Promise<BigNumber>;
+        masterChef(overrides?: CallOverrides): Promise<BigNumber>;
+        masterChefPid(overrides?: CallOverrides): Promise<BigNumber>;
         poolFee(overrides?: CallOverrides): Promise<BigNumber>;
-        positionFees(overrides?: CallOverrides): Promise<BigNumber>;
-        positionValue(overrides?: CallOverrides): Promise<BigNumber>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -451,35 +488,44 @@ export interface DeltaNeutralLpV3 extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         router(overrides?: CallOverrides): Promise<BigNumber>;
-        startPosition(assets: PromiseOrValue<BigNumberish>, tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        startPosition(assets: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        strategyVault(overrides?: CallOverrides): Promise<BigNumber>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
+        sushiToken(overrides?: CallOverrides): Promise<BigNumber>;
         sweep(token: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         totalLockedValue(overrides?: CallOverrides): Promise<BigNumber>;
-        valueOfLpPosition(overrides?: CallOverrides): Promise<BigNumber>;
+        useMasterChefV2(overrides?: CallOverrides): Promise<BigNumber>;
         vault(overrides?: CallOverrides): Promise<BigNumber>;
     };
     populateTransaction: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         MAX_BPS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        V3ROUTER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         aToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        abPair(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         assetToDepositRatioBps(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         balanceOfAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         borrow(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        borrowFeed(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         canStartNewPos(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        claimAndSellSushi(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         collateralToBorrowRatioBps(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         currentPosition(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        debtToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         decimalAdjust(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         decimalAdjustSign(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        endPosition(slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        endPosition(slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -490,13 +536,9 @@ export interface DeltaNeutralLpV3 extends BaseContract {
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        lpId(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        lpLiquidity(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        lpManager(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        pool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        masterChef(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        masterChefPid(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         poolFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        positionFees(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        positionValue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -504,15 +546,17 @@ export interface DeltaNeutralLpV3 extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         router(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        startPosition(assets: PromiseOrValue<BigNumberish>, tickLow: PromiseOrValue<BigNumberish>, tickHigh: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        startPosition(assets: PromiseOrValue<BigNumberish>, slippageToleranceBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
+        strategyVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        sushiToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         sweep(token: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         totalLockedValue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        valueOfLpPosition(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        useMasterChefV2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         vault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
     };
 }
