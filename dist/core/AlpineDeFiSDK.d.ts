@@ -21,7 +21,6 @@ export declare function _addDecimals(amount: string, decimals: number): ethers.B
  * @returns {string} equivalent amount in unit.
  */
 export declare function _removeDecimals(amount: ethers.BigNumber, decimals: ethers.BigNumberish): string;
-export declare function getMaticPrice(): Promise<number>;
 /**
  * Call a smart contract method with arguments
  * @param {ethers.Contract} contract smart contract

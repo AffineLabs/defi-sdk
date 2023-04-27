@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Vault__factory = void 0;
+exports.EthVault__factory = void 0;
 const ethers_1 = require("ethers");
 const _abi = [
     {
@@ -1540,6 +1540,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "weth",
+        outputs: [
+            {
+                internalType: "contract IWETH",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "pure",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "uint256",
@@ -1600,8 +1613,12 @@ const _abi = [
         stateMutability: "view",
         type: "function",
     },
+    {
+        stateMutability: "payable",
+        type: "receive",
+    },
 ];
-class Vault__factory {
+class EthVault__factory {
     static createInterface() {
         return new ethers_1.utils.Interface(_abi);
     }
@@ -1609,5 +1626,5 @@ class Vault__factory {
         return new ethers_1.Contract(address, _abi, signerOrProvider);
     }
 }
-exports.Vault__factory = Vault__factory;
-Vault__factory.abi = _abi;
+exports.EthVault__factory = EthVault__factory;
+EthVault__factory.abi = _abi;

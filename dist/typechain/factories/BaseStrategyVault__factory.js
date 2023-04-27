@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AffineVault__factory = void 0;
+exports.BaseStrategyVault__factory = void 0;
 const ethers_1 = require("ethers");
 const _abi = [
     {
@@ -14,12 +14,6 @@ const _abi = [
                 internalType: "address",
                 name: "user",
                 type: "address",
-            },
-            {
-                indexed: false,
-                internalType: "contract BaseStrategy[]",
-                name: "strategies",
-                type: "address[]",
             },
         ],
         name: "Harvest",
@@ -55,19 +49,6 @@ const _abi = [
             },
         ],
         name: "Liquidation",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: true,
-                internalType: "address",
-                name: "caller",
-                type: "address",
-            },
-        ],
-        name: "Rebalance",
         type: "event",
     },
     {
@@ -149,44 +130,6 @@ const _abi = [
         anonymous: false,
         inputs: [
             {
-                indexed: true,
-                internalType: "contract BaseStrategy",
-                name: "strategy",
-                type: "address",
-            },
-        ],
-        name: "StrategyAdded",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: false,
-                internalType: "contract BaseStrategy[]",
-                name: "strategyList",
-                type: "address[]",
-            },
-            {
-                indexed: false,
-                internalType: "uint16[]",
-                name: "strategyBps",
-                type: "uint16[]",
-            },
-        ],
-        name: "StrategyAllocsUpdated",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: true,
-                internalType: "contract BaseStrategy",
-                name: "strategy",
-                type: "address",
-            },
-            {
                 indexed: false,
                 internalType: "uint256",
                 name: "assets",
@@ -199,25 +142,6 @@ const _abi = [
     {
         anonymous: false,
         inputs: [
-            {
-                indexed: true,
-                internalType: "contract BaseStrategy",
-                name: "strategy",
-                type: "address",
-            },
-        ],
-        name: "StrategyRemoved",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: true,
-                internalType: "contract BaseStrategy",
-                name: "strategy",
-                type: "address",
-            },
             {
                 indexed: false,
                 internalType: "uint256",
@@ -232,19 +156,6 @@ const _abi = [
             },
         ],
         name: "StrategyWithdrawal",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: false,
-                internalType: "contract BaseStrategy[20]",
-                name: "newQueue",
-                type: "address[20]",
-            },
-        ],
-        name: "WithdrawalQueueSet",
         type: "event",
     },
     {
@@ -287,24 +198,6 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [
-            {
-                internalType: "contract BaseStrategy",
-                name: "strategy",
-                type: "address",
-            },
-            {
-                internalType: "uint16",
-                name: "tvlBps",
-                type: "uint16",
-            },
-        ],
-        name: "addStrategy",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
         inputs: [],
         name: "asset",
         outputs: [
@@ -312,6 +205,72 @@ const _abi = [
                 internalType: "address",
                 name: "",
                 type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "beginEpoch",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "debtEscrow",
+        outputs: [
+            {
+                internalType: "contract WithdrawalEscrow",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "endEpoch",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "epoch",
+        outputs: [
+            {
+                internalType: "uint248",
+                name: "",
+                type: "uint248",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "epochEnded",
+        outputs: [
+            {
+                internalType: "bool",
+                name: "",
+                type: "bool",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "epochStartTime",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
             },
         ],
         stateMutability: "view",
@@ -331,19 +290,6 @@ const _abi = [
                 internalType: "bytes32",
                 name: "",
                 type: "bytes32",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "getWithdrawalQueue",
-        outputs: [
-            {
-                internalType: "contract BaseStrategy[20]",
-                name: "",
-                type: "address[20]",
             },
         ],
         stateMutability: "view",
@@ -381,13 +327,7 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [
-            {
-                internalType: "contract BaseStrategy[]",
-                name: "strategyList",
-                type: "address[]",
-            },
-        ],
+        inputs: [],
         name: "harvest",
         outputs: [],
         stateMutability: "nonpayable",
@@ -476,26 +416,6 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [],
-        name: "rebalance",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "contract BaseStrategy",
-                name: "strategy",
-                type: "address",
-            },
-        ],
-        name: "removeStrategy",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
         inputs: [
             {
                 internalType: "bytes32",
@@ -534,12 +454,12 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "contract BaseStrategy[20]",
-                name: "newQueue",
-                type: "address[20]",
+                internalType: "contract WithdrawalEscrow",
+                name: "escrow",
+                type: "address",
             },
         ],
-        name: "setWithdrawalQueue",
+        name: "setDebtEscrow",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -548,26 +468,36 @@ const _abi = [
         inputs: [
             {
                 internalType: "contract BaseStrategy",
+                name: "newStrategy",
+                type: "address",
+            },
+        ],
+        name: "setStrategy",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "strategy",
+        outputs: [
+            {
+                internalType: "contract BaseStrategy",
                 name: "",
                 type: "address",
             },
         ],
-        name: "strategies",
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "strategyTVL",
         outputs: [
             {
-                internalType: "bool",
-                name: "isActive",
-                type: "bool",
-            },
-            {
-                internalType: "uint16",
-                name: "tvlBps",
-                type: "uint16",
-            },
-            {
-                internalType: "uint232",
-                name: "balance",
-                type: "uint232",
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
             },
         ],
         stateMutability: "view",
@@ -594,50 +524,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "totalBps",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "totalStrategyHoldings",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "contract BaseStrategy[]",
-                name: "strategyList",
-                type: "address[]",
-            },
-            {
-                internalType: "uint16[]",
-                name: "strategyBps",
-                type: "uint16[]",
-            },
-        ],
-        name: "updateStrategyAllocations",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [],
         name: "vaultTVL",
         outputs: [
             {
@@ -649,27 +535,8 @@ const _abi = [
         stateMutability: "view",
         type: "function",
     },
-    {
-        inputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        name: "withdrawalQueue",
-        outputs: [
-            {
-                internalType: "contract BaseStrategy",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
 ];
-class AffineVault__factory {
+class BaseStrategyVault__factory {
     static createInterface() {
         return new ethers_1.utils.Interface(_abi);
     }
@@ -677,5 +544,5 @@ class AffineVault__factory {
         return new ethers_1.Contract(address, _abi, signerOrProvider);
     }
 }
-exports.AffineVault__factory = AffineVault__factory;
-AffineVault__factory.abi = _abi;
+exports.BaseStrategyVault__factory = BaseStrategyVault__factory;
+BaseStrategyVault__factory.abi = _abi;

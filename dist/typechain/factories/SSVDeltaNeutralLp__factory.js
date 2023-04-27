@@ -3,13 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DeltaNeutralLp__factory = void 0;
+exports.SSVDeltaNeutralLp__factory = void 0;
 const ethers_1 = require("ethers");
 const _abi = [
     {
         inputs: [
             {
-                internalType: "contract AffineVault",
+                internalType: "contract StrategyVault",
                 name: "_vault",
                 type: "address",
             },
@@ -735,6 +735,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "strategyVault",
+        outputs: [
+            {
+                internalType: "contract StrategyVault",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "bytes4",
@@ -819,7 +832,7 @@ const _abi = [
         type: "function",
     },
 ];
-class DeltaNeutralLp__factory {
+class SSVDeltaNeutralLp__factory {
     static createInterface() {
         return new ethers_1.utils.Interface(_abi);
     }
@@ -827,5 +840,5 @@ class DeltaNeutralLp__factory {
         return new ethers_1.Contract(address, _abi, signerOrProvider);
     }
 }
-exports.DeltaNeutralLp__factory = DeltaNeutralLp__factory;
-DeltaNeutralLp__factory.abi = _abi;
+exports.SSVDeltaNeutralLp__factory = SSVDeltaNeutralLp__factory;
+SSVDeltaNeutralLp__factory.abi = _abi;
