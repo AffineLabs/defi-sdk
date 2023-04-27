@@ -276,6 +276,7 @@ export async function sellBtCEthShares(amountUSDC: number): Promise<DryRunReceip
     const dryRunInfo: GasInfo = {
       txnCost,
       txnCostUSD: (Number(txnCost) * maticPrice).toString(),
+      gasPrice: ethers.utils.formatEther(gasPrice),
     };
     return {
       ...basicInfo,

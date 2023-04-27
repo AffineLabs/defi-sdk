@@ -81,12 +81,12 @@ export async function blockchainCall(
     const { signature, request } = await getSignature(contract, signer, method, args);
     console.log({ signature, request });
     await sendToForwarder([signature], [request]);
-    return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "" };
+    return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "", gasPrice: "" };
   }
 
   if (biconomy && contract.address == usdc.address) {
     await sendBiconomy(contract, signer, method, args);
-    return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "" };
+    return { blockNumber: "", txnHash: "", txnCost: "", txnCostUSD: "", gasPrice: "" };
   }
 
   // regular (non-meta) tx
@@ -111,7 +111,7 @@ export async function blockchainCall(
     const maticPrice = await getMaticPrice();
     const txnCostUSD = (Number(txnCost) * maticPrice).toString();
 
-    return { txnCost, txnCostUSD };
+    return { txnCost, txnCostUSD, gasPrice: ethers.utils.formatEther(gasPrice) };
   }
 
   const tx: TransactionResponse = await contract[method].apply(null, args);
@@ -126,6 +126,7 @@ export async function blockchainCall(
     txnHash: receipt.transactionHash,
     txnCost,
     txnCostUSD,
+    gasPrice: ethers.utils.formatEther(receipt.effectiveGasPrice),
   };
 }
 
