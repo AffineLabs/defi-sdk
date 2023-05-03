@@ -178,8 +178,13 @@ class Account {
     return init(this.signer, biconomyProvider, undefined, this.selectedChainId);
   }
 
-  async isMaxUSDCApproved(product: AlpineProduct): Promise<boolean> {
-    return AlpineDeFiSDK.isMaxUSDCApproved(product);
+  /**
+   * It checks if the user has approved the outgoing transaction, amount is optional.
+   * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
+   * @returns {Promise<boolean>} boolean indicating whether the user has approved the outgoing transaction
+   */
+  async isApproved(product: AlpineProduct, amount?: number): Promise<boolean> {
+    return AlpineDeFiSDK.isApproved(product, amount);
   }
 
   /**
