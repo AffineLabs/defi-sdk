@@ -5,12 +5,18 @@ import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
 // import detectEthereumProvider from "@metamask/detect-provider";
 
-import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, productAllocation } from "../core/types";
+import {
+  EmergencyWithdrawalQueueRequest,
+  EmergencyWithdrawalQueueTransfer,
+  SSVWithdrawalRequestInfo,
+  productAllocation,
+} from "../core/types";
 import { portfolioSell, portfolioPurchase } from "../core/portfolio";
 import { AlpineDeFiSDK, init } from "../core";
 import { AlpineProduct } from "../core/types";
 import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
+import * as lockedWithdrawal from "../core/singleStrategy";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
 import {
   DEFAULT_RAW_CHAIN_ID,
@@ -365,6 +371,28 @@ class Account {
       this.signer = this.walletProvider.getSigner();
       this.userAddress = await this.signer.getAddress();
     }
+  }
+
+  /// Single strategy locked withdrawal request
+
+  async isStrategyLiquid() {
+    return lockedWithdrawal.isLiquidToWithdraw();
+  }
+
+  async getWithdrawalRequest() {
+    return lockedWithdrawal.getWithdrawalRequest();
+  }
+
+  async redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo) {
+    return lockedWithdrawal.redeemWithdrawRequest(reqInfo);
+  }
+
+  async getTotalWithdrawableAssets() {
+    return lockedWithdrawal.getAssets();
+  }
+
+  async lastEpochBeginUTCTime(): Promise<number> {
+    return lockedWithdrawal.epochStartTime();
   }
 }
 

@@ -8,6 +8,8 @@ import {
   Router__factory,
   EmergencyWithdrawalQueue__factory,
   Vault__factory,
+  WithdrawalEscrow__factory,
+  StrategyVault__factory,
 } from "../typechain";
 import { AllowedChainId } from "../types/account";
 import { DEFAULT_RAW_CHAIN_ID } from "./constants";
@@ -73,6 +75,7 @@ export async function getAllContracts(
     EthUsdcEarn: ethEarnData,
     EthWethEarn: ethWethEarnData,
     EthRouter: ethRouter,
+    EthSushiLpUsdcWeth: ssvEthSushiUSDEarn,
   } = allData;
 
   const chainId = getChainId();
@@ -90,9 +93,13 @@ export async function getAllContracts(
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
     const ethWethEarn = Vault__factory.connect(ethWethEarnData.address, provider);
+    const ssvEthUSDEarn = StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
+    const withdrawalEscrow = WithdrawalEscrow__factory.connect(await ssvEthUSDEarn.debtEscrow(), provider);
     return {
       ethEarn,
       ethWethEarn,
+      ssvEthUSDEarn,
+      withdrawalEscrow,
       usdc: new ethers.Contract(await ethEarn.asset(), erc20Abi, provider),
       weth: new ethers.Contract(await ethWethEarn.asset(), erc20Abi, provider),
       router: Router__factory.connect(ethRouter.address, provider),

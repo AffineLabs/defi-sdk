@@ -41,6 +41,7 @@ const portfolio_1 = require("../core/portfolio");
 const core_1 = require("../core");
 const productActions = __importStar(require("../core/product"));
 const cache_1 = require("../core/cache");
+const lockedWithdrawal = __importStar(require("../core/singleStrategy"));
 const constants_1 = require("../core/constants");
 const ewqueue_1 = require("../core/ewqueue");
 const wallets_1 = require("./wallets");
@@ -372,6 +373,32 @@ class Account {
                 this.signer = this.walletProvider.getSigner();
                 this.userAddress = yield this.signer.getAddress();
             }
+        });
+    }
+    /// Single strategy locked withdrawal request
+    isStrategyLiquid() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return lockedWithdrawal.isLiquidToWithdraw();
+        });
+    }
+    getWithdrawalRequest() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return lockedWithdrawal.getWithdrawalRequest();
+        });
+    }
+    redeemWithdrawalRequest(reqInfo) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return lockedWithdrawal.redeemWithdrawRequest(reqInfo);
+        });
+    }
+    getTotalWithdrawableAssets() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return lockedWithdrawal.getAssets();
+        });
+    }
+    lastEpochBeginUTCTime() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return lockedWithdrawal.epochStartTime();
         });
     }
 }

@@ -130,7 +130,7 @@ export async function blockchainCall(
  * @returns true if the user has approved the max amount of usdc to the contract
  */
 export async function isMaxUSDCApproved(product: AlpineProduct): Promise<boolean> {
-  const { usdc, alpSave, router, ethEarn } = getContracts() as AlpineContracts;
+  const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn } = getContracts() as AlpineContracts;
 
   if (product === "ethWethEarn") return true;
 
@@ -139,6 +139,7 @@ export async function isMaxUSDCApproved(product: AlpineProduct): Promise<boolean
     alpSave,
     alpLarge: router,
     ethEarn,
+    ssvEthUSDEarn,
   };
 
   const allowance = await asset.allowance(userAddress, productToSpender[product].address);

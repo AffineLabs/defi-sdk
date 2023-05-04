@@ -1,4 +1,13 @@
-import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue, Vault } from "../typechain";
+import {
+  Forwarder,
+  L2Vault,
+  Router,
+  TwoAssetBasket,
+  EmergencyWithdrawalQueue,
+  Vault,
+  StrategyVault,
+  WithdrawalEscrow,
+} from "../typechain";
 import { ethers } from "ethers";
 
 export interface GasInfo {
@@ -18,7 +27,7 @@ export interface SmallTxReceipt extends GasInfo {
   txnHash: string;
 }
 
-export const alpineProducts = ["alpSave", "alpLarge", "ethEarn", "ethWethEarn"] as const;
+export const alpineProducts = ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn"] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
 export const polygonProducts = ["alpSave", "alpLarge"] as const;
@@ -52,6 +61,8 @@ export interface EthContracts extends BothContracts {
   ethEarn: Vault;
   ethWethEarn: Vault;
   weth: ethers.Contract;
+  ssvEthUSDEarn: StrategyVault;
+  withdrawalEscrow: WithdrawalEscrow;
   router: Router;
 }
 
@@ -90,4 +101,12 @@ export interface EmergencyWithdrawalQueueTransfer {
   sharesValueInAsset: string;
   txHash: string;
   timestamp: Date;
+}
+
+export interface SSVWithdrawalRequestInfo {
+  epoch: number;
+  token: string;
+  value: string;
+  claimed: boolean;
+  claimable: boolean;
 }

@@ -125,7 +125,7 @@ exports.blockchainCall = blockchainCall;
  */
 function isMaxUSDCApproved(product) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn } = (0, cache_1.getContracts)();
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn } = (0, cache_1.getContracts)();
         if (product === "ethWethEarn")
             return true;
         const asset = usdc;
@@ -133,6 +133,7 @@ function isMaxUSDCApproved(product) {
             alpSave,
             alpLarge: router,
             ethEarn,
+            ssvEthUSDEarn,
         };
         const allowance = yield asset.allowance(cache_1.userAddress, productToSpender[product].address);
         /**

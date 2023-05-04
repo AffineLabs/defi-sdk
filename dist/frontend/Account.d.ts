@@ -1,6 +1,6 @@
 import { Magic } from "magic-sdk";
 import { ethers } from "ethers";
-import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, productAllocation } from "../core/types";
+import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, SSVWithdrawalRequestInfo, productAllocation } from "../core/types";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet, IConnectAccount } from "../types/account";
 import Provider from "@walletconnect/universal-provider";
@@ -52,8 +52,8 @@ declare class Account {
     approve(to: AlpineProduct, amountUSDC?: string): Promise<import("../core/types").DryRunReceipt | import("../core/types").FullTxReceipt>;
     portfolioSell(allocations: productAllocation, amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     portfolioPurchase(alloctions: productAllocation, amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
-    buyProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt | import("../core/types").FullTxReceipt>;
-    sellProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt | import("../core/types").FullTxReceipt>;
+    buyProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt | undefined>;
+    sellProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt | undefined>;
     /**
      * Transfer usdc from user's wallet to another wallet
      * @param  to receipient address
@@ -81,6 +81,11 @@ declare class Account {
      */
     switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void>;
     initWalletConnectProvider(web3Modal: import("@web3modal/standalone").Web3Modal): Promise<void>;
+    isStrategyLiquid(): Promise<boolean>;
+    getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]>;
+    redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<import("../core/types").FullTxReceipt>;
+    getTotalWithdrawableAssets(): Promise<string>;
+    lastEpochBeginUTCTime(): Promise<number>;
 }
 declare class ReadAccount {
     userAddress: string;
