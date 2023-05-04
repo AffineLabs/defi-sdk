@@ -60,7 +60,7 @@ const connectAndWrite = async ({
 
 const buy = async (alpAccount: Account, product: AlpineProduct) => {
   // check if user is approved max amount
-  const isApproved = await alpAccount.isMaxUSDCApproved(product);
+  const isApproved = await alpAccount.isApproved(product);
   console.log("isApproved: ", isApproved);
 
   // approve max amount if not approved

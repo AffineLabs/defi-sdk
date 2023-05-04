@@ -42,7 +42,12 @@ declare class Account {
      */
     getUserAddress(): Promise<string | undefined>;
     setGasMode(useGas: boolean): Promise<void>;
-    isMaxUSDCApproved(product: AlpineProduct): Promise<boolean>;
+    /**
+     * It checks if the user has approved the outgoing transaction, amount is optional.
+     * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
+     * @returns {Promise<boolean>} boolean indicating whether the user has approved the outgoing transaction
+     */
+    isApproved(product: AlpineProduct, amount?: number): Promise<boolean>;
     /**
      * approve outgoing transaction with another wallet or smart contract for
      * the specified amount

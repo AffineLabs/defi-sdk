@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mintUSDC = exports.transfer = exports.approve = exports.isMaxUSDCApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
+exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
 const ethers_1 = require("ethers");
 const cache_1 = require("./cache");
 const biconomy_1 = require("./biconomy");
@@ -120,10 +120,11 @@ simulate = false, value) {
 }
 exports.blockchainCall = blockchainCall;
 /**
- * check if the user has approved the max amount of usdc to the contract
- * @returns true if the user has approved the max amount of usdc to the contract
+ * check if the user has approved amount of usdc/ eth (Asset) to the contract.
+ * DEFAULT amount is: MAX_APPROVAL_AMOUNT/2
+ * @returns boolean
  */
-function isMaxUSDCApproved(product) {
+function isApproved(product, amount) {
     return __awaiter(this, void 0, void 0, function* () {
         const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn } = (0, cache_1.getContracts)();
         if (product === "ethWethEarn")
@@ -137,14 +138,19 @@ function isMaxUSDCApproved(product) {
         };
         const allowance = yield asset.allowance(cache_1.userAddress, productToSpender[product].address);
         /**
-         * user might have already deposited some amount
-         * and found out 'allowance' decreases by the amount deposited for 'ethEarn' only
-         * thats why we are dividing the max approval amount by 2 and comparing it with the allowance
+         * If the 'amount' is not specified then we will check the max amount, but
+         * we are dividing the max approval amount by 2 because
+         * user might have already deposited some amount after approving the max amount
+         * and we found out 'allowance' decreases by the amount deposited for 'ethEarn' only.
+         * Thats why we are dividing the max approval amount by 2 and comparing it with the allowance.
          */
-        return allowance.gte(constants_1.MAX_APPROVAL_AMOUNT.div(2));
+        const maxApprovalAmount = amount
+            ? _addDecimals(amount.toString(), yield asset.decimals())
+            : constants_1.MAX_APPROVAL_AMOUNT.div(2);
+        return allowance.gte(maxApprovalAmount);
     });
 }
-exports.isMaxUSDCApproved = isMaxUSDCApproved;
+exports.isApproved = isApproved;
 /**
  * approve outgoing transaction with another wallet or smart contract for
  * the specified amount

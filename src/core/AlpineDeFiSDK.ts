@@ -145,7 +145,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
 
   const allowance = await asset.allowance(userAddress, productToSpender[product].address);
   /**
-   * If the 'amount' is not specified then we are approving the max amount, but
+   * If the 'amount' is not specified then we will check the max amount, but
    * we are dividing the max approval amount by 2 because
    * user might have already deposited some amount after approving the max amount
    * and we found out 'allowance' decreases by the amount deposited for 'ethEarn' only.
