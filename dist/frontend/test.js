@@ -61,7 +61,7 @@ const connectAndWrite = ({ walletType = "metamask", account, chainId, }) => __aw
 });
 const buy = (alpAccount, product) => __awaiter(void 0, void 0, void 0, function* () {
     // check if user is approved max amount
-    const isApproved = yield alpAccount.isMaxUSDCApproved(product);
+    const isApproved = yield alpAccount.isApproved(product);
     console.log("isApproved: ", isApproved);
     // approve max amount if not approved
     if (!isApproved) {
