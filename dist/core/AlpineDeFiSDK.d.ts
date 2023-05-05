@@ -31,10 +31,11 @@ export declare function _removeDecimals(amount: ethers.BigNumber, decimals: ethe
 export declare function blockchainCall(contract: ethers.Contract, method: string, args: Array<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
 simulate?: boolean, value?: ethers.BigNumberish): Promise<SmallTxReceipt | GasInfo>;
 /**
- * check if the user has approved the max amount of usdc to the contract
- * @returns true if the user has approved the max amount of usdc to the contract
+ * check if the user has approved amount of usdc/ eth (Asset) to the contract.
+ * DEFAULT amount is: MAX_APPROVAL_AMOUNT/2
+ * @returns boolean
  */
-export declare function isMaxUSDCApproved(product: AlpineProduct): Promise<boolean>;
+export declare function isApproved(product: AlpineProduct, amount?: number): Promise<boolean>;
 /**
  * approve outgoing transaction with another wallet or smart contract for
  * the specified amount

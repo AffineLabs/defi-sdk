@@ -182,9 +182,14 @@ class Account {
             return (0, core_1.init)(this.signer, biconomyProvider, undefined, this.selectedChainId);
         });
     }
-    isMaxUSDCApproved(product) {
+    /**
+     * It checks if the user has approved the outgoing transaction, amount is optional.
+     * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
+     * @returns {Promise<boolean>} boolean indicating whether the user has approved the outgoing transaction
+     */
+    isApproved(product, amount) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.isMaxUSDCApproved(product);
+            return core_1.AlpineDeFiSDK.isApproved(product, amount);
         });
     }
     /**
