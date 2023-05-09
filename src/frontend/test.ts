@@ -61,7 +61,7 @@ const connectAndWrite = async ({
 
 const buy = async (alpAccount: Account, product: AlpineProduct) => {
   // check if user is approved max amount
-  const isApproved = await alpAccount.isApproved(product);
+  const isApproved = await alpAccount.isApproved(product, 1);
   console.log("isApproved: ", isApproved);
 
   // approve max amount if not approved
@@ -87,9 +87,10 @@ const main = async () => {
   await connectAndWrite({ walletType, account: alpAccount, chainId });
   const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
   console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
+  console.log("eth bal on ETH: ", await readAcc.getGasBalance());
 
   await alpAccount.setSimulationMode(false);
-  const buy = await alpAccount.buyProduct(_productToBuy, 1);
+  await buy(alpAccount, _productToBuy);
 
   console.log("buy res: ", buy);
 
@@ -101,8 +102,8 @@ const main = async () => {
   // console.log({ allAssets });
 
   // await buy(alpAccount, _productToBuy);
-  const sell = await alpAccount.sellProduct("ssvEthUSDEarn", 1);
-  console.log("sell res: ", sell);
+  // const sell = await alpAccount.sellProduct("ssvEthUSDEarn", 1);
+  // console.log("sell res: ", sell);
 
   console.log("exiting");
 };

@@ -64,21 +64,23 @@ export async function buyLockedShares(rawAmount: number): Promise<DryRunReceipt 
 
 async function buyDegenShares(amount: number) {
   const { degen } = getEthContracts();
+  const convertedAmount = _addDecimals(amount.toString(), 6);
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
-    dollarAmount: amount.toString(),
-    tokenAmount: _removeDecimals(await degen.convertToShares(amount), 18),
+    dollarAmount: convertedAmount.toString(),
+    tokenAmount: _removeDecimals(await degen.convertToShares(convertedAmount), await degen.decimals()),
   };
 
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(degen, "deposit", [amount, userAddress], true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(degen, "deposit", [convertedAmount, userAddress], true)) as GasInfo;
     return {
       ...basicInfo,
       ...dryRunInfo,
     };
   } else {
-    const receipt = (await blockchainCall(degen, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
+    console.log({ convertedAmount, amount, degen });
+    const receipt = (await blockchainCall(degen, "deposit", [convertedAmount, userAddress], false)) as SmallTxReceipt;
     return { ...basicInfo, ...receipt };
   }
 }
