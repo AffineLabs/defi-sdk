@@ -18,6 +18,8 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
     return buyEthWethShares(amount);
   } else if (product == "ssvEthUSDEarn") {
     return buyLockedShares(amount);
+  } else if (product == "degen") {
+    return buyDegenShares(amount);
   }
 }
 
@@ -32,6 +34,8 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
     return sellEthWethShares(amount);
   } else if (product == "ssvEthUSDEarn") {
     return sellLockedShares(amount);
+  } else if (product == "degen") {
+    return sellDegenShares(amount);
   }
 }
 
@@ -54,6 +58,27 @@ export async function buyLockedShares(rawAmount: number): Promise<DryRunReceipt 
     };
   } else {
     const receipt = (await blockchainCall(vault, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
+}
+
+async function buyDegenShares(amount: number) {
+  const { degen } = getEthContracts();
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amount.toString(),
+    tokenAmount: _removeDecimals(await degen.convertToShares(amount), 18),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(degen, "deposit", [amount, userAddress], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(degen, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
     return { ...basicInfo, ...receipt };
   }
 }
@@ -391,6 +416,39 @@ export async function sellLockedShares(rawAmount: number): Promise<DryRunReceipt
   }
 }
 
+export async function sellDegenShares(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { degen, usdc } = getEthContracts();
+
+  const assetsToWithdraw = _addDecimals(amount.toString(), usdc.decimals());
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amount.toString(),
+    tokenAmount: _removeDecimals(await degen.convertToShares(assetsToWithdraw), await degen.decimals()),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(
+      degen,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  }
+
+  const receipt = (await blockchainCall(
+    degen,
+    "withdraw",
+    [assetsToWithdraw, userAddress, userAddress],
+    false,
+  )) as SmallTxReceipt;
+  return { ...basicInfo, ...receipt };
+}
+
 // Convert usdc to a share amount to be passed to `redeem` (for alpLarge only)
 async function _convertToShares(amountUSDC: ethers.BigNumber) {
   const { alpLarge } = getPolygonContracts();
@@ -414,7 +472,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
   }
 
   let contract: L2Vault | TwoAssetBasket | Vault | StrategyVault;
-  if (product === "ethEarn" || product === "ethWethEarn" || product === "ssvEthUSDEarn") {
+  if (product === "ethEarn" || product === "ethWethEarn" || product === "ssvEthUSDEarn" || product === "degen") {
     contract = getEthContracts()[product];
   } else {
     contract = getPolygonContracts()[product];

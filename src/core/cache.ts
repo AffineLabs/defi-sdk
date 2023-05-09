@@ -76,6 +76,7 @@ export async function getAllContracts(
     EthWethEarn: ethWethEarnData,
     EthRouter: ethRouter,
     EthSushiLpUsdcWeth: ssvEthSushiUSDEarn,
+    Degen: degenData,
   } = allData;
 
   const chainId = getChainId();
@@ -95,11 +96,13 @@ export async function getAllContracts(
     const ethWethEarn = Vault__factory.connect(ethWethEarnData.address, provider);
     const ssvEthUSDEarn = StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
     const withdrawalEscrow = WithdrawalEscrow__factory.connect(await ssvEthUSDEarn.debtEscrow(), provider);
+    const degen = Vault__factory.connect(degenData.address, provider);
     return {
       ethEarn,
       ethWethEarn,
       ssvEthUSDEarn,
       withdrawalEscrow,
+      degen,
       usdc: new ethers.Contract(await ethEarn.asset(), erc20Abi, provider),
       weth: new ethers.Contract(await ethWethEarn.asset(), erc20Abi, provider),
       router: Router__factory.connect(ethRouter.address, provider),
