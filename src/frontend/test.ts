@@ -3,7 +3,7 @@ import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet } from "../types/account";
 import { Account, ReadAccount } from "./Account";
 
-const getTokenInfo = async (token: "alpSave" | "alpLarge" | "ethEarn" | "usdc", readAcc: ReadAccount) => {
+const getTokenInfo = async (token: AlpineProduct | "usdc", readAcc: ReadAccount) => {
   try {
     const _tokenInfo = await readAcc.getTokenInfo(token);
     console.log(token, " token: ", _tokenInfo);
@@ -26,6 +26,7 @@ const testRead = async (user: string, chainId: AllowedChainId) => {
       await getTokenInfo("alpLarge", readAcc);
     } else {
       await getTokenInfo("ethEarn", readAcc);
+      await getTokenInfo("degen", readAcc);
     }
   } catch (error) {
     console.error("Error in read account: ", error);
@@ -76,7 +77,7 @@ const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
   const chainId = 5 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "ssvEthUSDEarn";
+  const _productToBuy: AlpineProduct = "degen";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -88,16 +89,20 @@ const main = async () => {
   console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
 
   await alpAccount.setSimulationMode(false);
+  const buy = await alpAccount.buyProduct(_productToBuy, 1);
 
-  const res = await alpAccount.isStrategyLiquid();
-  console.log({ res });
-  const requests = await alpAccount.getWithdrawalRequest();
-  console.log({ requests });
-  const allAssets = await alpAccount.getTotalWithdrawableAssets();
-  console.log({ allAssets });
+  console.log("buy res: ", buy);
+
+  // const res = await alpAccount.isStrategyLiquid();
+  // console.log({ res });
+  // const requests = await alpAccount.getWithdrawalRequest();
+  // console.log({ requests });
+  // const allAssets = await alpAccount.getTotalWithdrawableAssets();
+  // console.log({ allAssets });
 
   // await buy(alpAccount, _productToBuy);
-  await alpAccount.sellProduct("ssvEthUSDEarn", 1);
+  const sell = await alpAccount.sellProduct("ssvEthUSDEarn", 1);
+  console.log("sell res: ", sell);
 
   console.log("exiting");
 };
