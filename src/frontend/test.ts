@@ -92,7 +92,11 @@ const main = async () => {
   await alpAccount.setSimulationMode(false);
   await buy(alpAccount, _productToBuy);
 
-  console.log("buy res: ", buy);
+  console.log("bought: ", _productToBuy, "of amount: ", 1);
+
+  await alpAccount.sellProduct(_productToBuy, 1);
+
+  console.log("sold: ", _productToBuy, "of amount: ", 1);
 
   // const res = await alpAccount.isStrategyLiquid();
   // console.log({ res });

@@ -419,9 +419,9 @@ export async function sellLockedShares(rawAmount: number): Promise<DryRunReceipt
 }
 
 export async function sellDegenShares(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { degen, usdc } = getEthContracts();
+  const { degen } = getEthContracts();
 
-  const assetsToWithdraw = _addDecimals(amount.toString(), usdc.decimals());
+  const assetsToWithdraw = _addDecimals(amount.toString(), 6);
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",

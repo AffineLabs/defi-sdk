@@ -84,7 +84,9 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("eth bal on ETH: ", yield readAcc.getGasBalance());
     yield alpAccount.setSimulationMode(false);
     yield buy(alpAccount, _productToBuy);
-    console.log("buy res: ", buy);
+    console.log("bought: ", _productToBuy, "of amount: ", 1);
+    yield alpAccount.sellProduct(_productToBuy, 1);
+    console.log("sold: ", _productToBuy, "of amount: ", 1);
     // const res = await alpAccount.isStrategyLiquid();
     // console.log({ res });
     // const requests = await alpAccount.getWithdrawalRequest();

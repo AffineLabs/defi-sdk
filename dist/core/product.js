@@ -371,8 +371,8 @@ function sellLockedShares(rawAmount) {
 exports.sellLockedShares = sellLockedShares;
 function sellDegenShares(amount) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { degen, usdc } = (0, cache_1.getEthContracts)();
-        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), usdc.decimals());
+        const { degen } = (0, cache_1.getEthContracts)();
+        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 6);
         const basicInfo = {
             alpFee: "0",
             alpFeePercent: "0",
