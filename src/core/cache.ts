@@ -77,12 +77,14 @@ export async function getAllContracts(
     EthRouter: ethRouter,
     EthSushiLpUsdcWeth: ssvEthSushiUSDEarn,
     Degen: degenData,
+    PolygonDegen: polygonDegenData,
   } = allData;
 
   const chainId = getChainId();
 
   if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
+
     return {
       alpSave,
       alpLarge: TwoAssetBasket__factory.connect(alpLarge.address, provider),
@@ -90,6 +92,7 @@ export async function getAllContracts(
       usdc: new ethers.Contract(await alpSave.asset(), erc20Abi, provider),
       router: Router__factory.connect(router.address, provider),
       ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSave.emergencyWithdrawalQueue(), provider),
+      polygonDegen: StrategyVault__factory.connect(polygonDegenData.address, provider),
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);

@@ -75,8 +75,8 @@ const buy = (alpAccount, product) => __awaiter(void 0, void 0, void 0, function*
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const alpAccount = new Account_1.Account();
     const walletType = "metamask";
-    const chainId = 5;
-    const _productToBuy = "degen";
+    const chainId = 80001;
+    const _productToBuy = "polygonDegen";
     console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS: constants_1.ALLOWED_CHAIN_IDS }, constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
     yield connectAndWrite({ walletType, account: alpAccount, chainId });
     const readAcc = new Account_1.ReadAccount(alpAccount.userAddress || "", chainId);

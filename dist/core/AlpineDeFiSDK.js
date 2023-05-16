@@ -126,7 +126,8 @@ exports.blockchainCall = blockchainCall;
  */
 function isApproved(product, amount) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen } = (0, cache_1.getContracts)();
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen } = (0, cache_1.getContracts)();
+        console.log({ polygonDegen });
         if (product === "ethWethEarn")
             return true;
         const asset = usdc;
@@ -136,6 +137,7 @@ function isApproved(product, amount) {
             ethEarn,
             ssvEthUSDEarn,
             degen,
+            polygonDegen,
         };
         const allowance = yield asset.allowance(cache_1.userAddress, productToSpender[product].address);
         /**

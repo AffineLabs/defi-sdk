@@ -58,6 +58,7 @@ export interface EthVaultInterface extends utils.Interface {
         "previewMint(uint256)": FunctionFragment;
         "previewRedeem(uint256)": FunctionFragment;
         "previewWithdraw(uint256)": FunctionFragment;
+        "proxiableUUID()": FunctionFragment;
         "rebalance()": FunctionFragment;
         "redeem(uint256,address,address)": FunctionFragment;
         "removeStrategy(address)": FunctionFragment;
@@ -77,13 +78,15 @@ export interface EthVaultInterface extends utils.Interface {
         "transferFrom(address,address,uint256)": FunctionFragment;
         "unpause()": FunctionFragment;
         "updateStrategyAllocations(address[],uint16[])": FunctionFragment;
+        "upgradeTo(address)": FunctionFragment;
+        "upgradeToAndCall(address,bytes)": FunctionFragment;
         "vaultTVL()": FunctionFragment;
         "weth()": FunctionFragment;
         "withdraw(uint256,address,address)": FunctionFragment;
         "withdrawalFee()": FunctionFragment;
         "withdrawalQueue(uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "allowance" | "approve" | "asset" | "balanceOf" | "convertToAssets" | "convertToShares" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "multicall" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "rebalance" | "redeem" | "removeStrategy" | "renounceRole" | "revokeRole" | "setManagementFee" | "setWithdrawalFee" | "setWithdrawalQueue" | "strategies" | "supportsInterface" | "symbol" | "totalAssets" | "totalBps" | "totalStrategyHoldings" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "updateStrategyAllocations" | "vaultTVL" | "weth" | "withdraw" | "withdrawalFee" | "withdrawalQueue"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "allowance" | "approve" | "asset" | "balanceOf" | "convertToAssets" | "convertToShares" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "multicall" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "rebalance" | "redeem" | "removeStrategy" | "renounceRole" | "revokeRole" | "setManagementFee" | "setWithdrawalFee" | "setWithdrawalQueue" | "strategies" | "supportsInterface" | "symbol" | "totalAssets" | "totalBps" | "totalStrategyHoldings" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "weth" | "withdraw" | "withdrawalFee" | "withdrawalQueue"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "GUARDIAN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
@@ -133,6 +136,7 @@ export interface EthVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "previewMint", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "previewRedeem", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "previewWithdraw", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "proxiableUUID", values?: undefined): string;
     encodeFunctionData(functionFragment: "rebalance", values?: undefined): string;
     encodeFunctionData(functionFragment: "redeem", values: [
         PromiseOrValue<BigNumberish>,
@@ -160,6 +164,8 @@ export interface EthVaultInterface extends utils.Interface {
     ]): string;
     encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
     encodeFunctionData(functionFragment: "updateStrategyAllocations", values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]): string;
+    encodeFunctionData(functionFragment: "upgradeTo", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "upgradeToAndCall", values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "vaultTVL", values?: undefined): string;
     encodeFunctionData(functionFragment: "weth", values?: undefined): string;
     encodeFunctionData(functionFragment: "withdraw", values: [
@@ -213,6 +219,7 @@ export interface EthVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "previewMint", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "previewRedeem", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "previewWithdraw", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "proxiableUUID", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "rebalance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "removeStrategy", data: BytesLike): Result;
@@ -232,13 +239,17 @@ export interface EthVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "transferFrom", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "updateStrategyAllocations", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "upgradeToAndCall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "vaultTVL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "weth", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawalFee", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawalQueue", data: BytesLike): Result;
     events: {
+        "AdminChanged(address,address)": EventFragment;
         "Approval(address,address,uint256)": EventFragment;
+        "BeaconUpgraded(address)": EventFragment;
         "Deposit(address,address,uint256,uint256)": EventFragment;
         "Harvest(address,address[])": EventFragment;
         "Initialized(uint8)": EventFragment;
@@ -256,11 +267,14 @@ export interface EthVaultInterface extends utils.Interface {
         "StrategyWithdrawal(address,uint256,uint256)": EventFragment;
         "Transfer(address,address,uint256)": EventFragment;
         "Unpaused(address)": EventFragment;
+        "Upgraded(address)": EventFragment;
         "Withdraw(address,address,address,uint256,uint256)": EventFragment;
         "WithdrawalFeeSet(uint256,uint256)": EventFragment;
         "WithdrawalQueueSet(address[20])": EventFragment;
     };
+    getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Harvest"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
@@ -278,10 +292,20 @@ export interface EthVaultInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: "StrategyWithdrawal"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "WithdrawalFeeSet"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "WithdrawalQueueSet"): EventFragment;
 }
+export interface AdminChangedEventObject {
+    previousAdmin: string;
+    newAdmin: string;
+}
+export type AdminChangedEvent = TypedEvent<[
+    string,
+    string
+], AdminChangedEventObject>;
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 export interface ApprovalEventObject {
     owner: string;
     spender: string;
@@ -293,6 +317,13 @@ export type ApprovalEvent = TypedEvent<[
     BigNumber
 ], ApprovalEventObject>;
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export interface BeaconUpgradedEventObject {
+    beacon: string;
+}
+export type BeaconUpgradedEvent = TypedEvent<[
+    string
+], BeaconUpgradedEventObject>;
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 export interface DepositEventObject {
     caller: string;
     owner: string;
@@ -435,6 +466,11 @@ export interface UnpausedEventObject {
 }
 export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+export interface UpgradedEventObject {
+    implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 export interface WithdrawEventObject {
     caller: string;
     receiver: string;
@@ -565,6 +601,7 @@ export interface EthVault extends BaseContract {
         previewMint(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
         previewRedeem(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
         previewWithdraw(assetsToUser: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
+        proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
         rebalance(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -614,6 +651,12 @@ export interface EthVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         updateStrategyAllocations(strategyList: PromiseOrValue<string>[], strategyBps: PromiseOrValue<BigNumberish>[], overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -692,6 +735,7 @@ export interface EthVault extends BaseContract {
     previewMint(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     previewRedeem(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     previewWithdraw(assetsToUser: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
     rebalance(overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -741,6 +785,12 @@ export interface EthVault extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     updateStrategyAllocations(strategyList: PromiseOrValue<string>[], strategyBps: PromiseOrValue<BigNumberish>[], overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
@@ -795,6 +845,7 @@ export interface EthVault extends BaseContract {
         previewMint(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         previewRedeem(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         previewWithdraw(assetsToUser: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        proxiableUUID(overrides?: CallOverrides): Promise<string>;
         rebalance(overrides?: CallOverrides): Promise<void>;
         redeem(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         removeStrategy(strategy: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
@@ -822,6 +873,8 @@ export interface EthVault extends BaseContract {
         transferFrom(from: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         unpause(overrides?: CallOverrides): Promise<void>;
         updateStrategyAllocations(strategyList: PromiseOrValue<string>[], strategyBps: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<void>;
+        upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+        upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<void>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
         weth(overrides?: CallOverrides): Promise<string>;
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -829,8 +882,12 @@ export interface EthVault extends BaseContract {
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
     };
     filters: {
+        "AdminChanged(address,address)"(previousAdmin?: null, newAdmin?: null): AdminChangedEventFilter;
+        AdminChanged(previousAdmin?: null, newAdmin?: null): AdminChangedEventFilter;
         "Approval(address,address,uint256)"(owner?: PromiseOrValue<string> | null, spender?: PromiseOrValue<string> | null, value?: null): ApprovalEventFilter;
         Approval(owner?: PromiseOrValue<string> | null, spender?: PromiseOrValue<string> | null, value?: null): ApprovalEventFilter;
+        "BeaconUpgraded(address)"(beacon?: PromiseOrValue<string> | null): BeaconUpgradedEventFilter;
+        BeaconUpgraded(beacon?: PromiseOrValue<string> | null): BeaconUpgradedEventFilter;
         "Deposit(address,address,uint256,uint256)"(caller?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): DepositEventFilter;
         Deposit(caller?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): DepositEventFilter;
         "Harvest(address,address[])"(user?: PromiseOrValue<string> | null, strategies?: null): HarvestEventFilter;
@@ -865,6 +922,8 @@ export interface EthVault extends BaseContract {
         Transfer(from?: PromiseOrValue<string> | null, to?: PromiseOrValue<string> | null, value?: null): TransferEventFilter;
         "Unpaused(address)"(account?: null): UnpausedEventFilter;
         Unpaused(account?: null): UnpausedEventFilter;
+        "Upgraded(address)"(implementation?: PromiseOrValue<string> | null): UpgradedEventFilter;
+        Upgraded(implementation?: PromiseOrValue<string> | null): UpgradedEventFilter;
         "Withdraw(address,address,address,uint256,uint256)"(caller?: PromiseOrValue<string> | null, receiver?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): WithdrawEventFilter;
         Withdraw(caller?: PromiseOrValue<string> | null, receiver?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): WithdrawEventFilter;
         "WithdrawalFeeSet(uint256,uint256)"(oldFee?: null, newFee?: null): WithdrawalFeeSetEventFilter;
@@ -941,6 +1000,7 @@ export interface EthVault extends BaseContract {
         previewMint(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         previewRedeem(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         previewWithdraw(assetsToUser: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
         rebalance(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -982,6 +1042,12 @@ export interface EthVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         updateStrategyAllocations(strategyList: PromiseOrValue<string>[], strategyBps: PromiseOrValue<BigNumberish>[], overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1061,6 +1127,7 @@ export interface EthVault extends BaseContract {
         previewMint(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         previewRedeem(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         previewWithdraw(assetsToUser: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         rebalance(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -1102,6 +1169,12 @@ export interface EthVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         updateStrategyAllocations(strategyList: PromiseOrValue<string>[], strategyBps: PromiseOrValue<BigNumberish>[], overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<PopulatedTransaction>;

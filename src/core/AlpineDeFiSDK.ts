@@ -131,7 +131,8 @@ export async function blockchainCall(
  * @returns boolean
  */
 export async function isApproved(product: AlpineProduct, amount?: number): Promise<boolean> {
-  const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen } = getContracts() as AlpineContracts;
+  const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen } = getContracts() as AlpineContracts;
+  console.log({ polygonDegen });
 
   if (product === "ethWethEarn") return true;
 
@@ -142,6 +143,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     ethEarn,
     ssvEthUSDEarn,
     degen,
+    polygonDegen,
   };
 
   const allowance = await asset.allowance(userAddress, productToSpender[product].address);

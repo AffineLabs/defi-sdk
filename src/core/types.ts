@@ -27,7 +27,15 @@ export interface SmallTxReceipt extends GasInfo {
   txnHash: string;
 }
 
-export const alpineProducts = ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen"] as const;
+export const alpineProducts = [
+  "alpSave",
+  "alpLarge",
+  "ethEarn",
+  "ethWethEarn",
+  "ssvEthUSDEarn",
+  "degen",
+  "polygonDegen",
+] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
 export const polygonProducts = ["alpSave", "alpLarge"] as const;
@@ -55,6 +63,7 @@ export interface PolygonContracts extends BothContracts {
   forwarder: Forwarder;
   router: Router;
   ewQueue: EmergencyWithdrawalQueue;
+  polygonDegen: StrategyVault;
 }
 
 export interface EthContracts extends BothContracts {

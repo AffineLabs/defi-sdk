@@ -10,6 +10,32 @@ const _abi = [
         anonymous: false,
         inputs: [
             {
+                indexed: false,
+                internalType: "uint256",
+                name: "epoch",
+                type: "uint256",
+            },
+        ],
+        name: "BeginEpoch",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "epoch",
+                type: "uint256",
+            },
+        ],
+        name: "EndEpoch",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
                 indexed: true,
                 internalType: "address",
                 name: "user",
@@ -30,25 +56,6 @@ const _abi = [
             },
         ],
         name: "Initialized",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: false,
-                internalType: "uint256",
-                name: "assetsRequested",
-                type: "uint256",
-            },
-            {
-                indexed: false,
-                internalType: "uint256",
-                name: "assetsLiquidated",
-                type: "uint256",
-            },
-        ],
-        name: "Liquidation",
         type: "event",
     },
     {
@@ -322,13 +329,6 @@ const _abi = [
             },
         ],
         name: "grantRole",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "harvest",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",

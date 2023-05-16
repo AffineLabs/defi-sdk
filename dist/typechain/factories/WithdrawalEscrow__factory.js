@@ -9,7 +9,7 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "contract StrategyVault",
+                internalType: "contract BaseStrategyVault",
                 name: "_vault",
                 type: "address",
             },
@@ -85,14 +85,14 @@ const _abi = [
         name: "epochInfo",
         outputs: [
             {
-                internalType: "uint256",
+                internalType: "uint128",
                 name: "shares",
-                type: "uint256",
+                type: "uint128",
             },
             {
-                internalType: "uint256",
+                internalType: "uint128",
                 name: "assets",
-                type: "uint256",
+                type: "uint128",
             },
         ],
         stateMutability: "view",
@@ -200,7 +200,7 @@ const _abi = [
         name: "vault",
         outputs: [
             {
-                internalType: "contract StrategyVault",
+                internalType: "contract BaseStrategyVault",
                 name: "",
                 type: "address",
             },
