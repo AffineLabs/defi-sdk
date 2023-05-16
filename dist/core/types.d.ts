@@ -16,7 +16,7 @@ export interface SmallTxReceipt extends GasInfo {
     blockNumber: string;
     txnHash: string;
 }
-export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn"];
+export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen"];
 export type AlpineProduct = typeof alpineProducts[number];
 export declare const polygonProducts: readonly ["alpSave", "alpLarge"];
 export type PolygonProduct = typeof polygonProducts[number];
@@ -46,6 +46,7 @@ export interface EthContracts extends BothContracts {
     ssvEthUSDEarn: StrategyVault;
     withdrawalEscrow: WithdrawalEscrow;
     router: Router;
+    degen: Vault;
 }
 export interface AlpineContracts extends PolygonContracts, EthContracts {
 }

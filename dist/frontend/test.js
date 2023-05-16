@@ -34,6 +34,7 @@ const testRead = (user, chainId) => __awaiter(void 0, void 0, void 0, function* 
         }
         else {
             yield getTokenInfo("ethEarn", readAcc);
+            yield getTokenInfo("degen", readAcc);
         }
     }
     catch (error) {
@@ -61,7 +62,7 @@ const connectAndWrite = ({ walletType = "metamask", account, chainId, }) => __aw
 });
 const buy = (alpAccount, product) => __awaiter(void 0, void 0, void 0, function* () {
     // check if user is approved max amount
-    const isApproved = yield alpAccount.isApproved(product);
+    const isApproved = yield alpAccount.isApproved(product, 1);
     console.log("isApproved: ", isApproved);
     // approve max amount if not approved
     if (!isApproved) {
@@ -75,20 +76,26 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const alpAccount = new Account_1.Account();
     const walletType = "metamask";
     const chainId = 5;
-    const _productToBuy = "ssvEthUSDEarn";
+    const _productToBuy = "degen";
     console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS: constants_1.ALLOWED_CHAIN_IDS }, constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
     yield connectAndWrite({ walletType, account: alpAccount, chainId });
     const readAcc = new Account_1.ReadAccount(alpAccount.userAddress || "", chainId);
     console.log("usdc bal on ETH: ", yield readAcc.getTokenInfo("usdc"));
+    console.log("eth bal on ETH: ", yield readAcc.getGasBalance());
     yield alpAccount.setSimulationMode(false);
-    const res = yield alpAccount.isStrategyLiquid();
-    console.log({ res });
-    const requests = yield alpAccount.getWithdrawalRequest();
-    console.log({ requests });
-    const allAssets = yield alpAccount.getTotalWithdrawableAssets();
-    console.log({ allAssets });
+    yield buy(alpAccount, _productToBuy);
+    console.log("bought: ", _productToBuy, "of amount: ", 1);
+    yield alpAccount.sellProduct(_productToBuy, 1);
+    console.log("sold: ", _productToBuy, "of amount: ", 1);
+    // const res = await alpAccount.isStrategyLiquid();
+    // console.log({ res });
+    // const requests = await alpAccount.getWithdrawalRequest();
+    // console.log({ requests });
+    // const allAssets = await alpAccount.getTotalWithdrawableAssets();
+    // console.log({ allAssets });
     // await buy(alpAccount, _productToBuy);
-    yield alpAccount.sellProduct("ssvEthUSDEarn", 1);
+    // const sell = await alpAccount.sellProduct("ssvEthUSDEarn", 1);
+    // console.log("sell res: ", sell);
     console.log("exiting");
 });
 const handleButtonClick = () => {

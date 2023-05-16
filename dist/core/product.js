@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sharesFromTokens = exports.tokensFromShares = exports.getTokenInfo = exports.sellLockedShares = exports.sellEthWethShares = exports.sellBtCEthShares = exports.sellEthUsdcShares = exports.sellUsdcShares = exports.buyBtCEthShares = exports.buyUsdcShares = exports.buyLockedShares = exports.sellProduct = exports.buyProduct = void 0;
+exports.sharesFromTokens = exports.tokensFromShares = exports.getTokenInfo = exports.sellDegenShares = exports.sellLockedShares = exports.sellEthWethShares = exports.sellBtCEthShares = exports.sellEthUsdcShares = exports.sellUsdcShares = exports.buyBtCEthShares = exports.buyUsdcShares = exports.buyLockedShares = exports.sellProduct = exports.buyProduct = void 0;
 const ethers_1 = require("ethers");
 const AlpineDeFiSDK_1 = require("./AlpineDeFiSDK");
 const cache_1 = require("./cache");
@@ -31,6 +31,9 @@ function buyProduct(product, amount, slippageBps = 500) {
         else if (product == "ssvEthUSDEarn") {
             return buyLockedShares(amount);
         }
+        else if (product == "degen") {
+            return buyDegenShares(amount);
+        }
     });
 }
 exports.buyProduct = buyProduct;
@@ -50,6 +53,9 @@ function sellProduct(product, amount) {
         }
         else if (product == "ssvEthUSDEarn") {
             return sellLockedShares(amount);
+        }
+        else if (product == "degen") {
+            return sellDegenShares(amount);
         }
     });
 }
@@ -75,6 +81,27 @@ function buyLockedShares(rawAmount) {
     });
 }
 exports.buyLockedShares = buyLockedShares;
+function buyDegenShares(amount) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { degen } = (0, cache_1.getEthContracts)();
+        const convertedAmount = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 6);
+        const basicInfo = {
+            alpFee: "0",
+            alpFeePercent: "0",
+            dollarAmount: convertedAmount.toString(),
+            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield degen.convertToShares(convertedAmount), yield degen.decimals()),
+        };
+        if (cache_1.SIMULATE) {
+            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(degen, "deposit", [convertedAmount, cache_1.userAddress], true));
+            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
+        }
+        else {
+            console.log({ convertedAmount, amount, degen });
+            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(degen, "deposit", [convertedAmount, cache_1.userAddress], false));
+            return Object.assign(Object.assign({}, basicInfo), receipt);
+        }
+    });
+}
 function buyEthWethShares(amountWeth) {
     return __awaiter(this, void 0, void 0, function* () {
         const { weth, ethWethEarn, router } = (0, cache_1.getEthContracts)();
@@ -342,6 +369,25 @@ function sellLockedShares(rawAmount) {
     });
 }
 exports.sellLockedShares = sellLockedShares;
+function sellDegenShares(amount) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { degen } = (0, cache_1.getEthContracts)();
+        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 6);
+        const basicInfo = {
+            alpFee: "0",
+            alpFeePercent: "0",
+            dollarAmount: amount.toString(),
+            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield degen.convertToShares(assetsToWithdraw), yield degen.decimals()),
+        };
+        if (cache_1.SIMULATE) {
+            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(degen, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
+            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
+        }
+        const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(degen, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
+        return Object.assign(Object.assign({}, basicInfo), receipt);
+    });
+}
+exports.sellDegenShares = sellDegenShares;
 // Convert usdc to a share amount to be passed to `redeem` (for alpLarge only)
 function _convertToShares(amountUSDC) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -365,7 +411,7 @@ function getTokenInfo(product) {
             };
         }
         let contract;
-        if (product === "ethEarn" || product === "ethWethEarn" || product === "ssvEthUSDEarn") {
+        if (product === "ethEarn" || product === "ethWethEarn" || product === "ssvEthUSDEarn" || product === "degen") {
             contract = (0, cache_1.getEthContracts)()[product];
         }
         else {

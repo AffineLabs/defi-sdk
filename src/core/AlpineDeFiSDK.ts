@@ -131,7 +131,7 @@ export async function blockchainCall(
  * @returns boolean
  */
 export async function isApproved(product: AlpineProduct, amount?: number): Promise<boolean> {
-  const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn } = getContracts() as AlpineContracts;
+  const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen } = getContracts() as AlpineContracts;
 
   if (product === "ethWethEarn") return true;
 
@@ -141,6 +141,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     alpLarge: router,
     ethEarn,
     ssvEthUSDEarn,
+    degen,
   };
 
   const allowance = await asset.allowance(userAddress, productToSpender[product].address);
@@ -181,6 +182,7 @@ export async function approve(product: AlpineProduct, amountAsset?: string): Pro
     tokenAmount: amountAsset || _removeDecimals(MAX_APPROVAL_AMOUNT, decimals),
   };
   const approveArgs = [product === "alpLarge" ? router.address : contracts[product].address, amount];
+  console.log({ approveArgs, asset });
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(asset, "approve", approveArgs, true)) as GasInfo;
     return { ...basicInfo, ...dryRunInfo };
