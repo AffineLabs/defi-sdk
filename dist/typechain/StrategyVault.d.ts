@@ -29,7 +29,6 @@ export interface StrategyVaultInterface extends utils.Interface {
         "decimals()": FunctionFragment;
         "decreaseAllowance(address,uint256)": FunctionFragment;
         "deposit(uint256,address)": FunctionFragment;
-        "depositIntoStrategies(uint256)": FunctionFragment;
         "detailedPrice()": FunctionFragment;
         "detailedTVL()": FunctionFragment;
         "detailedTotalSupply()": FunctionFragment;
@@ -40,7 +39,6 @@ export interface StrategyVaultInterface extends utils.Interface {
         "getRoleAdmin(bytes32)": FunctionFragment;
         "governance()": FunctionFragment;
         "grantRole(bytes32,address)": FunctionFragment;
-        "harvest()": FunctionFragment;
         "hasRole(bytes32,address)": FunctionFragment;
         "increaseAllowance(address,uint256)": FunctionFragment;
         "initialSharesPerAsset()": FunctionFragment;
@@ -62,13 +60,14 @@ export interface StrategyVaultInterface extends utils.Interface {
         "previewMint(uint256)": FunctionFragment;
         "previewRedeem(uint256)": FunctionFragment;
         "previewWithdraw(uint256)": FunctionFragment;
+        "proxiableUUID()": FunctionFragment;
         "redeem(uint256,address,address)": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
         "revokeRole(bytes32,address)": FunctionFragment;
-        "setAssetLimit(uint256)": FunctionFragment;
         "setDebtEscrow(address)": FunctionFragment;
         "setManagementFee(uint256)": FunctionFragment;
         "setStrategy(address)": FunctionFragment;
+        "setTvlCap(uint256)": FunctionFragment;
         "setWithdrawalFee(uint256)": FunctionFragment;
         "strategy()": FunctionFragment;
         "strategyTVL()": FunctionFragment;
@@ -80,11 +79,13 @@ export interface StrategyVaultInterface extends utils.Interface {
         "transfer(address,uint256)": FunctionFragment;
         "transferFrom(address,address,uint256)": FunctionFragment;
         "unpause()": FunctionFragment;
+        "upgradeTo(address)": FunctionFragment;
+        "upgradeToAndCall(address,bytes)": FunctionFragment;
         "vaultTVL()": FunctionFragment;
         "withdraw(uint256,address,address)": FunctionFragment;
         "withdrawalFee()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "allowance" | "approve" | "asset" | "balanceOf" | "beginEpoch" | "convertToAssets" | "convertToShares" | "debtEscrow" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "multicall" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "redeem" | "renounceRole" | "revokeRole" | "setAssetLimit" | "setDebtEscrow" | "setManagementFee" | "setStrategy" | "setWithdrawalFee" | "strategy" | "strategyTVL" | "supportsInterface" | "symbol" | "tearDown" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "vaultTVL" | "withdraw" | "withdrawalFee"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "allowance" | "approve" | "asset" | "balanceOf" | "beginEpoch" | "convertToAssets" | "convertToShares" | "debtEscrow" | "decimals" | "decreaseAllowance" | "deposit" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "multicall" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "redeem" | "renounceRole" | "revokeRole" | "setDebtEscrow" | "setManagementFee" | "setStrategy" | "setTvlCap" | "setWithdrawalFee" | "strategy" | "strategyTVL" | "supportsInterface" | "symbol" | "tearDown" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "withdraw" | "withdrawalFee"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "GUARDIAN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
@@ -100,7 +101,6 @@ export interface StrategyVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
     encodeFunctionData(functionFragment: "decreaseAllowance", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "deposit", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "depositIntoStrategies", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "detailedPrice", values?: undefined): string;
     encodeFunctionData(functionFragment: "detailedTVL", values?: undefined): string;
     encodeFunctionData(functionFragment: "detailedTotalSupply", values?: undefined): string;
@@ -111,7 +111,6 @@ export interface StrategyVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "getRoleAdmin", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "governance", values?: undefined): string;
     encodeFunctionData(functionFragment: "grantRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "harvest", values?: undefined): string;
     encodeFunctionData(functionFragment: "hasRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "increaseAllowance", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "initialSharesPerAsset", values?: undefined): string;
@@ -138,6 +137,7 @@ export interface StrategyVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "previewMint", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "previewRedeem", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "previewWithdraw", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "proxiableUUID", values?: undefined): string;
     encodeFunctionData(functionFragment: "redeem", values: [
         PromiseOrValue<BigNumberish>,
         PromiseOrValue<string>,
@@ -145,10 +145,10 @@ export interface StrategyVaultInterface extends utils.Interface {
     ]): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "revokeRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "setAssetLimit", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "setDebtEscrow", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "setManagementFee", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "setStrategy", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "setTvlCap", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "setWithdrawalFee", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "strategy", values?: undefined): string;
     encodeFunctionData(functionFragment: "strategyTVL", values?: undefined): string;
@@ -164,6 +164,8 @@ export interface StrategyVaultInterface extends utils.Interface {
         PromiseOrValue<BigNumberish>
     ]): string;
     encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
+    encodeFunctionData(functionFragment: "upgradeTo", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "upgradeToAndCall", values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "vaultTVL", values?: undefined): string;
     encodeFunctionData(functionFragment: "withdraw", values: [
         PromiseOrValue<BigNumberish>,
@@ -186,7 +188,6 @@ export interface StrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "decreaseAllowance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "depositIntoStrategies", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "detailedPrice", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "detailedTVL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "detailedTotalSupply", data: BytesLike): Result;
@@ -197,7 +198,6 @@ export interface StrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "governance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "increaseAllowance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "initialSharesPerAsset", data: BytesLike): Result;
@@ -219,13 +219,14 @@ export interface StrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "previewMint", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "previewRedeem", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "previewWithdraw", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "proxiableUUID", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "setAssetLimit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setDebtEscrow", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setManagementFee", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setStrategy", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "setTvlCap", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setWithdrawalFee", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "strategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "strategyTVL", data: BytesLike): Result;
@@ -237,16 +238,21 @@ export interface StrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "transferFrom", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "upgradeToAndCall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "vaultTVL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawalFee", data: BytesLike): Result;
     events: {
+        "AdminChanged(address,address)": EventFragment;
         "Approval(address,address,uint256)": EventFragment;
+        "BeaconUpgraded(address)": EventFragment;
+        "BeginEpoch(uint256)": EventFragment;
         "DebtRegistration(address,address,address,uint256)": EventFragment;
         "Deposit(address,address,uint256,uint256)": EventFragment;
+        "EndEpoch(uint256)": EventFragment;
         "Harvest(address)": EventFragment;
         "Initialized(uint8)": EventFragment;
-        "Liquidation(uint256,uint256)": EventFragment;
         "ManagementFeeSet(uint256,uint256)": EventFragment;
         "Paused(address)": EventFragment;
         "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
@@ -256,15 +262,19 @@ export interface StrategyVaultInterface extends utils.Interface {
         "StrategyWithdrawal(uint256,uint256)": EventFragment;
         "Transfer(address,address,uint256)": EventFragment;
         "Unpaused(address)": EventFragment;
+        "Upgraded(address)": EventFragment;
         "Withdraw(address,address,address,uint256,uint256)": EventFragment;
         "WithdrawalFeeSet(uint256,uint256)": EventFragment;
     };
+    getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "BeginEpoch"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "DebtRegistration"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "EndEpoch"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Harvest"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "Liquidation"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "ManagementFeeSet"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
@@ -274,9 +284,19 @@ export interface StrategyVaultInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: "StrategyWithdrawal"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "WithdrawalFeeSet"): EventFragment;
 }
+export interface AdminChangedEventObject {
+    previousAdmin: string;
+    newAdmin: string;
+}
+export type AdminChangedEvent = TypedEvent<[
+    string,
+    string
+], AdminChangedEventObject>;
+export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 export interface ApprovalEventObject {
     owner: string;
     spender: string;
@@ -288,6 +308,18 @@ export type ApprovalEvent = TypedEvent<[
     BigNumber
 ], ApprovalEventObject>;
 export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export interface BeaconUpgradedEventObject {
+    beacon: string;
+}
+export type BeaconUpgradedEvent = TypedEvent<[
+    string
+], BeaconUpgradedEventObject>;
+export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+export interface BeginEpochEventObject {
+    epoch: BigNumber;
+}
+export type BeginEpochEvent = TypedEvent<[BigNumber], BeginEpochEventObject>;
+export type BeginEpochEventFilter = TypedEventFilter<BeginEpochEvent>;
 export interface DebtRegistrationEventObject {
     caller: string;
     receiver: string;
@@ -314,6 +346,11 @@ export type DepositEvent = TypedEvent<[
     BigNumber
 ], DepositEventObject>;
 export type DepositEventFilter = TypedEventFilter<DepositEvent>;
+export interface EndEpochEventObject {
+    epoch: BigNumber;
+}
+export type EndEpochEvent = TypedEvent<[BigNumber], EndEpochEventObject>;
+export type EndEpochEventFilter = TypedEventFilter<EndEpochEvent>;
 export interface HarvestEventObject {
     user: string;
 }
@@ -324,15 +361,6 @@ export interface InitializedEventObject {
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-export interface LiquidationEventObject {
-    assetsRequested: BigNumber;
-    assetsLiquidated: BigNumber;
-}
-export type LiquidationEvent = TypedEvent<[
-    BigNumber,
-    BigNumber
-], LiquidationEventObject>;
-export type LiquidationEventFilter = TypedEventFilter<LiquidationEvent>;
 export interface ManagementFeeSetEventObject {
     oldFee: BigNumber;
     newFee: BigNumber;
@@ -412,6 +440,11 @@ export interface UnpausedEventObject {
 }
 export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
 export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+export interface UpgradedEventObject {
+    implementation: string;
+}
+export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 export interface WithdrawEventObject {
     caller: string;
     receiver: string;
@@ -478,9 +511,6 @@ export interface StrategyVault extends BaseContract {
         deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
         detailedPrice(overrides?: CallOverrides): Promise<[
             DetailedShare.NumberStructOutput
         ] & {
@@ -505,9 +535,6 @@ export interface StrategyVault extends BaseContract {
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string]>;
         governance(overrides?: CallOverrides): Promise<[string]>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
-        harvest(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean]>;
@@ -541,6 +568,7 @@ export interface StrategyVault extends BaseContract {
         previewMint(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
         previewRedeem(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
         previewWithdraw(assetsToUser: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
+        proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
         redeem(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -550,9 +578,6 @@ export interface StrategyVault extends BaseContract {
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        setAssetLimit(_assetLimit: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
         setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -560,6 +585,9 @@ export interface StrategyVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         setStrategy(newStrategy: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        setTvlCap(_tvlCap: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         setWithdrawalFee(feeBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -581,6 +609,12 @@ export interface StrategyVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         unpause(overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -612,9 +646,6 @@ export interface StrategyVault extends BaseContract {
     deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
     detailedPrice(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
     detailedTVL(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
     detailedTotalSupply(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
@@ -627,9 +658,6 @@ export interface StrategyVault extends BaseContract {
     getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
     governance(overrides?: CallOverrides): Promise<string>;
     grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
-    harvest(overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
@@ -663,6 +691,7 @@ export interface StrategyVault extends BaseContract {
     previewMint(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     previewRedeem(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     previewWithdraw(assetsToUser: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
     redeem(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -672,9 +701,6 @@ export interface StrategyVault extends BaseContract {
     revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    setAssetLimit(_assetLimit: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
     setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -682,6 +708,9 @@ export interface StrategyVault extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     setStrategy(newStrategy: PromiseOrValue<string>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    setTvlCap(_tvlCap: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     setWithdrawalFee(feeBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -705,6 +734,12 @@ export interface StrategyVault extends BaseContract {
     unpause(overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: PayableOverrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
     withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
@@ -726,7 +761,6 @@ export interface StrategyVault extends BaseContract {
         decimals(overrides?: CallOverrides): Promise<number>;
         decreaseAllowance(spender: PromiseOrValue<string>, subtractedValue: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-        depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         detailedPrice(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
         detailedTVL(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
         detailedTotalSupply(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
@@ -737,7 +771,6 @@ export interface StrategyVault extends BaseContract {
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
         governance(overrides?: CallOverrides): Promise<string>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
-        harvest(overrides?: CallOverrides): Promise<void>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
         increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         initialSharesPerAsset(overrides?: CallOverrides): Promise<BigNumber>;
@@ -759,13 +792,14 @@ export interface StrategyVault extends BaseContract {
         previewMint(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         previewRedeem(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         previewWithdraw(assetsToUser: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        proxiableUUID(overrides?: CallOverrides): Promise<string>;
         redeem(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
-        setAssetLimit(_assetLimit: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         setManagementFee(feeBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         setStrategy(newStrategy: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+        setTvlCap(_tvlCap: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         setWithdrawalFee(feeBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         strategy(overrides?: CallOverrides): Promise<string>;
         strategyTVL(overrides?: CallOverrides): Promise<BigNumber>;
@@ -777,23 +811,31 @@ export interface StrategyVault extends BaseContract {
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         transferFrom(from: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         unpause(overrides?: CallOverrides): Promise<void>;
+        upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+        upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<void>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
     };
     filters: {
+        "AdminChanged(address,address)"(previousAdmin?: null, newAdmin?: null): AdminChangedEventFilter;
+        AdminChanged(previousAdmin?: null, newAdmin?: null): AdminChangedEventFilter;
         "Approval(address,address,uint256)"(owner?: PromiseOrValue<string> | null, spender?: PromiseOrValue<string> | null, value?: null): ApprovalEventFilter;
         Approval(owner?: PromiseOrValue<string> | null, spender?: PromiseOrValue<string> | null, value?: null): ApprovalEventFilter;
+        "BeaconUpgraded(address)"(beacon?: PromiseOrValue<string> | null): BeaconUpgradedEventFilter;
+        BeaconUpgraded(beacon?: PromiseOrValue<string> | null): BeaconUpgradedEventFilter;
+        "BeginEpoch(uint256)"(epoch?: null): BeginEpochEventFilter;
+        BeginEpoch(epoch?: null): BeginEpochEventFilter;
         "DebtRegistration(address,address,address,uint256)"(caller?: null, receiver?: null, owner?: PromiseOrValue<string> | null, shares?: null): DebtRegistrationEventFilter;
         DebtRegistration(caller?: null, receiver?: null, owner?: PromiseOrValue<string> | null, shares?: null): DebtRegistrationEventFilter;
         "Deposit(address,address,uint256,uint256)"(caller?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): DepositEventFilter;
         Deposit(caller?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): DepositEventFilter;
+        "EndEpoch(uint256)"(epoch?: null): EndEpochEventFilter;
+        EndEpoch(epoch?: null): EndEpochEventFilter;
         "Harvest(address)"(user?: PromiseOrValue<string> | null): HarvestEventFilter;
         Harvest(user?: PromiseOrValue<string> | null): HarvestEventFilter;
         "Initialized(uint8)"(version?: null): InitializedEventFilter;
         Initialized(version?: null): InitializedEventFilter;
-        "Liquidation(uint256,uint256)"(assetsRequested?: null, assetsLiquidated?: null): LiquidationEventFilter;
-        Liquidation(assetsRequested?: null, assetsLiquidated?: null): LiquidationEventFilter;
         "ManagementFeeSet(uint256,uint256)"(oldFee?: null, newFee?: null): ManagementFeeSetEventFilter;
         ManagementFeeSet(oldFee?: null, newFee?: null): ManagementFeeSetEventFilter;
         "Paused(address)"(account?: null): PausedEventFilter;
@@ -812,6 +854,8 @@ export interface StrategyVault extends BaseContract {
         Transfer(from?: PromiseOrValue<string> | null, to?: PromiseOrValue<string> | null, value?: null): TransferEventFilter;
         "Unpaused(address)"(account?: null): UnpausedEventFilter;
         Unpaused(account?: null): UnpausedEventFilter;
+        "Upgraded(address)"(implementation?: PromiseOrValue<string> | null): UpgradedEventFilter;
+        Upgraded(implementation?: PromiseOrValue<string> | null): UpgradedEventFilter;
         "Withdraw(address,address,address,uint256,uint256)"(caller?: PromiseOrValue<string> | null, receiver?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): WithdrawEventFilter;
         Withdraw(caller?: PromiseOrValue<string> | null, receiver?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): WithdrawEventFilter;
         "WithdrawalFeeSet(uint256,uint256)"(oldFee?: null, newFee?: null): WithdrawalFeeSetEventFilter;
@@ -841,9 +885,6 @@ export interface StrategyVault extends BaseContract {
         deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
         detailedPrice(overrides?: CallOverrides): Promise<BigNumber>;
         detailedTVL(overrides?: CallOverrides): Promise<BigNumber>;
         detailedTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
@@ -856,9 +897,6 @@ export interface StrategyVault extends BaseContract {
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
         governance(overrides?: CallOverrides): Promise<BigNumber>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
-        harvest(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -892,6 +930,7 @@ export interface StrategyVault extends BaseContract {
         previewMint(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         previewRedeem(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         previewWithdraw(assetsToUser: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
         redeem(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -901,9 +940,6 @@ export interface StrategyVault extends BaseContract {
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        setAssetLimit(_assetLimit: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
         setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -911,6 +947,9 @@ export interface StrategyVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         setStrategy(newStrategy: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        setTvlCap(_tvlCap: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         setWithdrawalFee(feeBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -932,6 +971,12 @@ export interface StrategyVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         unpause(overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
@@ -964,9 +1009,6 @@ export interface StrategyVault extends BaseContract {
         deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
         detailedPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         detailedTVL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         detailedTotalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -979,9 +1021,6 @@ export interface StrategyVault extends BaseContract {
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         governance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        harvest(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1015,6 +1054,7 @@ export interface StrategyVault extends BaseContract {
         previewMint(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         previewRedeem(shares: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         previewWithdraw(assetsToUser: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         redeem(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -1024,9 +1064,6 @@ export interface StrategyVault extends BaseContract {
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        setAssetLimit(_assetLimit: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
         setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -1034,6 +1071,9 @@ export interface StrategyVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         setStrategy(newStrategy: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        setTvlCap(_tvlCap: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         setWithdrawalFee(feeBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -1055,6 +1095,12 @@ export interface StrategyVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         unpause(overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<PopulatedTransaction>;

@@ -17,7 +17,6 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
         "getRoleAdmin(bytes32)": FunctionFragment;
         "governance()": FunctionFragment;
         "grantRole(bytes32,address)": FunctionFragment;
-        "harvest()": FunctionFragment;
         "hasRole(bytes32,address)": FunctionFragment;
         "lastHarvest()": FunctionFragment;
         "lockedProfit()": FunctionFragment;
@@ -32,7 +31,7 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
         "supportsInterface(bytes4)": FunctionFragment;
         "vaultTVL()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "asset" | "beginEpoch" | "debtEscrow" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "harvest" | "hasRole" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "multicall" | "renounceRole" | "revokeRole" | "setDebtEscrow" | "setStrategy" | "strategy" | "strategyTVL" | "supportsInterface" | "vaultTVL"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "asset" | "beginEpoch" | "debtEscrow" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "hasRole" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "multicall" | "renounceRole" | "revokeRole" | "setDebtEscrow" | "setStrategy" | "strategy" | "strategyTVL" | "supportsInterface" | "vaultTVL"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
     encodeFunctionData(functionFragment: "LOCK_INTERVAL", values?: undefined): string;
@@ -46,7 +45,6 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "getRoleAdmin", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "governance", values?: undefined): string;
     encodeFunctionData(functionFragment: "grantRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "harvest", values?: undefined): string;
     encodeFunctionData(functionFragment: "hasRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "lastHarvest", values?: undefined): string;
     encodeFunctionData(functionFragment: "lockedProfit", values?: undefined): string;
@@ -73,7 +71,6 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "governance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "lastHarvest", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "lockedProfit", data: BytesLike): Result;
@@ -88,24 +85,36 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "vaultTVL", data: BytesLike): Result;
     events: {
+        "BeginEpoch(uint256)": EventFragment;
+        "EndEpoch(uint256)": EventFragment;
         "Harvest(address)": EventFragment;
         "Initialized(uint8)": EventFragment;
-        "Liquidation(uint256,uint256)": EventFragment;
         "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
         "RoleGranted(bytes32,address,address)": EventFragment;
         "RoleRevoked(bytes32,address,address)": EventFragment;
         "StrategyDeposit(uint256)": EventFragment;
         "StrategyWithdrawal(uint256,uint256)": EventFragment;
     };
+    getEvent(nameOrSignatureOrTopic: "BeginEpoch"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "EndEpoch"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Harvest"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "Liquidation"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "StrategyDeposit"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "StrategyWithdrawal"): EventFragment;
 }
+export interface BeginEpochEventObject {
+    epoch: BigNumber;
+}
+export type BeginEpochEvent = TypedEvent<[BigNumber], BeginEpochEventObject>;
+export type BeginEpochEventFilter = TypedEventFilter<BeginEpochEvent>;
+export interface EndEpochEventObject {
+    epoch: BigNumber;
+}
+export type EndEpochEvent = TypedEvent<[BigNumber], EndEpochEventObject>;
+export type EndEpochEventFilter = TypedEventFilter<EndEpochEvent>;
 export interface HarvestEventObject {
     user: string;
 }
@@ -116,15 +125,6 @@ export interface InitializedEventObject {
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-export interface LiquidationEventObject {
-    assetsRequested: BigNumber;
-    assetsLiquidated: BigNumber;
-}
-export type LiquidationEvent = TypedEvent<[
-    BigNumber,
-    BigNumber
-], LiquidationEventObject>;
-export type LiquidationEventFilter = TypedEventFilter<LiquidationEvent>;
 export interface RoleAdminChangedEventObject {
     role: string;
     previousAdminRole: string;
@@ -208,9 +208,6 @@ export interface BaseStrategyVault extends BaseContract {
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        harvest(overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean]>;
         lastHarvest(overrides?: CallOverrides): Promise<[BigNumber]>;
         lockedProfit(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -254,9 +251,6 @@ export interface BaseStrategyVault extends BaseContract {
     grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    harvest(overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
     hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
     lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
     lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -294,7 +288,6 @@ export interface BaseStrategyVault extends BaseContract {
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
         governance(overrides?: CallOverrides): Promise<string>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
-        harvest(overrides?: CallOverrides): Promise<void>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
         lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -310,12 +303,14 @@ export interface BaseStrategyVault extends BaseContract {
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
     };
     filters: {
+        "BeginEpoch(uint256)"(epoch?: null): BeginEpochEventFilter;
+        BeginEpoch(epoch?: null): BeginEpochEventFilter;
+        "EndEpoch(uint256)"(epoch?: null): EndEpochEventFilter;
+        EndEpoch(epoch?: null): EndEpochEventFilter;
         "Harvest(address)"(user?: PromiseOrValue<string> | null): HarvestEventFilter;
         Harvest(user?: PromiseOrValue<string> | null): HarvestEventFilter;
         "Initialized(uint8)"(version?: null): InitializedEventFilter;
         Initialized(version?: null): InitializedEventFilter;
-        "Liquidation(uint256,uint256)"(assetsRequested?: null, assetsLiquidated?: null): LiquidationEventFilter;
-        Liquidation(assetsRequested?: null, assetsLiquidated?: null): LiquidationEventFilter;
         "RoleAdminChanged(bytes32,bytes32,bytes32)"(role?: PromiseOrValue<BytesLike> | null, previousAdminRole?: PromiseOrValue<BytesLike> | null, newAdminRole?: PromiseOrValue<BytesLike> | null): RoleAdminChangedEventFilter;
         RoleAdminChanged(role?: PromiseOrValue<BytesLike> | null, previousAdminRole?: PromiseOrValue<BytesLike> | null, newAdminRole?: PromiseOrValue<BytesLike> | null): RoleAdminChangedEventFilter;
         "RoleGranted(bytes32,address,address)"(role?: PromiseOrValue<BytesLike> | null, account?: PromiseOrValue<string> | null, sender?: PromiseOrValue<string> | null): RoleGrantedEventFilter;
@@ -345,9 +340,6 @@ export interface BaseStrategyVault extends BaseContract {
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
         governance(overrides?: CallOverrides): Promise<BigNumber>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
-        harvest(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -392,9 +384,6 @@ export interface BaseStrategyVault extends BaseContract {
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         governance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        harvest(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;

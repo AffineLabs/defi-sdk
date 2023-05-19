@@ -7,6 +7,7 @@ import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
 
+// TODO: clean this up!
 export async function buyProduct(product: AlpineProduct, amount: number, slippageBps = 500) {
   if (product === "alpSave") {
     return buyUsdcShares(amount);
@@ -20,6 +21,8 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
     return buyLockedShares(amount);
   } else if (product == "degen") {
     return buyDegenShares(amount);
+  } else if (product == "polygonDegen") {
+    return buypolygonDegen(amount);
   }
 }
 
@@ -36,6 +39,8 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
     return sellLockedShares(amount);
   } else if (product == "degen") {
     return sellDegenShares(amount);
+  } else if (product == "polygonDegen") {
+    return sellpolygonDegen(amount);
   }
 }
 
@@ -81,6 +86,33 @@ async function buyDegenShares(amount: number) {
   } else {
     console.log({ convertedAmount, amount, degen });
     const receipt = (await blockchainCall(degen, "deposit", [convertedAmount, userAddress], false)) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
+}
+
+async function buypolygonDegen(amount: number) {
+  const { polygonDegen } = getPolygonContracts();
+  const convertedAmount = _addDecimals(amount.toString(), 6);
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: convertedAmount.toString(),
+    tokenAmount: _removeDecimals(await polygonDegen.convertToShares(convertedAmount), await polygonDegen.decimals()),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(polygonDegen, "deposit", [convertedAmount, userAddress], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(
+      polygonDegen,
+      "deposit",
+      [convertedAmount, userAddress],
+      false,
+    )) as SmallTxReceipt;
     return { ...basicInfo, ...receipt };
   }
 }
@@ -444,6 +476,39 @@ export async function sellDegenShares(amount: number): Promise<DryRunReceipt | F
 
   const receipt = (await blockchainCall(
     degen,
+    "withdraw",
+    [assetsToWithdraw, userAddress, userAddress],
+    false,
+  )) as SmallTxReceipt;
+  return { ...basicInfo, ...receipt };
+}
+
+export async function sellpolygonDegen(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { polygonDegen } = getPolygonContracts();
+
+  const assetsToWithdraw = _addDecimals(amount.toString(), 6);
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amount.toString(),
+    tokenAmount: _removeDecimals(await polygonDegen.convertToShares(assetsToWithdraw), await polygonDegen.decimals()),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(
+      polygonDegen,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  }
+
+  const receipt = (await blockchainCall(
+    polygonDegen,
     "withdraw",
     [assetsToWithdraw, userAddress, userAddress],
     false,

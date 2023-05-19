@@ -4,7 +4,7 @@ import type { WithdrawalEscrow, WithdrawalEscrowInterface } from "../WithdrawalE
 export declare class WithdrawalEscrow__factory {
     static readonly abi: readonly [{
         readonly inputs: readonly [{
-            readonly internalType: "contract StrategyVault";
+            readonly internalType: "contract BaseStrategyVault";
             readonly name: "_vault";
             readonly type: "address";
         }];
@@ -62,13 +62,13 @@ export declare class WithdrawalEscrow__factory {
         }];
         readonly name: "epochInfo";
         readonly outputs: readonly [{
-            readonly internalType: "uint256";
+            readonly internalType: "uint128";
             readonly name: "shares";
-            readonly type: "uint256";
+            readonly type: "uint128";
         }, {
-            readonly internalType: "uint256";
+            readonly internalType: "uint128";
             readonly name: "assets";
-            readonly type: "uint256";
+            readonly type: "uint128";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -150,7 +150,7 @@ export declare class WithdrawalEscrow__factory {
         readonly inputs: readonly [];
         readonly name: "vault";
         readonly outputs: readonly [{
-            readonly internalType: "contract StrategyVault";
+            readonly internalType: "contract BaseStrategyVault";
             readonly name: "";
             readonly type: "address";
         }];

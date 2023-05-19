@@ -5,6 +5,26 @@ export declare class BaseStrategyVault__factory {
     static readonly abi: readonly [{
         readonly anonymous: false;
         readonly inputs: readonly [{
+            readonly indexed: false;
+            readonly internalType: "uint256";
+            readonly name: "epoch";
+            readonly type: "uint256";
+        }];
+        readonly name: "BeginEpoch";
+        readonly type: "event";
+    }, {
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: false;
+            readonly internalType: "uint256";
+            readonly name: "epoch";
+            readonly type: "uint256";
+        }];
+        readonly name: "EndEpoch";
+        readonly type: "event";
+    }, {
+        readonly anonymous: false;
+        readonly inputs: readonly [{
             readonly indexed: true;
             readonly internalType: "address";
             readonly name: "user";
@@ -21,21 +41,6 @@ export declare class BaseStrategyVault__factory {
             readonly type: "uint8";
         }];
         readonly name: "Initialized";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "assetsRequested";
-            readonly type: "uint256";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "assetsLiquidated";
-            readonly type: "uint256";
-        }];
-        readonly name: "Liquidation";
         readonly type: "event";
     }, {
         readonly anonymous: false;
@@ -249,12 +254,6 @@ export declare class BaseStrategyVault__factory {
             readonly type: "address";
         }];
         readonly name: "grantRole";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "harvest";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";

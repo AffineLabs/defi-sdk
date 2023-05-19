@@ -15,6 +15,7 @@ export { ConvexStrategy__factory } from "./ConvexStrategy__factory";
 export { DeltaNeutralLp__factory } from "./DeltaNeutralLp__factory";
 export { DeltaNeutralLpV3__factory } from "./DeltaNeutralLpV3__factory";
 export { DetailedShare__factory } from "./DetailedShare__factory";
+export { DummyEpochStrategy__factory } from "./DummyEpochStrategy__factory";
 export { ERC165__factory } from "./ERC165__factory";
 export { ERC165Upgradeable__factory } from "./ERC165Upgradeable__factory";
 export { ERC1967UpgradeUpgradeable__factory } from "./ERC1967UpgradeUpgradeable__factory";
