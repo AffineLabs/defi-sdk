@@ -12,7 +12,12 @@ import {
   StrategyVault__factory,
 } from "../typechain";
 import { AllowedChainId } from "../types/account";
-import { DEFAULT_RAW_CHAIN_ID } from "./constants";
+import {
+  DEFAULT_RAW_CHAIN_ID,
+  FORKED_NODE_URL_FOR_ETH,
+  FORKED_NODE_URL_FOR_MATIC,
+  IS_USING_FORKED_MAINNET,
+} from "./constants";
 
 let CONTRACTS: PolygonContracts | EthContracts;
 let CHAIN_ID: AllowedChainId;
@@ -28,8 +33,14 @@ const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 export let PROVIDER: ethers.providers.StaticJsonRpcProvider;
 
 export const RPC_URLS: { [index: AllowedChainId]: string } = {
-  1: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-  5: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+  1:
+    IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_ETH
+      ? FORKED_NODE_URL_FOR_ETH
+      : `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+  5:
+    IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_MATIC
+      ? FORKED_NODE_URL_FOR_MATIC
+      : `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
   137: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
   80001: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
 };

@@ -23,15 +23,22 @@ export const MAX_APPROVAL_AMOUNT: BigNumber = ethers.constants.MaxUint256;
 
 export const WALLETCONNECT_PROJECT_ID = process.env.WALLETCONNECT_PROJECT_ID || "demo-project-id";
 
+export const IS_USING_FORKED_MAINNET: boolean = process.env.IS_USING_FORKED_MAINNET === "true";
+
+export const FORKED_NODE_URL_FOR_ETH = process.env.FORKED_NODE_URL_FOR_ETH || "";
+
+export const FORKED_NODE_URL_FOR_MATIC = process.env.FORKED_NODE_URL_FOR_MATIC || "";
+
 export const NETWORK_PARAMS: { [index: number]: NetworkParams } = {
   1: {
-    chainName: "Ethereum Mainnet",
+    chainName: `Ethereum Mainnet${IS_USING_FORKED_MAINNET ? " (Forked)" : ""}`,
     nativeCurrency: {
       name: "Ether",
       symbol: "ETH",
       decimals: 18,
     },
-    rpcUrls: ["https://rpc.ankr.com/eth"],
+    rpcUrls:
+      IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_ETH ? [FORKED_NODE_URL_FOR_ETH] : ["https://rpc.ankr.com/eth"],
     blockExplorerUrls: ["https://etherscan.io"],
   },
   5: {
@@ -45,13 +52,14 @@ export const NETWORK_PARAMS: { [index: number]: NetworkParams } = {
     blockExplorerUrls: ["https://goerli.etherscan.io"],
   },
   137: {
-    chainName: "Polygon Mainnet",
+    chainName: `Polygon Mainnet${IS_USING_FORKED_MAINNET ? " (Forked)" : ""}`,
     nativeCurrency: {
       name: "Matic",
       symbol: "MATIC",
       decimals: 18,
     },
-    rpcUrls: ["https://polygon-rpc.com"],
+    rpcUrls:
+      IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_MATIC ? [FORKED_NODE_URL_FOR_MATIC] : ["https://polygon-rpc.com"],
     blockExplorerUrls: ["https://polygonscan.com"],
   },
   80001: {
