@@ -314,6 +314,13 @@ class Account {
             catch (error) {
                 const err = error;
                 console.error("Error on switching ethereum chain", error);
+                console.log("Error", err.code, {
+                    chainId,
+                    chainIdRaw: (0, constants_1.getChainIdFromRaw)(chainId),
+                    NETWORK_PARAM: constants_1.NETWORK_PARAMS[chainId],
+                    IS_USING_FORKED_MAINNET: process.env.IS_USING_FORKED_MAINNET,
+                    FORKED_NODE_URL_FOR_MATIC: process.env.FORKED_NODE_URL_FOR_MATIC,
+                });
                 if (err.code === 4902) {
                     /**
                      * case - 4902 indicates that the chain has not been added to MetaMask.
