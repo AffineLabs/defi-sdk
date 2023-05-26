@@ -530,6 +530,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
   if (product === "usdc") {
     const { usdc } = getContracts();
     const amount = await usdc.balanceOf(user);
+    console.log("USDC amount w/ decimals", amount.toString(), { usdc });
     const numUsdc = _removeDecimals(amount, 6);
     return {
       amount: numUsdc,
