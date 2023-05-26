@@ -37,11 +37,11 @@ export const RPC_URLS: { [index: AllowedChainId]: string } = {
     IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_ETH
       ? FORKED_NODE_URL_FOR_ETH
       : `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-  5:
+  5: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+  137:
     IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_MATIC
       ? FORKED_NODE_URL_FOR_MATIC
-      : `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-  137: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+      : `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
   80001: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
 };
 
