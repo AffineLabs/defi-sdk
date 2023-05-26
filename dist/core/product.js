@@ -449,6 +449,7 @@ function getTokenInfo(product) {
         if (product === "usdc") {
             const { usdc } = (0, cache_1.getContracts)();
             const amount = yield usdc.balanceOf(user);
+            console.log("USDC amount w/ decimals", amount.toString(), { usdc });
             const numUsdc = (0, AlpineDeFiSDK_1._removeDecimals)(amount, 6);
             return {
                 amount: numUsdc,
