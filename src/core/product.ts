@@ -1,58 +1,52 @@
 import { ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
-import { L2Vault, StrategyVault, TwoAssetBasket, Vault } from "../typechain";
+import { ERC4626Upgradeable, L2Vault, StrategyVault, TwoAssetBasket, Vault } from "../typechain";
+import { ERC20__factory } from "../typechain/factories/solmate/src/tokens";
+import { ERC20 } from "../typechain/solmate/src/tokens";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
 import { getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
 import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
 
-// TODO: clean this up!
+async function _getVaultAndAsset(product: AlpineProduct) {
+  const { alpSave, alpLarge, polygonDegen } = getPolygonContracts();
+  const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen } = getEthContracts();
+
+  const productToVault: { [key in AlpineProduct]: ERC4626Upgradeable } = {
+    alpSave,
+    alpLarge: alpLarge as unknown as ERC4626Upgradeable,
+    polygonDegen,
+    ethEarn,
+    ethWethEarn,
+    ssvEthUSDEarn,
+    degen,
+  };
+
+  const vault = productToVault[product];
+  const asset = ERC20__factory.connect(await vault.asset(), vault.provider);
+
+  return { vault, asset };
+}
 export async function buyProduct(product: AlpineProduct, amount: number, slippageBps = 500) {
-  if (product === "alpSave") {
-    return buyUsdcShares(amount);
-  } else if (product === "alpLarge") {
-    return buyBtCEthShares(amount, slippageBps);
-  } else if (product == "ethEarn") {
-    return buyEthUsdcShares(amount);
-  } else if (product == "ethWethEarn") {
-    return buyEthWethShares(amount);
-  } else if (product == "ssvEthUSDEarn") {
-    return buyLockedShares(amount);
-  } else if (product == "degen") {
-    return buyDegenShares(amount);
-  } else if (product == "polygonDegen") {
-    return buypolygonDegen(amount);
-  }
+  const { vault, asset } = await _getVaultAndAsset(product);
+  return buyVault(vault, amount, asset);
 }
 
 export async function sellProduct(product: AlpineProduct, amount: number) {
-  if (product === "alpSave") {
-    return sellUsdcShares(amount);
-  } else if (product === "alpLarge") {
-    return sellBtCEthShares(amount);
-  } else if (product == "ethEarn") {
-    return sellEthUsdcShares(amount);
-  } else if (product == "ethWethEarn") {
-    return sellEthWethShares(amount);
-  } else if (product == "ssvEthUSDEarn") {
-    return sellLockedShares(amount);
-  } else if (product == "degen") {
-    return sellDegenShares(amount);
-  } else if (product == "polygonDegen") {
-    return sellpolygonDegen(amount);
-  }
+  const { vault, asset } = await _getVaultAndAsset(product);
+  return sellVault(vault, amount, asset);
 }
 
-export async function buyLockedShares(rawAmount: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { ssvEthUSDEarn: vault } = getEthContracts();
-  const amount = _addDecimals(rawAmount.toString(), 6);
+export async function buyVault(vault: ERC4626Upgradeable, rawAmount: number, asset: ERC20) {
+  const decimals = await asset.decimals();
+  const amount = _addDecimals(rawAmount.toString(), decimals);
 
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: amount.toString(),
-    tokenAmount: _removeDecimals(await vault.convertToShares(amount), 14),
+    tokenAmount: _removeDecimals(await vault.convertToShares(amount), await vault.decimals()),
   };
 
   if (SIMULATE) {
@@ -67,50 +61,30 @@ export async function buyLockedShares(rawAmount: number): Promise<DryRunReceipt 
   }
 }
 
-async function buyDegenShares(amount: number) {
-  const { degen } = getEthContracts();
-  const convertedAmount = _addDecimals(amount.toString(), 6);
+export async function sellVault(vault: ERC4626Upgradeable, rawAmount: number, asset: ERC20) {
+  const assetsToWithdraw = _addDecimals(rawAmount.toString(), await asset.decimals());
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
-    dollarAmount: convertedAmount.toString(),
-    tokenAmount: _removeDecimals(await degen.convertToShares(convertedAmount), await degen.decimals()),
+    dollarAmount: rawAmount.toString(),
+    tokenAmount: _removeDecimals(await vault.convertToShares(assetsToWithdraw), await vault.decimals()),
   };
-
   if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(degen, "deposit", [convertedAmount, userAddress], true)) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  } else {
-    console.log({ convertedAmount, amount, degen });
-    const receipt = (await blockchainCall(degen, "deposit", [convertedAmount, userAddress], false)) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
-  }
-}
-
-async function buypolygonDegen(amount: number) {
-  const { polygonDegen } = getPolygonContracts();
-  const convertedAmount = _addDecimals(amount.toString(), 6);
-  const basicInfo = {
-    alpFee: "0",
-    alpFeePercent: "0",
-    dollarAmount: convertedAmount.toString(),
-    tokenAmount: _removeDecimals(await polygonDegen.convertToShares(convertedAmount), await polygonDegen.decimals()),
-  };
-
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(polygonDegen, "deposit", [convertedAmount, userAddress], true)) as GasInfo;
+    const dryRunInfo = (await blockchainCall(
+      vault,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
     return {
       ...basicInfo,
       ...dryRunInfo,
     };
   } else {
     const receipt = (await blockchainCall(
-      polygonDegen,
-      "deposit",
-      [convertedAmount, userAddress],
+      vault,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
       false,
     )) as SmallTxReceipt;
     return { ...basicInfo, ...receipt };
@@ -163,69 +137,6 @@ async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | Ful
   }
 }
 
-async function buyEthUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { ethEarn } = getEthContracts();
-  const userAddress = await SIGNER.getAddress();
-  const amount = _addDecimals(amountUSDC.toString(), 6);
-
-  const basicInfo = {
-    alpFee: "0",
-    alpFeePercent: "0",
-    dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(await ethEarn.convertToShares(amount), 18),
-  };
-
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(ethEarn, "deposit", [amount, userAddress], true)) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  } else {
-    const receipt = (await blockchainCall(ethEarn, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
-  }
-}
-
-/**
- * Deposit usdc to a vault, and get alp tokens in return
- * @param {String} amountUSDC amount in usdc
- */
-export async function buyUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { usdc, alpSave } = getPolygonContracts();
-  const userAddress = await SIGNER.getAddress();
-  const amount = _addDecimals(amountUSDC.toString(), 6);
-  if (amount.isNegative() || amount.isZero()) {
-    throw new Error("amount must be positive.");
-  }
-  const walletBalance = await usdc.balanceOf(userAddress);
-  if (walletBalance.lt(amount)) {
-    throw new Error("Insufficient balance");
-  }
-
-  // check if user has sufficient allowance
-  const allowance = await usdc.allowance(userAddress, alpSave.address);
-  if (allowance.lt(amount)) throw new Error("Insufficient allowance");
-
-  const basicInfo = {
-    alpFee: "0",
-    alpFeePercent: "0",
-    dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(await alpSave.convertToShares(amount), 16),
-  };
-
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(alpSave, "deposit", [amount, userAddress], true)) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  } else {
-    const receipt = (await blockchainCall(alpSave, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
-  }
-}
-
 export async function buyBtCEthShares(amountUSDC: number, slippageBps: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { alpLarge, router, usdc } = getPolygonContracts();
   const amount = _addDecimals(amountUSDC.toString(), 6);
@@ -262,84 +173,6 @@ export async function buyBtCEthShares(amountUSDC: number, slippageBps: number): 
 
     const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, 18) };
     return res;
-  }
-}
-
-/**
- * sell alp token and withdraw usdc from a vault (to user's wallet by default)
- * @param amountUSDC amount in usdc to sell
- */
-export async function sellUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { alpSave } = getPolygonContracts();
-  // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-  const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
-  const withdrawFeeBps: ethers.BigNumber = await alpSave.withdrawalFee();
-  const alpFee = usdcToWithdraw.mul(withdrawFeeBps).div(10_000);
-  const alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
-
-  const basicInfo = {
-    alpFee: _removeDecimals(alpFee, 6).toString(),
-    alpFeePercent,
-    dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(await alpSave.convertToShares(usdcToWithdraw), 16),
-  };
-  console.log({ basicInfo });
-
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(
-      alpSave,
-      "withdraw",
-      [usdcToWithdraw, userAddress, userAddress],
-      true,
-    )) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  } else {
-    const receipt = (await blockchainCall(
-      alpSave,
-      "withdraw",
-      [usdcToWithdraw, userAddress, userAddress],
-      false,
-    )) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
-  }
-}
-
-/**
- * Sell from eth vault shares.
- * @param amountUSDC Smount in usdc to sell
- */
-export async function sellEthUsdcShares(amountUSDC: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { ethEarn } = getEthContracts();
-  // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-  const usdcToWithdraw = _addDecimals(amountUSDC.toString(), 6);
-  const basicInfo = {
-    alpFee: "0",
-    alpFeePercent: "0",
-    dollarAmount: amountUSDC.toString(),
-    tokenAmount: _removeDecimals(await ethEarn.convertToShares(usdcToWithdraw), await ethEarn.decimals()),
-  };
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(
-      ethEarn,
-      "withdraw",
-      [usdcToWithdraw, userAddress, userAddress],
-      true,
-    )) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  } else {
-    const receipt = (await blockchainCall(
-      ethEarn,
-      "withdraw",
-      [usdcToWithdraw, userAddress, userAddress],
-      false,
-    )) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
   }
 }
 
@@ -416,104 +249,6 @@ export async function sellEthWethShares(amountWeth: number): Promise<DryRunRecei
     )) as SmallTxReceipt;
     return { ...basicInfo, ...receipt };
   }
-}
-
-export async function sellLockedShares(rawAmount: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { ssvEthUSDEarn: vault } = getEthContracts();
-
-  const assetsToWithdraw = _addDecimals(rawAmount.toString(), 6);
-  const basicInfo = {
-    alpFee: "0",
-    alpFeePercent: "0",
-    dollarAmount: rawAmount.toString(),
-    tokenAmount: _removeDecimals(await vault.convertToShares(assetsToWithdraw), await vault.decimals()),
-  };
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(
-      vault,
-      "withdraw",
-      [assetsToWithdraw, userAddress, userAddress],
-      true,
-    )) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  } else {
-    const receipt = (await blockchainCall(
-      vault,
-      "withdraw",
-      [assetsToWithdraw, userAddress, userAddress],
-      false,
-    )) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
-  }
-}
-
-export async function sellDegenShares(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { degen } = getEthContracts();
-
-  const assetsToWithdraw = _addDecimals(amount.toString(), 6);
-  const basicInfo = {
-    alpFee: "0",
-    alpFeePercent: "0",
-    dollarAmount: amount.toString(),
-    tokenAmount: _removeDecimals(await degen.convertToShares(assetsToWithdraw), await degen.decimals()),
-  };
-
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(
-      degen,
-      "withdraw",
-      [assetsToWithdraw, userAddress, userAddress],
-      true,
-    )) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  }
-
-  const receipt = (await blockchainCall(
-    degen,
-    "withdraw",
-    [assetsToWithdraw, userAddress, userAddress],
-    false,
-  )) as SmallTxReceipt;
-  return { ...basicInfo, ...receipt };
-}
-
-export async function sellpolygonDegen(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { polygonDegen } = getPolygonContracts();
-
-  const assetsToWithdraw = _addDecimals(amount.toString(), 6);
-  const basicInfo = {
-    alpFee: "0",
-    alpFeePercent: "0",
-    dollarAmount: amount.toString(),
-    tokenAmount: _removeDecimals(await polygonDegen.convertToShares(assetsToWithdraw), await polygonDegen.decimals()),
-  };
-
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(
-      polygonDegen,
-      "withdraw",
-      [assetsToWithdraw, userAddress, userAddress],
-      true,
-    )) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  }
-
-  const receipt = (await blockchainCall(
-    polygonDegen,
-    "withdraw",
-    [assetsToWithdraw, userAddress, userAddress],
-    false,
-  )) as SmallTxReceipt;
-  return { ...basicInfo, ...receipt };
 }
 
 // Convert usdc to a share amount to be passed to `redeem` (for alpLarge only)
