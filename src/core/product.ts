@@ -23,6 +23,8 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
     return buyDegenShares(amount);
   } else if (product == "polygonDegen") {
     return buypolygonDegen(amount);
+  } else if (product == "ethLeverage") {
+    return buyEthLeverage(amount);
   }
 }
 
@@ -41,6 +43,8 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
     return sellDegenShares(amount);
   } else if (product == "polygonDegen") {
     return sellpolygonDegen(amount);
+  } else if (product == "ethLeverage") {
+    return sellEthLeverage(amount);
   }
 }
 
@@ -86,6 +90,33 @@ async function buyDegenShares(amount: number) {
   } else {
     console.log({ convertedAmount, amount, degen });
     const receipt = (await blockchainCall(degen, "deposit", [convertedAmount, userAddress], false)) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
+}
+
+async function buyEthLeverage(amount: number) {
+  const { ethLeverage, weth } = getEthContracts();
+  const convertedAmount = _addDecimals(amount.toString(), weth.decimals());
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: convertedAmount.toString(),
+    tokenAmount: _removeDecimals(await ethLeverage.convertToShares(convertedAmount), await ethLeverage.decimals()),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(ethLeverage, "deposit", [convertedAmount, userAddress], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(
+      ethLeverage,
+      "deposit",
+      [convertedAmount, userAddress],
+      false,
+    )) as SmallTxReceipt;
     return { ...basicInfo, ...receipt };
   }
 }
@@ -483,6 +514,39 @@ export async function sellDegenShares(amount: number): Promise<DryRunReceipt | F
   return { ...basicInfo, ...receipt };
 }
 
+export async function sellEthLeverage(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { ethLeverage, weth } = getEthContracts();
+
+  const assetsToWithdraw = _addDecimals(amount.toString(), weth.decimals());
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amount.toString(),
+    tokenAmount: _removeDecimals(await ethLeverage.convertToShares(assetsToWithdraw), await ethLeverage.decimals()),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(
+      ethLeverage,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(
+      ethLeverage,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      false,
+    )) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
+}
+
 export async function sellpolygonDegen(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { polygonDegen } = getPolygonContracts();
 
@@ -540,7 +604,13 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
   }
 
   let contract: L2Vault | TwoAssetBasket | Vault | StrategyVault;
-  if (product === "ethEarn" || product === "ethWethEarn" || product === "ssvEthUSDEarn" || product === "degen") {
+  if (
+    product === "ethEarn" ||
+    product === "ethWethEarn" ||
+    product === "ssvEthUSDEarn" ||
+    product === "degen" ||
+    product === "ethLeverage"
+  ) {
     contract = getEthContracts()[product];
   } else {
     contract = getPolygonContracts()[product];
