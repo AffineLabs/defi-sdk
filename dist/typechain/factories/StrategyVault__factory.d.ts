@@ -5,21 +5,6 @@ export declare class StrategyVault__factory {
     static readonly abi: readonly [{
         readonly anonymous: false;
         readonly inputs: readonly [{
-            readonly indexed: false;
-            readonly internalType: "address";
-            readonly name: "previousAdmin";
-            readonly type: "address";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "address";
-            readonly name: "newAdmin";
-            readonly type: "address";
-        }];
-        readonly name: "AdminChanged";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
             readonly indexed: true;
             readonly internalType: "address";
             readonly name: "owner";
@@ -36,26 +21,6 @@ export declare class StrategyVault__factory {
             readonly type: "uint256";
         }];
         readonly name: "Approval";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: true;
-            readonly internalType: "address";
-            readonly name: "beacon";
-            readonly type: "address";
-        }];
-        readonly name: "BeaconUpgraded";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "epoch";
-            readonly type: "uint256";
-        }];
-        readonly name: "BeginEpoch";
         readonly type: "event";
     }, {
         readonly anonymous: false;
@@ -110,16 +75,6 @@ export declare class StrategyVault__factory {
     }, {
         readonly anonymous: false;
         readonly inputs: readonly [{
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "epoch";
-            readonly type: "uint256";
-        }];
-        readonly name: "EndEpoch";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
             readonly indexed: true;
             readonly internalType: "address";
             readonly name: "user";
@@ -136,6 +91,21 @@ export declare class StrategyVault__factory {
             readonly type: "uint8";
         }];
         readonly name: "Initialized";
+        readonly type: "event";
+    }, {
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: false;
+            readonly internalType: "uint256";
+            readonly name: "assetsRequested";
+            readonly type: "uint256";
+        }, {
+            readonly indexed: false;
+            readonly internalType: "uint256";
+            readonly name: "assetsLiquidated";
+            readonly type: "uint256";
+        }];
+        readonly name: "Liquidation";
         readonly type: "event";
     }, {
         readonly anonymous: false;
@@ -276,16 +246,6 @@ export declare class StrategyVault__factory {
             readonly type: "address";
         }];
         readonly name: "Unpaused";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: true;
-            readonly internalType: "address";
-            readonly name: "implementation";
-            readonly type: "address";
-        }];
-        readonly name: "Upgraded";
         readonly type: "event";
     }, {
         readonly anonymous: false;
@@ -523,6 +483,16 @@ export declare class StrategyVault__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "amount";
+            readonly type: "uint256";
+        }];
+        readonly name: "depositIntoStrategies";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [];
         readonly name: "detailedPrice";
         readonly outputs: readonly [{
@@ -650,6 +620,12 @@ export declare class StrategyVault__factory {
             readonly type: "address";
         }];
         readonly name: "grantRole";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "harvest";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
@@ -932,16 +908,6 @@ export declare class StrategyVault__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "proxiableUUID";
-        readonly outputs: readonly [{
-            readonly internalType: "bytes32";
-            readonly name: "";
-            readonly type: "bytes32";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
         readonly inputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "shares";
@@ -993,6 +959,16 @@ export declare class StrategyVault__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "_assetLimit";
+            readonly type: "uint256";
+        }];
+        readonly name: "setAssetLimit";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
             readonly internalType: "contract WithdrawalEscrow";
             readonly name: "escrow";
             readonly type: "address";
@@ -1018,16 +994,6 @@ export declare class StrategyVault__factory {
             readonly type: "address";
         }];
         readonly name: "setStrategy";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "_tvlCap";
-            readonly type: "uint256";
-        }];
-        readonly name: "setTvlCap";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
@@ -1160,30 +1126,6 @@ export declare class StrategyVault__factory {
         readonly name: "unpause";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "address";
-            readonly name: "newImplementation";
-            readonly type: "address";
-        }];
-        readonly name: "upgradeTo";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "address";
-            readonly name: "newImplementation";
-            readonly type: "address";
-        }, {
-            readonly internalType: "bytes";
-            readonly name: "data";
-            readonly type: "bytes";
-        }];
-        readonly name: "upgradeToAndCall";
-        readonly outputs: readonly [];
-        readonly stateMutability: "payable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];

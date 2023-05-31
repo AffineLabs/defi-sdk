@@ -24,9 +24,13 @@ exports.SIMULATE = false;
 const CONTRACT_VERSION = (_a = process.env.CONTRACT_VERSION) !== null && _a !== void 0 ? _a : "test";
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 exports.RPC_URLS = {
-    1: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+    1: constants_1.IS_USING_FORKED_MAINNET && constants_1.FORKED_NODE_URL_FOR_ETH
+        ? constants_1.FORKED_NODE_URL_FOR_ETH
+        : `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
     5: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-    137: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+    137: constants_1.IS_USING_FORKED_MAINNET && constants_1.FORKED_NODE_URL_FOR_MATIC
+        ? constants_1.FORKED_NODE_URL_FOR_MATIC
+        : `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
     80001: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
 };
 function getProviderByChainId(chainId) {
