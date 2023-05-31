@@ -9,5 +9,6 @@ exports.alpineProducts = [
     "ssvEthUSDEarn",
     "degen",
     "polygonDegen",
+    "ethLeverage",
 ];
 exports.polygonProducts = ["alpSave", "alpLarge"];

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sharesFromTokens = exports.tokensFromShares = exports.getTokenInfo = exports.sellpolygonDegen = exports.sellDegenShares = exports.sellLockedShares = exports.sellEthWethShares = exports.sellBtCEthShares = exports.sellEthUsdcShares = exports.sellUsdcShares = exports.buyBtCEthShares = exports.buyUsdcShares = exports.buyLockedShares = exports.sellProduct = exports.buyProduct = void 0;
+exports.sharesFromTokens = exports.tokensFromShares = exports.getTokenInfo = exports.sellpolygonDegen = exports.sellEthLeverage = exports.sellDegenShares = exports.sellLockedShares = exports.sellEthWethShares = exports.sellBtCEthShares = exports.sellEthUsdcShares = exports.sellUsdcShares = exports.buyBtCEthShares = exports.buyUsdcShares = exports.buyLockedShares = exports.sellProduct = exports.buyProduct = void 0;
 const ethers_1 = require("ethers");
 const AlpineDeFiSDK_1 = require("./AlpineDeFiSDK");
 const cache_1 = require("./cache");
@@ -38,6 +38,9 @@ function buyProduct(product, amount, slippageBps = 500) {
         else if (product == "polygonDegen") {
             return buypolygonDegen(amount);
         }
+        else if (product == "ethLeverage") {
+            return buyEthLeverage(amount);
+        }
     });
 }
 exports.buyProduct = buyProduct;
@@ -63,6 +66,9 @@ function sellProduct(product, amount) {
         }
         else if (product == "polygonDegen") {
             return sellpolygonDegen(amount);
+        }
+        else if (product == "ethLeverage") {
+            return sellEthLeverage(amount);
         }
     });
 }
@@ -105,6 +111,26 @@ function buyDegenShares(amount) {
         else {
             console.log({ convertedAmount, amount, degen });
             const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(degen, "deposit", [convertedAmount, cache_1.userAddress], false));
+            return Object.assign(Object.assign({}, basicInfo), receipt);
+        }
+    });
+}
+function buyEthLeverage(amount) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { ethLeverage, weth } = (0, cache_1.getEthContracts)();
+        const convertedAmount = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), weth.decimals());
+        const basicInfo = {
+            alpFee: "0",
+            alpFeePercent: "0",
+            dollarAmount: convertedAmount.toString(),
+            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield ethLeverage.convertToShares(convertedAmount), yield ethLeverage.decimals()),
+        };
+        if (cache_1.SIMULATE) {
+            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "deposit", [convertedAmount, cache_1.userAddress], true));
+            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
+        }
+        else {
+            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "deposit", [convertedAmount, cache_1.userAddress], false));
             return Object.assign(Object.assign({}, basicInfo), receipt);
         }
     });
@@ -415,6 +441,27 @@ function sellDegenShares(amount) {
     });
 }
 exports.sellDegenShares = sellDegenShares;
+function sellEthLeverage(amount) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { ethLeverage, weth } = (0, cache_1.getEthContracts)();
+        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), weth.decimals());
+        const basicInfo = {
+            alpFee: "0",
+            alpFeePercent: "0",
+            dollarAmount: amount.toString(),
+            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield ethLeverage.convertToShares(assetsToWithdraw), yield ethLeverage.decimals()),
+        };
+        if (cache_1.SIMULATE) {
+            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
+            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
+        }
+        else {
+            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
+            return Object.assign(Object.assign({}, basicInfo), receipt);
+        }
+    });
+}
+exports.sellEthLeverage = sellEthLeverage;
 function sellpolygonDegen(amount) {
     return __awaiter(this, void 0, void 0, function* () {
         const { polygonDegen } = (0, cache_1.getPolygonContracts)();
@@ -458,7 +505,11 @@ function getTokenInfo(product) {
             };
         }
         let contract;
-        if (product === "ethEarn" || product === "ethWethEarn" || product === "ssvEthUSDEarn" || product === "degen") {
+        if (product === "ethEarn" ||
+            product === "ethWethEarn" ||
+            product === "ssvEthUSDEarn" ||
+            product === "degen" ||
+            product === "ethLeverage") {
             contract = (0, cache_1.getEthContracts)()[product];
         }
         else {
