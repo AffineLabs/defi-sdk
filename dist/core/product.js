@@ -504,6 +504,16 @@ function getTokenInfo(product) {
                 equity: numUsdc,
             };
         }
+        else if (product === "weth") {
+            const { weth } = (0, cache_1.getEthContracts)();
+            const amount = yield weth.balanceOf(user);
+            const numWeth = (0, AlpineDeFiSDK_1._removeDecimals)(amount, weth.decimals());
+            return {
+                amount: numWeth,
+                price: "1",
+                equity: numWeth,
+            };
+        }
         let contract;
         if (product === "ethEarn" ||
             product === "ethWethEarn" ||

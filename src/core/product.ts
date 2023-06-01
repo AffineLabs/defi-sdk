@@ -588,7 +588,7 @@ async function _convertToShares(amountUSDC: ethers.BigNumber) {
   return shares.gt(userShares) ? userShares : shares;
 }
 
-export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<TokenInfo> {
+export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<TokenInfo> {
   const user = userAddress;
 
   if (product === "usdc") {
@@ -600,6 +600,15 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
       amount: numUsdc,
       price: "1",
       equity: numUsdc,
+    };
+  } else if (product === "weth") {
+    const { weth } = getEthContracts();
+    const amount = await weth.balanceOf(user);
+    const numWeth = _removeDecimals(amount, weth.decimals());
+    return {
+      amount: numWeth,
+      price: "1",
+      equity: numWeth,
     };
   }
 

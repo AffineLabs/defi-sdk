@@ -259,6 +259,26 @@ export declare class ConvexStrategy__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [];
+        readonly name: "depositIntoConvex";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "assets";
+            readonly type: "uint256";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "minLpTokens";
+            readonly type: "uint256";
+        }];
+        readonly name: "depositIntoCurve";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "amount";
@@ -451,6 +471,20 @@ export declare class ConvexStrategy__factory {
             readonly type: "uint256";
         }];
         readonly name: "withdrawFromConvex";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "maxLpTokensToBurn";
+            readonly type: "uint256";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "minAssetsReceived";
+            readonly type: "uint256";
+        }];
+        readonly name: "withdrawFromCurve";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
