@@ -95,8 +95,8 @@ async function buyDegenShares(amount: number) {
 }
 
 async function buyEthLeverage(amount: number) {
-  const { ethLeverage, weth } = getEthContracts();
-  const convertedAmount = _addDecimals(amount.toString(), weth.decimals());
+  const { ethLeverage } = getEthContracts();
+  const convertedAmount = _addDecimals(amount.toString(), 18);
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
@@ -515,9 +515,9 @@ export async function sellDegenShares(amount: number): Promise<DryRunReceipt | F
 }
 
 export async function sellEthLeverage(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { ethLeverage, weth } = getEthContracts();
+  const { ethLeverage } = getEthContracts();
 
-  const assetsToWithdraw = _addDecimals(amount.toString(), weth.decimals());
+  const assetsToWithdraw = _addDecimals(amount.toString(), 18);
   const basicInfo = {
     alpFee: "0",
     alpFeePercent: "0",
@@ -604,7 +604,8 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
   } else if (product === "weth") {
     const { weth } = getEthContracts();
     const amount = await weth.balanceOf(user);
-    const numWeth = _removeDecimals(amount, weth.decimals());
+    console.log("WETH amount w/ decimals", amount.toString(), { weth });
+    const numWeth = _removeDecimals(amount, 18);
     return {
       amount: numWeth,
       price: "1",

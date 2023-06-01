@@ -117,8 +117,8 @@ function buyDegenShares(amount) {
 }
 function buyEthLeverage(amount) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { ethLeverage, weth } = (0, cache_1.getEthContracts)();
-        const convertedAmount = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), weth.decimals());
+        const { ethLeverage } = (0, cache_1.getEthContracts)();
+        const convertedAmount = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 18);
         const basicInfo = {
             alpFee: "0",
             alpFeePercent: "0",
@@ -443,8 +443,8 @@ function sellDegenShares(amount) {
 exports.sellDegenShares = sellDegenShares;
 function sellEthLeverage(amount) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { ethLeverage, weth } = (0, cache_1.getEthContracts)();
-        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), weth.decimals());
+        const { ethLeverage } = (0, cache_1.getEthContracts)();
+        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 18);
         const basicInfo = {
             alpFee: "0",
             alpFeePercent: "0",
@@ -507,7 +507,8 @@ function getTokenInfo(product) {
         else if (product === "weth") {
             const { weth } = (0, cache_1.getEthContracts)();
             const amount = yield weth.balanceOf(user);
-            const numWeth = (0, AlpineDeFiSDK_1._removeDecimals)(amount, weth.decimals());
+            console.log("WETH amount w/ decimals", amount.toString(), { weth });
+            const numWeth = (0, AlpineDeFiSDK_1._removeDecimals)(amount, 18);
             return {
                 amount: numWeth,
                 price: "1",
