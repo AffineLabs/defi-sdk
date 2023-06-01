@@ -95,7 +95,7 @@ async function buyDegenShares(amount: number) {
 }
 
 async function buyEthLeverage(amount: number) {
-  const { ethLeverage } = getEthContracts();
+  const { ethLeverage, router, weth } = getEthContracts();
   const convertedAmount = _addDecimals(amount.toString(), 18);
   const basicInfo = {
     alpFee: "0",
@@ -149,8 +149,13 @@ async function buypolygonDegen(amount: number) {
 }
 
 async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { weth, ethWethEarn, router } = getEthContracts();
-  const shareDecimals = await ethWethEarn.decimals();
+  const { ethWethEarn } = getEthContracts();
+  return buySharesByEthThroughWeth(amountWeth, ethWethEarn);
+}
+
+async function buySharesByEthThroughWeth(amountWeth: number, vault: Vault): Promise<DryRunReceipt | FullTxReceipt> {
+  const { weth, router } = getEthContracts();
+  const shareDecimals = await vault.decimals();
   const ethDecimals = 18;
   const amount = _addDecimals(amountWeth.toString(), ethDecimals);
 
@@ -168,15 +173,15 @@ async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | Ful
     // TODO: Dollar amount is not right given the amount is weth amount. But populated
     // for the sake of backward compatibility.
     dollarAmount: amountWeth.toString(),
-    tokenAmount: _removeDecimals(await ethWethEarn.convertToShares(amount), shareDecimals),
+    tokenAmount: _removeDecimals(await vault.convertToShares(amount), shareDecimals),
   };
 
   const data: string[] = [];
   data.push(router.interface.encodeFunctionData("depositNative"));
-  data.push(router.interface.encodeFunctionData("approve", [weth.address, ethWethEarn.address, MAX_UINT]));
-  data.push(router.interface.encodeFunctionData("deposit", [ethWethEarn.address, userAddress, amount, 0]));
+  data.push(router.interface.encodeFunctionData("approve", [weth.address, vault.address, MAX_UINT]));
+  data.push(router.interface.encodeFunctionData("deposit", [vault.address, userAddress, amount, 0]));
 
-  const beforeBal: ethers.BigNumber = await ethWethEarn.balanceOf(userAddress);
+  const beforeBal: ethers.BigNumber = await vault.balanceOf(userAddress);
   console.log({ amount });
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(router, "multicall", [data], true, amount)) as GasInfo;
@@ -186,7 +191,7 @@ async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | Ful
     };
   } else {
     const receipt = (await blockchainCall(router, "multicall", [data], false, amount)) as SmallTxReceipt;
-    const afterBal: ethers.BigNumber = await ethWethEarn.balanceOf(userAddress);
+    const afterBal: ethers.BigNumber = await vault.balanceOf(userAddress);
     const amountChanged = afterBal.sub(beforeBal);
 
     const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, shareDecimals) };
@@ -516,35 +521,7 @@ export async function sellDegenShares(amount: number): Promise<DryRunReceipt | F
 
 export async function sellEthLeverage(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { ethLeverage } = getEthContracts();
-
-  const assetsToWithdraw = _addDecimals(amount.toString(), 18);
-  const basicInfo = {
-    alpFee: "0",
-    alpFeePercent: "0",
-    dollarAmount: amount.toString(),
-    tokenAmount: _removeDecimals(await ethLeverage.convertToShares(assetsToWithdraw), await ethLeverage.decimals()),
-  };
-
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(
-      ethLeverage,
-      "withdraw",
-      [assetsToWithdraw, userAddress, userAddress],
-      true,
-    )) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  } else {
-    const receipt = (await blockchainCall(
-      ethLeverage,
-      "withdraw",
-      [assetsToWithdraw, userAddress, userAddress],
-      false,
-    )) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
-  }
+  return buySharesByEthThroughWeth(amount, ethLeverage);
 }
 
 export async function sellpolygonDegen(amount: number): Promise<DryRunReceipt | FullTxReceipt> {

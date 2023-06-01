@@ -61,7 +61,7 @@ function getAllContracts(provider, version) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLarge, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, AffineEthLeverage: ethLeverageData, } = allData;
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLarge, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);

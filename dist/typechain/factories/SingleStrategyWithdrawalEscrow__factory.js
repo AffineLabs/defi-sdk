@@ -3,13 +3,13 @@
 /* tslint:disable */
 /* eslint-disable */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WithdrawalEscrow__factory = void 0;
+exports.SingleStrategyWithdrawalEscrow__factory = void 0;
 const ethers_1 = require("ethers");
 const _abi = [
     {
         inputs: [
             {
-                internalType: "contract StrategyVault",
+                internalType: "contract Vault",
                 name: "_vault",
                 type: "address",
             },
@@ -75,6 +75,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "currentEpoch",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "uint256",
@@ -115,7 +128,20 @@ const _abi = [
         outputs: [
             {
                 internalType: "uint256",
-                name: "assets",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "lastResolvedUTCTime",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
                 type: "uint256",
             },
         ],
@@ -200,7 +226,7 @@ const _abi = [
         name: "vault",
         outputs: [
             {
-                internalType: "contract StrategyVault",
+                internalType: "contract Vault",
                 name: "",
                 type: "address",
             },
@@ -257,7 +283,7 @@ const _abi = [
         type: "function",
     },
 ];
-class WithdrawalEscrow__factory {
+class SingleStrategyWithdrawalEscrow__factory {
     static createInterface() {
         return new ethers_1.utils.Interface(_abi);
     }
@@ -265,5 +291,5 @@ class WithdrawalEscrow__factory {
         return new ethers_1.Contract(address, _abi, signerOrProvider);
     }
 }
-exports.WithdrawalEscrow__factory = WithdrawalEscrow__factory;
-WithdrawalEscrow__factory.abi = _abi;
+exports.SingleStrategyWithdrawalEscrow__factory = SingleStrategyWithdrawalEscrow__factory;
+SingleStrategyWithdrawalEscrow__factory.abi = _abi;

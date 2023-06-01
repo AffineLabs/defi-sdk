@@ -117,7 +117,7 @@ function buyDegenShares(amount) {
 }
 function buyEthLeverage(amount) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { ethLeverage } = (0, cache_1.getEthContracts)();
+        const { ethLeverage, router, weth } = (0, cache_1.getEthContracts)();
         const convertedAmount = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 18);
         const basicInfo = {
             alpFee: "0",
@@ -157,8 +157,14 @@ function buypolygonDegen(amount) {
 }
 function buyEthWethShares(amountWeth) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { weth, ethWethEarn, router } = (0, cache_1.getEthContracts)();
-        const shareDecimals = yield ethWethEarn.decimals();
+        const { ethWethEarn } = (0, cache_1.getEthContracts)();
+        return buySharesByEthThroughWeth(amountWeth, ethWethEarn);
+    });
+}
+function buySharesByEthThroughWeth(amountWeth, vault) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { weth, router } = (0, cache_1.getEthContracts)();
+        const shareDecimals = yield vault.decimals();
         const ethDecimals = 18;
         const amount = (0, AlpineDeFiSDK_1._addDecimals)(amountWeth.toString(), ethDecimals);
         if (amount.isNegative() || amount.isZero()) {
@@ -174,13 +180,13 @@ function buyEthWethShares(amountWeth) {
             // TODO: Dollar amount is not right given the amount is weth amount. But populated
             // for the sake of backward compatibility.
             dollarAmount: amountWeth.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield ethWethEarn.convertToShares(amount), shareDecimals),
+            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(amount), shareDecimals),
         };
         const data = [];
         data.push(router.interface.encodeFunctionData("depositNative"));
-        data.push(router.interface.encodeFunctionData("approve", [weth.address, ethWethEarn.address, constants_1.MAX_UINT]));
-        data.push(router.interface.encodeFunctionData("deposit", [ethWethEarn.address, cache_1.userAddress, amount, 0]));
-        const beforeBal = yield ethWethEarn.balanceOf(cache_1.userAddress);
+        data.push(router.interface.encodeFunctionData("approve", [weth.address, vault.address, constants_1.MAX_UINT]));
+        data.push(router.interface.encodeFunctionData("deposit", [vault.address, cache_1.userAddress, amount, 0]));
+        const beforeBal = yield vault.balanceOf(cache_1.userAddress);
         console.log({ amount });
         if (cache_1.SIMULATE) {
             const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(router, "multicall", [data], true, amount));
@@ -188,7 +194,7 @@ function buyEthWethShares(amountWeth) {
         }
         else {
             const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(router, "multicall", [data], false, amount));
-            const afterBal = yield ethWethEarn.balanceOf(cache_1.userAddress);
+            const afterBal = yield vault.balanceOf(cache_1.userAddress);
             const amountChanged = afterBal.sub(beforeBal);
             const res = Object.assign(Object.assign(Object.assign({}, basicInfo), receipt), { tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(amountChanged, shareDecimals) });
             return res;
@@ -444,21 +450,7 @@ exports.sellDegenShares = sellDegenShares;
 function sellEthLeverage(amount) {
     return __awaiter(this, void 0, void 0, function* () {
         const { ethLeverage } = (0, cache_1.getEthContracts)();
-        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 18);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: amount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield ethLeverage.convertToShares(assetsToWithdraw), yield ethLeverage.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
+        return buySharesByEthThroughWeth(amount, ethLeverage);
     });
 }
 exports.sellEthLeverage = sellEthLeverage;

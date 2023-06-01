@@ -89,7 +89,7 @@ export async function getAllContracts(
     EthSushiLpUsdcWeth: ssvEthSushiUSDEarn,
     Degen: degenData,
     PolygonDegen: polygonDegenData,
-    AffineEthLeverage: ethLeverageData,
+    EthStEthLev: ethLeverageData,
   } = allData;
 
   const chainId = getChainId();

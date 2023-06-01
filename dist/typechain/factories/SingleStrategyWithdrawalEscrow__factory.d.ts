@@ -1,10 +1,10 @@
 import { Signer } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { WithdrawalEscrow, WithdrawalEscrowInterface } from "../WithdrawalEscrow";
-export declare class WithdrawalEscrow__factory {
+import type { SingleStrategyWithdrawalEscrow, SingleStrategyWithdrawalEscrowInterface } from "../SingleStrategyWithdrawalEscrow";
+export declare class SingleStrategyWithdrawalEscrow__factory {
     static readonly abi: readonly [{
         readonly inputs: readonly [{
-            readonly internalType: "contract StrategyVault";
+            readonly internalType: "contract Vault";
             readonly name: "_vault";
             readonly type: "address";
         }];
@@ -55,6 +55,16 @@ export declare class WithdrawalEscrow__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [];
+        readonly name: "currentEpoch";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "";
@@ -85,7 +95,17 @@ export declare class WithdrawalEscrow__factory {
         readonly name: "getAssets";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
-            readonly name: "assets";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "lastResolvedUTCTime";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
             readonly type: "uint256";
         }];
         readonly stateMutability: "view";
@@ -150,7 +170,7 @@ export declare class WithdrawalEscrow__factory {
         readonly inputs: readonly [];
         readonly name: "vault";
         readonly outputs: readonly [{
-            readonly internalType: "contract StrategyVault";
+            readonly internalType: "contract Vault";
             readonly name: "";
             readonly type: "address";
         }];
@@ -193,6 +213,6 @@ export declare class WithdrawalEscrow__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }];
-    static createInterface(): WithdrawalEscrowInterface;
-    static connect(address: string, signerOrProvider: Signer | Provider): WithdrawalEscrow;
+    static createInterface(): SingleStrategyWithdrawalEscrowInterface;
+    static connect(address: string, signerOrProvider: Signer | Provider): SingleStrategyWithdrawalEscrow;
 }

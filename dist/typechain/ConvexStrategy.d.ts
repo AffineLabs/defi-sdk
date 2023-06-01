@@ -20,8 +20,6 @@ export interface ConvexStrategyInterface extends utils.Interface {
         "curvePool()": FunctionFragment;
         "cvxRewarder()": FunctionFragment;
         "deposit(uint256,uint256)": FunctionFragment;
-        "depositIntoConvex()": FunctionFragment;
-        "depositIntoCurve(uint256,uint256)": FunctionFragment;
         "divest(uint256)": FunctionFragment;
         "getRoleAdmin(bytes32)": FunctionFragment;
         "grantRole(bytes32,address)": FunctionFragment;
@@ -38,10 +36,9 @@ export interface ConvexStrategyInterface extends utils.Interface {
         "vault()": FunctionFragment;
         "withdrawAssets(uint256)": FunctionFragment;
         "withdrawFromConvex(uint256)": FunctionFragment;
-        "withdrawFromCurve(uint256,uint256)": FunctionFragment;
         "zapper()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "CRV" | "CVX" | "CVX_BOOSTER" | "DEFAULT_ADMIN_ROLE" | "ROUTER" | "STRATEGIST_ROLE" | "asset" | "assetIndex" | "balanceOfAsset" | "claimAndSellRewards" | "claimRewards" | "convexPid" | "curveLpToken" | "curvePool" | "cvxRewarder" | "deposit" | "depositIntoConvex" | "depositIntoCurve" | "divest" | "getRoleAdmin" | "grantRole" | "hasRole" | "invest" | "pendingRewards" | "renounceRole" | "revokeRole" | "sellRewards" | "sendAllTokens" | "supportsInterface" | "sweep" | "totalLockedValue" | "vault" | "withdrawAssets" | "withdrawFromConvex" | "withdrawFromCurve" | "zapper"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "CRV" | "CVX" | "CVX_BOOSTER" | "DEFAULT_ADMIN_ROLE" | "ROUTER" | "STRATEGIST_ROLE" | "asset" | "assetIndex" | "balanceOfAsset" | "claimAndSellRewards" | "claimRewards" | "convexPid" | "curveLpToken" | "curvePool" | "cvxRewarder" | "deposit" | "divest" | "getRoleAdmin" | "grantRole" | "hasRole" | "invest" | "pendingRewards" | "renounceRole" | "revokeRole" | "sellRewards" | "sendAllTokens" | "supportsInterface" | "sweep" | "totalLockedValue" | "vault" | "withdrawAssets" | "withdrawFromConvex" | "zapper"): FunctionFragment;
     encodeFunctionData(functionFragment: "CRV", values?: undefined): string;
     encodeFunctionData(functionFragment: "CVX", values?: undefined): string;
     encodeFunctionData(functionFragment: "CVX_BOOSTER", values?: undefined): string;
@@ -58,8 +55,6 @@ export interface ConvexStrategyInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "curvePool", values?: undefined): string;
     encodeFunctionData(functionFragment: "cvxRewarder", values?: undefined): string;
     encodeFunctionData(functionFragment: "deposit", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]): string;
-    encodeFunctionData(functionFragment: "depositIntoConvex", values?: undefined): string;
-    encodeFunctionData(functionFragment: "depositIntoCurve", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "divest", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "getRoleAdmin", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "grantRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
@@ -76,7 +71,6 @@ export interface ConvexStrategyInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "vault", values?: undefined): string;
     encodeFunctionData(functionFragment: "withdrawAssets", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "withdrawFromConvex", values: [PromiseOrValue<BigNumberish>]): string;
-    encodeFunctionData(functionFragment: "withdrawFromCurve", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "zapper", values?: undefined): string;
     decodeFunctionResult(functionFragment: "CRV", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "CVX", data: BytesLike): Result;
@@ -94,8 +88,6 @@ export interface ConvexStrategyInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "curvePool", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "cvxRewarder", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "depositIntoConvex", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "depositIntoCurve", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "divest", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
@@ -112,7 +104,6 @@ export interface ConvexStrategyInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "vault", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawAssets", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawFromConvex", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "withdrawFromCurve", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "zapper", data: BytesLike): Result;
     events: {
         "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
@@ -195,12 +186,6 @@ export interface ConvexStrategy extends BaseContract {
         deposit(assets: PromiseOrValue<BigNumberish>, minLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        depositIntoConvex(overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
-        depositIntoCurve(assets: PromiseOrValue<BigNumberish>, minLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -241,9 +226,6 @@ export interface ConvexStrategy extends BaseContract {
         withdrawFromConvex(numLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        withdrawFromCurve(maxLpTokensToBurn: PromiseOrValue<BigNumberish>, minAssetsReceived: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
         zapper(overrides?: CallOverrides): Promise<[string]>;
     };
     CRV(overrides?: CallOverrides): Promise<string>;
@@ -266,12 +248,6 @@ export interface ConvexStrategy extends BaseContract {
     curvePool(overrides?: CallOverrides): Promise<string>;
     cvxRewarder(overrides?: CallOverrides): Promise<string>;
     deposit(assets: PromiseOrValue<BigNumberish>, minLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
-    depositIntoConvex(overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
-    depositIntoCurve(assets: PromiseOrValue<BigNumberish>, minLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -312,9 +288,6 @@ export interface ConvexStrategy extends BaseContract {
     withdrawFromConvex(numLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    withdrawFromCurve(maxLpTokensToBurn: PromiseOrValue<BigNumberish>, minAssetsReceived: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
     zapper(overrides?: CallOverrides): Promise<string>;
     callStatic: {
         CRV(overrides?: CallOverrides): Promise<string>;
@@ -333,8 +306,6 @@ export interface ConvexStrategy extends BaseContract {
         curvePool(overrides?: CallOverrides): Promise<string>;
         cvxRewarder(overrides?: CallOverrides): Promise<string>;
         deposit(assets: PromiseOrValue<BigNumberish>, minLpTokens: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
-        depositIntoConvex(overrides?: CallOverrides): Promise<void>;
-        depositIntoCurve(assets: PromiseOrValue<BigNumberish>, minLpTokens: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
@@ -351,7 +322,6 @@ export interface ConvexStrategy extends BaseContract {
         vault(overrides?: CallOverrides): Promise<string>;
         withdrawAssets(assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         withdrawFromConvex(numLpTokens: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
-        withdrawFromCurve(maxLpTokensToBurn: PromiseOrValue<BigNumberish>, minAssetsReceived: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         zapper(overrides?: CallOverrides): Promise<string>;
     };
     filters: {
@@ -383,12 +353,6 @@ export interface ConvexStrategy extends BaseContract {
         curvePool(overrides?: CallOverrides): Promise<BigNumber>;
         cvxRewarder(overrides?: CallOverrides): Promise<BigNumber>;
         deposit(assets: PromiseOrValue<BigNumberish>, minLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
-        depositIntoConvex(overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
-        depositIntoCurve(assets: PromiseOrValue<BigNumberish>, minLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -429,9 +393,6 @@ export interface ConvexStrategy extends BaseContract {
         withdrawFromConvex(numLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        withdrawFromCurve(maxLpTokensToBurn: PromiseOrValue<BigNumberish>, minAssetsReceived: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
         zapper(overrides?: CallOverrides): Promise<BigNumber>;
     };
     populateTransaction: {
@@ -455,12 +416,6 @@ export interface ConvexStrategy extends BaseContract {
         curvePool(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         cvxRewarder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         deposit(assets: PromiseOrValue<BigNumberish>, minLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        depositIntoConvex(overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        depositIntoCurve(assets: PromiseOrValue<BigNumberish>, minLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -499,9 +454,6 @@ export interface ConvexStrategy extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         withdrawFromConvex(numLpTokens: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        withdrawFromCurve(maxLpTokensToBurn: PromiseOrValue<BigNumberish>, minAssetsReceived: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         zapper(overrides?: CallOverrides): Promise<PopulatedTransaction>;
