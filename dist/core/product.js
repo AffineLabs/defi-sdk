@@ -117,22 +117,8 @@ function buyDegenShares(amount) {
 }
 function buyEthLeverage(amount) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { ethLeverage, router, weth } = (0, cache_1.getEthContracts)();
-        const convertedAmount = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 18);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: convertedAmount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield ethLeverage.convertToShares(convertedAmount), yield ethLeverage.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "deposit", [convertedAmount, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "deposit", [convertedAmount, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
+        const { ethLeverage } = (0, cache_1.getEthContracts)();
+        return buySharesByEthThroughWeth(amount, ethLeverage);
     });
 }
 function buypolygonDegen(amount) {
@@ -450,7 +436,21 @@ exports.sellDegenShares = sellDegenShares;
 function sellEthLeverage(amount) {
     return __awaiter(this, void 0, void 0, function* () {
         const { ethLeverage } = (0, cache_1.getEthContracts)();
-        return buySharesByEthThroughWeth(amount, ethLeverage);
+        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 18);
+        const basicInfo = {
+            alpFee: "0",
+            alpFeePercent: "0",
+            dollarAmount: amount.toString(),
+            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield ethLeverage.convertToShares(assetsToWithdraw), yield ethLeverage.decimals()),
+        };
+        if (cache_1.SIMULATE) {
+            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
+            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
+        }
+        else {
+            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
+            return Object.assign(Object.assign({}, basicInfo), receipt);
+        }
     });
 }
 exports.sellEthLeverage = sellEthLeverage;

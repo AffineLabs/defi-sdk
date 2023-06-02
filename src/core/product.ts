@@ -95,30 +95,8 @@ async function buyDegenShares(amount: number) {
 }
 
 async function buyEthLeverage(amount: number) {
-  const { ethLeverage, router, weth } = getEthContracts();
-  const convertedAmount = _addDecimals(amount.toString(), 18);
-  const basicInfo = {
-    alpFee: "0",
-    alpFeePercent: "0",
-    dollarAmount: convertedAmount.toString(),
-    tokenAmount: _removeDecimals(await ethLeverage.convertToShares(convertedAmount), await ethLeverage.decimals()),
-  };
-
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(ethLeverage, "deposit", [convertedAmount, userAddress], true)) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  } else {
-    const receipt = (await blockchainCall(
-      ethLeverage,
-      "deposit",
-      [convertedAmount, userAddress],
-      false,
-    )) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
-  }
+  const { ethLeverage } = getEthContracts();
+  return buySharesByEthThroughWeth(amount, ethLeverage);
 }
 
 async function buypolygonDegen(amount: number) {
@@ -521,7 +499,35 @@ export async function sellDegenShares(amount: number): Promise<DryRunReceipt | F
 
 export async function sellEthLeverage(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { ethLeverage } = getEthContracts();
-  return buySharesByEthThroughWeth(amount, ethLeverage);
+
+  const assetsToWithdraw = _addDecimals(amount.toString(), 18);
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amount.toString(),
+    tokenAmount: _removeDecimals(await ethLeverage.convertToShares(assetsToWithdraw), await ethLeverage.decimals()),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(
+      ethLeverage,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(
+      ethLeverage,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      false,
+    )) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
 }
 
 export async function sellpolygonDegen(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
