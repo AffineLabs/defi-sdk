@@ -57,33 +57,8 @@ declare class Account {
     approve(to: AlpineProduct, amountUSDC?: string): Promise<import("../core/types").DryRunReceipt | import("../core/types").FullTxReceipt>;
     portfolioSell(allocations: productAllocation, amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     portfolioPurchase(alloctions: productAllocation, amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
-    buyProduct(product: AlpineProduct, amount: number): Promise<{
-        txnCost: string;
-        gasPrice: string;
-        alpFee: string;
-        alpFeePercent: string;
-        dollarAmount: string;
-        tokenAmount: string;
-    } | {
-        blockNumber: string;
-        txnHash: string;
-        txnCost: string;
-        gasPrice: string;
-        alpFee: string;
-        alpFeePercent: string;
-        dollarAmount: string;
-        tokenAmount: string;
-    }>;
+    buyProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt & (import("../core/types").GasInfo | import("../core/types").SmallTxReceipt)>;
     sellProduct(product: AlpineProduct, amount: number): Promise<{
-        txnCost: string;
-        gasPrice: string;
-        alpFee: string;
-        alpFeePercent: string;
-        dollarAmount: string;
-        tokenAmount: string;
-    } | {
-        blockNumber: string;
-        txnHash: string;
         txnCost: string;
         gasPrice: string;
         alpFee: string;

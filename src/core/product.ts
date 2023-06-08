@@ -1,15 +1,18 @@
 import { ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
-import { ERC4626Upgradeable, L2Vault, StrategyVault, TwoAssetBasket, Vault } from "../typechain";
-import { ERC20__factory } from "../typechain/factories/solmate/src/tokens";
-import { ERC20 } from "../typechain/solmate/src/tokens";
+import { ERC4626Upgradeable, L2Vault, MockERC20, StrategyVault, TwoAssetBasket, Vault } from "../typechain";
+// Implementation of erc20, as contract uses two erc20 implementation oz, solmate,
+import { MockERC20__factory } from "../typechain";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
 import { getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
 import { MAX_UINT } from "./constants";
 
-import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
+import { AlpineProduct, BasicReceiptInfo, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
 
-async function _getVaultAndAsset(product: AlpineProduct) {
+async function _getVaultAndAsset(product: AlpineProduct): Promise<{
+  vault: ERC4626Upgradeable;
+  asset: MockERC20;
+}> {
   const { alpSave, alpLarge, polygonDegen } = getPolygonContracts();
   const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen } = getEthContracts();
 
@@ -24,8 +27,7 @@ async function _getVaultAndAsset(product: AlpineProduct) {
   };
 
   const vault = productToVault[product];
-  const asset = ERC20__factory.connect(await vault.asset(), vault.provider);
-
+  const asset = MockERC20__factory.connect(await vault.asset(), vault.provider);
   return { vault, asset };
 }
 export async function buyProduct(product: AlpineProduct, amount: number, slippageBps = 500) {
@@ -38,57 +40,45 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
   return sellVault(vault, amount, asset);
 }
 
-export async function buyVault(vault: ERC4626Upgradeable, rawAmount: number, asset: ERC20) {
+export async function buyVault(
+  vault: ERC4626Upgradeable,
+  rawAmount: number,
+  asset: MockERC20,
+): Promise<DryRunReceipt & (SmallTxReceipt | GasInfo)> {
   const decimals = await asset.decimals();
   const amount = _addDecimals(rawAmount.toString(), decimals);
 
-  const basicInfo = {
+  const basicInfo: BasicReceiptInfo = {
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: amount.toString(),
     tokenAmount: _removeDecimals(await vault.convertToShares(amount), await vault.decimals()),
   };
 
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(vault, "deposit", [amount, userAddress], true)) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  } else {
-    const receipt = (await blockchainCall(vault, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
-  }
+  const receipt = SIMULATE
+    ? ((await blockchainCall(vault, "deposit", [amount, userAddress], true)) as GasInfo)
+    : ((await blockchainCall(vault, "deposit", [amount, userAddress], false)) as SmallTxReceipt);
+  return { ...basicInfo, ...receipt };
 }
 
-export async function sellVault(vault: ERC4626Upgradeable, rawAmount: number, asset: ERC20) {
+export async function sellVault(vault: ERC4626Upgradeable, rawAmount: number, asset: MockERC20) {
   const assetsToWithdraw = _addDecimals(rawAmount.toString(), await asset.decimals());
-  const basicInfo = {
+  const basicInfo: BasicReceiptInfo = {
     alpFee: "0",
     alpFeePercent: "0",
     dollarAmount: rawAmount.toString(),
     tokenAmount: _removeDecimals(await vault.convertToShares(assetsToWithdraw), await vault.decimals()),
   };
-  if (SIMULATE) {
-    const dryRunInfo = (await blockchainCall(
-      vault,
-      "withdraw",
-      [assetsToWithdraw, userAddress, userAddress],
-      true,
-    )) as GasInfo;
-    return {
-      ...basicInfo,
-      ...dryRunInfo,
-    };
-  } else {
-    const receipt = (await blockchainCall(
-      vault,
-      "withdraw",
-      [assetsToWithdraw, userAddress, userAddress],
-      false,
-    )) as SmallTxReceipt;
-    return { ...basicInfo, ...receipt };
-  }
+
+  const receipt = SIMULATE
+    ? ((await blockchainCall(vault, "withdraw", [assetsToWithdraw, userAddress, userAddress], true)) as GasInfo)
+    : ((await blockchainCall(
+        vault,
+        "withdraw",
+        [assetsToWithdraw, userAddress, userAddress],
+        false,
+      )) as SmallTxReceipt);
+  return { ...basicInfo, ...receipt };
 }
 
 async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt> {

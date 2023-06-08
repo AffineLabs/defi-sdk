@@ -4,11 +4,13 @@ export interface GasInfo {
     txnCost: string;
     gasPrice: string;
 }
-export interface DryRunReceipt extends GasInfo {
+export interface BasicReceiptInfo {
     alpFee: string;
     alpFeePercent: string;
     dollarAmount: string;
     tokenAmount: string;
+}
+export interface DryRunReceipt extends BasicReceiptInfo, GasInfo {
 }
 export interface FullTxReceipt extends DryRunReceipt, SmallTxReceipt {
 }

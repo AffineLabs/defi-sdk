@@ -11,7 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sharesFromTokens = exports.tokensFromShares = exports.getTokenInfo = exports.sellEthWethShares = exports.sellBtCEthShares = exports.buyBtCEthShares = exports.sellVault = exports.buyVault = exports.sellProduct = exports.buyProduct = void 0;
 const ethers_1 = require("ethers");
-const tokens_1 = require("../typechain/factories/solmate/src/tokens");
+// Implementation of erc20, as contract uses two erc20 implementation oz, solmate,
+const typechain_1 = require("../typechain");
 const AlpineDeFiSDK_1 = require("./AlpineDeFiSDK");
 const cache_1 = require("./cache");
 const constants_1 = require("./constants");
@@ -29,7 +30,7 @@ function _getVaultAndAsset(product) {
             degen,
         };
         const vault = productToVault[product];
-        const asset = tokens_1.ERC20__factory.connect(yield vault.asset(), vault.provider);
+        const asset = typechain_1.MockERC20__factory.connect(yield vault.asset(), vault.provider);
         return { vault, asset };
     });
 }
@@ -57,14 +58,10 @@ function buyVault(vault, rawAmount, asset) {
             dollarAmount: amount.toString(),
             tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(amount), yield vault.decimals()),
         };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [amount, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [amount, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
+        const receipt = cache_1.SIMULATE
+            ? (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [amount, cache_1.userAddress], true))
+            : (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [amount, cache_1.userAddress], false));
+        return Object.assign(Object.assign({}, basicInfo), receipt);
     });
 }
 exports.buyVault = buyVault;
@@ -77,14 +74,10 @@ function sellVault(vault, rawAmount, asset) {
             dollarAmount: rawAmount.toString(),
             tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(assetsToWithdraw), yield vault.decimals()),
         };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
+        const receipt = cache_1.SIMULATE
+            ? (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true))
+            : (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
+        return Object.assign(Object.assign({}, basicInfo), receipt);
     });
 }
 exports.sellVault = sellVault;
