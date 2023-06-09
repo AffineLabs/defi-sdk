@@ -20,7 +20,7 @@ export interface SmallTxReceipt extends GasInfo {
 }
 export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen", "polygonDegen"];
 export type AlpineProduct = typeof alpineProducts[number];
-export declare const polygonProducts: readonly ["alpSave", "alpLarge"];
+export declare const polygonProducts: readonly ["alpSave", "alpLarge", "polygonDegen"];
 export type PolygonProduct = typeof polygonProducts[number];
 export type productAmounts = {
     [key in PolygonProduct]?: string;

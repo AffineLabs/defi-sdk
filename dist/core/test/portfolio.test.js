@@ -39,9 +39,13 @@ describe("Portfolio transactions", () => __awaiter(void 0, void 0, void 0, funct
         yield (0, AlpineDeFiSDK_1.blockchainCall)(alpSave, "approve", [router.address, MAX_INT]);
     }));
     xit("Portfolio Purchase", () => __awaiter(void 0, void 0, void 0, function* () {
-        const coinBalance = { alpLarge: ethers_1.ethers.BigNumber.from(0), alpSave: ethers_1.ethers.BigNumber.from(0) };
+        const coinBalance = {
+            alpLarge: ethers_1.ethers.BigNumber.from(0),
+            alpSave: ethers_1.ethers.BigNumber.from(0),
+            polygonDegen: ethers_1.ethers.BigNumber.from(0),
+        };
         const user = cache_1.userAddress;
-        const allocation = { alpLarge: 50, alpSave: 50 };
+        const allocation = { alpLarge: 50, alpSave: 50, polygonDegen: 50 };
         const balanceBefore = Number((yield (0, product_1.getTokenInfo)("usdc")).amount);
         yield (0, portfolio_1.portfolioPurchase)(allocation, 1000);
         const balanceAfter = Number((yield (0, product_1.getTokenInfo)("usdc")).amount);
@@ -60,8 +64,12 @@ describe("Portfolio transactions", () => __awaiter(void 0, void 0, void 0, funct
     }));
     // TODO: Re-enable and fix the following tests. Skipped to unblock mainnet alpha.
     xit("Portfolio Sell", () => __awaiter(void 0, void 0, void 0, function* () {
-        const coinBalance = { alpLarge: ethers_1.ethers.BigNumber.from(0), alpSave: ethers_1.ethers.BigNumber.from(0) };
-        const allocation = { alpLarge: 50, alpSave: 50 };
+        const coinBalance = {
+            alpLarge: ethers_1.ethers.BigNumber.from(0),
+            alpSave: ethers_1.ethers.BigNumber.from(0),
+            polygonDegen: ethers_1.ethers.BigNumber.from(0),
+        };
+        const allocation = { alpLarge: 50, alpSave: 50, polygonDegen: 50 };
         yield (0, portfolio_1.portfolioSell)(allocation, 100);
         const user = cache_1.userAddress;
         const total = ethers_1.ethers.BigNumber.from(0);
@@ -81,10 +89,14 @@ describe("Portfolio transactions", () => __awaiter(void 0, void 0, void 0, funct
         (0, chai_1.expect)(alpSaveBalance > 445);
     }));
     xit("Portfolio Rebalance", () => __awaiter(void 0, void 0, void 0, function* () {
-        const allocation = { alpLarge: 50, alpSave: 50 };
+        const allocation = { alpLarge: 50, alpSave: 50, polygonDegen: 50 };
         yield (0, portfolio_1.portfolioRebalance)(allocation);
         const user = cache_1.userAddress;
-        const coinBalance = { alpLarge: ethers_1.ethers.BigNumber.from(0), alpSave: ethers_1.ethers.BigNumber.from(0) };
+        const coinBalance = {
+            alpLarge: ethers_1.ethers.BigNumber.from(0),
+            alpSave: ethers_1.ethers.BigNumber.from(0),
+            polygonDegen: ethers_1.ethers.BigNumber.from(0),
+        };
         const total = ethers_1.ethers.BigNumber.from(0);
         for (const product of types_1.polygonProducts) {
             const contract = contracts[product];

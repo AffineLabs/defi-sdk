@@ -35,9 +35,13 @@ describe("Portfolio transactions", async () => {
   });
 
   xit("Portfolio Purchase", async () => {
-    const coinBalance: productBalances = { alpLarge: ethers.BigNumber.from(0), alpSave: ethers.BigNumber.from(0) };
+    const coinBalance: productBalances = {
+      alpLarge: ethers.BigNumber.from(0),
+      alpSave: ethers.BigNumber.from(0),
+      polygonDegen: ethers.BigNumber.from(0),
+    };
     const user = userAddress;
-    const allocation: productAllocation = { alpLarge: 50, alpSave: 50 };
+    const allocation: productAllocation = { alpLarge: 50, alpSave: 50, polygonDegen: 50 };
     const balanceBefore = Number((await getTokenInfo("usdc")).amount);
     await portfolioPurchase(allocation, 1000);
     const balanceAfter = Number((await getTokenInfo("usdc")).amount);
@@ -57,8 +61,12 @@ describe("Portfolio transactions", async () => {
 
   // TODO: Re-enable and fix the following tests. Skipped to unblock mainnet alpha.
   xit("Portfolio Sell", async () => {
-    const coinBalance: productBalances = { alpLarge: ethers.BigNumber.from(0), alpSave: ethers.BigNumber.from(0) };
-    const allocation: productAllocation = { alpLarge: 50, alpSave: 50 };
+    const coinBalance: productBalances = {
+      alpLarge: ethers.BigNumber.from(0),
+      alpSave: ethers.BigNumber.from(0),
+      polygonDegen: ethers.BigNumber.from(0),
+    };
+    const allocation: productAllocation = { alpLarge: 50, alpSave: 50, polygonDegen: 50 };
     await portfolioSell(allocation, 100);
     const user = userAddress;
     const total: ethers.BigNumber = ethers.BigNumber.from(0);
@@ -79,10 +87,14 @@ describe("Portfolio transactions", async () => {
   });
 
   xit("Portfolio Rebalance", async () => {
-    const allocation: productAllocation = { alpLarge: 50, alpSave: 50 };
+    const allocation: productAllocation = { alpLarge: 50, alpSave: 50, polygonDegen: 50 };
     await portfolioRebalance(allocation);
     const user = userAddress;
-    const coinBalance: productBalances = { alpLarge: ethers.BigNumber.from(0), alpSave: ethers.BigNumber.from(0) };
+    const coinBalance: productBalances = {
+      alpLarge: ethers.BigNumber.from(0),
+      alpSave: ethers.BigNumber.from(0),
+      polygonDegen: ethers.BigNumber.from(0),
+    };
     const total = ethers.BigNumber.from(0);
     for (const product of polygonProducts) {
       const contract = contracts[product];

@@ -41,7 +41,7 @@ export const alpineProducts = [
 ] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
-export const polygonProducts = ["alpSave", "alpLarge"] as const;
+export const polygonProducts = ["alpSave", "alpLarge", "polygonDegen"] as const;
 export type PolygonProduct = typeof polygonProducts[number];
 
 export type productAmounts = {
