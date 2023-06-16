@@ -23,6 +23,8 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
     return buyDegenShares(amount);
   } else if (product == "polygonDegen") {
     return buypolygonDegen(amount);
+  } else if (product == "ethLeverage") {
+    return buyEthLeverage(amount);
   }
 }
 
@@ -41,6 +43,8 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
     return sellDegenShares(amount);
   } else if (product == "polygonDegen") {
     return sellpolygonDegen(amount);
+  } else if (product == "ethLeverage") {
+    return sellEthLeverage(amount);
   }
 }
 
@@ -90,6 +94,11 @@ async function buyDegenShares(amount: number) {
   }
 }
 
+async function buyEthLeverage(amount: number) {
+  const { ethLeverage } = getEthContracts();
+  return buySharesByEthThroughWeth(amount, ethLeverage);
+}
+
 async function buypolygonDegen(amount: number) {
   const { polygonDegen } = getPolygonContracts();
   const convertedAmount = _addDecimals(amount.toString(), 6);
@@ -118,8 +127,13 @@ async function buypolygonDegen(amount: number) {
 }
 
 async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | FullTxReceipt> {
-  const { weth, ethWethEarn, router } = getEthContracts();
-  const shareDecimals = await ethWethEarn.decimals();
+  const { ethWethEarn } = getEthContracts();
+  return buySharesByEthThroughWeth(amountWeth, ethWethEarn);
+}
+
+async function buySharesByEthThroughWeth(amountWeth: number, vault: Vault): Promise<DryRunReceipt | FullTxReceipt> {
+  const { weth, router } = getEthContracts();
+  const shareDecimals = await vault.decimals();
   const ethDecimals = 18;
   const amount = _addDecimals(amountWeth.toString(), ethDecimals);
 
@@ -137,15 +151,15 @@ async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | Ful
     // TODO: Dollar amount is not right given the amount is weth amount. But populated
     // for the sake of backward compatibility.
     dollarAmount: amountWeth.toString(),
-    tokenAmount: _removeDecimals(await ethWethEarn.convertToShares(amount), shareDecimals),
+    tokenAmount: _removeDecimals(await vault.convertToShares(amount), shareDecimals),
   };
 
   const data: string[] = [];
   data.push(router.interface.encodeFunctionData("depositNative"));
-  data.push(router.interface.encodeFunctionData("approve", [weth.address, ethWethEarn.address, MAX_UINT]));
-  data.push(router.interface.encodeFunctionData("deposit", [ethWethEarn.address, userAddress, amount, 0]));
+  data.push(router.interface.encodeFunctionData("approve", [weth.address, vault.address, MAX_UINT]));
+  data.push(router.interface.encodeFunctionData("deposit", [vault.address, userAddress, amount, 0]));
 
-  const beforeBal: ethers.BigNumber = await ethWethEarn.balanceOf(userAddress);
+  const beforeBal: ethers.BigNumber = await vault.balanceOf(userAddress);
   console.log({ amount });
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(router, "multicall", [data], true, amount)) as GasInfo;
@@ -155,7 +169,7 @@ async function buyEthWethShares(amountWeth: number): Promise<DryRunReceipt | Ful
     };
   } else {
     const receipt = (await blockchainCall(router, "multicall", [data], false, amount)) as SmallTxReceipt;
-    const afterBal: ethers.BigNumber = await ethWethEarn.balanceOf(userAddress);
+    const afterBal: ethers.BigNumber = await vault.balanceOf(userAddress);
     const amountChanged = afterBal.sub(beforeBal);
 
     const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, shareDecimals) };
@@ -483,6 +497,39 @@ export async function sellDegenShares(amount: number): Promise<DryRunReceipt | F
   return { ...basicInfo, ...receipt };
 }
 
+export async function sellEthLeverage(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { ethLeverage } = getEthContracts();
+
+  const assetsToWithdraw = _addDecimals(amount.toString(), 18);
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amount.toString(),
+    tokenAmount: _removeDecimals(await ethLeverage.convertToShares(assetsToWithdraw), await ethLeverage.decimals()),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(
+      ethLeverage,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(
+      ethLeverage,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      false,
+    )) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
+}
+
 export async function sellpolygonDegen(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { polygonDegen } = getPolygonContracts();
 
@@ -524,7 +571,7 @@ async function _convertToShares(amountUSDC: ethers.BigNumber) {
   return shares.gt(userShares) ? userShares : shares;
 }
 
-export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<TokenInfo> {
+export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<TokenInfo> {
   const user = userAddress;
 
   if (product === "usdc") {
@@ -537,10 +584,26 @@ export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<Tok
       price: "1",
       equity: numUsdc,
     };
+  } else if (product === "weth") {
+    const { weth } = getEthContracts();
+    const amount = await weth.balanceOf(user);
+    console.log("WETH amount w/ decimals", amount.toString(), { weth });
+    const numWeth = _removeDecimals(amount, 18);
+    return {
+      amount: numWeth,
+      price: "1",
+      equity: numWeth,
+    };
   }
 
   let contract: L2Vault | TwoAssetBasket | Vault | StrategyVault;
-  if (product === "ethEarn" || product === "ethWethEarn" || product === "ssvEthUSDEarn" || product === "degen") {
+  if (
+    product === "ethEarn" ||
+    product === "ethWethEarn" ||
+    product === "ssvEthUSDEarn" ||
+    product === "degen" ||
+    product === "ethLeverage"
+  ) {
     contract = getEthContracts()[product];
   } else {
     contract = getPolygonContracts()[product];

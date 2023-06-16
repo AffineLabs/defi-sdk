@@ -335,6 +335,31 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "depositIntoConvex",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "assets",
+                type: "uint256",
+            },
+            {
+                internalType: "uint256",
+                name: "minLpTokens",
+                type: "uint256",
+            },
+        ],
+        name: "depositIntoCurve",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "uint256",
@@ -587,6 +612,24 @@ const _abi = [
             },
         ],
         name: "withdrawFromConvex",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "maxLpTokensToBurn",
+                type: "uint256",
+            },
+            {
+                internalType: "uint256",
+                name: "minAssetsReceived",
+                type: "uint256",
+            },
+        ],
+        name: "withdrawFromCurve",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",

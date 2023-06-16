@@ -76,8 +76,8 @@ const buy = async (alpAccount: Account, product: AlpineProduct) => {
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
-  const chainId = 80_001 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "polygonDegen";
+  const chainId = 1 as AllowedChainId;
+  const _productToBuy: AlpineProduct = "ethLeverage";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -88,6 +88,7 @@ const main = async () => {
   const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
   console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
   console.log("eth bal on ETH: ", await readAcc.getGasBalance());
+  console.log("basket bal on ETH: ", await readAcc.getTokenInfo(_productToBuy));
 
   await alpAccount.setSimulationMode(false);
   await buy(alpAccount, _productToBuy);

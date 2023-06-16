@@ -75,13 +75,14 @@ const buy = (alpAccount, product) => __awaiter(void 0, void 0, void 0, function*
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const alpAccount = new Account_1.Account();
     const walletType = "metamask";
-    const chainId = 80001;
-    const _productToBuy = "polygonDegen";
+    const chainId = 1;
+    const _productToBuy = "ethLeverage";
     console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS: constants_1.ALLOWED_CHAIN_IDS }, constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
     yield connectAndWrite({ walletType, account: alpAccount, chainId });
     const readAcc = new Account_1.ReadAccount(alpAccount.userAddress || "", chainId);
     console.log("usdc bal on ETH: ", yield readAcc.getTokenInfo("usdc"));
     console.log("eth bal on ETH: ", yield readAcc.getGasBalance());
+    console.log("basket bal on ETH: ", yield readAcc.getTokenInfo(_productToBuy));
     yield alpAccount.setSimulationMode(false);
     yield buy(alpAccount, _productToBuy);
     console.log("bought: ", _productToBuy, "of amount: ", 1);

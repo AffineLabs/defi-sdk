@@ -432,7 +432,7 @@ class ReadAccount {
     return AlpineDeFiSDK.getGasBalance();
   }
 
-  async getTokenInfo(product: AlpineProduct | "usdc") {
+  async getTokenInfo(product: AlpineProduct | "usdc" | "weth") {
     return productActions.getTokenInfo(product);
   }
 }
