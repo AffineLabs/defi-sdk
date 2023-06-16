@@ -61,7 +61,7 @@ function getAllContracts(provider, version) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLarge, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, } = allData;
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLarge, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
@@ -73,6 +73,7 @@ function getAllContracts(provider, version) {
                 router: typechain_1.Router__factory.connect(router.address, provider),
                 ewQueue: typechain_1.EmergencyWithdrawalQueue__factory.connect(yield alpSave.emergencyWithdrawalQueue(), provider),
                 polygonDegen: typechain_1.StrategyVault__factory.connect(polygonDegenData.address, provider),
+                polygonLeverage: typechain_1.Vault__factory.connect(polygonLeverageData.address, provider),
             };
         }
         else if (chainId === 1 || chainId === 5) {
