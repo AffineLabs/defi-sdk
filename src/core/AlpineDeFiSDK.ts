@@ -136,7 +136,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
 
   if (product === "ethWethEarn") return true;
 
-  const asset = product === "ethLeverage" ? weth : usdc;
+  const asset = ["ethLeverage", "polygonLeverage"].includes(product) ? weth : usdc;
   const productToSpender = {
     alpSave,
     alpLarge: router,
@@ -173,7 +173,7 @@ export async function approve(product: AlpineProduct, amountAsset?: string): Pro
   const { usdc, router, weth } = contracts;
 
   let asset = usdc;
-  if (["ethWethEarn", "ethLeverage"].includes(product)) {
+  if (["ethWethEarn", "ethLeverage", "polygonLeverage"].includes(product)) {
     asset = weth;
   }
   const decimals = await asset.decimals();

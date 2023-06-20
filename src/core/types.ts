@@ -63,6 +63,7 @@ export interface PolygonContracts extends BothContracts {
   alpSave: L2Vault;
   alpLarge: TwoAssetBasket;
   forwarder: Forwarder;
+  weth: ethers.Contract;
   router: Router;
   ewQueue: EmergencyWithdrawalQueue;
   polygonDegen: StrategyVault;

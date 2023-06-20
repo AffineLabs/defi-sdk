@@ -3,7 +3,7 @@ import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet } from "../types/account";
 import { Account, ReadAccount } from "./Account";
 
-const getTokenInfo = async (token: AlpineProduct | "usdc", readAcc: ReadAccount) => {
+const getTokenInfo = async (token: AlpineProduct | "usdc" | "weth", readAcc: ReadAccount) => {
   try {
     const _tokenInfo = await readAcc.getTokenInfo(token);
     console.log(token, " token: ", _tokenInfo);
@@ -20,6 +20,7 @@ const testRead = async (user: string, chainId: AllowedChainId) => {
     const balance = await readAcc.getGasBalance();
     console.log({ gas, balance });
     await getTokenInfo("usdc", readAcc);
+    await getTokenInfo("weth", readAcc);
 
     if (chainId === 80001 || chainId === 137) {
       await getTokenInfo("alpSave", readAcc);
@@ -59,7 +60,7 @@ const connectAndWrite = async ({
   await testRead(account.userAddress || "", chainId);
 };
 
-const buy = async (alpAccount: Account, product: AlpineProduct) => {
+const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) => {
   // check if user is approved max amount
   const isApproved = await alpAccount.isApproved(product, 1);
   console.log("isApproved: ", isApproved);
@@ -70,14 +71,14 @@ const buy = async (alpAccount: Account, product: AlpineProduct) => {
     console.log("approve res: ", res);
   }
   console.log("approved: ", product);
-  await alpAccount.buyProduct(product, 1);
+  await alpAccount.buyProduct(product, amount);
 };
 
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
-  const chainId = 1 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "ethLeverage";
+  const chainId = 137 as AllowedChainId;
+  const _productToBuy: AlpineProduct = "polygonLeverage";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -86,18 +87,21 @@ const main = async () => {
   );
   await connectAndWrite({ walletType, account: alpAccount, chainId });
   const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
-  console.log("usdc bal on ETH: ", await readAcc.getTokenInfo("usdc"));
-  console.log("eth bal on ETH: ", await readAcc.getGasBalance());
-  console.log("basket bal on ETH: ", await readAcc.getTokenInfo(_productToBuy));
+  await readAcc.init();
+  console.log("usdc bal: ", await readAcc.getTokenInfo("usdc"));
+  console.log("native bal: ", await readAcc.getGasBalance());
+  console.log("basket bal: ", await readAcc.getTokenInfo(_productToBuy));
 
   await alpAccount.setSimulationMode(false);
-  await buy(alpAccount, _productToBuy);
+  await buy(alpAccount, _productToBuy, 2);
 
   console.log("bought: ", _productToBuy, "of amount: ", 1);
+  console.log("basket bal after purchase ", await readAcc.getTokenInfo(_productToBuy));
 
   await alpAccount.sellProduct(_productToBuy, 1);
 
   console.log("sold: ", _productToBuy, "of amount: ", 1);
+  console.log("basket bal after sell ", await readAcc.getTokenInfo(_productToBuy));
 
   // const res = await alpAccount.isStrategyLiquid();
   // console.log({ res });

@@ -129,7 +129,7 @@ function isApproved(product, amount) {
         const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, weth, polygonLeverage } = (0, cache_1.getContracts)();
         if (product === "ethWethEarn")
             return true;
-        const asset = product === "ethLeverage" ? weth : usdc;
+        const asset = ["ethLeverage", "polygonLeverage"].includes(product) ? weth : usdc;
         const productToSpender = {
             alpSave,
             alpLarge: router,
@@ -166,7 +166,7 @@ function approve(product, amountAsset) {
         const contracts = (0, cache_1.getContracts)();
         const { usdc, router, weth } = contracts;
         let asset = usdc;
-        if (["ethWethEarn", "ethLeverage"].includes(product)) {
+        if (["ethWethEarn", "ethLeverage", "polygonLeverage"].includes(product)) {
             asset = weth;
         }
         const decimals = yield asset.decimals();

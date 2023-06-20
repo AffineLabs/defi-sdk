@@ -544,7 +544,7 @@ function getTokenInfo(product) {
             };
         }
         else if (product === "weth") {
-            const { weth } = (0, cache_1.getEthContracts)();
+            const { weth } = (0, cache_1.getContracts)();
             const amount = yield weth.balanceOf(user);
             console.log("WETH amount w/ decimals", amount.toString(), { weth });
             const numWeth = (0, AlpineDeFiSDK_1._removeDecimals)(amount, 18);

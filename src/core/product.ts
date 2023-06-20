@@ -645,7 +645,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
       equity: numUsdc,
     };
   } else if (product === "weth") {
-    const { weth } = getEthContracts();
+    const { weth } = getContracts();
     const amount = await weth.balanceOf(user);
     console.log("WETH amount w/ decimals", amount.toString(), { weth });
     const numWeth = _removeDecimals(amount, 18);
