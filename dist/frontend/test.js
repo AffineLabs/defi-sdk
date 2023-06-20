@@ -28,6 +28,7 @@ const testRead = (user, chainId) => __awaiter(void 0, void 0, void 0, function* 
         const balance = yield readAcc.getGasBalance();
         console.log({ gas, balance });
         yield getTokenInfo("usdc", readAcc);
+        yield getTokenInfo("weth", readAcc);
         if (chainId === 80001 || chainId === 137) {
             yield getTokenInfo("alpSave", readAcc);
             yield getTokenInfo("alpLarge", readAcc);
@@ -60,7 +61,7 @@ const connectAndWrite = ({ walletType = "metamask", account, chainId, }) => __aw
     console.timeEnd("entire-connect");
     yield testRead(account.userAddress || "", chainId);
 });
-const buy = (alpAccount, product) => __awaiter(void 0, void 0, void 0, function* () {
+const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, function* () {
     // check if user is approved max amount
     const isApproved = yield alpAccount.isApproved(product, 1);
     console.log("isApproved: ", isApproved);
@@ -70,24 +71,27 @@ const buy = (alpAccount, product) => __awaiter(void 0, void 0, void 0, function*
         console.log("approve res: ", res);
     }
     console.log("approved: ", product);
-    yield alpAccount.buyProduct(product, 1);
+    yield alpAccount.buyProduct(product, amount);
 });
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const alpAccount = new Account_1.Account();
     const walletType = "metamask";
-    const chainId = 1;
-    const _productToBuy = "ethLeverage";
+    const chainId = 137;
+    const _productToBuy = "polygonLeverage";
     console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS: constants_1.ALLOWED_CHAIN_IDS }, constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
     yield connectAndWrite({ walletType, account: alpAccount, chainId });
     const readAcc = new Account_1.ReadAccount(alpAccount.userAddress || "", chainId);
-    console.log("usdc bal on ETH: ", yield readAcc.getTokenInfo("usdc"));
-    console.log("eth bal on ETH: ", yield readAcc.getGasBalance());
-    console.log("basket bal on ETH: ", yield readAcc.getTokenInfo(_productToBuy));
+    yield readAcc.init();
+    console.log("usdc bal: ", yield readAcc.getTokenInfo("usdc"));
+    console.log("native bal: ", yield readAcc.getGasBalance());
+    console.log("basket bal: ", yield readAcc.getTokenInfo(_productToBuy));
     yield alpAccount.setSimulationMode(false);
-    yield buy(alpAccount, _productToBuy);
+    yield buy(alpAccount, _productToBuy, 2);
     console.log("bought: ", _productToBuy, "of amount: ", 1);
+    console.log("basket bal after purchase ", yield readAcc.getTokenInfo(_productToBuy));
     yield alpAccount.sellProduct(_productToBuy, 1);
     console.log("sold: ", _productToBuy, "of amount: ", 1);
+    console.log("basket bal after sell ", yield readAcc.getTokenInfo(_productToBuy));
     // const res = await alpAccount.isStrategyLiquid();
     // console.log({ res });
     // const requests = await alpAccount.getWithdrawalRequest();

@@ -61,18 +61,21 @@ function getAllContracts(provider, version) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLarge, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, } = allData;
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
+            const alpLarge = typechain_1.TwoAssetBasket__factory.connect(alpLargeData.address, provider);
             return {
                 alpSave,
-                alpLarge: typechain_1.TwoAssetBasket__factory.connect(alpLarge.address, provider),
+                alpLarge,
                 forwarder: typechain_1.Forwarder__factory.connect(forwarder.address, provider),
                 usdc: new ethers_1.ethers.Contract(yield alpSave.asset(), erc20Abi, provider),
+                weth: new ethers_1.ethers.Contract(yield alpLarge.weth(), erc20Abi, provider),
                 router: typechain_1.Router__factory.connect(router.address, provider),
                 ewQueue: typechain_1.EmergencyWithdrawalQueue__factory.connect(yield alpSave.emergencyWithdrawalQueue(), provider),
                 polygonDegen: typechain_1.StrategyVault__factory.connect(polygonDegenData.address, provider),
+                polygonLeverage: typechain_1.Vault__factory.connect(polygonLeverageData.address, provider),
             };
         }
         else if (chainId === 1 || chainId === 5) {

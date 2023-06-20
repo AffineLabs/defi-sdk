@@ -28,6 +28,7 @@ export declare function sellEthWethShares(amountWeth: number): Promise<DryRunRec
 export declare function sellLockedShares(rawAmount: number): Promise<DryRunReceipt | FullTxReceipt>;
 export declare function sellDegenShares(amount: number): Promise<DryRunReceipt | FullTxReceipt>;
 export declare function sellEthLeverage(amount: number): Promise<DryRunReceipt | FullTxReceipt>;
+export declare function sellPolygonLeverage(amount: number): Promise<DryRunReceipt | FullTxReceipt>;
 export declare function sellpolygonDegen(amount: number): Promise<DryRunReceipt | FullTxReceipt>;
 export declare function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<TokenInfo>;
 export declare function tokensFromShares(product: AlpineProduct, shareAmount: ethers.BigNumber): Promise<ethers.BigNumber>;

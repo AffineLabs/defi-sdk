@@ -25,6 +25,8 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
     return buypolygonDegen(amount);
   } else if (product == "ethLeverage") {
     return buyEthLeverage(amount);
+  } else if (product == "polygonLeverage") {
+    return buyPolygonLeverage(amount);
   }
 }
 
@@ -45,6 +47,8 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
     return sellpolygonDegen(amount);
   } else if (product == "ethLeverage") {
     return sellEthLeverage(amount);
+  } else if (product == "polygonLeverage") {
+    return sellPolygonLeverage(amount);
   }
 }
 
@@ -97,6 +101,29 @@ async function buyDegenShares(amount: number) {
 async function buyEthLeverage(amount: number) {
   const { ethLeverage } = getEthContracts();
   return buySharesByEthThroughWeth(amount, ethLeverage);
+}
+
+async function buyPolygonLeverage(rawAmount: number) {
+  const { polygonLeverage: vault } = getPolygonContracts();
+  const amount = _addDecimals(rawAmount.toString(), 18);
+
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amount.toString(),
+    tokenAmount: _removeDecimals(await vault.convertToShares(amount), await vault.decimals()),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(vault, "deposit", [amount, userAddress], true)) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(vault, "deposit", [amount, userAddress], false)) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
 }
 
 async function buypolygonDegen(amount: number) {
@@ -530,6 +557,39 @@ export async function sellEthLeverage(amount: number): Promise<DryRunReceipt | F
   }
 }
 
+export async function sellPolygonLeverage(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
+  const { polygonLeverage: vault } = getPolygonContracts();
+
+  const assetsToWithdraw = _addDecimals(amount.toString(), 18);
+  const basicInfo = {
+    alpFee: "0",
+    alpFeePercent: "0",
+    dollarAmount: amount.toString(),
+    tokenAmount: _removeDecimals(await vault.convertToShares(assetsToWithdraw), await vault.decimals()),
+  };
+
+  if (SIMULATE) {
+    const dryRunInfo = (await blockchainCall(
+      vault,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      true,
+    )) as GasInfo;
+    return {
+      ...basicInfo,
+      ...dryRunInfo,
+    };
+  } else {
+    const receipt = (await blockchainCall(
+      vault,
+      "withdraw",
+      [assetsToWithdraw, userAddress, userAddress],
+      false,
+    )) as SmallTxReceipt;
+    return { ...basicInfo, ...receipt };
+  }
+}
+
 export async function sellpolygonDegen(amount: number): Promise<DryRunReceipt | FullTxReceipt> {
   const { polygonDegen } = getPolygonContracts();
 
@@ -585,7 +645,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
       equity: numUsdc,
     };
   } else if (product === "weth") {
-    const { weth } = getEthContracts();
+    const { weth } = getContracts();
     const amount = await weth.balanceOf(user);
     console.log("WETH amount w/ decimals", amount.toString(), { weth });
     const numWeth = _removeDecimals(amount, 18);

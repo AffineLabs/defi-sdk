@@ -80,7 +80,7 @@ export async function getAllContracts(
   ];
   const {
     PolygonAlpSave: alpSaveData,
-    PolygonBtcEthVault: alpLarge,
+    PolygonBtcEthVault: alpLargeData,
     Forwarder: forwarder,
     ERC4626Router: router,
     EthUsdcEarn: ethEarnData,
@@ -90,21 +90,25 @@ export async function getAllContracts(
     Degen: degenData,
     PolygonDegen: polygonDegenData,
     EthStEthLev: ethLeverageData,
+    PolygonStEthLev: polygonLeverageData,
   } = allData;
 
   const chainId = getChainId();
 
   if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
+    const alpLarge = TwoAssetBasket__factory.connect(alpLargeData.address, provider);
 
     return {
       alpSave,
-      alpLarge: TwoAssetBasket__factory.connect(alpLarge.address, provider),
+      alpLarge,
       forwarder: Forwarder__factory.connect(forwarder.address, provider),
       usdc: new ethers.Contract(await alpSave.asset(), erc20Abi, provider),
+      weth: new ethers.Contract(await alpLarge.weth(), erc20Abi, provider),
       router: Router__factory.connect(router.address, provider),
       ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSave.emergencyWithdrawalQueue(), provider),
       polygonDegen: StrategyVault__factory.connect(polygonDegenData.address, provider),
+      polygonLeverage: Vault__factory.connect(polygonLeverageData.address, provider),
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
