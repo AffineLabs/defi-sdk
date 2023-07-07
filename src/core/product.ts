@@ -5,7 +5,7 @@ import { ERC4626Upgradeable, L2Vault, MockERC20, Router, StrategyVault, TwoAsset
 // replacing it with mockERC20 which is an extension of ERC20
 import { MockERC20__factory } from "../typechain";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
-import { getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIGNER, SIMULATE, userAddress } from "./cache";
+import { getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIMULATE, userAddress } from "./cache";
 import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, BasicReceiptInfo, DryRunReceipt, FullTxReceipt, TokenInfo, polygonProducts } from "./types";
@@ -55,46 +55,46 @@ export async function sellProduct(product: AlpineProduct, amount: number) {
 
 async function getBasicTxInfo(
   vault: ERC4626Upgradeable,
-  rawAmount: number,
-  decimals: number,
+  rawAssets: number, // assets without decimals, e.g. "100" for 100 USDC
+  assetDecimals: number,
 ): Promise<{
-  amount: BigNumber;
+  assets: BigNumber;
   basicInfo: BasicReceiptInfo;
 }> {
-  const amount = _addDecimals(rawAmount.toString(), decimals);
+  const assets = _addDecimals(rawAssets.toString(), assetDecimals);
 
   const basicInfo: BasicReceiptInfo = {
     alpFee: "0",
     alpFeePercent: "0",
-    dollarAmount: amount.toString(),
-    tokenAmount: _removeDecimals(await vault.convertToShares(amount), await vault.decimals()),
+    dollarAmount: rawAssets.toString(),
+    tokenAmount: _removeDecimals(await vault.convertToShares(assets), await vault.decimals()),
   };
 
   return {
-    amount,
+    assets,
     basicInfo,
   };
 }
 
 export async function buyVault(
   vault: ERC4626Upgradeable,
-  rawAmount: number,
+  rawAssets: number,
   asset: MockERC20,
 ): Promise<DryRunReceipt & (SmallTxReceipt | GasInfo)> {
-  const { amount, basicInfo } = await getBasicTxInfo(vault, rawAmount, await asset.decimals());
+  const { assets, basicInfo } = await getBasicTxInfo(vault, rawAssets, await asset.decimals());
 
   const receipt = SIMULATE
-    ? ((await blockchainCall(vault, "deposit", [amount, userAddress], true)) as GasInfo)
-    : ((await blockchainCall(vault, "deposit", [amount, userAddress], false)) as SmallTxReceipt);
+    ? ((await blockchainCall(vault, "deposit", [assets, userAddress], true)) as GasInfo)
+    : ((await blockchainCall(vault, "deposit", [assets, userAddress], false)) as SmallTxReceipt);
   return { ...basicInfo, ...receipt };
 }
 
-export async function sellVault(vault: ERC4626Upgradeable, rawAmount: number, asset: MockERC20) {
-  const { amount, basicInfo } = await getBasicTxInfo(vault, rawAmount, await asset.decimals());
+export async function sellVault(vault: ERC4626Upgradeable, rawAssets: number, asset: MockERC20) {
+  const { assets, basicInfo } = await getBasicTxInfo(vault, rawAssets, await asset.decimals());
 
   const receipt = SIMULATE
-    ? ((await blockchainCall(vault, "withdraw", [amount, userAddress, userAddress], true)) as GasInfo)
-    : ((await blockchainCall(vault, "withdraw", [amount, userAddress, userAddress], false)) as SmallTxReceipt);
+    ? ((await blockchainCall(vault, "withdraw", [assets, userAddress, userAddress], true)) as GasInfo)
+    : ((await blockchainCall(vault, "withdraw", [assets, userAddress, userAddress], false)) as SmallTxReceipt);
   return { ...basicInfo, ...receipt };
 }
 
@@ -107,7 +107,7 @@ async function buyEthWethShares(
   const shareDecimals = await ethWethEarn.decimals();
   const ethDecimals = 18;
 
-  const { amount, basicInfo } = await getBasicTxInfo(ethWethEarn, amountWeth, ethDecimals);
+  const { assets: amount, basicInfo } = await getBasicTxInfo(ethWethEarn, amountWeth, ethDecimals);
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
@@ -123,7 +123,6 @@ async function buyEthWethShares(
   data.push(router.interface.encodeFunctionData("deposit", [ethWethEarn.address, userAddress, amount, 0]));
 
   const beforeBal: ethers.BigNumber = await ethWethEarn.balanceOf(userAddress);
-  console.log({ amount });
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(router, "multicall", [data], true, amount)) as GasInfo;
     return {

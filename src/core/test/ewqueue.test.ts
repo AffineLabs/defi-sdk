@@ -13,9 +13,9 @@ import { setUSDCBalance, setAlpSaveL1LockedValue } from "./utils";
 
 const testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8545");
 const wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
-const oneUSDC = 1000000;
-const halfUSDC = oneUSDC / 2;
-
+const assets = ethers.BigNumber.from(10).pow(6).mul(200);
+const halfAssets = assets.div(2);
+const assetsStr = _removeDecimals(assets, 6);
 describe("Emergency Withdrawal Queue", async () => {
   let contracts: PolygonContracts;
   beforeEach(async () => {
@@ -23,25 +23,30 @@ describe("Emergency Withdrawal Queue", async () => {
     await init(wallet, undefined);
     contracts = getPolygonContracts();
     await PROVIDER.send("anvil_setBalance", [userAddress, ethers.BigNumber.from(10).pow(18).toHexString()]);
-    await mintUSDC(wallet.address, oneUSDC);
-    await approve("alpSave", oneUSDC.toString());
+    await mintUSDC(wallet.address, assets);
+    await approve("alpSave", assets.toString());
   });
 
   it("Test emergency functions", async () => {
     const { alpSave, ewQueue } = contracts;
-    // Deposit
-    await blockchainCall(alpSave, "deposit", [oneUSDC, wallet.address]);
+    // Reset vault to have no assets, and deposit `assets` into it. Makes it easy to simulate have of user deposit being unavailable.
+    await setUSDCBalance(alpSave.address, ethers.BigNumber.from(0));
+    await blockchainCall(alpSave, "deposit", [assets, wallet.address]);
+
     // Simulate transfer to L1
-    await setUSDCBalance(alpSave.address, halfUSDC);
-    await setAlpSaveL1LockedValue(halfUSDC);
+    await setUSDCBalance(alpSave.address, halfAssets);
+    await setAlpSaveL1LockedValue(halfAssets);
+
+    console.log("storage updated");
 
     // Check withdrawable amount
     const withdrawableAmount = await vaultWithdrawableAssetAmount("alpSave");
-    expect(withdrawableAmount).eq(_removeDecimals(ethers.BigNumber.from(halfUSDC), 6));
+    expect(withdrawableAmount).eq(_removeDecimals(ethers.BigNumber.from(halfAssets), 6));
+    console.log("withdrawableAmount", withdrawableAmount.toString());
 
     // Withdraw
     const withdrawRes = (await blockchainCall(alpSave, "withdraw", [
-      oneUSDC,
+      assets,
       wallet.address,
       wallet.address,
     ])) as SmallTxReceipt;
@@ -54,11 +59,13 @@ describe("Emergency Withdrawal Queue", async () => {
     expect(queue.length).eq(1);
     const gotEvent = queue[0];
     expect(gotEvent.pos).eq(0);
-    expect(gotEvent.sharesValueInAsset).eq("1.0");
+    expect(gotEvent.sharesValueInAsset).eq(assetsStr);
+
+    console.log("got queue stats");
 
     // Simulate transfer back to L2
-    await setUSDCBalance(alpSave.address, oneUSDC);
-    await setAlpSaveL1LockedValue(0);
+    await setUSDCBalance(alpSave.address, assets);
+    await setAlpSaveL1LockedValue(ethers.BigNumber.from(0));
 
     // Dequeue
     const tx = (await blockchainCall(ewQueue, "dequeue", [])) as SmallTxReceipt;
@@ -68,6 +75,6 @@ describe("Emergency Withdrawal Queue", async () => {
     expect(transfers.length).eq(1);
     const gotTransfer = transfers[0];
     expect(gotTransfer.txHash).eq(tx.txnHash);
-    expect(gotTransfer.sharesValueInAsset).eq("1.0");
+    expect(gotTransfer.sharesValueInAsset).eq(assetsStr);
   });
 });
