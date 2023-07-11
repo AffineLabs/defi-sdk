@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { GasInfo } from "..";
 /**
@@ -49,4 +49,4 @@ export declare function approve(product: AlpineProduct, amountAsset?: string): P
  * @param amountUSDC amount in usdc
  */
 export declare function transfer(to: string, amountUSDC: string): Promise<GasInfo | SmallTxReceipt>;
-export declare function mintUSDC(to: string, amountUSDC: number): Promise<GasInfo | SmallTxReceipt>;
+export declare function mintUSDC(to: string, amountUSDC: number | BigNumber): Promise<GasInfo | SmallTxReceipt>;

@@ -178,7 +178,6 @@ function approve(product, amountAsset) {
             tokenAmount: amountAsset || _removeDecimals(constants_1.MAX_APPROVAL_AMOUNT, decimals),
         };
         const approveArgs = [product === "alpLarge" ? router.address : contracts[product].address, amount];
-        console.log({ approveArgs, asset });
         if (cache_1.SIMULATE) {
             const dryRunInfo = (yield blockchainCall(asset, "approve", approveArgs, true));
             return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
