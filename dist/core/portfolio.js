@@ -69,7 +69,11 @@ function portfolioRebalance(allocations) {
         // difference between current vs desired allocation * amount to buy or sell for every product
         const contracts = (0, cache_1.getPolygonContracts)();
         const user = cache_1.userAddress;
-        const coinBalance = { alpLarge: ethers_1.ethers.BigNumber.from(0), alpSave: ethers_1.ethers.BigNumber.from(0) };
+        const coinBalance = {
+            alpLarge: ethers_1.ethers.BigNumber.from(0),
+            alpSave: ethers_1.ethers.BigNumber.from(0),
+            polygonDegen: ethers_1.ethers.BigNumber.from(0),
+        };
         let total = ethers_1.ethers.BigNumber.from(0);
         const buyAmounts = {};
         const sellAmounts = {};

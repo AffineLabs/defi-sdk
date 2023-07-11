@@ -9,176 +9,101 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sharesFromTokens = exports.tokensFromShares = exports.getTokenInfo = exports.sellpolygonDegen = exports.sellPolygonLeverage = exports.sellEthLeverage = exports.sellDegenShares = exports.sellLockedShares = exports.sellEthWethShares = exports.sellBtCEthShares = exports.sellEthUsdcShares = exports.sellUsdcShares = exports.buyBtCEthShares = exports.buyUsdcShares = exports.buyLockedShares = exports.sellProduct = exports.buyProduct = void 0;
+exports.sharesFromTokens = exports.tokensFromShares = exports.getTokenInfo = exports.sellBtCEthShares = exports.buyBtCEthShares = exports.sellVault = exports.buyVault = exports.sellProduct = exports.buyProduct = void 0;
 const ethers_1 = require("ethers");
+// Implementation of erc20, as contract uses two erc20 implementation oz, solmate,
+// replacing it with mockERC20 which is an extension of ERC20
+const typechain_1 = require("../typechain");
 const AlpineDeFiSDK_1 = require("./AlpineDeFiSDK");
 const cache_1 = require("./cache");
 const constants_1 = require("./constants");
-// TODO: clean this up!
+const types_1 = require("./types");
+function _getVaultAndAsset(product) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { alpSave, alpLarge, polygonDegen, router: polyRouter, polygonLeverage } = (0, cache_1.getPolygonContracts)();
+        const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, router: ethRouter, ethLeverage } = (0, cache_1.getEthContracts)();
+        const productToVault = {
+            alpSave,
+            alpLarge: alpLarge,
+            polygonDegen,
+            ethEarn,
+            ethWethEarn,
+            ssvEthUSDEarn,
+            degen,
+            ethLeverage,
+            polygonLeverage,
+        };
+        const vault = productToVault[product];
+        const asset = typechain_1.MockERC20__factory.connect(yield vault.asset(), vault.provider);
+        const router = product in types_1.polygonProducts ? polyRouter : ethRouter;
+        return { vault, asset, router };
+    });
+}
 function buyProduct(product, amount, slippageBps = 500) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (product === "alpSave") {
-            return buyUsdcShares(amount);
+        const { vault, asset, router } = yield _getVaultAndAsset(product);
+        if (product == "alpLarge") {
+            return buyBtCEthShares(vault, amount, slippageBps, asset, router);
         }
-        else if (product === "alpLarge") {
-            return buyBtCEthShares(amount, slippageBps);
+        else if (product == "ethWethEarn" || product == "ethLeverage") {
+            return buySharesByEthThroughWeth(amount, vault);
         }
-        else if (product == "ethEarn") {
-            return buyEthUsdcShares(amount);
-        }
-        else if (product == "ethWethEarn") {
-            return buyEthWethShares(amount);
-        }
-        else if (product == "ssvEthUSDEarn") {
-            return buyLockedShares(amount);
-        }
-        else if (product == "degen") {
-            return buyDegenShares(amount);
-        }
-        else if (product == "polygonDegen") {
-            return buypolygonDegen(amount);
-        }
-        else if (product == "ethLeverage") {
-            return buyEthLeverage(amount);
-        }
-        else if (product == "polygonLeverage") {
-            return buyPolygonLeverage(amount);
-        }
+        return buyVault(vault, amount, asset);
     });
 }
 exports.buyProduct = buyProduct;
 function sellProduct(product, amount) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (product === "alpSave") {
-            return sellUsdcShares(amount);
+        const { vault, asset } = yield _getVaultAndAsset(product);
+        if (product == "alpLarge") {
+            return sellBtCEthShares(vault, amount, asset);
         }
-        else if (product === "alpLarge") {
-            return sellBtCEthShares(amount);
-        }
-        else if (product == "ethEarn") {
-            return sellEthUsdcShares(amount);
-        }
-        else if (product == "ethWethEarn") {
-            return sellEthWethShares(amount);
-        }
-        else if (product == "ssvEthUSDEarn") {
-            return sellLockedShares(amount);
-        }
-        else if (product == "degen") {
-            return sellDegenShares(amount);
-        }
-        else if (product == "polygonDegen") {
-            return sellpolygonDegen(amount);
-        }
-        else if (product == "ethLeverage") {
-            return sellEthLeverage(amount);
-        }
-        else if (product == "polygonLeverage") {
-            return sellPolygonLeverage(amount);
-        }
+        return sellVault(vault, amount, asset);
     });
 }
 exports.sellProduct = sellProduct;
-function buyLockedShares(rawAmount) {
+function getBasicTxInfo(vault, rawAssets, // assets without decimals, e.g. "100" for 100 USDC
+assetDecimals) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { ssvEthUSDEarn: vault } = (0, cache_1.getEthContracts)();
-        const amount = (0, AlpineDeFiSDK_1._addDecimals)(rawAmount.toString(), 6);
+        const assets = (0, AlpineDeFiSDK_1._addDecimals)(rawAssets.toString(), assetDecimals);
         const basicInfo = {
             alpFee: "0",
             alpFeePercent: "0",
-            dollarAmount: amount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(amount), 14),
+            dollarAmount: rawAssets.toString(),
+            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(assets), yield vault.decimals()),
         };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [amount, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [amount, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
-    });
-}
-exports.buyLockedShares = buyLockedShares;
-function buyDegenShares(amount) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { degen } = (0, cache_1.getEthContracts)();
-        const convertedAmount = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 6);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: convertedAmount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield degen.convertToShares(convertedAmount), yield degen.decimals()),
+        return {
+            assets,
+            basicInfo,
         };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(degen, "deposit", [convertedAmount, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            console.log({ convertedAmount, amount, degen });
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(degen, "deposit", [convertedAmount, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
     });
 }
-function buyEthLeverage(amount) {
+function buyVault(vault, rawAssets, asset) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { ethLeverage } = (0, cache_1.getEthContracts)();
-        return buySharesByEthThroughWeth(amount, ethLeverage);
+        const { assets, basicInfo } = yield getBasicTxInfo(vault, rawAssets, yield asset.decimals());
+        const receipt = cache_1.SIMULATE
+            ? (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [assets, cache_1.userAddress], true))
+            : (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [assets, cache_1.userAddress], false));
+        return Object.assign(Object.assign({}, basicInfo), receipt);
     });
 }
-function buyPolygonLeverage(rawAmount) {
+exports.buyVault = buyVault;
+function sellVault(vault, rawAssets, asset) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { polygonLeverage: vault } = (0, cache_1.getPolygonContracts)();
-        const amount = (0, AlpineDeFiSDK_1._addDecimals)(rawAmount.toString(), 18);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: amount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(amount), yield vault.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [amount, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [amount, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
+        const { assets, basicInfo } = yield getBasicTxInfo(vault, rawAssets, yield asset.decimals());
+        const receipt = cache_1.SIMULATE
+            ? (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "withdraw", [assets, cache_1.userAddress, cache_1.userAddress], true))
+            : (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "withdraw", [assets, cache_1.userAddress, cache_1.userAddress], false));
+        return Object.assign(Object.assign({}, basicInfo), receipt);
     });
 }
-function buypolygonDegen(amount) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { polygonDegen } = (0, cache_1.getPolygonContracts)();
-        const convertedAmount = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 6);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: convertedAmount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield polygonDegen.convertToShares(convertedAmount), yield polygonDegen.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(polygonDegen, "deposit", [convertedAmount, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(polygonDegen, "deposit", [convertedAmount, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
-    });
-}
-function buyEthWethShares(amountWeth) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { ethWethEarn } = (0, cache_1.getEthContracts)();
-        return buySharesByEthThroughWeth(amountWeth, ethWethEarn);
-    });
-}
+exports.sellVault = sellVault;
 function buySharesByEthThroughWeth(amountWeth, vault) {
     return __awaiter(this, void 0, void 0, function* () {
+        const ethDecimals = 18;
+        const { assets: amount, basicInfo } = yield getBasicTxInfo(vault, amountWeth, ethDecimals);
         const { weth, router } = (0, cache_1.getEthContracts)();
         const shareDecimals = yield vault.decimals();
-        const ethDecimals = 18;
-        const amount = (0, AlpineDeFiSDK_1._addDecimals)(amountWeth.toString(), ethDecimals);
         if (amount.isNegative() || amount.isZero()) {
             throw new Error("amount must be positive.");
         }
@@ -186,14 +111,6 @@ function buySharesByEthThroughWeth(amountWeth, vault) {
         if (walletBalance.lt(amount)) {
             throw new Error("Insufficient balance");
         }
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            // TODO: Dollar amount is not right given the amount is weth amount. But populated
-            // for the sake of backward compatibility.
-            dollarAmount: amountWeth.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(amount), shareDecimals),
-        };
         const data = [];
         data.push(router.interface.encodeFunctionData("depositNative"));
         data.push(router.interface.encodeFunctionData("approve", [weth.address, vault.address, constants_1.MAX_UINT]));
@@ -213,74 +130,16 @@ function buySharesByEthThroughWeth(amountWeth, vault) {
         }
     });
 }
-function buyEthUsdcShares(amountUSDC) {
+function buyBtCEthShares(alpLarge, amountUSDC, slippageBps, usdc, router) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { ethEarn } = (0, cache_1.getEthContracts)();
-        const userAddress = yield cache_1.SIGNER.getAddress();
-        const amount = (0, AlpineDeFiSDK_1._addDecimals)(amountUSDC.toString(), 6);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: amountUSDC.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield ethEarn.convertToShares(amount), 18),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethEarn, "deposit", [amount, userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethEarn, "deposit", [amount, userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
-    });
-}
-/**
- * Deposit usdc to a vault, and get alp tokens in return
- * @param {String} amountUSDC amount in usdc
- */
-function buyUsdcShares(amountUSDC) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave } = (0, cache_1.getPolygonContracts)();
-        const userAddress = yield cache_1.SIGNER.getAddress();
-        const amount = (0, AlpineDeFiSDK_1._addDecimals)(amountUSDC.toString(), 6);
-        if (amount.isNegative() || amount.isZero()) {
-            throw new Error("amount must be positive.");
-        }
-        const walletBalance = yield usdc.balanceOf(userAddress);
-        if (walletBalance.lt(amount)) {
-            throw new Error("Insufficient balance");
-        }
-        // check if user has sufficient allowance
-        const allowance = yield usdc.allowance(userAddress, alpSave.address);
-        if (allowance.lt(amount))
-            throw new Error("Insufficient allowance");
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: amountUSDC.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield alpSave.convertToShares(amount), 16),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(alpSave, "deposit", [amount, userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(alpSave, "deposit", [amount, userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
-    });
-}
-exports.buyUsdcShares = buyUsdcShares;
-function buyBtCEthShares(amountUSDC, slippageBps) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { alpLarge, router, usdc } = (0, cache_1.getPolygonContracts)();
-        const amount = (0, AlpineDeFiSDK_1._addDecimals)(amountUSDC.toString(), 6);
+        // const { alpLarge, router, usdc } = getPolygonContracts();
+        const amount = (0, AlpineDeFiSDK_1._addDecimals)(amountUSDC.toString(), yield usdc.decimals());
         const expectedShares = yield sharesFromTokens("alpLarge", amount);
         const basicInfo = {
             alpFee: "0",
             alpFeePercent: "0",
             dollarAmount: amountUSDC.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(expectedShares, 18),
+            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(expectedShares, yield alpLarge.decimals()),
         };
         const data = [];
         data.push(router.interface.encodeFunctionData("approve", [usdc.address, alpLarge.address, constants_1.MAX_UINT]));
@@ -305,72 +164,15 @@ function buyBtCEthShares(amountUSDC, slippageBps) {
     });
 }
 exports.buyBtCEthShares = buyBtCEthShares;
-/**
- * sell alp token and withdraw usdc from a vault (to user's wallet by default)
- * @param amountUSDC amount in usdc to sell
- */
-function sellUsdcShares(amountUSDC) {
+function sellBtCEthShares(alpLarge, amountUSDC, asset) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { alpSave } = (0, cache_1.getPolygonContracts)();
         // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-        const usdcToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amountUSDC.toString(), 6);
-        const withdrawFeeBps = yield alpSave.withdrawalFee();
-        const alpFee = usdcToWithdraw.mul(withdrawFeeBps).div(10000);
-        const alpFeePercent = (withdrawFeeBps.toNumber() / 100).toString();
-        const basicInfo = {
-            alpFee: (0, AlpineDeFiSDK_1._removeDecimals)(alpFee, 6).toString(),
-            alpFeePercent,
-            dollarAmount: amountUSDC.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield alpSave.convertToShares(usdcToWithdraw), 16),
-        };
-        console.log({ basicInfo });
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(alpSave, "withdraw", [usdcToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(alpSave, "withdraw", [usdcToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
-    });
-}
-exports.sellUsdcShares = sellUsdcShares;
-/**
- * Sell from eth vault shares.
- * @param amountUSDC Smount in usdc to sell
- */
-function sellEthUsdcShares(amountUSDC) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { ethEarn } = (0, cache_1.getEthContracts)();
-        // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-        const usdcToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amountUSDC.toString(), 6);
+        const usdcToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amountUSDC.toString(), yield asset.decimals());
         const basicInfo = {
             alpFee: "0",
             alpFeePercent: "0",
             dollarAmount: amountUSDC.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield ethEarn.convertToShares(usdcToWithdraw), yield ethEarn.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethEarn, "withdraw", [usdcToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethEarn, "withdraw", [usdcToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
-    });
-}
-exports.sellEthUsdcShares = sellEthUsdcShares;
-function sellBtCEthShares(amountUSDC) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { alpLarge } = (0, cache_1.getPolygonContracts)();
-        // TODO: this only works if amountUSDC has less than 6 decimals. Handle other case
-        const usdcToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amountUSDC.toString(), 6);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: amountUSDC.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield sharesFromTokens("alpLarge", usdcToWithdraw), 18),
+            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield sharesFromTokens("alpLarge", usdcToWithdraw), yield alpLarge.decimals()),
         };
         if (cache_1.SIMULATE) {
             const gasEstimate = ethers_1.ethers.BigNumber.from(100e3);
@@ -393,133 +195,6 @@ function sellBtCEthShares(amountUSDC) {
     });
 }
 exports.sellBtCEthShares = sellBtCEthShares;
-/**
- * Sell from eth weth vault shares.
- * @param amountWeth Amount in weth to sell
- */
-function sellEthWethShares(amountWeth) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { ethWethEarn, weth } = (0, cache_1.getEthContracts)();
-        // TODO: this only works if amountWeth has less than 18 decimals. Handle other case
-        const wethToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amountWeth.toString(), yield weth.decimals());
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: amountWeth.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield ethWethEarn.convertToShares(wethToWithdraw), yield ethWethEarn.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethWethEarn, "withdraw", [wethToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethWethEarn, "withdraw", [wethToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
-    });
-}
-exports.sellEthWethShares = sellEthWethShares;
-function sellLockedShares(rawAmount) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { ssvEthUSDEarn: vault } = (0, cache_1.getEthContracts)();
-        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(rawAmount.toString(), 6);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: rawAmount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(assetsToWithdraw), yield vault.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
-    });
-}
-exports.sellLockedShares = sellLockedShares;
-function sellDegenShares(amount) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { degen } = (0, cache_1.getEthContracts)();
-        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 6);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: amount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield degen.convertToShares(assetsToWithdraw), yield degen.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(degen, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(degen, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
-        return Object.assign(Object.assign({}, basicInfo), receipt);
-    });
-}
-exports.sellDegenShares = sellDegenShares;
-function sellEthLeverage(amount) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { ethLeverage } = (0, cache_1.getEthContracts)();
-        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 18);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: amount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield ethLeverage.convertToShares(assetsToWithdraw), yield ethLeverage.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ethLeverage, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
-    });
-}
-exports.sellEthLeverage = sellEthLeverage;
-function sellPolygonLeverage(amount) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { polygonLeverage: vault } = (0, cache_1.getPolygonContracts)();
-        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 18);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: amount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield vault.convertToShares(assetsToWithdraw), yield vault.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        else {
-            const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
-            return Object.assign(Object.assign({}, basicInfo), receipt);
-        }
-    });
-}
-exports.sellPolygonLeverage = sellPolygonLeverage;
-function sellpolygonDegen(amount) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const { polygonDegen } = (0, cache_1.getPolygonContracts)();
-        const assetsToWithdraw = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), 6);
-        const basicInfo = {
-            alpFee: "0",
-            alpFeePercent: "0",
-            dollarAmount: amount.toString(),
-            tokenAmount: (0, AlpineDeFiSDK_1._removeDecimals)(yield polygonDegen.convertToShares(assetsToWithdraw), yield polygonDegen.decimals()),
-        };
-        if (cache_1.SIMULATE) {
-            const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(polygonDegen, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], true));
-            return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
-        }
-        const receipt = (yield (0, AlpineDeFiSDK_1.blockchainCall)(polygonDegen, "withdraw", [assetsToWithdraw, cache_1.userAddress, cache_1.userAddress], false));
-        return Object.assign(Object.assign({}, basicInfo), receipt);
-    });
-}
-exports.sellpolygonDegen = sellpolygonDegen;
 // Convert usdc to a share amount to be passed to `redeem` (for alpLarge only)
 function _convertToShares(amountUSDC) {
     return __awaiter(this, void 0, void 0, function* () {

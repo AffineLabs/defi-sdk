@@ -1,4 +1,4 @@
-import { ethers, PayableOverrides } from "ethers";
+import { BigNumber, ethers, PayableOverrides } from "ethers";
 
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, SmallTxReceipt } from "./types";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
@@ -186,7 +186,6 @@ export async function approve(product: AlpineProduct, amountAsset?: string): Pro
     tokenAmount: amountAsset || _removeDecimals(MAX_APPROVAL_AMOUNT, decimals),
   };
   const approveArgs = [product === "alpLarge" ? router.address : contracts[product].address, amount];
-  console.log({ approveArgs, asset });
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(asset, "approve", approveArgs, true)) as GasInfo;
     return { ...basicInfo, ...dryRunInfo };
@@ -223,7 +222,7 @@ export async function transfer(to: string, amountUSDC: string) {
   return blockchainCall(usdc, "transfer", [to, amount]);
 }
 
-export async function mintUSDC(to: string, amountUSDC: number) {
+export async function mintUSDC(to: string, amountUSDC: number | BigNumber) {
   const { usdc } = getContracts();
   const amount = _addDecimals(amountUSDC.toString(), 6);
 

@@ -1,4 +1,4 @@
-import { ethers, utils } from "ethers";
+import { BigNumber, ethers, utils } from "ethers";
 import { getPolygonContracts, PROVIDER } from "../cache";
 
 function _getMappingStorage(slot: number, key: string): string {
@@ -7,7 +7,7 @@ function _getMappingStorage(slot: number, key: string): string {
   return utils.keccak256(paddedKey + paddedSlot.slice(2));
 }
 
-export async function setUSDCBalance(address: string, balance: number) {
+export async function setUSDCBalance(address: string, balance: BigNumber) {
   const contracts = getPolygonContracts();
   await PROVIDER.send("anvil_setStorageAt", [
     contracts.usdc.address,
@@ -34,7 +34,7 @@ export async function setAlpLargeBalance(address: string, balance: number) {
   ]);
 }
 
-export async function setAlpSaveL1LockedValue(value: number) {
+export async function setAlpSaveL1LockedValue(value: BigNumber) {
   const { alpSave } = getPolygonContracts();
   await PROVIDER.send("anvil_setStorageAt", [
     alpSave.address,

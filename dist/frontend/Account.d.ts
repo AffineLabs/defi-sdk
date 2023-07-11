@@ -57,8 +57,8 @@ declare class Account {
     approve(to: AlpineProduct, amountUSDC?: string): Promise<import("../core/types").DryRunReceipt | import("../core/types").FullTxReceipt>;
     portfolioSell(allocations: productAllocation, amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     portfolioPurchase(alloctions: productAllocation, amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
-    buyProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt | undefined>;
-    sellProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt | undefined>;
+    buyProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt>;
+    sellProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt>;
     /**
      * Transfer usdc from user's wallet to another wallet
      * @param  to receipient address

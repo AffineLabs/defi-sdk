@@ -17,8 +17,9 @@ const ewqueue_1 = require("../ewqueue");
 const utils_1 = require("./utils");
 const testProvider = new ethers_1.ethers.providers.JsonRpcProvider("http://localhost:8545");
 const wallet = ethers_1.ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
-const oneUSDC = 1000000;
-const halfUSDC = oneUSDC / 2;
+const assets = ethers_1.ethers.BigNumber.from(10).pow(6).mul(200);
+const halfAssets = assets.div(2);
+const assetsStr = (0, AlpineDeFiSDK_1._removeDecimals)(assets, 6);
 describe("Emergency Withdrawal Queue", () => __awaiter(void 0, void 0, void 0, function* () {
     let contracts;
     beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
@@ -26,22 +27,25 @@ describe("Emergency Withdrawal Queue", () => __awaiter(void 0, void 0, void 0, f
         yield (0, cache_1.init)(wallet, undefined);
         contracts = (0, cache_1.getPolygonContracts)();
         yield cache_1.PROVIDER.send("anvil_setBalance", [cache_1.userAddress, ethers_1.ethers.BigNumber.from(10).pow(18).toHexString()]);
-        yield (0, AlpineDeFiSDK_1.mintUSDC)(wallet.address, oneUSDC);
-        yield (0, AlpineDeFiSDK_1.approve)("alpSave", oneUSDC.toString());
+        yield (0, AlpineDeFiSDK_1.mintUSDC)(wallet.address, assets);
+        yield (0, AlpineDeFiSDK_1.approve)("alpSave", assets.toString());
     }));
     it("Test emergency functions", () => __awaiter(void 0, void 0, void 0, function* () {
         const { alpSave, ewQueue } = contracts;
-        // Deposit
-        yield (0, AlpineDeFiSDK_1.blockchainCall)(alpSave, "deposit", [oneUSDC, wallet.address]);
+        // Reset vault to have no assets, and deposit `assets` into it. Makes it easy to simulate have of user deposit being unavailable.
+        yield (0, utils_1.setUSDCBalance)(alpSave.address, ethers_1.ethers.BigNumber.from(0));
+        yield (0, AlpineDeFiSDK_1.blockchainCall)(alpSave, "deposit", [assets, wallet.address]);
         // Simulate transfer to L1
-        yield (0, utils_1.setUSDCBalance)(alpSave.address, halfUSDC);
-        yield (0, utils_1.setAlpSaveL1LockedValue)(halfUSDC);
+        yield (0, utils_1.setUSDCBalance)(alpSave.address, halfAssets);
+        yield (0, utils_1.setAlpSaveL1LockedValue)(halfAssets);
+        console.log("storage updated");
         // Check withdrawable amount
         const withdrawableAmount = yield (0, ewqueue_1.vaultWithdrawableAssetAmount)("alpSave");
-        (0, chai_1.expect)(withdrawableAmount).eq((0, AlpineDeFiSDK_1._removeDecimals)(ethers_1.ethers.BigNumber.from(halfUSDC), 6));
+        (0, chai_1.expect)(withdrawableAmount).eq((0, AlpineDeFiSDK_1._removeDecimals)(ethers_1.ethers.BigNumber.from(halfAssets), 6));
+        console.log("withdrawableAmount", withdrawableAmount.toString());
         // Withdraw
         const withdrawRes = (yield (0, AlpineDeFiSDK_1.blockchainCall)(alpSave, "withdraw", [
-            oneUSDC,
+            assets,
             wallet.address,
             wallet.address,
         ]));
@@ -53,10 +57,11 @@ describe("Emergency Withdrawal Queue", () => __awaiter(void 0, void 0, void 0, f
         (0, chai_1.expect)(queue.length).eq(1);
         const gotEvent = queue[0];
         (0, chai_1.expect)(gotEvent.pos).eq(0);
-        (0, chai_1.expect)(gotEvent.sharesValueInAsset).eq("1.0");
+        (0, chai_1.expect)(gotEvent.sharesValueInAsset).eq(assetsStr);
+        console.log("got queue stats");
         // Simulate transfer back to L2
-        yield (0, utils_1.setUSDCBalance)(alpSave.address, oneUSDC);
-        yield (0, utils_1.setAlpSaveL1LockedValue)(0);
+        yield (0, utils_1.setUSDCBalance)(alpSave.address, assets);
+        yield (0, utils_1.setAlpSaveL1LockedValue)(ethers_1.ethers.BigNumber.from(0));
         // Dequeue
         const tx = (yield (0, AlpineDeFiSDK_1.blockchainCall)(ewQueue, "dequeue", []));
         // Get tansfers from emergency withdrawal queue.
@@ -64,6 +69,6 @@ describe("Emergency Withdrawal Queue", () => __awaiter(void 0, void 0, void 0, f
         (0, chai_1.expect)(transfers.length).eq(1);
         const gotTransfer = transfers[0];
         (0, chai_1.expect)(gotTransfer.txHash).eq(tx.txnHash);
-        (0, chai_1.expect)(gotTransfer.sharesValueInAsset).eq("1.0");
+        (0, chai_1.expect)(gotTransfer.sharesValueInAsset).eq(assetsStr);
     }));
 }));

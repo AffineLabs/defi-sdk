@@ -14,12 +14,15 @@ export interface GasInfo {
   txnCost: string;
   gasPrice: string;
 }
-export interface DryRunReceipt extends GasInfo {
+
+export interface BasicReceiptInfo {
   alpFee: string;
   alpFeePercent: string;
   dollarAmount: string;
   tokenAmount: string;
 }
+
+export interface DryRunReceipt extends BasicReceiptInfo, GasInfo {}
 export interface FullTxReceipt extends DryRunReceipt, SmallTxReceipt {}
 
 export interface SmallTxReceipt extends GasInfo {
@@ -40,7 +43,7 @@ export const alpineProducts = [
 ] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
-export const polygonProducts = ["alpSave", "alpLarge"] as const;
+export const polygonProducts = ["alpSave", "alpLarge", "polygonDegen"] as const;
 export type PolygonProduct = typeof polygonProducts[number];
 
 export type productAmounts = {
