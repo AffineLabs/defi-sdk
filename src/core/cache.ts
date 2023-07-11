@@ -12,7 +12,12 @@ import {
   StrategyVault__factory,
 } from "../typechain";
 import { AllowedChainId } from "../types/account";
-import { DEFAULT_RAW_CHAIN_ID } from "./constants";
+import {
+  DEFAULT_RAW_CHAIN_ID,
+  FORKED_NODE_URL_FOR_ETH,
+  FORKED_NODE_URL_FOR_MATIC,
+  IS_USING_FORKED_MAINNET,
+} from "./constants";
 
 let CONTRACTS: PolygonContracts | EthContracts;
 let CHAIN_ID: AllowedChainId;
@@ -28,9 +33,15 @@ const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 export let PROVIDER: ethers.providers.StaticJsonRpcProvider;
 
 export const RPC_URLS: { [index: AllowedChainId]: string } = {
-  1: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+  1:
+    IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_ETH
+      ? FORKED_NODE_URL_FOR_ETH
+      : `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
   5: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-  137: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+  137:
+    IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_MATIC
+      ? FORKED_NODE_URL_FOR_MATIC
+      : `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
   80001: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
 };
 
@@ -69,7 +80,7 @@ export async function getAllContracts(
   ];
   const {
     PolygonAlpSave: alpSaveData,
-    PolygonBtcEthVault: alpLarge,
+    PolygonBtcEthVault: alpLargeData,
     Forwarder: forwarder,
     ERC4626Router: router,
     EthUsdcEarn: ethEarnData,
@@ -78,21 +89,26 @@ export async function getAllContracts(
     EthSushiLpUsdcWeth: ssvEthSushiUSDEarn,
     Degen: degenData,
     PolygonDegen: polygonDegenData,
+    EthStEthLev: ethLeverageData,
+    PolygonStEthLev: polygonLeverageData,
   } = allData;
 
   const chainId = getChainId();
 
   if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
+    const alpLarge = TwoAssetBasket__factory.connect(alpLargeData.address, provider);
 
     return {
       alpSave,
-      alpLarge: TwoAssetBasket__factory.connect(alpLarge.address, provider),
+      alpLarge,
       forwarder: Forwarder__factory.connect(forwarder.address, provider),
       usdc: new ethers.Contract(await alpSave.asset(), erc20Abi, provider),
+      weth: new ethers.Contract(await alpLarge.weth(), erc20Abi, provider),
       router: Router__factory.connect(router.address, provider),
       ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSave.emergencyWithdrawalQueue(), provider),
       polygonDegen: StrategyVault__factory.connect(polygonDegenData.address, provider),
+      polygonLeverage: Vault__factory.connect(polygonLeverageData.address, provider),
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
@@ -100,12 +116,14 @@ export async function getAllContracts(
     const ssvEthUSDEarn = StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
     const withdrawalEscrow = WithdrawalEscrow__factory.connect(await ssvEthUSDEarn.debtEscrow(), provider);
     const degen = Vault__factory.connect(degenData.address, provider);
+    const ethLeverage = Vault__factory.connect(ethLeverageData.address, provider);
     return {
       ethEarn,
       ethWethEarn,
       ssvEthUSDEarn,
       withdrawalEscrow,
       degen,
+      ethLeverage,
       usdc: new ethers.Contract(await ethEarn.asset(), erc20Abi, provider),
       weth: new ethers.Contract(await ethWethEarn.asset(), erc20Abi, provider),
       router: Router__factory.connect(ethRouter.address, provider),

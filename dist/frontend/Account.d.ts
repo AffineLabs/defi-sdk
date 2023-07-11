@@ -103,6 +103,6 @@ declare class ReadAccount {
      */
     getGasPrice(): Promise<string>;
     getGasBalance(): Promise<string>;
-    getTokenInfo(product: AlpineProduct | "usdc"): Promise<import("../core/types").TokenInfo>;
+    getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<import("../core/types").TokenInfo>;
 }
 export { Account, ReadAccount };

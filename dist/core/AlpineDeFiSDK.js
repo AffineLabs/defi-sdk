@@ -126,11 +126,10 @@ exports.blockchainCall = blockchainCall;
  */
 function isApproved(product, amount) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen } = (0, cache_1.getContracts)();
-        console.log({ polygonDegen });
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, weth, polygonLeverage } = (0, cache_1.getContracts)();
         if (product === "ethWethEarn")
             return true;
-        const asset = usdc;
+        const asset = ["ethLeverage", "polygonLeverage"].includes(product) ? weth : usdc;
         const productToSpender = {
             alpSave,
             alpLarge: router,
@@ -138,6 +137,8 @@ function isApproved(product, amount) {
             ssvEthUSDEarn,
             degen,
             polygonDegen,
+            ethLeverage,
+            polygonLeverage,
         };
         const allowance = yield asset.allowance(cache_1.userAddress, productToSpender[product].address);
         /**
@@ -165,7 +166,7 @@ function approve(product, amountAsset) {
         const contracts = (0, cache_1.getContracts)();
         const { usdc, router, weth } = contracts;
         let asset = usdc;
-        if (product === "ethWethEarn") {
+        if (["ethWethEarn", "ethLeverage", "polygonLeverage"].includes(product)) {
             asset = weth;
         }
         const decimals = yield asset.decimals();

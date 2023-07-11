@@ -15,8 +15,8 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   asset: MockERC20;
   router: Router;
 }> {
-  const { alpSave, alpLarge, polygonDegen, router: polyRouter } = getPolygonContracts();
-  const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, router: ethRouter } = getEthContracts();
+  const { alpSave, alpLarge, polygonDegen, router: polyRouter, polygonLeverage } = getPolygonContracts();
+  const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, router: ethRouter, ethLeverage } = getEthContracts();
 
   const productToVault: { [key in AlpineProduct]: ERC4626Upgradeable } = {
     alpSave,
@@ -26,6 +26,8 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
     ethWethEarn,
     ssvEthUSDEarn,
     degen,
+    ethLeverage,
+    polygonLeverage,
   };
 
   const vault = productToVault[product];
@@ -39,8 +41,8 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
 
   if (product == "alpLarge") {
     return buyBtCEthShares(vault, amount, slippageBps, asset, router);
-  } else if (product == "ethWethEarn") {
-    return buyEthWethShares(vault, amount, asset, router);
+  } else if (product == "ethWethEarn" || product == "ethLeverage") {
+    return buySharesByEthThroughWeth(amount, vault);
   }
   return buyVault(vault, amount, asset);
 }
@@ -98,16 +100,15 @@ export async function sellVault(vault: ERC4626Upgradeable, rawAssets: number, as
   return { ...basicInfo, ...receipt };
 }
 
-async function buyEthWethShares(
-  ethWethEarn: ERC4626Upgradeable,
+async function buySharesByEthThroughWeth(
   amountWeth: number,
-  weth: MockERC20,
-  router: Router,
+  vault: ERC4626Upgradeable,
 ): Promise<DryRunReceipt | FullTxReceipt> {
-  const shareDecimals = await ethWethEarn.decimals();
   const ethDecimals = 18;
+  const { assets: amount, basicInfo } = await getBasicTxInfo(vault, amountWeth, ethDecimals);
 
-  const { assets: amount, basicInfo } = await getBasicTxInfo(ethWethEarn, amountWeth, ethDecimals);
+  const { weth, router } = getEthContracts();
+  const shareDecimals = await vault.decimals();
 
   if (amount.isNegative() || amount.isZero()) {
     throw new Error("amount must be positive.");
@@ -119,10 +120,11 @@ async function buyEthWethShares(
 
   const data: string[] = [];
   data.push(router.interface.encodeFunctionData("depositNative"));
-  data.push(router.interface.encodeFunctionData("approve", [weth.address, ethWethEarn.address, MAX_UINT]));
-  data.push(router.interface.encodeFunctionData("deposit", [ethWethEarn.address, userAddress, amount, 0]));
+  data.push(router.interface.encodeFunctionData("approve", [weth.address, vault.address, MAX_UINT]));
+  data.push(router.interface.encodeFunctionData("deposit", [vault.address, userAddress, amount, 0]));
 
-  const beforeBal: ethers.BigNumber = await ethWethEarn.balanceOf(userAddress);
+  const beforeBal: ethers.BigNumber = await vault.balanceOf(userAddress);
+  console.log({ amount });
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(router, "multicall", [data], true, amount)) as GasInfo;
     return {
@@ -131,7 +133,7 @@ async function buyEthWethShares(
     };
   } else {
     const receipt = (await blockchainCall(router, "multicall", [data], false, amount)) as SmallTxReceipt;
-    const afterBal: ethers.BigNumber = await ethWethEarn.balanceOf(userAddress);
+    const afterBal: ethers.BigNumber = await vault.balanceOf(userAddress);
     const amountChanged = afterBal.sub(beforeBal);
 
     const res = { ...basicInfo, ...receipt, tokenAmount: _removeDecimals(amountChanged, shareDecimals) };
@@ -233,22 +235,39 @@ async function _convertToShares(amountUSDC: ethers.BigNumber) {
   return shares.gt(userShares) ? userShares : shares;
 }
 
-export async function getTokenInfo(product: AlpineProduct | "usdc"): Promise<TokenInfo> {
+export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<TokenInfo> {
   const user = userAddress;
 
   if (product === "usdc") {
     const { usdc } = getContracts();
     const amount = await usdc.balanceOf(user);
+    console.log("USDC amount w/ decimals", amount.toString(), { usdc });
     const numUsdc = _removeDecimals(amount, 6);
     return {
       amount: numUsdc,
       price: "1",
       equity: numUsdc,
     };
+  } else if (product === "weth") {
+    const { weth } = getContracts();
+    const amount = await weth.balanceOf(user);
+    console.log("WETH amount w/ decimals", amount.toString(), { weth });
+    const numWeth = _removeDecimals(amount, 18);
+    return {
+      amount: numWeth,
+      price: "1",
+      equity: numWeth,
+    };
   }
 
   let contract: L2Vault | TwoAssetBasket | Vault | StrategyVault;
-  if (product === "ethEarn" || product === "ethWethEarn" || product === "ssvEthUSDEarn" || product === "degen") {
+  if (
+    product === "ethEarn" ||
+    product === "ethWethEarn" ||
+    product === "ssvEthUSDEarn" ||
+    product === "degen" ||
+    product === "ethLeverage"
+  ) {
     contract = getEthContracts()[product];
   } else {
     contract = getPolygonContracts()[product];

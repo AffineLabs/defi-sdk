@@ -24,9 +24,13 @@ exports.SIMULATE = false;
 const CONTRACT_VERSION = (_a = process.env.CONTRACT_VERSION) !== null && _a !== void 0 ? _a : "test";
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 exports.RPC_URLS = {
-    1: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+    1: constants_1.IS_USING_FORKED_MAINNET && constants_1.FORKED_NODE_URL_FOR_ETH
+        ? constants_1.FORKED_NODE_URL_FOR_ETH
+        : `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
     5: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-    137: `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+    137: constants_1.IS_USING_FORKED_MAINNET && constants_1.FORKED_NODE_URL_FOR_MATIC
+        ? constants_1.FORKED_NODE_URL_FOR_MATIC
+        : `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
     80001: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
 };
 function getProviderByChainId(chainId) {
@@ -57,18 +61,21 @@ function getAllContracts(provider, version) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLarge, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, } = allData;
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
+            const alpLarge = typechain_1.TwoAssetBasket__factory.connect(alpLargeData.address, provider);
             return {
                 alpSave,
-                alpLarge: typechain_1.TwoAssetBasket__factory.connect(alpLarge.address, provider),
+                alpLarge,
                 forwarder: typechain_1.Forwarder__factory.connect(forwarder.address, provider),
                 usdc: new ethers_1.ethers.Contract(yield alpSave.asset(), erc20Abi, provider),
+                weth: new ethers_1.ethers.Contract(yield alpLarge.weth(), erc20Abi, provider),
                 router: typechain_1.Router__factory.connect(router.address, provider),
                 ewQueue: typechain_1.EmergencyWithdrawalQueue__factory.connect(yield alpSave.emergencyWithdrawalQueue(), provider),
                 polygonDegen: typechain_1.StrategyVault__factory.connect(polygonDegenData.address, provider),
+                polygonLeverage: typechain_1.Vault__factory.connect(polygonLeverageData.address, provider),
             };
         }
         else if (chainId === 1 || chainId === 5) {
@@ -77,12 +84,14 @@ function getAllContracts(provider, version) {
             const ssvEthUSDEarn = typechain_1.StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
             const withdrawalEscrow = typechain_1.WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
             const degen = typechain_1.Vault__factory.connect(degenData.address, provider);
+            const ethLeverage = typechain_1.Vault__factory.connect(ethLeverageData.address, provider);
             return {
                 ethEarn,
                 ethWethEarn,
                 ssvEthUSDEarn,
                 withdrawalEscrow,
                 degen,
+                ethLeverage,
                 usdc: new ethers_1.ethers.Contract(yield ethEarn.asset(), erc20Abi, provider),
                 weth: new ethers_1.ethers.Contract(yield ethWethEarn.asset(), erc20Abi, provider),
                 router: typechain_1.Router__factory.connect(ethRouter.address, provider),
