@@ -71,6 +71,7 @@ export interface PolygonContracts extends BothContracts {
   ewQueue: EmergencyWithdrawalQueue;
   polygonDegen: StrategyVault;
   polygonLeverage: Vault;
+  affineGenesis: ethers.Contract;
 }
 
 export interface EthContracts extends BothContracts {

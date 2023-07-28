@@ -91,6 +91,7 @@ export async function getAllContracts(
     PolygonDegen: polygonDegenData,
     EthStEthLev: ethLeverageData,
     PolygonStEthLev: polygonLeverageData,
+    AffineGenesis: affineGenesisData,
   } = allData;
 
   const chainId = getChainId();
@@ -109,6 +110,7 @@ export async function getAllContracts(
       ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSave.emergencyWithdrawalQueue(), provider),
       polygonDegen: StrategyVault__factory.connect(polygonDegenData.address, provider),
       polygonLeverage: Vault__factory.connect(polygonLeverageData.address, provider),
+      affineGenesis: new ethers.Contract(affineGenesisData.address, affineGenesisData.abi, provider),
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
