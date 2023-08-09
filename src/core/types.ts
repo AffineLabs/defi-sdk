@@ -7,6 +7,7 @@ import {
   Vault,
   StrategyVault,
   WithdrawalEscrow,
+  AffineGenesis,
 } from "../typechain";
 import { ethers } from "ethers";
 
@@ -71,6 +72,7 @@ export interface PolygonContracts extends BothContracts {
   ewQueue: EmergencyWithdrawalQueue;
   polygonDegen: StrategyVault;
   polygonLeverage: Vault;
+  affineGenesis: AffineGenesis;
 }
 
 export interface EthContracts extends BothContracts {

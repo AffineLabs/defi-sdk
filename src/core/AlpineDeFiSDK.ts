@@ -231,3 +231,56 @@ export async function mintUSDC(to: string, amountUSDC: number | BigNumber) {
   }
   return blockchainCall(usdc, "mint", [to, amount]);
 }
+
+// AffinePass
+
+/**
+ * Mint NFTs for whitelisted users.
+ * @param quantity how many NFTs to mint
+ * @param proof a merkle proof generated using the Whitelist merkle tree
+ */
+export async function mintWhitelist(quantity: number, proof: string[]) {
+  const contracts = getContracts() as AlpineContracts;
+  const { affineGenesis } = contracts;
+  return blockchainCall(affineGenesis, "mintWhitelist", [quantity, proof]);
+}
+
+/**
+ * Mint NFTs during public sale.
+ * @param quantity how many NFTs to mint
+ */
+export async function mint(quantity: number) {
+  const contracts = getContracts() as AlpineContracts;
+  const { affineGenesis } = contracts;
+  return blockchainCall(affineGenesis, "mint", [quantity]);
+}
+
+/**
+ * check if the user is whitelisted.
+ * @returns boolean
+ */
+export async function isWhitelisted(address: string, proof: string[]): Promise<boolean> {
+  const contracts = getContracts() as AlpineContracts;
+  const { affineGenesis } = contracts;
+  return affineGenesis.isWhitelisted(address, proof);
+}
+
+/**
+ * check affine pass whitelist mint is live.
+ * @returns boolean
+ */
+export async function whitelistSaleIsActive(): Promise<boolean> {
+  const contracts = getContracts() as AlpineContracts;
+  const { affineGenesis } = contracts;
+  return affineGenesis.whitelistSaleIsActive();
+}
+
+/**
+ * check affine pass public mint is live.
+ * @returns boolean
+ */
+export async function saleIsActive(): Promise<boolean> {
+  const contracts = getContracts() as AlpineContracts;
+  const { affineGenesis } = contracts;
+  return affineGenesis.saleIsActive();
+}
