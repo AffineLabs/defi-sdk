@@ -50,3 +50,29 @@ export declare function approve(product: AlpineProduct, amountAsset?: string): P
  */
 export declare function transfer(to: string, amountUSDC: string): Promise<GasInfo | SmallTxReceipt>;
 export declare function mintUSDC(to: string, amountUSDC: number | BigNumber): Promise<GasInfo | SmallTxReceipt>;
+/**
+ * Mint NFTs for whitelisted users.
+ * @param quantity how many NFTs to mint
+ * @param proof a merkle proof generated using the Whitelist merkle tree
+ */
+export declare function mintWhitelist(quantity: number, proof: string[]): Promise<GasInfo | SmallTxReceipt>;
+/**
+ * Mint NFTs during public sale.
+ * @param quantity how many NFTs to mint
+ */
+export declare function mint(quantity: number): Promise<GasInfo | SmallTxReceipt>;
+/**
+ * check if the user is whitelisted.
+ * @returns boolean
+ */
+export declare function isWhitelisted(address: string, proof: string[]): Promise<boolean>;
+/**
+ * check affine pass whitelist mint is live.
+ * @returns boolean
+ */
+export declare function whitelistSaleIsActive(): Promise<boolean>;
+/**
+ * check affine pass public mint is live.
+ * @returns boolean
+ */
+export declare function saleIsActive(): Promise<boolean>;

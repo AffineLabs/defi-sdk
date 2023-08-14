@@ -1,5 +1,5 @@
 import { userAddress, getEthContracts } from "./cache";
-import { FullTxReceipt, SSVWithdrawalRequestInfo, SmallTxReceipt, TxnReceipt } from "./types";
+import { FullTxReceipt, SSVWithdrawalRequestInfo, SmallTxReceipt } from "./types";
 import { blockchainCall, _removeDecimals } from "./AlpineDeFiSDK";
 
 export async function getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]> {

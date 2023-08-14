@@ -234,6 +234,16 @@ class Account {
             return core_1.AlpineDeFiSDK.mintUSDC(to, amountUSDC);
         });
     }
+    mintAffinePass(amount) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return core_1.AlpineDeFiSDK.mint(amount);
+        });
+    }
+    mintWhitelistAffinePass(amount, proof) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return core_1.AlpineDeFiSDK.mintWhitelist(amount, proof);
+        });
+    }
     getUserEmergencyWithdrawalQueueRequests(product) {
         return __awaiter(this, void 0, void 0, function* () {
             return (0, ewqueue_1.getUserEmergencyWithdrawalQueueRequests)(product);
@@ -437,6 +447,31 @@ class ReadAccount {
     getGasBalance() {
         return __awaiter(this, void 0, void 0, function* () {
             return core_1.AlpineDeFiSDK.getGasBalance();
+        });
+    }
+    saleIsActive() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return core_1.AlpineDeFiSDK.saleIsActive();
+        });
+    }
+    whitelistSaleIsActive() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return core_1.AlpineDeFiSDK.whitelistSaleIsActive();
+        });
+    }
+    isWhitelisted(address, proof) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return core_1.AlpineDeFiSDK.isWhitelisted(address, proof);
+        });
+    }
+    mint(quantity) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return core_1.AlpineDeFiSDK.mint(quantity);
+        });
+    }
+    mintWhitelist(quantity, proof) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return core_1.AlpineDeFiSDK.mintWhitelist(quantity, proof);
         });
     }
     getTokenInfo(product) {

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
+exports.saleIsActive = exports.whitelistSaleIsActive = exports.isWhitelisted = exports.mint = exports.mintWhitelist = exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
 const ethers_1 = require("ethers");
 const cache_1 = require("./cache");
 const biconomy_1 = require("./biconomy");
@@ -221,3 +221,65 @@ function mintUSDC(to, amountUSDC) {
     });
 }
 exports.mintUSDC = mintUSDC;
+// AffinePass
+/**
+ * Mint NFTs for whitelisted users.
+ * @param quantity how many NFTs to mint
+ * @param proof a merkle proof generated using the Whitelist merkle tree
+ */
+function mintWhitelist(quantity, proof) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affineGenesis } = contracts;
+        return blockchainCall(affineGenesis, "mintWhitelist", [quantity, proof]);
+    });
+}
+exports.mintWhitelist = mintWhitelist;
+/**
+ * Mint NFTs during public sale.
+ * @param quantity how many NFTs to mint
+ */
+function mint(quantity) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affineGenesis } = contracts;
+        return blockchainCall(affineGenesis, "mint", [quantity]);
+    });
+}
+exports.mint = mint;
+/**
+ * check if the user is whitelisted.
+ * @returns boolean
+ */
+function isWhitelisted(address, proof) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affineGenesis } = contracts;
+        return affineGenesis.isWhitelisted(address, proof);
+    });
+}
+exports.isWhitelisted = isWhitelisted;
+/**
+ * check affine pass whitelist mint is live.
+ * @returns boolean
+ */
+function whitelistSaleIsActive() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affineGenesis } = contracts;
+        return affineGenesis.whitelistSaleIsActive();
+    });
+}
+exports.whitelistSaleIsActive = whitelistSaleIsActive;
+/**
+ * check affine pass public mint is live.
+ * @returns boolean
+ */
+function saleIsActive() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affineGenesis } = contracts;
+        return affineGenesis.saleIsActive();
+    });
+}
+exports.saleIsActive = saleIsActive;
