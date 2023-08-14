@@ -675,6 +675,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "amount",
+                type: "uint256",
+            },
+        ],
+        name: "depositIntoStrategy",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
         inputs: [],
         name: "detailedPrice",
         outputs: [
@@ -1509,6 +1522,19 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "tvlCap",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "unpause",
         outputs: [],
         stateMutability: "nonpayable",
@@ -1584,6 +1610,19 @@ const _abi = [
                 type: "uint256",
             },
         ],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "amount",
+                type: "uint256",
+            },
+        ],
+        name: "withdrawFromStrategy",
+        outputs: [],
         stateMutability: "nonpayable",
         type: "function",
     },

@@ -72,6 +72,8 @@ declare class Account {
      * @param {number} amountUSDC amount in usdc
      */
     mintUSDCTokens(to: string, amountUSDC: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
+    mintAffinePass(amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
+    mintWhitelistAffinePass(amount: number, proof: string[]): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     getUserEmergencyWithdrawalQueueRequests(product: AlpineProduct): Promise<EmergencyWithdrawalQueueRequest[]>;
     vaultWithdrawableAssetAmount(product: AlpineProduct): Promise<string>;
     txHasEnqueueEvent(txHash: string): Promise<boolean>;
@@ -103,6 +105,11 @@ declare class ReadAccount {
      */
     getGasPrice(): Promise<string>;
     getGasBalance(): Promise<string>;
+    saleIsActive(): Promise<boolean>;
+    whitelistSaleIsActive(): Promise<boolean>;
+    isWhitelisted(address: string, proof: string[]): Promise<boolean>;
+    mint(quantity: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
+    mintWhitelist(quantity: number, proof: string[]): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<import("../core/types").TokenInfo>;
 }
 export { Account, ReadAccount };

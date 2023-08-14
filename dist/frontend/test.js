@@ -85,6 +85,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("usdc bal: ", yield readAcc.getTokenInfo("usdc"));
     console.log("native bal: ", yield readAcc.getGasBalance());
     console.log("basket bal: ", yield readAcc.getTokenInfo(_productToBuy));
+    console.log("sale state", yield readAcc.saleIsActive());
+    console.log("whitelist state", yield readAcc.whitelistSaleIsActive());
     yield alpAccount.setSimulationMode(false);
     yield buy(alpAccount, _productToBuy, 2);
     console.log("bought: ", _productToBuy, "of amount: ", 1);

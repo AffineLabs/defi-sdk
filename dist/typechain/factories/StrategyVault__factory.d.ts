@@ -523,6 +523,16 @@ export declare class StrategyVault__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "amount";
+            readonly type: "uint256";
+        }];
+        readonly name: "depositIntoStrategy";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [];
         readonly name: "detailedPrice";
         readonly outputs: readonly [{
@@ -1157,6 +1167,16 @@ export declare class StrategyVault__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
+        readonly name: "tvlCap";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "unpause";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
@@ -1215,6 +1235,16 @@ export declare class StrategyVault__factory {
             readonly name: "";
             readonly type: "uint256";
         }];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "amount";
+            readonly type: "uint256";
+        }];
+        readonly name: "withdrawFromStrategy";
+        readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {

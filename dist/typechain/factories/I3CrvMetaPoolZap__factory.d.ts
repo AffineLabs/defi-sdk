@@ -30,6 +30,28 @@ export declare class I3CrvMetaPoolZap__factory {
             readonly name: "pool";
             readonly type: "address";
         }, {
+            readonly internalType: "uint256[4]";
+            readonly name: "amounts";
+            readonly type: "uint256[4]";
+        }, {
+            readonly internalType: "bool";
+            readonly name: "deposit";
+            readonly type: "bool";
+        }];
+        readonly name: "calc_token_amount";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "address";
+            readonly name: "pool";
+            readonly type: "address";
+        }, {
             readonly internalType: "uint256";
             readonly name: "tokenAmount";
             readonly type: "uint256";
