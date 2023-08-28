@@ -34,6 +34,8 @@ function _getVaultAndAsset(product) {
             polygonLeverage,
         };
         const vault = productToVault[product];
+        if (!vault)
+            throw new Error("Invalid product");
         const asset = typechain_1.MockERC20__factory.connect(yield vault.asset(), vault.provider);
         const router = product in types_1.polygonProducts ? polyRouter : ethRouter;
         return { vault, asset, router };
@@ -240,6 +242,8 @@ function getTokenInfo(product) {
         else {
             contract = (0, cache_1.getPolygonContracts)()[product];
         }
+        if (!contract)
+            throw new Error("Invalid product");
         const amount = yield contract.balanceOf(user);
         // price number of decimals of the share token
         const { num, decimals } = yield contract.detailedPrice();
