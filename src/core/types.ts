@@ -71,8 +71,8 @@ export interface PolygonContracts extends BothContracts {
   router: Router;
   ewQueue: EmergencyWithdrawalQueue;
   polygonDegen: StrategyVault;
-  polygonLeverage: Vault;
-  affineGenesis: AffineGenesis;
+  polygonLeverage?: Vault;
+  affineGenesis?: AffineGenesis;
 }
 
 export interface EthContracts extends BothContracts {
@@ -83,7 +83,7 @@ export interface EthContracts extends BothContracts {
   withdrawalEscrow: WithdrawalEscrow;
   router: Router;
   degen: Vault;
-  ethLeverage: Vault;
+  ethLeverage?: Vault;
 }
 
 export interface AlpineContracts extends PolygonContracts, EthContracts {}

@@ -148,7 +148,11 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     polygonLeverage,
   };
 
-  const allowance = await asset.allowance(userAddress, productToSpender[product].address);
+  if (!productToSpender[product]) {
+    throw new Error("Product not found");
+  }
+
+  const allowance = await asset.allowance(userAddress, productToSpender[product]?.address);
   /**
    * If the 'amount' is not specified then we will check the max amount, but
    * we are dividing the max approval amount by 2 because
@@ -185,7 +189,7 @@ export async function approve(product: AlpineProduct, amountAsset?: string): Pro
     dollarAmount: amountAsset || _removeDecimals(MAX_APPROVAL_AMOUNT, decimals),
     tokenAmount: amountAsset || _removeDecimals(MAX_APPROVAL_AMOUNT, decimals),
   };
-  const approveArgs = [product === "alpLarge" ? router.address : contracts[product].address, amount];
+  const approveArgs = [product === "alpLarge" ? router.address : contracts[product]?.address, amount];
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(asset, "approve", approveArgs, true)) as GasInfo;
     return { ...basicInfo, ...dryRunInfo };
@@ -242,6 +246,7 @@ export async function mintUSDC(to: string, amountUSDC: number | BigNumber) {
 export async function mintWhitelist(quantity: number, proof: string[]) {
   const contracts = getContracts() as AlpineContracts;
   const { affineGenesis } = contracts;
+  if (!affineGenesis) throw new Error("AffineGenesis contract not found");
   return blockchainCall(affineGenesis, "mintWhitelist", [quantity, proof]);
 }
 
@@ -252,6 +257,7 @@ export async function mintWhitelist(quantity: number, proof: string[]) {
 export async function mint(quantity: number) {
   const contracts = getContracts() as AlpineContracts;
   const { affineGenesis } = contracts;
+  if (!affineGenesis) throw new Error("AffineGenesis contract not found");
   return blockchainCall(affineGenesis, "mint", [quantity]);
 }
 
@@ -262,7 +268,7 @@ export async function mint(quantity: number) {
 export async function isWhitelisted(address: string, proof: string[]): Promise<boolean> {
   const contracts = getContracts() as AlpineContracts;
   const { affineGenesis } = contracts;
-  return affineGenesis.isWhitelisted(address, proof);
+  return affineGenesis?.isWhitelisted(address, proof) ?? false;
 }
 
 /**
@@ -272,7 +278,7 @@ export async function isWhitelisted(address: string, proof: string[]): Promise<b
 export async function whitelistSaleIsActive(): Promise<boolean> {
   const contracts = getContracts() as AlpineContracts;
   const { affineGenesis } = contracts;
-  return affineGenesis.whitelistSaleIsActive();
+  return affineGenesis?.whitelistSaleIsActive() ?? false;
 }
 
 /**
@@ -282,5 +288,5 @@ export async function whitelistSaleIsActive(): Promise<boolean> {
 export async function saleIsActive(): Promise<boolean> {
   const contracts = getContracts() as AlpineContracts;
   const { affineGenesis } = contracts;
-  return affineGenesis.saleIsActive();
+  return affineGenesis?.saleIsActive() ?? false;
 }

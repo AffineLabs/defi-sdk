@@ -76,8 +76,8 @@ const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, f
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const alpAccount = new Account_1.Account();
     const walletType = "metamask";
-    const chainId = 137;
-    const _productToBuy = "polygonLeverage";
+    const chainId = 5;
+    const _productToBuy = "ethEarn";
     console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS: constants_1.ALLOWED_CHAIN_IDS }, constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
     yield connectAndWrite({ walletType, account: alpAccount, chainId });
     const readAcc = new Account_1.ReadAccount(alpAccount.userAddress || "", chainId);
@@ -85,8 +85,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("usdc bal: ", yield readAcc.getTokenInfo("usdc"));
     console.log("native bal: ", yield readAcc.getGasBalance());
     console.log("basket bal: ", yield readAcc.getTokenInfo(_productToBuy));
-    console.log("sale state", yield readAcc.saleIsActive());
-    console.log("whitelist state", yield readAcc.whitelistSaleIsActive());
+    // console.log("sale state", await readAcc.saleIsActive());
+    // console.log("whitelist state", await readAcc.whitelistSaleIsActive());
     yield alpAccount.setSimulationMode(false);
     yield buy(alpAccount, _productToBuy, 2);
     console.log("bought: ", _productToBuy, "of amount: ", 1);

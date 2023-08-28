@@ -77,8 +77,8 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
-  const chainId = 137 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "polygonLeverage";
+  const chainId = 5 as AllowedChainId;
+  const _productToBuy: AlpineProduct = "ethEarn";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -92,8 +92,8 @@ const main = async () => {
   console.log("native bal: ", await readAcc.getGasBalance());
   console.log("basket bal: ", await readAcc.getTokenInfo(_productToBuy));
 
-  console.log("sale state", await readAcc.saleIsActive());
-  console.log("whitelist state", await readAcc.whitelistSaleIsActive());
+  // console.log("sale state", await readAcc.saleIsActive());
+  // console.log("whitelist state", await readAcc.whitelistSaleIsActive());
 
   await alpAccount.setSimulationMode(false);
   await buy(alpAccount, _productToBuy, 2);

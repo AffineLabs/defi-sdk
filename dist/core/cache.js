@@ -75,8 +75,8 @@ function getAllContracts(provider, version) {
                 router: typechain_1.Router__factory.connect(router.address, provider),
                 ewQueue: typechain_1.EmergencyWithdrawalQueue__factory.connect(yield alpSave.emergencyWithdrawalQueue(), provider),
                 polygonDegen: typechain_1.StrategyVault__factory.connect(polygonDegenData.address, provider),
-                polygonLeverage: typechain_1.Vault__factory.connect(polygonLeverageData.address, provider),
-                affineGenesis: typechain_1.AffineGenesis__factory.connect(affineGenesisData.address, provider),
+                polygonLeverage: chainId === 137 ? typechain_1.Vault__factory.connect(polygonLeverageData.address, provider) : undefined,
+                affineGenesis: chainId === 137 ? typechain_1.AffineGenesis__factory.connect(affineGenesisData.address, provider) : undefined,
             };
         }
         else if (chainId === 1 || chainId === 5) {
@@ -85,7 +85,7 @@ function getAllContracts(provider, version) {
             const ssvEthUSDEarn = typechain_1.StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
             const withdrawalEscrow = typechain_1.WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
             const degen = typechain_1.Vault__factory.connect(degenData.address, provider);
-            const ethLeverage = typechain_1.Vault__factory.connect(ethLeverageData.address, provider);
+            const ethLeverage = chainId === 1 ? typechain_1.Vault__factory.connect(ethLeverageData.address, provider) : undefined;
             return {
                 ethEarn,
                 ethWethEarn,

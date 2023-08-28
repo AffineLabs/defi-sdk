@@ -110,8 +110,8 @@ export async function getAllContracts(
       router: Router__factory.connect(router.address, provider),
       ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSave.emergencyWithdrawalQueue(), provider),
       polygonDegen: StrategyVault__factory.connect(polygonDegenData.address, provider),
-      polygonLeverage: Vault__factory.connect(polygonLeverageData.address, provider),
-      affineGenesis: AffineGenesis__factory.connect(affineGenesisData.address, provider),
+      polygonLeverage: chainId === 137 ? Vault__factory.connect(polygonLeverageData.address, provider) : undefined,
+      affineGenesis: chainId === 137 ? AffineGenesis__factory.connect(affineGenesisData.address, provider) : undefined,
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
@@ -119,7 +119,7 @@ export async function getAllContracts(
     const ssvEthUSDEarn = StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
     const withdrawalEscrow = WithdrawalEscrow__factory.connect(await ssvEthUSDEarn.debtEscrow(), provider);
     const degen = Vault__factory.connect(degenData.address, provider);
-    const ethLeverage = Vault__factory.connect(ethLeverageData.address, provider);
+    const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
     return {
       ethEarn,
       ethWethEarn,

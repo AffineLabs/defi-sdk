@@ -18,7 +18,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   const { alpSave, alpLarge, polygonDegen, router: polyRouter, polygonLeverage } = getPolygonContracts();
   const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, router: ethRouter, ethLeverage } = getEthContracts();
 
-  const productToVault: { [key in AlpineProduct]: ERC4626Upgradeable } = {
+  const productToVault: { [key in AlpineProduct]?: ERC4626Upgradeable } = {
     alpSave,
     alpLarge: alpLarge as unknown as ERC4626Upgradeable,
     polygonDegen,
@@ -31,6 +31,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   };
 
   const vault = productToVault[product];
+  if (!vault) throw new Error("Invalid product");
   const asset = MockERC20__factory.connect(await vault.asset(), vault.provider);
 
   const router: Router = product in polygonProducts ? polyRouter : ethRouter;
@@ -260,7 +261,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     };
   }
 
-  let contract: L2Vault | TwoAssetBasket | Vault | StrategyVault;
+  let contract: L2Vault | TwoAssetBasket | Vault | StrategyVault | undefined;
   if (
     product === "ethEarn" ||
     product === "ethWethEarn" ||
@@ -272,6 +273,8 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
   } else {
     contract = getPolygonContracts()[product];
   }
+
+  if (!contract) throw new Error("Invalid product");
 
   const amount = await contract.balanceOf(user);
   // price number of decimals of the share token

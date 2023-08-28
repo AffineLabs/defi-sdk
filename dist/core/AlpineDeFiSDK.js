@@ -125,6 +125,7 @@ exports.blockchainCall = blockchainCall;
  * @returns boolean
  */
 function isApproved(product, amount) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, weth, polygonLeverage } = (0, cache_1.getContracts)();
         if (product === "ethWethEarn")
@@ -140,7 +141,10 @@ function isApproved(product, amount) {
             ethLeverage,
             polygonLeverage,
         };
-        const allowance = yield asset.allowance(cache_1.userAddress, productToSpender[product].address);
+        if (!productToSpender[product]) {
+            throw new Error("Product not found");
+        }
+        const allowance = yield asset.allowance(cache_1.userAddress, (_a = productToSpender[product]) === null || _a === void 0 ? void 0 : _a.address);
         /**
          * If the 'amount' is not specified then we will check the max amount, but
          * we are dividing the max approval amount by 2 because
@@ -162,6 +166,7 @@ exports.isApproved = isApproved;
  * @param amountUSDC (optional) transaction amount in usdc, if not specified then approve max amount
  */
 function approve(product, amountAsset) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
         const { usdc, router, weth } = contracts;
@@ -177,7 +182,7 @@ function approve(product, amountAsset) {
             dollarAmount: amountAsset || _removeDecimals(constants_1.MAX_APPROVAL_AMOUNT, decimals),
             tokenAmount: amountAsset || _removeDecimals(constants_1.MAX_APPROVAL_AMOUNT, decimals),
         };
-        const approveArgs = [product === "alpLarge" ? router.address : contracts[product].address, amount];
+        const approveArgs = [product === "alpLarge" ? router.address : (_a = contracts[product]) === null || _a === void 0 ? void 0 : _a.address, amount];
         if (cache_1.SIMULATE) {
             const dryRunInfo = (yield blockchainCall(asset, "approve", approveArgs, true));
             return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
@@ -231,6 +236,8 @@ function mintWhitelist(quantity, proof) {
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
         const { affineGenesis } = contracts;
+        if (!affineGenesis)
+            throw new Error("AffineGenesis contract not found");
         return blockchainCall(affineGenesis, "mintWhitelist", [quantity, proof]);
     });
 }
@@ -243,6 +250,8 @@ function mint(quantity) {
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
         const { affineGenesis } = contracts;
+        if (!affineGenesis)
+            throw new Error("AffineGenesis contract not found");
         return blockchainCall(affineGenesis, "mint", [quantity]);
     });
 }
@@ -252,10 +261,11 @@ exports.mint = mint;
  * @returns boolean
  */
 function isWhitelisted(address, proof) {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
         const { affineGenesis } = contracts;
-        return affineGenesis.isWhitelisted(address, proof);
+        return (_a = affineGenesis === null || affineGenesis === void 0 ? void 0 : affineGenesis.isWhitelisted(address, proof)) !== null && _a !== void 0 ? _a : false;
     });
 }
 exports.isWhitelisted = isWhitelisted;
@@ -264,10 +274,11 @@ exports.isWhitelisted = isWhitelisted;
  * @returns boolean
  */
 function whitelistSaleIsActive() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
         const { affineGenesis } = contracts;
-        return affineGenesis.whitelistSaleIsActive();
+        return (_a = affineGenesis === null || affineGenesis === void 0 ? void 0 : affineGenesis.whitelistSaleIsActive()) !== null && _a !== void 0 ? _a : false;
     });
 }
 exports.whitelistSaleIsActive = whitelistSaleIsActive;
@@ -276,10 +287,11 @@ exports.whitelistSaleIsActive = whitelistSaleIsActive;
  * @returns boolean
  */
 function saleIsActive() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
         const { affineGenesis } = contracts;
-        return affineGenesis.saleIsActive();
+        return (_a = affineGenesis === null || affineGenesis === void 0 ? void 0 : affineGenesis.saleIsActive()) !== null && _a !== void 0 ? _a : false;
     });
 }
 exports.saleIsActive = saleIsActive;
