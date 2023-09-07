@@ -76,7 +76,9 @@ function getAllContracts(provider, version) {
                 ewQueue: typechain_1.EmergencyWithdrawalQueue__factory.connect(yield alpSave.emergencyWithdrawalQueue(), provider),
                 polygonDegen: typechain_1.StrategyVault__factory.connect(polygonDegenData.address, provider),
                 polygonLeverage: chainId === 137 ? typechain_1.Vault__factory.connect(polygonLeverageData.address, provider) : undefined,
-                affineGenesis: chainId === 137 ? typechain_1.AffineGenesis__factory.connect(affineGenesisData.address, provider) : undefined,
+                affineGenesis: chainId === 137 && typeof affineGenesisData !== "undefined"
+                    ? typechain_1.AffineGenesis__factory.connect(affineGenesisData.address, provider)
+                    : undefined,
             };
         }
         else if (chainId === 1 || chainId === 5) {

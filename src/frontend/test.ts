@@ -77,8 +77,8 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
-  const chainId = 5 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "ethEarn";
+  const chainId = 137 as AllowedChainId;
+  const _productToBuy: AlpineProduct = "polygonDegen";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,

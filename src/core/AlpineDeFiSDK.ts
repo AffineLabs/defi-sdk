@@ -8,6 +8,7 @@ import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
 import { MAX_APPROVAL_AMOUNT } from "./constants";
+import { StrategyVault } from "../typechain";
 
 /**
  * Get the current best estimate for gas price
@@ -289,4 +290,11 @@ export async function saleIsActive(): Promise<boolean> {
   const contracts = getContracts() as AlpineContracts;
   const { affineGenesis } = contracts;
   return affineGenesis?.saleIsActive() ?? false;
+}
+
+export async function getTVLCap(product: AlpineProduct) {
+  const contracts = getContracts() as AlpineContracts;
+  const _contract = contracts[product] as StrategyVault;
+
+  return await _contract.tvlCap();
 }

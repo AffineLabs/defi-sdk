@@ -76,3 +76,4 @@ export declare function whitelistSaleIsActive(): Promise<boolean>;
  * @returns boolean
  */
 export declare function saleIsActive(): Promise<boolean>;
+export declare function getTVLCap(product: AlpineProduct): Promise<BigNumber>;
