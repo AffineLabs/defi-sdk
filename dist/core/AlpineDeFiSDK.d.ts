@@ -76,4 +76,11 @@ export declare function whitelistSaleIsActive(): Promise<boolean>;
  * @returns boolean
  */
 export declare function saleIsActive(): Promise<boolean>;
-export declare function getTVLCap(product: AlpineProduct): Promise<BigNumber>;
+/**
+ * This function will return the tvl cap of the product,
+ * but some of the products don't have tvl cap so it will return error in that case.
+ * So, make sure to handle the error or use try catch block.
+ * @param product {AlpineProduct} the product name
+ * @returns {Promise<string>} the tvl cap of the product in unit
+ */
+export declare function getTVLCap(product: AlpineProduct): Promise<string>;

@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("../core");
 const constants_1 = require("../core/constants");
 const Account_1 = require("./Account");
 const getTokenInfo = (token, readAcc) => __awaiter(void 0, void 0, void 0, function* () {
@@ -94,6 +95,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     yield alpAccount.sellProduct(_productToBuy, 1);
     console.log("sold: ", _productToBuy, "of amount: ", 1);
     console.log("basket bal after sell ", yield readAcc.getTokenInfo(_productToBuy));
+    const tvlCap = yield core_1.AlpineDeFiSDK.getTVLCap(_productToBuy);
+    console.log("tvlCap: ", tvlCap);
     // const res = await alpAccount.isStrategyLiquid();
     // console.log({ res });
     // const requests = await alpAccount.getWithdrawalRequest();
