@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const core_1 = require("../core");
 const constants_1 = require("../core/constants");
 const Account_1 = require("./Account");
 const getTokenInfo = (token, readAcc) => __awaiter(void 0, void 0, void 0, function* () {
@@ -76,8 +77,8 @@ const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, f
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const alpAccount = new Account_1.Account();
     const walletType = "metamask";
-    const chainId = 5;
-    const _productToBuy = "ethEarn";
+    const chainId = 137;
+    const _productToBuy = "polygonDegen";
     console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS: constants_1.ALLOWED_CHAIN_IDS }, constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
     yield connectAndWrite({ walletType, account: alpAccount, chainId });
     const readAcc = new Account_1.ReadAccount(alpAccount.userAddress || "", chainId);
@@ -94,6 +95,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     yield alpAccount.sellProduct(_productToBuy, 1);
     console.log("sold: ", _productToBuy, "of amount: ", 1);
     console.log("basket bal after sell ", yield readAcc.getTokenInfo(_productToBuy));
+    const tvlCap = yield core_1.AlpineDeFiSDK.getTVLCap(_productToBuy);
+    console.log("tvlCap: ", tvlCap);
     // const res = await alpAccount.isStrategyLiquid();
     // console.log({ res });
     // const requests = await alpAccount.getWithdrawalRequest();
