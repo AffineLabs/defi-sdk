@@ -292,9 +292,19 @@ export async function saleIsActive(): Promise<boolean> {
   return affineGenesis?.saleIsActive() ?? false;
 }
 
-export async function getTVLCap(product: AlpineProduct) {
+/**
+ * This function will return the tvl cap of the product,
+ * but some of the products don't have tvl cap so it will return error in that case.
+ * So, make sure to handle the error or use try catch block.
+ * @param product {AlpineProduct} the product name
+ * @returns {Promise<string>} the tvl cap of the product in unit
+ */
+export async function getTVLCap(product: AlpineProduct): Promise<string> {
   const contracts = getContracts() as AlpineContracts;
+  const _asset = ["ethLeverage", "polygonLeverage", "ethWethEarn"].includes(product) ? contracts.weth : contracts.usdc;
   const _contract = contracts[product] as StrategyVault;
 
-  return await _contract.tvlCap();
+  const tvlCap = await _contract.tvlCap();
+  const decimals = await _asset.decimals();
+  return _removeDecimals(tvlCap, decimals);
 }

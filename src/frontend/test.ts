@@ -1,3 +1,4 @@
+import { AlpineDeFiSDK } from "../core";
 import { ALLOWED_CHAIN_IDS, DEFAULT_RAW_CHAIN_ID } from "../core/constants";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet } from "../types/account";
@@ -95,16 +96,20 @@ const main = async () => {
   // console.log("sale state", await readAcc.saleIsActive());
   // console.log("whitelist state", await readAcc.whitelistSaleIsActive());
 
-  await alpAccount.setSimulationMode(false);
-  await buy(alpAccount, _productToBuy, 2);
+  // await alpAccount.setSimulationMode(false);
+  // await buy(alpAccount, _productToBuy, 2);
 
-  console.log("bought: ", _productToBuy, "of amount: ", 1);
+  // console.log("bought: ", _productToBuy, "of amount: ", 1);
   console.log("basket bal after purchase ", await readAcc.getTokenInfo(_productToBuy));
 
-  await alpAccount.sellProduct(_productToBuy, 1);
+  // await alpAccount.sellProduct(_productToBuy, 1);
 
-  console.log("sold: ", _productToBuy, "of amount: ", 1);
+  // console.log("sold: ", _productToBuy, "of amount: ", 1);
   console.log("basket bal after sell ", await readAcc.getTokenInfo(_productToBuy));
+
+  const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
+
+  console.log("tvlCap: ", tvlCap);
 
   // const res = await alpAccount.isStrategyLiquid();
   // console.log({ res });
