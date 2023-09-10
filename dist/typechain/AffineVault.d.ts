@@ -1,4 +1,4 @@
-import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, ContractTransaction, Overrides, PayableOverrides, PopulatedTransaction, Signer, utils } from "ethers";
+import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, ContractTransaction, Overrides, PopulatedTransaction, Signer, utils } from "ethers";
 import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "./common";
@@ -9,6 +9,7 @@ export interface AffineVaultInterface extends utils.Interface {
         "LOCK_INTERVAL()": FunctionFragment;
         "addStrategy(address,uint16)": FunctionFragment;
         "asset()": FunctionFragment;
+        "depositIntoStrategy(address,uint256)": FunctionFragment;
         "getRoleAdmin(bytes32)": FunctionFragment;
         "getWithdrawalQueue()": FunctionFragment;
         "governance()": FunctionFragment;
@@ -18,7 +19,6 @@ export interface AffineVaultInterface extends utils.Interface {
         "lastHarvest()": FunctionFragment;
         "lockedProfit()": FunctionFragment;
         "maxLockedProfit()": FunctionFragment;
-        "multicall(bytes[])": FunctionFragment;
         "rebalance()": FunctionFragment;
         "removeStrategy(address)": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
@@ -30,14 +30,16 @@ export interface AffineVaultInterface extends utils.Interface {
         "totalStrategyHoldings()": FunctionFragment;
         "updateStrategyAllocations(address[],uint16[])": FunctionFragment;
         "vaultTVL()": FunctionFragment;
+        "withdrawFromStrategy(address,uint256)": FunctionFragment;
         "withdrawalQueue(uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "asset" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "multicall" | "rebalance" | "removeStrategy" | "renounceRole" | "revokeRole" | "setWithdrawalQueue" | "strategies" | "supportsInterface" | "totalBps" | "totalStrategyHoldings" | "updateStrategyAllocations" | "vaultTVL" | "withdrawalQueue"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "asset" | "depositIntoStrategy" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "rebalance" | "removeStrategy" | "renounceRole" | "revokeRole" | "setWithdrawalQueue" | "strategies" | "supportsInterface" | "totalBps" | "totalStrategyHoldings" | "updateStrategyAllocations" | "vaultTVL" | "withdrawFromStrategy" | "withdrawalQueue"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
     encodeFunctionData(functionFragment: "LOCK_INTERVAL", values?: undefined): string;
     encodeFunctionData(functionFragment: "addStrategy", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "asset", values?: undefined): string;
+    encodeFunctionData(functionFragment: "depositIntoStrategy", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "getRoleAdmin", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "getWithdrawalQueue", values?: undefined): string;
     encodeFunctionData(functionFragment: "governance", values?: undefined): string;
@@ -47,7 +49,6 @@ export interface AffineVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "lastHarvest", values?: undefined): string;
     encodeFunctionData(functionFragment: "lockedProfit", values?: undefined): string;
     encodeFunctionData(functionFragment: "maxLockedProfit", values?: undefined): string;
-    encodeFunctionData(functionFragment: "multicall", values: [PromiseOrValue<BytesLike>[]]): string;
     encodeFunctionData(functionFragment: "rebalance", values?: undefined): string;
     encodeFunctionData(functionFragment: "removeStrategy", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
@@ -59,12 +60,14 @@ export interface AffineVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "totalStrategyHoldings", values?: undefined): string;
     encodeFunctionData(functionFragment: "updateStrategyAllocations", values: [PromiseOrValue<string>[], PromiseOrValue<BigNumberish>[]]): string;
     encodeFunctionData(functionFragment: "vaultTVL", values?: undefined): string;
+    encodeFunctionData(functionFragment: "withdrawFromStrategy", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "withdrawalQueue", values: [PromiseOrValue<BigNumberish>]): string;
     decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "HARVESTER", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "LOCK_INTERVAL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "addStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "depositIntoStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getWithdrawalQueue", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "governance", data: BytesLike): Result;
@@ -74,7 +77,6 @@ export interface AffineVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "lastHarvest", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "lockedProfit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "maxLockedProfit", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "rebalance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "removeStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
@@ -86,6 +88,7 @@ export interface AffineVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "totalStrategyHoldings", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "updateStrategyAllocations", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "vaultTVL", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "withdrawFromStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawalQueue", data: BytesLike): Result;
     events: {
         "Harvest(address,address[])": EventFragment;
@@ -244,6 +247,9 @@ export interface AffineVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         asset(overrides?: CallOverrides): Promise<[string]>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string]>;
         getWithdrawalQueue(overrides?: CallOverrides): Promise<[string[]]>;
         governance(overrides?: CallOverrides): Promise<[string]>;
@@ -257,9 +263,6 @@ export interface AffineVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<[BigNumber]>;
         lockedProfit(overrides?: CallOverrides): Promise<[BigNumber]>;
         maxLockedProfit(overrides?: CallOverrides): Promise<[BigNumber]>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
         rebalance(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -291,6 +294,9 @@ export interface AffineVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<[BigNumber]>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[string]>;
     };
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -300,6 +306,9 @@ export interface AffineVault extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     asset(overrides?: CallOverrides): Promise<string>;
+    depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
     getWithdrawalQueue(overrides?: CallOverrides): Promise<string[]>;
     governance(overrides?: CallOverrides): Promise<string>;
@@ -313,9 +322,6 @@ export interface AffineVault extends BaseContract {
     lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
     lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
     maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
-    multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
     rebalance(overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -347,6 +353,9 @@ export interface AffineVault extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
+    withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
     callStatic: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -354,6 +363,7 @@ export interface AffineVault extends BaseContract {
         LOCK_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
         addStrategy(strategy: PromiseOrValue<string>, tvlBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         asset(overrides?: CallOverrides): Promise<string>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
         getWithdrawalQueue(overrides?: CallOverrides): Promise<string[]>;
         governance(overrides?: CallOverrides): Promise<string>;
@@ -363,7 +373,6 @@ export interface AffineVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
         lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
         maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<string[]>;
         rebalance(overrides?: CallOverrides): Promise<void>;
         removeStrategy(strategy: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
@@ -383,6 +392,7 @@ export interface AffineVault extends BaseContract {
         totalStrategyHoldings(overrides?: CallOverrides): Promise<BigNumber>;
         updateStrategyAllocations(strategyList: PromiseOrValue<string>[], strategyBps: PromiseOrValue<BigNumberish>[], overrides?: CallOverrides): Promise<void>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
     };
     filters: {
@@ -421,6 +431,9 @@ export interface AffineVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         asset(overrides?: CallOverrides): Promise<BigNumber>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
         getWithdrawalQueue(overrides?: CallOverrides): Promise<BigNumber>;
         governance(overrides?: CallOverrides): Promise<BigNumber>;
@@ -434,9 +447,6 @@ export interface AffineVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
         lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
         maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
         rebalance(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -460,6 +470,9 @@ export interface AffineVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     };
     populateTransaction: {
@@ -470,6 +483,9 @@ export interface AffineVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         getWithdrawalQueue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         governance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -483,9 +499,6 @@ export interface AffineVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         lockedProfit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         maxLockedProfit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
         rebalance(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -509,6 +522,9 @@ export interface AffineVault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
     };
 }

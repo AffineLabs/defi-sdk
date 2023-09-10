@@ -98,6 +98,36 @@ describe("Buy products Eth", () => __awaiter(void 0, void 0, void 0, function* (
         expect(Number(ethWethInfo.amount) * Number(ethWethInfo.price)).to.closeTo(Number(ethWethInfo.equity), 1);
     }));
 }));
+describe("Buy products Base", () => __awaiter(void 0, void 0, void 0, function* () {
+    let wallet;
+    let contracts;
+    before(() => __awaiter(void 0, void 0, void 0, function* () {
+        const testProvider = (0, utils_1.getTestProvider)("base");
+        wallet = ethers_1.ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
+        yield (0, cache_1.init)(wallet, undefined, "v1.0-beta", 8453);
+        yield testProvider.send("anvil_setBalance", [wallet.address, ethers_1.ethers.BigNumber.from(10).pow(18).toHexString()]);
+        console.log("INIT DONE");
+        yield (0, utils_1.setBaseUsdcBalance)(wallet.address, ethers_1.ethers.BigNumber.from(100).mul(utils_1.oneUSDC));
+        console.log("usdc balance set");
+        contracts = (0, cache_1.getBaseContracts)();
+    }));
+    it("Buy/Sell usdEarnBase", () => __awaiter(void 0, void 0, void 0, function* () {
+        const { baseUsdEarn } = contracts;
+        yield (0, AlpineDeFiSDK_1.approve)("baseUsdEarn", "100000");
+        yield (0, product_1.buyProduct)("baseUsdEarn", 10);
+        console.log("shares bought");
+        const shares = yield baseUsdEarn.balanceOf(wallet.address);
+        expect(shares.gt(0)).to.be.true;
+        yield (0, product_1.sellProduct)("baseUsdEarn", 9);
+        const newBal = yield baseUsdEarn.balanceOf(wallet.address);
+        expect(newBal.lt(shares)).to.be.true;
+    }));
+    it("BaseUsdEarn info", () => __awaiter(void 0, void 0, void 0, function* () {
+        const baseInfo = yield (0, product_1.getTokenInfo)("baseUsdEarn");
+        console.log({ baseInfo });
+        expect(Number(baseInfo.amount) * Number(baseInfo.price)).to.closeTo(Number(baseInfo.equity), 1);
+    }));
+}));
 describe("Product info", () => __awaiter(void 0, void 0, void 0, function* () {
     let wallet;
     before(() => __awaiter(void 0, void 0, void 0, function* () {

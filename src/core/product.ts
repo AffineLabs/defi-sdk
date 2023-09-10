@@ -1,14 +1,39 @@
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, Contract, ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
-import { ERC4626Upgradeable, L2Vault, MockERC20, Router, StrategyVault, TwoAssetBasket, Vault } from "../typechain";
+import {
+  ERC4626Upgradeable,
+  L2Vault,
+  MockERC20,
+  Router,
+  StrategyVault,
+  TwoAssetBasket,
+  Vault,
+  VaultV2,
+} from "../typechain";
 // Implementation of erc20, as contract uses two erc20 implementation oz, solmate,
 // replacing it with mockERC20 which is an extension of ERC20
 import { MockERC20__factory } from "../typechain";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
-import { getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIMULATE, userAddress } from "./cache";
+import {
+  getBaseContracts,
+  getContracts,
+  getEthContracts,
+  getPolygonContracts,
+  PROVIDER,
+  SIMULATE,
+  userAddress,
+} from "./cache";
 import { MAX_UINT } from "./constants";
 
-import { AlpineProduct, BasicReceiptInfo, DryRunReceipt, FullTxReceipt, TokenInfo, polygonProducts } from "./types";
+import {
+  AlpineProduct,
+  BasicReceiptInfo,
+  DryRunReceipt,
+  FullTxReceipt,
+  TokenInfo,
+  polygonProducts,
+  AlpineContracts,
+} from "./types";
 
 async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   vault: ERC4626Upgradeable;
@@ -17,6 +42,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
 }> {
   const { alpSave, alpLarge, polygonDegen, router: polyRouter, polygonLeverage } = getPolygonContracts();
   const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, router: ethRouter, ethLeverage } = getEthContracts();
+  const { baseUsdEarn } = getBaseContracts();
 
   const productToVault: { [key in AlpineProduct]?: ERC4626Upgradeable } = {
     alpSave,
@@ -28,6 +54,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
     degen,
     ethLeverage,
     polygonLeverage,
+    baseUsdEarn,
   };
 
   const vault = productToVault[product];
@@ -261,18 +288,33 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     };
   }
 
-  let contract: L2Vault | TwoAssetBasket | Vault | StrategyVault | undefined;
-  if (
-    product === "ethEarn" ||
-    product === "ethWethEarn" ||
-    product === "ssvEthUSDEarn" ||
-    product === "degen" ||
-    product === "ethLeverage"
-  ) {
-    contract = getEthContracts()[product];
-  } else {
-    contract = getPolygonContracts()[product];
-  }
+  const {
+    alpSave,
+    alpLarge,
+    ethEarn,
+    ethWethEarn,
+    ssvEthUSDEarn,
+    degen,
+    polygonDegen,
+    ethLeverage,
+    polygonLeverage,
+    baseUsdEarn,
+  } = getContracts() as AlpineContracts;
+
+  const productToContract: { [key in AlpineProduct]: Contract | undefined } = {
+    alpSave,
+    ethEarn,
+    ssvEthUSDEarn,
+    degen,
+    polygonDegen,
+    ethLeverage,
+    polygonLeverage,
+    baseUsdEarn,
+    alpLarge,
+    ethWethEarn,
+  };
+
+  const contract = productToContract[product];
 
   if (!contract) throw new Error("Invalid product");
 

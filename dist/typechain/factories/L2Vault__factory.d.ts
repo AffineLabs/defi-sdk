@@ -3,6 +3,30 @@ import type { Provider } from "@ethersproject/providers";
 import type { L2Vault, L2VaultInterface } from "../L2Vault";
 export declare class L2Vault__factory {
     static readonly abi: readonly [{
+        readonly inputs: readonly [];
+        readonly name: "OnlyEscrow";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "OnlyWormholeRouter";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "ProfitUnlocking";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "SharesExceedBalance";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "TooManyStrategyBps";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "ZeroShares";
+        readonly type: "error";
+    }, {
         readonly anonymous: false;
         readonly inputs: readonly [{
             readonly indexed: false;
@@ -91,21 +115,6 @@ export declare class L2Vault__factory {
         readonly anonymous: false;
         readonly inputs: readonly [{
             readonly indexed: true;
-            readonly internalType: "contract EmergencyWithdrawalQueue";
-            readonly name: "oldQ";
-            readonly type: "address";
-        }, {
-            readonly indexed: true;
-            readonly internalType: "contract EmergencyWithdrawalQueue";
-            readonly name: "newQ";
-            readonly type: "address";
-        }];
-        readonly name: "EwqSet";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: true;
             readonly internalType: "address";
             readonly name: "user";
             readonly type: "address";
@@ -156,21 +165,6 @@ export declare class L2Vault__factory {
             readonly type: "uint256";
         }];
         readonly name: "Liquidation";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "oldFee";
-            readonly type: "uint256";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "newFee";
-            readonly type: "uint256";
-        }];
-        readonly name: "ManagementFeeSet";
         readonly type: "event";
     }, {
         readonly anonymous: false;
@@ -426,21 +420,6 @@ export declare class L2Vault__factory {
             readonly type: "uint256";
         }];
         readonly name: "Withdraw";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "oldFee";
-            readonly type: "uint256";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "newFee";
-            readonly type: "uint256";
-        }];
-        readonly name: "WithdrawalFeeSet";
         readonly type: "event";
     }, {
         readonly anonymous: false;
@@ -702,6 +681,20 @@ export declare class L2Vault__factory {
             readonly type: "uint256";
         }];
         readonly name: "depositIntoStrategies";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "contract BaseStrategy";
+            readonly name: "strategy";
+            readonly type: "address";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "assets";
+            readonly type: "uint256";
+        }];
+        readonly name: "depositIntoStrategy";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
@@ -1095,20 +1088,6 @@ export declare class L2Vault__factory {
             readonly type: "uint256";
         }];
         readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "bytes[]";
-            readonly name: "data";
-            readonly type: "bytes[]";
-        }];
-        readonly name: "multicall";
-        readonly outputs: readonly [{
-            readonly internalType: "bytes[]";
-            readonly name: "results";
-            readonly type: "bytes[]";
-        }];
-        readonly stateMutability: "payable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -1620,6 +1599,20 @@ export declare class L2Vault__factory {
             readonly name: "shares";
             readonly type: "uint256";
         }];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "contract BaseStrategy";
+            readonly name: "strategy";
+            readonly type: "address";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "assets";
+            readonly type: "uint256";
+        }];
+        readonly name: "withdrawFromStrategy";
+        readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {

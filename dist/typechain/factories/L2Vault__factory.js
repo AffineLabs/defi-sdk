@@ -7,6 +7,36 @@ exports.L2Vault__factory = void 0;
 const ethers_1 = require("ethers");
 const _abi = [
     {
+        inputs: [],
+        name: "OnlyEscrow",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "OnlyWormholeRouter",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "ProfitUnlocking",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "SharesExceedBalance",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "TooManyStrategyBps",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "ZeroShares",
+        type: "error",
+    },
+    {
         anonymous: false,
         inputs: [
             {
@@ -118,25 +148,6 @@ const _abi = [
         inputs: [
             {
                 indexed: true,
-                internalType: "contract EmergencyWithdrawalQueue",
-                name: "oldQ",
-                type: "address",
-            },
-            {
-                indexed: true,
-                internalType: "contract EmergencyWithdrawalQueue",
-                name: "newQ",
-                type: "address",
-            },
-        ],
-        name: "EwqSet",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: true,
                 internalType: "address",
                 name: "user",
                 type: "address",
@@ -200,25 +211,6 @@ const _abi = [
             },
         ],
         name: "Liquidation",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: false,
-                internalType: "uint256",
-                name: "oldFee",
-                type: "uint256",
-            },
-            {
-                indexed: false,
-                internalType: "uint256",
-                name: "newFee",
-                type: "uint256",
-            },
-        ],
-        name: "ManagementFeeSet",
         type: "event",
     },
     {
@@ -542,25 +534,6 @@ const _abi = [
             },
         ],
         name: "Withdraw",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: false,
-                internalType: "uint256",
-                name: "oldFee",
-                type: "uint256",
-            },
-            {
-                indexed: false,
-                internalType: "uint256",
-                name: "newFee",
-                type: "uint256",
-            },
-        ],
-        name: "WithdrawalFeeSet",
         type: "event",
     },
     {
@@ -905,6 +878,24 @@ const _abi = [
             },
         ],
         name: "depositIntoStrategies",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "contract BaseStrategy",
+                name: "strategy",
+                type: "address",
+            },
+            {
+                internalType: "uint256",
+                name: "assets",
+                type: "uint256",
+            },
+        ],
+        name: "depositIntoStrategy",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -1421,25 +1412,6 @@ const _abi = [
             },
         ],
         stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "bytes[]",
-                name: "data",
-                type: "bytes[]",
-            },
-        ],
-        name: "multicall",
-        outputs: [
-            {
-                internalType: "bytes[]",
-                name: "results",
-                type: "bytes[]",
-            },
-        ],
-        stateMutability: "payable",
         type: "function",
     },
     {
@@ -2107,6 +2079,24 @@ const _abi = [
                 type: "uint256",
             },
         ],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "contract BaseStrategy",
+                name: "strategy",
+                type: "address",
+            },
+            {
+                internalType: "uint256",
+                name: "assets",
+                type: "uint256",
+            },
+        ],
+        name: "withdrawFromStrategy",
+        outputs: [],
         stateMutability: "nonpayable",
         type: "function",
     },

@@ -1,4 +1,4 @@
-import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, ContractTransaction, Overrides, PopulatedTransaction, Signer, utils } from "ethers";
+import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, ContractTransaction, Overrides, PayableOverrides, PopulatedTransaction, Signer, utils } from "ethers";
 import type { FunctionFragment, Result } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "./common";
@@ -6,12 +6,13 @@ export interface ICurvePoolInterface extends utils.Interface {
     functions: {
         "add_liquidity(uint256[2],uint256)": FunctionFragment;
         "calc_withdraw_one_coin(uint256,int128)": FunctionFragment;
+        "exchange(int128,int128,uint256,uint256)": FunctionFragment;
         "get_virtual_price()": FunctionFragment;
         "lp_token()": FunctionFragment;
         "remove_liquidity_imbalance(uint256[2],uint256)": FunctionFragment;
         "remove_liquidity_one_coin(uint256,int128,uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "add_liquidity" | "calc_withdraw_one_coin" | "get_virtual_price" | "lp_token" | "remove_liquidity_imbalance" | "remove_liquidity_one_coin"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "add_liquidity" | "calc_withdraw_one_coin" | "exchange" | "get_virtual_price" | "lp_token" | "remove_liquidity_imbalance" | "remove_liquidity_one_coin"): FunctionFragment;
     encodeFunctionData(functionFragment: "add_liquidity", values: [
         [
             PromiseOrValue<BigNumberish>,
@@ -20,6 +21,12 @@ export interface ICurvePoolInterface extends utils.Interface {
         PromiseOrValue<BigNumberish>
     ]): string;
     encodeFunctionData(functionFragment: "calc_withdraw_one_coin", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "exchange", values: [
+        PromiseOrValue<BigNumberish>,
+        PromiseOrValue<BigNumberish>,
+        PromiseOrValue<BigNumberish>,
+        PromiseOrValue<BigNumberish>
+    ]): string;
     encodeFunctionData(functionFragment: "get_virtual_price", values?: undefined): string;
     encodeFunctionData(functionFragment: "lp_token", values?: undefined): string;
     encodeFunctionData(functionFragment: "remove_liquidity_imbalance", values: [
@@ -36,6 +43,7 @@ export interface ICurvePoolInterface extends utils.Interface {
     ]): string;
     decodeFunctionResult(functionFragment: "add_liquidity", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "calc_withdraw_one_coin", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "exchange", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "get_virtual_price", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "lp_token", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "remove_liquidity_imbalance", data: BytesLike): Result;
@@ -60,10 +68,13 @@ export interface ICurvePool extends BaseContract {
         add_liquidity(depositAmounts: [
             PromiseOrValue<BigNumberish>,
             PromiseOrValue<BigNumberish>
-        ], minMintAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        ], minMintAmount: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         calc_withdraw_one_coin(_token_amount: PromiseOrValue<BigNumberish>, i: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
+        exchange(x: PromiseOrValue<BigNumberish>, y: PromiseOrValue<BigNumberish>, dx: PromiseOrValue<BigNumberish>, min_dy: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         get_virtual_price(overrides?: CallOverrides): Promise<[BigNumber]>;
         lp_token(overrides?: CallOverrides): Promise<[string]>;
         remove_liquidity_imbalance(_amounts: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _max_burn_amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -76,10 +87,13 @@ export interface ICurvePool extends BaseContract {
     add_liquidity(depositAmounts: [
         PromiseOrValue<BigNumberish>,
         PromiseOrValue<BigNumberish>
-    ], minMintAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+    ], minMintAmount: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     calc_withdraw_one_coin(_token_amount: PromiseOrValue<BigNumberish>, i: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    exchange(x: PromiseOrValue<BigNumberish>, y: PromiseOrValue<BigNumberish>, dx: PromiseOrValue<BigNumberish>, min_dy: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     get_virtual_price(overrides?: CallOverrides): Promise<BigNumber>;
     lp_token(overrides?: CallOverrides): Promise<string>;
     remove_liquidity_imbalance(_amounts: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _max_burn_amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -94,6 +108,7 @@ export interface ICurvePool extends BaseContract {
             PromiseOrValue<BigNumberish>
         ], minMintAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         calc_withdraw_one_coin(_token_amount: PromiseOrValue<BigNumberish>, i: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        exchange(x: PromiseOrValue<BigNumberish>, y: PromiseOrValue<BigNumberish>, dx: PromiseOrValue<BigNumberish>, min_dy: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         get_virtual_price(overrides?: CallOverrides): Promise<BigNumber>;
         lp_token(overrides?: CallOverrides): Promise<string>;
         remove_liquidity_imbalance(_amounts: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _max_burn_amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -104,10 +119,13 @@ export interface ICurvePool extends BaseContract {
         add_liquidity(depositAmounts: [
             PromiseOrValue<BigNumberish>,
             PromiseOrValue<BigNumberish>
-        ], minMintAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        ], minMintAmount: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         calc_withdraw_one_coin(_token_amount: PromiseOrValue<BigNumberish>, i: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        exchange(x: PromiseOrValue<BigNumberish>, y: PromiseOrValue<BigNumberish>, dx: PromiseOrValue<BigNumberish>, min_dy: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         get_virtual_price(overrides?: CallOverrides): Promise<BigNumber>;
         lp_token(overrides?: CallOverrides): Promise<BigNumber>;
         remove_liquidity_imbalance(_amounts: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _max_burn_amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -121,10 +139,13 @@ export interface ICurvePool extends BaseContract {
         add_liquidity(depositAmounts: [
             PromiseOrValue<BigNumberish>,
             PromiseOrValue<BigNumberish>
-        ], minMintAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        ], minMintAmount: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         calc_withdraw_one_coin(_token_amount: PromiseOrValue<BigNumberish>, i: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        exchange(x: PromiseOrValue<BigNumberish>, y: PromiseOrValue<BigNumberish>, dx: PromiseOrValue<BigNumberish>, min_dy: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         get_virtual_price(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         lp_token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         remove_liquidity_imbalance(_amounts: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _max_burn_amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {

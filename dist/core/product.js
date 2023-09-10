@@ -22,6 +22,7 @@ function _getVaultAndAsset(product) {
     return __awaiter(this, void 0, void 0, function* () {
         const { alpSave, alpLarge, polygonDegen, router: polyRouter, polygonLeverage } = (0, cache_1.getPolygonContracts)();
         const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, router: ethRouter, ethLeverage } = (0, cache_1.getEthContracts)();
+        const { baseUsdEarn } = (0, cache_1.getBaseContracts)();
         const productToVault = {
             alpSave,
             alpLarge: alpLarge,
@@ -32,6 +33,7 @@ function _getVaultAndAsset(product) {
             degen,
             ethLeverage,
             polygonLeverage,
+            baseUsdEarn,
         };
         const vault = productToVault[product];
         if (!vault)
@@ -231,17 +233,20 @@ function getTokenInfo(product) {
                 equity: numWeth,
             };
         }
-        let contract;
-        if (product === "ethEarn" ||
-            product === "ethWethEarn" ||
-            product === "ssvEthUSDEarn" ||
-            product === "degen" ||
-            product === "ethLeverage") {
-            contract = (0, cache_1.getEthContracts)()[product];
-        }
-        else {
-            contract = (0, cache_1.getPolygonContracts)()[product];
-        }
+        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, } = (0, cache_1.getContracts)();
+        const productToContract = {
+            alpSave,
+            ethEarn,
+            ssvEthUSDEarn,
+            degen,
+            polygonDegen,
+            ethLeverage,
+            polygonLeverage,
+            baseUsdEarn,
+            alpLarge,
+            ethWethEarn,
+        };
+        const contract = productToContract[product];
         if (!contract)
             throw new Error("Invalid product");
         const amount = yield contract.balanceOf(user);

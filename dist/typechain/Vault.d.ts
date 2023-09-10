@@ -29,6 +29,7 @@ export interface VaultInterface extends utils.Interface {
         "decreaseAllowance(address,uint256)": FunctionFragment;
         "deposit(uint256,address)": FunctionFragment;
         "depositIntoStrategies(uint256)": FunctionFragment;
+        "depositIntoStrategy(address,uint256)": FunctionFragment;
         "detailedPrice()": FunctionFragment;
         "detailedTVL()": FunctionFragment;
         "detailedTotalSupply()": FunctionFragment;
@@ -50,7 +51,6 @@ export interface VaultInterface extends utils.Interface {
         "maxRedeem(address)": FunctionFragment;
         "maxWithdraw(address)": FunctionFragment;
         "mint(uint256,address)": FunctionFragment;
-        "multicall(bytes[])": FunctionFragment;
         "name()": FunctionFragment;
         "pause()": FunctionFragment;
         "paused()": FunctionFragment;
@@ -82,10 +82,11 @@ export interface VaultInterface extends utils.Interface {
         "upgradeToAndCall(address,bytes)": FunctionFragment;
         "vaultTVL()": FunctionFragment;
         "withdraw(uint256,address,address)": FunctionFragment;
+        "withdrawFromStrategy(address,uint256)": FunctionFragment;
         "withdrawalFee()": FunctionFragment;
         "withdrawalQueue(uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "allowance" | "approve" | "asset" | "balanceOf" | "convertToAssets" | "convertToShares" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "multicall" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "rebalance" | "redeem" | "removeStrategy" | "renounceRole" | "revokeRole" | "setManagementFee" | "setWithdrawalFee" | "setWithdrawalQueue" | "strategies" | "supportsInterface" | "symbol" | "totalAssets" | "totalBps" | "totalStrategyHoldings" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "withdraw" | "withdrawalFee" | "withdrawalQueue"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "allowance" | "approve" | "asset" | "balanceOf" | "convertToAssets" | "convertToShares" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "depositIntoStrategy" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "rebalance" | "redeem" | "removeStrategy" | "renounceRole" | "revokeRole" | "setManagementFee" | "setWithdrawalFee" | "setWithdrawalQueue" | "strategies" | "supportsInterface" | "symbol" | "totalAssets" | "totalBps" | "totalStrategyHoldings" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "withdraw" | "withdrawFromStrategy" | "withdrawalFee" | "withdrawalQueue"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "GUARDIAN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
@@ -101,6 +102,7 @@ export interface VaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "decreaseAllowance", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "deposit", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "depositIntoStrategies", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "depositIntoStrategy", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "detailedPrice", values?: undefined): string;
     encodeFunctionData(functionFragment: "detailedTVL", values?: undefined): string;
     encodeFunctionData(functionFragment: "detailedTotalSupply", values?: undefined): string;
@@ -127,7 +129,6 @@ export interface VaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "maxRedeem", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "maxWithdraw", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "mint", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "multicall", values: [PromiseOrValue<BytesLike>[]]): string;
     encodeFunctionData(functionFragment: "name", values?: undefined): string;
     encodeFunctionData(functionFragment: "pause", values?: undefined): string;
     encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -171,6 +172,7 @@ export interface VaultInterface extends utils.Interface {
         PromiseOrValue<string>,
         PromiseOrValue<string>
     ]): string;
+    encodeFunctionData(functionFragment: "withdrawFromStrategy", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "withdrawalFee", values?: undefined): string;
     encodeFunctionData(functionFragment: "withdrawalQueue", values: [PromiseOrValue<BigNumberish>]): string;
     decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
@@ -188,6 +190,7 @@ export interface VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "decreaseAllowance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "depositIntoStrategies", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "depositIntoStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "detailedPrice", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "detailedTVL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "detailedTotalSupply", data: BytesLike): Result;
@@ -209,7 +212,6 @@ export interface VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "maxWithdraw", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -241,6 +243,7 @@ export interface VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "upgradeToAndCall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "vaultTVL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "withdrawFromStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawalFee", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawalQueue", data: BytesLike): Result;
     events: {
@@ -543,6 +546,9 @@ export interface Vault extends BaseContract {
         depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         detailedPrice(overrides?: CallOverrides): Promise<[
             DetailedShare.NumberStructOutput
         ] & {
@@ -584,9 +590,6 @@ export interface Vault extends BaseContract {
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         name(overrides?: CallOverrides): Promise<[string]>;
@@ -660,6 +663,9 @@ export interface Vault extends BaseContract {
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         withdrawalFee(overrides?: CallOverrides): Promise<[BigNumber]>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[string]>;
     };
@@ -686,6 +692,9 @@ export interface Vault extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     detailedPrice(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
@@ -717,9 +726,6 @@ export interface Vault extends BaseContract {
     maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
-    multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     name(overrides?: CallOverrides): Promise<string>;
@@ -793,6 +799,9 @@ export interface Vault extends BaseContract {
     withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
     withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
     callStatic: {
@@ -811,6 +820,7 @@ export interface Vault extends BaseContract {
         decreaseAllowance(spender: PromiseOrValue<string>, subtractedValue: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         detailedPrice(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
         detailedTVL(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
         detailedTotalSupply(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
@@ -832,7 +842,6 @@ export interface Vault extends BaseContract {
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<string[]>;
         name(overrides?: CallOverrides): Promise<string>;
         pause(overrides?: CallOverrides): Promise<void>;
         paused(overrides?: CallOverrides): Promise<boolean>;
@@ -872,6 +881,7 @@ export interface Vault extends BaseContract {
         upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<void>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
     };
@@ -951,6 +961,9 @@ export interface Vault extends BaseContract {
         depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         detailedPrice(overrides?: CallOverrides): Promise<BigNumber>;
         detailedTVL(overrides?: CallOverrides): Promise<BigNumber>;
         detailedTotalSupply(overrides?: CallOverrides): Promise<BigNumber>;
@@ -980,9 +993,6 @@ export interface Vault extends BaseContract {
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1048,6 +1058,9 @@ export interface Vault extends BaseContract {
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     };
@@ -1075,6 +1088,9 @@ export interface Vault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         detailedPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1106,9 +1122,6 @@ export interface Vault extends BaseContract {
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1172,6 +1185,9 @@ export interface Vault extends BaseContract {
         }): Promise<PopulatedTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         withdrawalFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;

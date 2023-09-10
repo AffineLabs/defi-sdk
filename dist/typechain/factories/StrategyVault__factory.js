@@ -7,6 +7,11 @@ exports.StrategyVault__factory = void 0;
 const ethers_1 = require("ethers");
 const _abi = [
     {
+        inputs: [],
+        name: "ZeroShares",
+        type: "error",
+    },
+    {
         anonymous: false,
         inputs: [
             {
@@ -1097,25 +1102,6 @@ const _abi = [
             },
         ],
         stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "bytes[]",
-                name: "data",
-                type: "bytes[]",
-            },
-        ],
-        name: "multicall",
-        outputs: [
-            {
-                internalType: "bytes[]",
-                name: "results",
-                type: "bytes[]",
-            },
-        ],
-        stateMutability: "payable",
         type: "function",
     },
     {

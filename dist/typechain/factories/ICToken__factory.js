@@ -210,7 +210,7 @@ const _abi = [
         inputs: [
             {
                 internalType: "uint256",
-                name: "",
+                name: "underlying",
                 type: "uint256",
             },
         ],
@@ -261,6 +261,13 @@ const _abi = [
             },
         ],
         stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "repayBorrow",
+        outputs: [],
+        stateMutability: "payable",
         type: "function",
     },
     {

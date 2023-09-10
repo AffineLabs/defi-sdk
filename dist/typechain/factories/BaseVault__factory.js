@@ -7,6 +7,16 @@ exports.BaseVault__factory = void 0;
 const ethers_1 = require("ethers");
 const _abi = [
     {
+        inputs: [],
+        name: "ProfitUnlocking",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "TooManyStrategyBps",
+        type: "error",
+    },
+    {
         anonymous: false,
         inputs: [
             {
@@ -371,6 +381,24 @@ const _abi = [
     {
         inputs: [
             {
+                internalType: "contract BaseStrategy",
+                name: "strategy",
+                type: "address",
+            },
+            {
+                internalType: "uint256",
+                name: "assets",
+                type: "uint256",
+            },
+        ],
+        name: "depositIntoStrategy",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
                 internalType: "bytes32",
                 name: "role",
                 type: "bytes32",
@@ -505,25 +533,6 @@ const _abi = [
             },
         ],
         stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "bytes[]",
-                name: "data",
-                type: "bytes[]",
-            },
-        ],
-        name: "multicall",
-        outputs: [
-            {
-                internalType: "bytes[]",
-                name: "results",
-                type: "bytes[]",
-            },
-        ],
-        stateMutability: "payable",
         type: "function",
     },
     {
@@ -724,6 +733,24 @@ const _abi = [
             },
         ],
         stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "contract BaseStrategy",
+                name: "strategy",
+                type: "address",
+            },
+            {
+                internalType: "uint256",
+                name: "assets",
+                type: "uint256",
+            },
+        ],
+        name: "withdrawFromStrategy",
+        outputs: [],
+        stateMutability: "nonpayable",
         type: "function",
     },
     {

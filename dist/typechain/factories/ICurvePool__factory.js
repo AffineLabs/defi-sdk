@@ -27,7 +27,7 @@ const _abi = [
                 type: "uint256",
             },
         ],
-        stateMutability: "nonpayable",
+        stateMutability: "payable",
         type: "function",
     },
     {
@@ -52,6 +52,40 @@ const _abi = [
             },
         ],
         stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "int128",
+                name: "x",
+                type: "int128",
+            },
+            {
+                internalType: "int128",
+                name: "y",
+                type: "int128",
+            },
+            {
+                internalType: "uint256",
+                name: "dx",
+                type: "uint256",
+            },
+            {
+                internalType: "uint256",
+                name: "min_dy",
+                type: "uint256",
+            },
+        ],
+        name: "exchange",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "nonpayable",
         type: "function",
     },
     {

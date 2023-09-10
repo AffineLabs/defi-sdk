@@ -3,10 +3,10 @@ import chai from "chai";
 const { expect } = chai;
 
 import { approve, mintUSDC } from "../AlpineDeFiSDK";
-import { getContracts, getEthContracts, getPolygonContracts, init, setProvider } from "../cache";
+import { getBaseContracts, getContracts, getEthContracts, getPolygonContracts, init, setProvider } from "../cache";
 import { buyProduct, sellProduct, getTokenInfo } from "../product";
-import { EthContracts, PolygonContracts } from "../types";
-import { getTestProvider } from "./utils";
+import { BaseContracts, EthContracts, PolygonContracts } from "../types";
+import { getTestProvider, oneUSDC, setBaseUsdcBalance } from "./utils";
 
 describe("Buy products", async () => {
   let wallet: ethers.Wallet;
@@ -103,6 +103,42 @@ describe("Buy products Eth", async () => {
     const ethWethInfo = await getTokenInfo("ethWethEarn");
     console.log({ ethWethInfo });
     expect(Number(ethWethInfo.amount) * Number(ethWethInfo.price)).to.closeTo(Number(ethWethInfo.equity), 1);
+  });
+});
+
+describe("Buy products Base", async () => {
+  let wallet: ethers.Wallet;
+  let contracts: BaseContracts;
+
+  before(async () => {
+    const testProvider = getTestProvider("base");
+    wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
+
+    await init(wallet, undefined, "v1.0-beta", 8453);
+    await testProvider.send("anvil_setBalance", [wallet.address, ethers.BigNumber.from(10).pow(18).toHexString()]);
+    console.log("INIT DONE");
+    await setBaseUsdcBalance(wallet.address, ethers.BigNumber.from(100).mul(oneUSDC));
+    console.log("usdc balance set");
+    contracts = getBaseContracts();
+  });
+
+  it("Buy/Sell usdEarnBase", async () => {
+    const { baseUsdEarn } = contracts;
+    await approve("baseUsdEarn", "100000");
+    await buyProduct("baseUsdEarn", 10);
+    console.log("shares bought");
+    const shares = await baseUsdEarn.balanceOf(wallet.address);
+    expect(shares.gt(0)).to.be.true;
+
+    await sellProduct("baseUsdEarn", 9);
+    const newBal = await baseUsdEarn.balanceOf(wallet.address);
+    expect(newBal.lt(shares)).to.be.true;
+  });
+
+  it("BaseUsdEarn info", async () => {
+    const baseInfo = await getTokenInfo("baseUsdEarn");
+    console.log({ baseInfo });
+    expect(Number(baseInfo.amount) * Number(baseInfo.price)).to.closeTo(Number(baseInfo.equity), 1);
   });
 });
 
