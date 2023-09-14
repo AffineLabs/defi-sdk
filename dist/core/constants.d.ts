@@ -11,6 +11,7 @@ export declare const WALLETCONNECT_PROJECT_ID: string;
 export declare const IS_USING_FORKED_MAINNET: boolean;
 export declare const FORKED_NODE_URL_FOR_ETH: string;
 export declare const FORKED_NODE_URL_FOR_MATIC: string;
+export declare const FORKED_NODE_URL_FOR_BASE: string;
 export declare const NETWORK_PARAMS: {
     [index: number]: NetworkParams;
 };
