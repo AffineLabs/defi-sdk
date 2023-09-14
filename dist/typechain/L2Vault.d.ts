@@ -33,6 +33,7 @@ export interface L2VaultInterface extends utils.Interface {
         "decreaseAllowance(address,uint256)": FunctionFragment;
         "deposit(uint256,address)": FunctionFragment;
         "depositIntoStrategies(uint256)": FunctionFragment;
+        "depositIntoStrategy(address,uint256)": FunctionFragment;
         "detailedPrice()": FunctionFragment;
         "detailedTVL()": FunctionFragment;
         "detailedTotalSupply()": FunctionFragment;
@@ -61,7 +62,6 @@ export interface L2VaultInterface extends utils.Interface {
         "maxRedeem(address)": FunctionFragment;
         "maxWithdraw(address)": FunctionFragment;
         "mint(uint256,address)": FunctionFragment;
-        "multicall(bytes[])": FunctionFragment;
         "name()": FunctionFragment;
         "pause()": FunctionFragment;
         "paused()": FunctionFragment;
@@ -104,11 +104,12 @@ export interface L2VaultInterface extends utils.Interface {
         "vaultTVL()": FunctionFragment;
         "versionRecipient()": FunctionFragment;
         "withdraw(uint256,address,address)": FunctionFragment;
+        "withdrawFromStrategy(address,uint256)": FunctionFragment;
         "withdrawalFee()": FunctionFragment;
         "withdrawalQueue(uint256)": FunctionFragment;
         "wormholeRouter()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "afterReceive" | "allowance" | "approve" | "asset" | "balanceOf" | "bridgeEscrow" | "canRequestFromL1" | "canTransferToL1" | "convertToAssets" | "convertToShares" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "emergencyWithdrawalQueue" | "ewqMinAssets" | "ewqMinFee" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialize" | "isTrustedForwarder" | "l1Ratio" | "l1TotalLockedValue" | "l2Ratio" | "lastHarvest" | "lockedProfit" | "lockedTVL" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "multicall" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "rebalance" | "rebalanceDelta" | "receiveTVL" | "redeem" | "removeStrategy" | "renounceRole" | "revokeRole" | "setBridgeEscrow" | "setEwq" | "setEwqParams" | "setLayerRatios" | "setManagementFee" | "setRebalanceDelta" | "setTrustedForwarder" | "setWithdrawalFee" | "setWithdrawalQueue" | "setWormholeRouter" | "strategies" | "supportsInterface" | "symbol" | "totalAssets" | "totalBps" | "totalStrategyHoldings" | "totalSupply" | "transfer" | "transferFrom" | "trustedForwarder" | "unpause" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "versionRecipient" | "withdraw" | "withdrawalFee" | "withdrawalQueue" | "wormholeRouter"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "afterReceive" | "allowance" | "approve" | "asset" | "balanceOf" | "bridgeEscrow" | "canRequestFromL1" | "canTransferToL1" | "convertToAssets" | "convertToShares" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "depositIntoStrategy" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "emergencyWithdrawalQueue" | "ewqMinAssets" | "ewqMinFee" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialize" | "isTrustedForwarder" | "l1Ratio" | "l1TotalLockedValue" | "l2Ratio" | "lastHarvest" | "lockedProfit" | "lockedTVL" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "rebalance" | "rebalanceDelta" | "receiveTVL" | "redeem" | "removeStrategy" | "renounceRole" | "revokeRole" | "setBridgeEscrow" | "setEwq" | "setEwqParams" | "setLayerRatios" | "setManagementFee" | "setRebalanceDelta" | "setTrustedForwarder" | "setWithdrawalFee" | "setWithdrawalQueue" | "setWormholeRouter" | "strategies" | "supportsInterface" | "symbol" | "totalAssets" | "totalBps" | "totalStrategyHoldings" | "totalSupply" | "transfer" | "transferFrom" | "trustedForwarder" | "unpause" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "versionRecipient" | "withdraw" | "withdrawFromStrategy" | "withdrawalFee" | "withdrawalQueue" | "wormholeRouter"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "GUARDIAN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
@@ -128,6 +129,7 @@ export interface L2VaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "decreaseAllowance", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "deposit", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "depositIntoStrategies", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "depositIntoStrategy", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "detailedPrice", values?: undefined): string;
     encodeFunctionData(functionFragment: "detailedTVL", values?: undefined): string;
     encodeFunctionData(functionFragment: "detailedTotalSupply", values?: undefined): string;
@@ -175,7 +177,6 @@ export interface L2VaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "maxRedeem", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "maxWithdraw", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "mint", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "multicall", values: [PromiseOrValue<BytesLike>[]]): string;
     encodeFunctionData(functionFragment: "name", values?: undefined): string;
     encodeFunctionData(functionFragment: "pause", values?: undefined): string;
     encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -230,6 +231,7 @@ export interface L2VaultInterface extends utils.Interface {
         PromiseOrValue<string>,
         PromiseOrValue<string>
     ]): string;
+    encodeFunctionData(functionFragment: "withdrawFromStrategy", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "withdrawalFee", values?: undefined): string;
     encodeFunctionData(functionFragment: "withdrawalQueue", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "wormholeRouter", values?: undefined): string;
@@ -252,6 +254,7 @@ export interface L2VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "decreaseAllowance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "depositIntoStrategies", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "depositIntoStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "detailedPrice", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "detailedTVL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "detailedTotalSupply", data: BytesLike): Result;
@@ -280,7 +283,6 @@ export interface L2VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "maxWithdraw", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -323,6 +325,7 @@ export interface L2VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "vaultTVL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "versionRecipient", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "withdrawFromStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawalFee", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawalQueue", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "wormholeRouter", data: BytesLike): Result;
@@ -332,12 +335,10 @@ export interface L2VaultInterface extends utils.Interface {
         "BeaconUpgraded(address)": EventFragment;
         "BridgeEscrowSet(address,address)": EventFragment;
         "Deposit(address,address,uint256,uint256)": EventFragment;
-        "EwqSet(address,address)": EventFragment;
         "Harvest(address,address[])": EventFragment;
         "Initialized(uint8)": EventFragment;
         "LayerRatiosSet(uint8,uint8)": EventFragment;
         "Liquidation(uint256,uint256)": EventFragment;
-        "ManagementFeeSet(uint256,uint256)": EventFragment;
         "Paused(address)": EventFragment;
         "Rebalance(address)": EventFragment;
         "RebalanceDeltaSet(uint224,uint224)": EventFragment;
@@ -355,7 +356,6 @@ export interface L2VaultInterface extends utils.Interface {
         "Unpaused(address)": EventFragment;
         "Upgraded(address)": EventFragment;
         "Withdraw(address,address,address,uint256,uint256)": EventFragment;
-        "WithdrawalFeeSet(uint256,uint256)": EventFragment;
         "WithdrawalQueueSet(address[20])": EventFragment;
         "WormholeRouterSet(address,address)": EventFragment;
     };
@@ -364,12 +364,10 @@ export interface L2VaultInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "BridgeEscrowSet"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "EwqSet"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Harvest"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "LayerRatiosSet"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Liquidation"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "ManagementFeeSet"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Rebalance"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "RebalanceDeltaSet"): EventFragment;
@@ -387,7 +385,6 @@ export interface L2VaultInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "WithdrawalFeeSet"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "WithdrawalQueueSet"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "WormholeRouterSet"): EventFragment;
 }
@@ -440,12 +437,6 @@ export type DepositEvent = TypedEvent<[
     BigNumber
 ], DepositEventObject>;
 export type DepositEventFilter = TypedEventFilter<DepositEvent>;
-export interface EwqSetEventObject {
-    oldQ: string;
-    newQ: string;
-}
-export type EwqSetEvent = TypedEvent<[string, string], EwqSetEventObject>;
-export type EwqSetEventFilter = TypedEventFilter<EwqSetEvent>;
 export interface HarvestEventObject {
     user: string;
     strategies: string[];
@@ -475,15 +466,6 @@ export type LiquidationEvent = TypedEvent<[
     BigNumber
 ], LiquidationEventObject>;
 export type LiquidationEventFilter = TypedEventFilter<LiquidationEvent>;
-export interface ManagementFeeSetEventObject {
-    oldFee: BigNumber;
-    newFee: BigNumber;
-}
-export type ManagementFeeSetEvent = TypedEvent<[
-    BigNumber,
-    BigNumber
-], ManagementFeeSetEventObject>;
-export type ManagementFeeSetEventFilter = TypedEventFilter<ManagementFeeSetEvent>;
 export interface PausedEventObject {
     account: string;
 }
@@ -627,15 +609,6 @@ export type WithdrawEvent = TypedEvent<[
     BigNumber
 ], WithdrawEventObject>;
 export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
-export interface WithdrawalFeeSetEventObject {
-    oldFee: BigNumber;
-    newFee: BigNumber;
-}
-export type WithdrawalFeeSetEvent = TypedEvent<[
-    BigNumber,
-    BigNumber
-], WithdrawalFeeSetEventObject>;
-export type WithdrawalFeeSetEventFilter = TypedEventFilter<WithdrawalFeeSetEvent>;
 export interface WithdrawalQueueSetEventObject {
     newQueue: string[];
 }
@@ -704,6 +677,9 @@ export interface L2Vault extends BaseContract {
         depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         detailedPrice(overrides?: CallOverrides): Promise<[
             DetailedShare.NumberStructOutput
         ] & {
@@ -760,9 +736,6 @@ export interface L2Vault extends BaseContract {
             maxAssets: BigNumber;
         }>;
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         name(overrides?: CallOverrides): Promise<[string]>;
@@ -873,6 +846,9 @@ export interface L2Vault extends BaseContract {
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         withdrawalFee(overrides?: CallOverrides): Promise<[BigNumber]>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[string]>;
         wormholeRouter(overrides?: CallOverrides): Promise<[string]>;
@@ -906,6 +882,9 @@ export interface L2Vault extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     detailedPrice(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
@@ -944,9 +923,6 @@ export interface L2Vault extends BaseContract {
     maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
-    multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     name(overrides?: CallOverrides): Promise<string>;
@@ -1047,6 +1023,9 @@ export interface L2Vault extends BaseContract {
     withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
     withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
     wormholeRouter(overrides?: CallOverrides): Promise<string>;
@@ -1070,6 +1049,7 @@ export interface L2Vault extends BaseContract {
         decreaseAllowance(spender: PromiseOrValue<string>, subtractedValue: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         detailedPrice(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
         detailedTVL(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
         detailedTotalSupply(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
@@ -1098,7 +1078,6 @@ export interface L2Vault extends BaseContract {
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<string[]>;
         name(overrides?: CallOverrides): Promise<string>;
         pause(overrides?: CallOverrides): Promise<void>;
         paused(overrides?: CallOverrides): Promise<boolean>;
@@ -1149,6 +1128,7 @@ export interface L2Vault extends BaseContract {
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
         versionRecipient(overrides?: CallOverrides): Promise<string>;
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
         wormholeRouter(overrides?: CallOverrides): Promise<string>;
@@ -1164,8 +1144,6 @@ export interface L2Vault extends BaseContract {
         BridgeEscrowSet(oldEscrow?: PromiseOrValue<string> | null, newEscrow?: PromiseOrValue<string> | null): BridgeEscrowSetEventFilter;
         "Deposit(address,address,uint256,uint256)"(caller?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): DepositEventFilter;
         Deposit(caller?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): DepositEventFilter;
-        "EwqSet(address,address)"(oldQ?: PromiseOrValue<string> | null, newQ?: PromiseOrValue<string> | null): EwqSetEventFilter;
-        EwqSet(oldQ?: PromiseOrValue<string> | null, newQ?: PromiseOrValue<string> | null): EwqSetEventFilter;
         "Harvest(address,address[])"(user?: PromiseOrValue<string> | null, strategies?: null): HarvestEventFilter;
         Harvest(user?: PromiseOrValue<string> | null, strategies?: null): HarvestEventFilter;
         "Initialized(uint8)"(version?: null): InitializedEventFilter;
@@ -1174,8 +1152,6 @@ export interface L2Vault extends BaseContract {
         LayerRatiosSet(l1Ratio?: null, l2Ratio?: null): LayerRatiosSetEventFilter;
         "Liquidation(uint256,uint256)"(assetsRequested?: null, assetsLiquidated?: null): LiquidationEventFilter;
         Liquidation(assetsRequested?: null, assetsLiquidated?: null): LiquidationEventFilter;
-        "ManagementFeeSet(uint256,uint256)"(oldFee?: null, newFee?: null): ManagementFeeSetEventFilter;
-        ManagementFeeSet(oldFee?: null, newFee?: null): ManagementFeeSetEventFilter;
         "Paused(address)"(account?: null): PausedEventFilter;
         Paused(account?: null): PausedEventFilter;
         "Rebalance(address)"(caller?: PromiseOrValue<string> | null): RebalanceEventFilter;
@@ -1210,8 +1186,6 @@ export interface L2Vault extends BaseContract {
         Upgraded(implementation?: PromiseOrValue<string> | null): UpgradedEventFilter;
         "Withdraw(address,address,address,uint256,uint256)"(caller?: PromiseOrValue<string> | null, receiver?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): WithdrawEventFilter;
         Withdraw(caller?: PromiseOrValue<string> | null, receiver?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): WithdrawEventFilter;
-        "WithdrawalFeeSet(uint256,uint256)"(oldFee?: null, newFee?: null): WithdrawalFeeSetEventFilter;
-        WithdrawalFeeSet(oldFee?: null, newFee?: null): WithdrawalFeeSetEventFilter;
         "WithdrawalQueueSet(address[20])"(newQueue?: null): WithdrawalQueueSetEventFilter;
         WithdrawalQueueSet(newQueue?: null): WithdrawalQueueSetEventFilter;
         "WormholeRouterSet(address,address)"(oldRouter?: PromiseOrValue<string> | null, newRouter?: PromiseOrValue<string> | null): WormholeRouterSetEventFilter;
@@ -1247,6 +1221,9 @@ export interface L2Vault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         detailedPrice(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1285,9 +1262,6 @@ export interface L2Vault extends BaseContract {
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1380,6 +1354,9 @@ export interface L2Vault extends BaseContract {
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         wormholeRouter(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1414,6 +1391,9 @@ export interface L2Vault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         depositIntoStrategies(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         detailedPrice(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1452,9 +1432,6 @@ export interface L2Vault extends BaseContract {
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1545,6 +1522,9 @@ export interface L2Vault extends BaseContract {
         vaultTVL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         versionRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         withdrawalFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;

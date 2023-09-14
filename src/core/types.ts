@@ -8,6 +8,7 @@ import {
   StrategyVault,
   WithdrawalEscrow,
   AffineGenesis,
+  VaultV2,
 } from "../typechain";
 import { ethers } from "ethers";
 
@@ -41,6 +42,7 @@ export const alpineProducts = [
   "polygonDegen",
   "ethLeverage",
   "polygonLeverage",
+  "baseUsdEarn",
 ] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
@@ -61,13 +63,13 @@ export type productAllocation = {
 
 export interface BothContracts {
   usdc: ethers.Contract;
+  weth: ethers.Contract;
 }
 
 export interface PolygonContracts extends BothContracts {
   alpSave: L2Vault;
   alpLarge: TwoAssetBasket;
   forwarder: Forwarder;
-  weth: ethers.Contract;
   router: Router;
   ewQueue: EmergencyWithdrawalQueue;
   polygonDegen: StrategyVault;
@@ -78,7 +80,6 @@ export interface PolygonContracts extends BothContracts {
 export interface EthContracts extends BothContracts {
   ethEarn: Vault;
   ethWethEarn: Vault;
-  weth: ethers.Contract;
   ssvEthUSDEarn: StrategyVault;
   withdrawalEscrow: WithdrawalEscrow;
   router: Router;
@@ -86,7 +87,11 @@ export interface EthContracts extends BothContracts {
   ethLeverage?: Vault;
 }
 
-export interface AlpineContracts extends PolygonContracts, EthContracts {}
+export interface BaseContracts extends BothContracts {
+  baseUsdEarn?: VaultV2;
+}
+
+export interface AlpineContracts extends PolygonContracts, EthContracts, BaseContracts {}
 
 export interface TokenInfo {
   amount: string; // in base unit

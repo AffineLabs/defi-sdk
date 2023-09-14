@@ -16,6 +16,7 @@ const { result } = concurrently(
   [
     `anvil --fork-url https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY} --port 8545`,
     `anvil --fork-url https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY} --port 8546`,
+    `anvil --fork-url https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_MAINNET_KEY} --port 8547`,
     `sleep 5 && yarn run-test src/core/${testFiles}`,
   ],
   // The rpc processes do not exit. The process exits successfully if the `yarn test` process exits correctly

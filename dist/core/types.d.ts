@@ -1,4 +1,4 @@
-import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue, Vault, StrategyVault, WithdrawalEscrow, AffineGenesis } from "../typechain";
+import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue, Vault, StrategyVault, WithdrawalEscrow, AffineGenesis, VaultV2 } from "../typechain";
 import { ethers } from "ethers";
 export interface GasInfo {
     txnCost: string;
@@ -18,7 +18,7 @@ export interface SmallTxReceipt extends GasInfo {
     blockNumber: string;
     txnHash: string;
 }
-export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen", "polygonDegen", "ethLeverage", "polygonLeverage"];
+export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen", "polygonDegen", "ethLeverage", "polygonLeverage", "baseUsdEarn"];
 export type AlpineProduct = typeof alpineProducts[number];
 export declare const polygonProducts: readonly ["alpSave", "alpLarge", "polygonDegen"];
 export type PolygonProduct = typeof polygonProducts[number];
@@ -33,12 +33,12 @@ export type productAllocation = {
 };
 export interface BothContracts {
     usdc: ethers.Contract;
+    weth: ethers.Contract;
 }
 export interface PolygonContracts extends BothContracts {
     alpSave: L2Vault;
     alpLarge: TwoAssetBasket;
     forwarder: Forwarder;
-    weth: ethers.Contract;
     router: Router;
     ewQueue: EmergencyWithdrawalQueue;
     polygonDegen: StrategyVault;
@@ -48,14 +48,16 @@ export interface PolygonContracts extends BothContracts {
 export interface EthContracts extends BothContracts {
     ethEarn: Vault;
     ethWethEarn: Vault;
-    weth: ethers.Contract;
     ssvEthUSDEarn: StrategyVault;
     withdrawalEscrow: WithdrawalEscrow;
     router: Router;
     degen: Vault;
     ethLeverage?: Vault;
 }
-export interface AlpineContracts extends PolygonContracts, EthContracts {
+export interface BaseContracts extends BothContracts {
+    baseUsdEarn?: VaultV2;
+}
+export interface AlpineContracts extends PolygonContracts, EthContracts, BaseContracts {
 }
 export interface TokenInfo {
     amount: string;

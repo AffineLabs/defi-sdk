@@ -127,7 +127,7 @@ exports.blockchainCall = blockchainCall;
 function isApproved(product, amount) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, weth, polygonLeverage } = (0, cache_1.getContracts)();
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, weth, polygonLeverage, baseUsdEarn, } = (0, cache_1.getContracts)();
         if (product === "ethWethEarn")
             return true;
         const asset = ["ethLeverage", "polygonLeverage"].includes(product) ? weth : usdc;
@@ -140,6 +140,7 @@ function isApproved(product, amount) {
             polygonDegen,
             ethLeverage,
             polygonLeverage,
+            baseUsdEarn,
         };
         if (!productToSpender[product]) {
             throw new Error("Product not found");

@@ -1,5 +1,5 @@
 import { BigNumber, ethers, utils } from "ethers";
-import { getPolygonContracts, PROVIDER } from "../cache";
+import { getContracts, getPolygonContracts, PROVIDER } from "../cache";
 
 function _getMappingStorage(slot: number, key: string): string {
   const paddedSlot = utils.hexZeroPad(utils.hexValue(slot), 32);
@@ -8,10 +8,21 @@ function _getMappingStorage(slot: number, key: string): string {
 }
 
 export async function setUSDCBalance(address: string, balance: BigNumber) {
-  const contracts = getPolygonContracts();
+  const { usdc } = getContracts();
   await PROVIDER.send("anvil_setStorageAt", [
-    contracts.usdc.address,
+    usdc.address,
     _getMappingStorage(0, address),
+    utils.hexZeroPad(utils.hexValue(balance), 32),
+  ]);
+}
+
+// https://basescan.org/address/0x1833c6171e0a3389b156eaedb301cffbf328b463#code
+// There's 1 slot in `Initializable` and  50 slots used in ContextUpgradeable
+export async function setBaseUsdcBalance(address: string, balance: BigNumber) {
+  const { usdc } = getContracts();
+  await PROVIDER.send("anvil_setStorageAt", [
+    usdc.address,
+    _getMappingStorage(51, address),
     utils.hexZeroPad(utils.hexValue(balance), 32),
   ]);
 }
@@ -44,11 +55,19 @@ export async function setAlpSaveL1LockedValue(value: BigNumber) {
   ]);
 }
 
-export function getTestProvider(network: "poly" | "eth") {
-  const url = network === "poly" ? "http://localhost:8545" : "http://localhost:8546";
+export function getTestProvider(network: "poly" | "eth" | "base") {
+  const networkToPort = {
+    poly: 8545,
+    eth: 8546,
+    base: 8547,
+  };
+  const port = networkToPort[network];
+  const url = `http://localhost:${port}`;
   const testProvider = new ethers.providers.StaticJsonRpcProvider({
     url,
     throttleLimit: 10,
   });
   return testProvider;
 }
+
+export const oneUSDC = ethers.BigNumber.from(10).pow(6);

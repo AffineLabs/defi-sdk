@@ -53,7 +53,6 @@ export interface StrategyVaultInterface extends utils.Interface {
         "maxRedeem(address)": FunctionFragment;
         "maxWithdraw(address)": FunctionFragment;
         "mint(uint256,address)": FunctionFragment;
-        "multicall(bytes[])": FunctionFragment;
         "name()": FunctionFragment;
         "pause()": FunctionFragment;
         "paused()": FunctionFragment;
@@ -88,7 +87,7 @@ export interface StrategyVaultInterface extends utils.Interface {
         "withdrawFromStrategy(uint256)": FunctionFragment;
         "withdrawalFee()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "allowance" | "approve" | "asset" | "balanceOf" | "beginEpoch" | "convertToAssets" | "convertToShares" | "debtEscrow" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategy" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "multicall" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "redeem" | "renounceRole" | "revokeRole" | "setDebtEscrow" | "setManagementFee" | "setStrategy" | "setTvlCap" | "setWithdrawalFee" | "strategy" | "strategyTVL" | "supportsInterface" | "symbol" | "tearDown" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "tvlCap" | "unpause" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "withdraw" | "withdrawFromStrategy" | "withdrawalFee"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "allowance" | "approve" | "asset" | "balanceOf" | "beginEpoch" | "convertToAssets" | "convertToShares" | "debtEscrow" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategy" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "redeem" | "renounceRole" | "revokeRole" | "setDebtEscrow" | "setManagementFee" | "setStrategy" | "setTvlCap" | "setWithdrawalFee" | "strategy" | "strategyTVL" | "supportsInterface" | "symbol" | "tearDown" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "tvlCap" | "unpause" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "withdraw" | "withdrawFromStrategy" | "withdrawalFee"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "GUARDIAN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
@@ -133,7 +132,6 @@ export interface StrategyVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "maxRedeem", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "maxWithdraw", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "mint", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "multicall", values: [PromiseOrValue<BytesLike>[]]): string;
     encodeFunctionData(functionFragment: "name", values?: undefined): string;
     encodeFunctionData(functionFragment: "pause", values?: undefined): string;
     encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -218,7 +216,6 @@ export interface StrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "maxWithdraw", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -568,9 +565,6 @@ export interface StrategyVault extends BaseContract {
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
         name(overrides?: CallOverrides): Promise<[string]>;
         pause(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -698,9 +692,6 @@ export interface StrategyVault extends BaseContract {
     mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
     name(overrides?: CallOverrides): Promise<string>;
     pause(overrides?: Overrides & {
         from?: PromiseOrValue<string>;
@@ -808,7 +799,6 @@ export interface StrategyVault extends BaseContract {
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<string[]>;
         name(overrides?: CallOverrides): Promise<string>;
         pause(overrides?: CallOverrides): Promise<void>;
         paused(overrides?: CallOverrides): Promise<boolean>;
@@ -947,9 +937,6 @@ export interface StrategyVault extends BaseContract {
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
         name(overrides?: CallOverrides): Promise<BigNumber>;
         pause(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -1076,9 +1063,6 @@ export interface StrategyVault extends BaseContract {
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         name(overrides?: CallOverrides): Promise<PopulatedTransaction>;

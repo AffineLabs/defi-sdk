@@ -3,6 +3,14 @@ import type { Provider } from "@ethersproject/providers";
 import type { BaseVault, BaseVaultInterface } from "../BaseVault";
 export declare class BaseVault__factory {
     static readonly abi: readonly [{
+        readonly inputs: readonly [];
+        readonly name: "ProfitUnlocking";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "TooManyStrategyBps";
+        readonly type: "error";
+    }, {
         readonly anonymous: false;
         readonly inputs: readonly [{
             readonly indexed: true;
@@ -288,6 +296,20 @@ export declare class BaseVault__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
+            readonly internalType: "contract BaseStrategy";
+            readonly name: "strategy";
+            readonly type: "address";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "assets";
+            readonly type: "uint256";
+        }];
+        readonly name: "depositIntoStrategy";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
             readonly internalType: "bytes32";
             readonly name: "role";
             readonly type: "bytes32";
@@ -391,20 +413,6 @@ export declare class BaseVault__factory {
             readonly type: "uint128";
         }];
         readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "bytes[]";
-            readonly name: "data";
-            readonly type: "bytes[]";
-        }];
-        readonly name: "multicall";
-        readonly outputs: readonly [{
-            readonly internalType: "bytes[]";
-            readonly name: "results";
-            readonly type: "bytes[]";
-        }];
-        readonly stateMutability: "payable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -559,6 +567,20 @@ export declare class BaseVault__factory {
             readonly type: "uint256";
         }];
         readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "contract BaseStrategy";
+            readonly name: "strategy";
+            readonly type: "address";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "assets";
+            readonly type: "uint256";
+        }];
+        readonly name: "withdrawFromStrategy";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [{

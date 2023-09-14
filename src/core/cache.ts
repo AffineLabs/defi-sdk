@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import axios from "axios";
-import { EthContracts, PolygonContracts } from "./types";
+import { BaseContracts, EthContracts, PolygonContracts } from "./types";
 import {
   Forwarder__factory,
   L2Vault__factory,
@@ -11,6 +11,7 @@ import {
   WithdrawalEscrow__factory,
   StrategyVault__factory,
   AffineGenesis__factory,
+  VaultV2__factory,
 } from "../typechain";
 import { AllowedChainId } from "../types/account";
 import {
@@ -20,7 +21,7 @@ import {
   IS_USING_FORKED_MAINNET,
 } from "./constants";
 
-let CONTRACTS: PolygonContracts | EthContracts;
+let CONTRACTS: PolygonContracts | EthContracts | BaseContracts;
 let CHAIN_ID: AllowedChainId;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
@@ -29,7 +30,7 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
 
 const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 
-const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
+const { ALCHEMY_API_KEY, ALCHEMY_BASE_TESTNET_KEY, ALCHEMY_BASE_MAINNET_KEY } = process.env;
 
 export let PROVIDER: ethers.providers.StaticJsonRpcProvider;
 
@@ -44,6 +45,8 @@ export const RPC_URLS: { [index: AllowedChainId]: string } = {
       ? FORKED_NODE_URL_FOR_MATIC
       : `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
   80001: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+  8453: `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_BASE_MAINNET_KEY}`,
+  84531: `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_BASE_TESTNET_KEY}`,
 };
 
 export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.StaticJsonRpcProvider {
@@ -59,7 +62,7 @@ export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.
 export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider,
   version: string,
-): Promise<PolygonContracts | EthContracts> {
+): Promise<PolygonContracts | EthContracts | BaseContracts> {
   const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${version}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
@@ -93,6 +96,7 @@ export async function getAllContracts(
     EthStEthLev: ethLeverageData,
     PolygonStEthLev: polygonLeverageData,
     AffineGenesis: affineGenesisData,
+    BaseUsdEarn: baseUsdEarnData,
   } = allData;
 
   const chainId = getChainId();
@@ -134,12 +138,24 @@ export async function getAllContracts(
       weth: new ethers.Contract(await ethWethEarn.asset(), erc20Abi, provider),
       router: Router__factory.connect(ethRouter.address, provider),
     };
+  } else if (chainId == 8453 || chainId == 84531) {
+    const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
+
+    return {
+      baseUsdEarn,
+      usdc: new ethers.Contract(
+        baseUsdEarn ? await baseUsdEarn.asset() : "0x2e668Bb88287675e34c8dF82686dfd0b7F0c0383",
+        erc20Abi,
+        provider,
+      ),
+      weth: new ethers.Contract("0x4200000000000000000000000000000000000006", erc20Abi, provider),
+    };
   } else {
     throw Error("Bad chainId");
   }
 }
 
-export function getContracts(): PolygonContracts | EthContracts {
+export function getContracts(): PolygonContracts | EthContracts | BaseContracts {
   return CONTRACTS;
 }
 export function getEthContracts(): EthContracts {
@@ -147,6 +163,9 @@ export function getEthContracts(): EthContracts {
 }
 export function getPolygonContracts(): PolygonContracts {
   return CONTRACTS as PolygonContracts;
+}
+export function getBaseContracts(): BaseContracts {
+  return CONTRACTS as BaseContracts;
 }
 
 export async function init(

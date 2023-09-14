@@ -1,6 +1,6 @@
 {
   "name": "@alpine-ramp/alpine-defi-sdk",
-  "version": "1.4.12-beta",
+  "version": "1.4.3-beta",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/Multiplyr/defi-sdk.git",
@@ -40,7 +40,7 @@
     "chai": "^4.3.6",
     "commander": "^9.0.0",
     "concurrently": "^7.0.0",
-    "contracts": "https://github.com/AffineLabs/contracts.git#c5900ba35d1afedc021e4f727f2106b55aed1c4a",
+    "contracts": "https://github.com/AffineLabs/contracts.git#62422a209fed2fc28b6d11f08c070182b2597c0a",
     "dotenv": "^16.0.0",
     "eslint": "^8.16.0",
     "fs-extra": "^10.1.0",

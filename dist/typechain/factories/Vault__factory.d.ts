@@ -3,6 +3,10 @@ import type { Provider } from "@ethersproject/providers";
 import type { Vault, VaultInterface } from "../Vault";
 export declare class Vault__factory {
     static readonly abi: readonly [{
+        readonly inputs: readonly [];
+        readonly name: "ZeroShares";
+        readonly type: "error";
+    }, {
         readonly anonymous: false;
         readonly inputs: readonly [{
             readonly indexed: false;
@@ -571,6 +575,20 @@ export declare class Vault__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [{
+            readonly internalType: "contract BaseStrategy";
+            readonly name: "strategy";
+            readonly type: "address";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "assets";
+            readonly type: "uint256";
+        }];
+        readonly name: "depositIntoStrategy";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [];
         readonly name: "detailedPrice";
         readonly outputs: readonly [{
@@ -866,20 +884,6 @@ export declare class Vault__factory {
             readonly type: "uint256";
         }];
         readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "bytes[]";
-            readonly name: "data";
-            readonly type: "bytes[]";
-        }];
-        readonly name: "multicall";
-        readonly outputs: readonly [{
-            readonly internalType: "bytes[]";
-            readonly name: "results";
-            readonly type: "bytes[]";
-        }];
-        readonly stateMutability: "payable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -1269,6 +1273,20 @@ export declare class Vault__factory {
             readonly name: "";
             readonly type: "uint256";
         }];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "contract BaseStrategy";
+            readonly name: "strategy";
+            readonly type: "address";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "assets";
+            readonly type: "uint256";
+        }];
+        readonly name: "withdrawFromStrategy";
+        readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {

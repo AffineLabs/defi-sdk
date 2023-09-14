@@ -307,20 +307,6 @@ export declare class BaseStrategyVault__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
-            readonly internalType: "bytes[]";
-            readonly name: "data";
-            readonly type: "bytes[]";
-        }];
-        readonly name: "multicall";
-        readonly outputs: readonly [{
-            readonly internalType: "bytes[]";
-            readonly name: "results";
-            readonly type: "bytes[]";
-        }];
-        readonly stateMutability: "payable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
             readonly internalType: "bytes32";
             readonly name: "role";
             readonly type: "bytes32";

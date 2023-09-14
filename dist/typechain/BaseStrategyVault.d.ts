@@ -1,4 +1,4 @@
-import type { BaseContract, BigNumber, BytesLike, CallOverrides, ContractTransaction, Overrides, PayableOverrides, PopulatedTransaction, Signer, utils } from "ethers";
+import type { BaseContract, BigNumber, BytesLike, CallOverrides, ContractTransaction, Overrides, PopulatedTransaction, Signer, utils } from "ethers";
 import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "./common";
@@ -21,7 +21,6 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
         "lastHarvest()": FunctionFragment;
         "lockedProfit()": FunctionFragment;
         "maxLockedProfit()": FunctionFragment;
-        "multicall(bytes[])": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
         "revokeRole(bytes32,address)": FunctionFragment;
         "setDebtEscrow(address)": FunctionFragment;
@@ -31,7 +30,7 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
         "supportsInterface(bytes4)": FunctionFragment;
         "vaultTVL()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "asset" | "beginEpoch" | "debtEscrow" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "hasRole" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "multicall" | "renounceRole" | "revokeRole" | "setDebtEscrow" | "setStrategy" | "strategy" | "strategyTVL" | "supportsInterface" | "vaultTVL"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "asset" | "beginEpoch" | "debtEscrow" | "endEpoch" | "epoch" | "epochEnded" | "epochStartTime" | "getRoleAdmin" | "governance" | "grantRole" | "hasRole" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "renounceRole" | "revokeRole" | "setDebtEscrow" | "setStrategy" | "strategy" | "strategyTVL" | "supportsInterface" | "vaultTVL"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
     encodeFunctionData(functionFragment: "LOCK_INTERVAL", values?: undefined): string;
@@ -49,7 +48,6 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "lastHarvest", values?: undefined): string;
     encodeFunctionData(functionFragment: "lockedProfit", values?: undefined): string;
     encodeFunctionData(functionFragment: "maxLockedProfit", values?: undefined): string;
-    encodeFunctionData(functionFragment: "multicall", values: [PromiseOrValue<BytesLike>[]]): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "revokeRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "setDebtEscrow", values: [PromiseOrValue<string>]): string;
@@ -75,7 +73,6 @@ export interface BaseStrategyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "lastHarvest", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "lockedProfit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "maxLockedProfit", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setDebtEscrow", data: BytesLike): Result;
@@ -212,9 +209,6 @@ export interface BaseStrategyVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<[BigNumber]>;
         lockedProfit(overrides?: CallOverrides): Promise<[BigNumber]>;
         maxLockedProfit(overrides?: CallOverrides): Promise<[BigNumber]>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -255,9 +249,6 @@ export interface BaseStrategyVault extends BaseContract {
     lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
     lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
     maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
-    multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
     renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -292,7 +283,6 @@ export interface BaseStrategyVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
         lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
         maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<string[]>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         setDebtEscrow(escrow: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
@@ -346,9 +336,6 @@ export interface BaseStrategyVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
         lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
         maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -390,9 +377,6 @@ export interface BaseStrategyVault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         lockedProfit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         maxLockedProfit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;

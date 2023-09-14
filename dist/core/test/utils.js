@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTestProvider = exports.setAlpSaveL1LockedValue = exports.setAlpLargeBalance = exports.setAlpSaveBalance = exports.setUSDCBalance = void 0;
+exports.oneUSDC = exports.getTestProvider = exports.setAlpSaveL1LockedValue = exports.setAlpLargeBalance = exports.setAlpSaveBalance = exports.setBaseUsdcBalance = exports.setUSDCBalance = void 0;
 const ethers_1 = require("ethers");
 const cache_1 = require("../cache");
 function _getMappingStorage(slot, key) {
@@ -19,15 +19,28 @@ function _getMappingStorage(slot, key) {
 }
 function setUSDCBalance(address, balance) {
     return __awaiter(this, void 0, void 0, function* () {
-        const contracts = (0, cache_1.getPolygonContracts)();
+        const { usdc } = (0, cache_1.getContracts)();
         yield cache_1.PROVIDER.send("anvil_setStorageAt", [
-            contracts.usdc.address,
+            usdc.address,
             _getMappingStorage(0, address),
             ethers_1.utils.hexZeroPad(ethers_1.utils.hexValue(balance), 32),
         ]);
     });
 }
 exports.setUSDCBalance = setUSDCBalance;
+// https://basescan.org/address/0x1833c6171e0a3389b156eaedb301cffbf328b463#code
+// There's 1 slot in `Initializable` and  50 slots used in ContextUpgradeable
+function setBaseUsdcBalance(address, balance) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { usdc } = (0, cache_1.getContracts)();
+        yield cache_1.PROVIDER.send("anvil_setStorageAt", [
+            usdc.address,
+            _getMappingStorage(51, address),
+            ethers_1.utils.hexZeroPad(ethers_1.utils.hexValue(balance), 32),
+        ]);
+    });
+}
+exports.setBaseUsdcBalance = setBaseUsdcBalance;
 function setAlpSaveBalance(address, balance) {
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getPolygonContracts)();
@@ -63,7 +76,13 @@ function setAlpSaveL1LockedValue(value) {
 }
 exports.setAlpSaveL1LockedValue = setAlpSaveL1LockedValue;
 function getTestProvider(network) {
-    const url = network === "poly" ? "http://localhost:8545" : "http://localhost:8546";
+    const networkToPort = {
+        poly: 8545,
+        eth: 8546,
+        base: 8547,
+    };
+    const port = networkToPort[network];
+    const url = `http://localhost:${port}`;
     const testProvider = new ethers_1.ethers.providers.StaticJsonRpcProvider({
         url,
         throttleLimit: 10,
@@ -71,3 +90,4 @@ function getTestProvider(network) {
     return testProvider;
 }
 exports.getTestProvider = getTestProvider;
+exports.oneUSDC = ethers_1.ethers.BigNumber.from(10).pow(6);

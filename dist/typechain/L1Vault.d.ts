@@ -12,6 +12,7 @@ export interface L1VaultInterface extends utils.Interface {
         "asset()": FunctionFragment;
         "bridgeEscrow()": FunctionFragment;
         "chainManager()": FunctionFragment;
+        "depositIntoStrategy(address,uint256)": FunctionFragment;
         "getRoleAdmin(bytes32)": FunctionFragment;
         "getWithdrawalQueue()": FunctionFragment;
         "governance()": FunctionFragment;
@@ -22,7 +23,6 @@ export interface L1VaultInterface extends utils.Interface {
         "lastHarvest()": FunctionFragment;
         "lockedProfit()": FunctionFragment;
         "maxLockedProfit()": FunctionFragment;
-        "multicall(bytes[])": FunctionFragment;
         "paused()": FunctionFragment;
         "predicate()": FunctionFragment;
         "processFundRequest(uint256)": FunctionFragment;
@@ -44,10 +44,11 @@ export interface L1VaultInterface extends utils.Interface {
         "upgradeTo(address)": FunctionFragment;
         "upgradeToAndCall(address,bytes)": FunctionFragment;
         "vaultTVL()": FunctionFragment;
+        "withdrawFromStrategy(address,uint256)": FunctionFragment;
         "withdrawalQueue(uint256)": FunctionFragment;
         "wormholeRouter()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "afterReceive" | "asset" | "bridgeEscrow" | "chainManager" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "initialize" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "multicall" | "paused" | "predicate" | "processFundRequest" | "proxiableUUID" | "rebalance" | "received" | "removeStrategy" | "renounceRole" | "revokeRole" | "sendTVL" | "setBridgeEscrow" | "setWithdrawalQueue" | "setWormholeRouter" | "strategies" | "supportsInterface" | "totalBps" | "totalStrategyHoldings" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "withdrawalQueue" | "wormholeRouter"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "afterReceive" | "asset" | "bridgeEscrow" | "chainManager" | "depositIntoStrategy" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "initialize" | "lastHarvest" | "lockedProfit" | "maxLockedProfit" | "paused" | "predicate" | "processFundRequest" | "proxiableUUID" | "rebalance" | "received" | "removeStrategy" | "renounceRole" | "revokeRole" | "sendTVL" | "setBridgeEscrow" | "setWithdrawalQueue" | "setWormholeRouter" | "strategies" | "supportsInterface" | "totalBps" | "totalStrategyHoldings" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "withdrawFromStrategy" | "withdrawalQueue" | "wormholeRouter"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
     encodeFunctionData(functionFragment: "LOCK_INTERVAL", values?: undefined): string;
@@ -56,6 +57,7 @@ export interface L1VaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "asset", values?: undefined): string;
     encodeFunctionData(functionFragment: "bridgeEscrow", values?: undefined): string;
     encodeFunctionData(functionFragment: "chainManager", values?: undefined): string;
+    encodeFunctionData(functionFragment: "depositIntoStrategy", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "getRoleAdmin", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "getWithdrawalQueue", values?: undefined): string;
     encodeFunctionData(functionFragment: "governance", values?: undefined): string;
@@ -73,7 +75,6 @@ export interface L1VaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "lastHarvest", values?: undefined): string;
     encodeFunctionData(functionFragment: "lockedProfit", values?: undefined): string;
     encodeFunctionData(functionFragment: "maxLockedProfit", values?: undefined): string;
-    encodeFunctionData(functionFragment: "multicall", values: [PromiseOrValue<BytesLike>[]]): string;
     encodeFunctionData(functionFragment: "paused", values?: undefined): string;
     encodeFunctionData(functionFragment: "predicate", values?: undefined): string;
     encodeFunctionData(functionFragment: "processFundRequest", values: [PromiseOrValue<BigNumberish>]): string;
@@ -95,6 +96,7 @@ export interface L1VaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "upgradeTo", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "upgradeToAndCall", values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "vaultTVL", values?: undefined): string;
+    encodeFunctionData(functionFragment: "withdrawFromStrategy", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "withdrawalQueue", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "wormholeRouter", values?: undefined): string;
     decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
@@ -105,6 +107,7 @@ export interface L1VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "asset", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "bridgeEscrow", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "chainManager", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "depositIntoStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getWithdrawalQueue", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "governance", data: BytesLike): Result;
@@ -115,7 +118,6 @@ export interface L1VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "lastHarvest", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "lockedProfit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "maxLockedProfit", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "predicate", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "processFundRequest", data: BytesLike): Result;
@@ -137,6 +139,7 @@ export interface L1VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "upgradeToAndCall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "vaultTVL", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "withdrawFromStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawalQueue", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "wormholeRouter", data: BytesLike): Result;
     events: {
@@ -382,6 +385,9 @@ export interface L1Vault extends BaseContract {
         asset(overrides?: CallOverrides): Promise<[string]>;
         bridgeEscrow(overrides?: CallOverrides): Promise<[string]>;
         chainManager(overrides?: CallOverrides): Promise<[string]>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string]>;
         getWithdrawalQueue(overrides?: CallOverrides): Promise<[string[]]>;
         governance(overrides?: CallOverrides): Promise<[string]>;
@@ -398,9 +404,6 @@ export interface L1Vault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<[BigNumber]>;
         lockedProfit(overrides?: CallOverrides): Promise<[BigNumber]>;
         maxLockedProfit(overrides?: CallOverrides): Promise<[BigNumber]>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
         paused(overrides?: CallOverrides): Promise<[boolean]>;
         predicate(overrides?: CallOverrides): Promise<[string]>;
         processFundRequest(amountRequested: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -454,6 +457,9 @@ export interface L1Vault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<[BigNumber]>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[string]>;
         wormholeRouter(overrides?: CallOverrides): Promise<[string]>;
     };
@@ -469,6 +475,9 @@ export interface L1Vault extends BaseContract {
     asset(overrides?: CallOverrides): Promise<string>;
     bridgeEscrow(overrides?: CallOverrides): Promise<string>;
     chainManager(overrides?: CallOverrides): Promise<string>;
+    depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
     getWithdrawalQueue(overrides?: CallOverrides): Promise<string[]>;
     governance(overrides?: CallOverrides): Promise<string>;
@@ -485,9 +494,6 @@ export interface L1Vault extends BaseContract {
     lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
     lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
     maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
-    multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
     paused(overrides?: CallOverrides): Promise<boolean>;
     predicate(overrides?: CallOverrides): Promise<string>;
     processFundRequest(amountRequested: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -541,6 +547,9 @@ export interface L1Vault extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
+    withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
     wormholeRouter(overrides?: CallOverrides): Promise<string>;
     callStatic: {
@@ -552,6 +561,7 @@ export interface L1Vault extends BaseContract {
         asset(overrides?: CallOverrides): Promise<string>;
         bridgeEscrow(overrides?: CallOverrides): Promise<string>;
         chainManager(overrides?: CallOverrides): Promise<string>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
         getWithdrawalQueue(overrides?: CallOverrides): Promise<string[]>;
         governance(overrides?: CallOverrides): Promise<string>;
@@ -562,7 +572,6 @@ export interface L1Vault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
         lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
         maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<string[]>;
         paused(overrides?: CallOverrides): Promise<boolean>;
         predicate(overrides?: CallOverrides): Promise<string>;
         processFundRequest(amountRequested: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
@@ -592,6 +601,7 @@ export interface L1Vault extends BaseContract {
         upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<void>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
         wormholeRouter(overrides?: CallOverrides): Promise<string>;
     };
@@ -654,6 +664,9 @@ export interface L1Vault extends BaseContract {
         asset(overrides?: CallOverrides): Promise<BigNumber>;
         bridgeEscrow(overrides?: CallOverrides): Promise<BigNumber>;
         chainManager(overrides?: CallOverrides): Promise<BigNumber>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
         getWithdrawalQueue(overrides?: CallOverrides): Promise<BigNumber>;
         governance(overrides?: CallOverrides): Promise<BigNumber>;
@@ -670,9 +683,6 @@ export interface L1Vault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
         lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
         maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
         paused(overrides?: CallOverrides): Promise<BigNumber>;
         predicate(overrides?: CallOverrides): Promise<BigNumber>;
         processFundRequest(amountRequested: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -718,6 +728,9 @@ export interface L1Vault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         wormholeRouter(overrides?: CallOverrides): Promise<BigNumber>;
     };
@@ -734,6 +747,9 @@ export interface L1Vault extends BaseContract {
         asset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         bridgeEscrow(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         chainManager(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        depositIntoStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         getWithdrawalQueue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         governance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -750,9 +766,6 @@ export interface L1Vault extends BaseContract {
         lastHarvest(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         lockedProfit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         maxLockedProfit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        multicall(data: PromiseOrValue<BytesLike>[], overrides?: PayableOverrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
         paused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         predicate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         processFundRequest(amountRequested: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -798,6 +811,9 @@ export interface L1Vault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         withdrawalQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         wormholeRouter(overrides?: CallOverrides): Promise<PopulatedTransaction>;
     };
