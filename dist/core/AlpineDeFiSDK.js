@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.saleIsActive = exports.whitelistSaleIsActive = exports.isWhitelisted = exports.mint = exports.mintWhitelist = exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
+exports.getTVLCap = exports.saleIsActive = exports.whitelistSaleIsActive = exports.isWhitelisted = exports.mint = exports.mintWhitelist = exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
 const ethers_1 = require("ethers");
 const cache_1 = require("./cache");
 const biconomy_1 = require("./biconomy");
@@ -296,3 +296,21 @@ function saleIsActive() {
     });
 }
 exports.saleIsActive = saleIsActive;
+/**
+ * This function will return the tvl cap of the product,
+ * but some of the products don't have tvl cap so it will return error in that case.
+ * So, make sure to handle the error or use try catch block.
+ * @param product {AlpineProduct} the product name
+ * @returns {Promise<string>} the tvl cap of the product in unit
+ */
+function getTVLCap(product) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const _asset = ["ethLeverage", "polygonLeverage", "ethWethEarn"].includes(product) ? contracts.weth : contracts.usdc;
+        const _contract = contracts[product];
+        const tvlCap = yield _contract.tvlCap();
+        const decimals = yield _asset.decimals();
+        return _removeDecimals(tvlCap, decimals);
+    });
+}
+exports.getTVLCap = getTVLCap;

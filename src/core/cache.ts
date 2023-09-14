@@ -115,7 +115,10 @@ export async function getAllContracts(
       ewQueue: EmergencyWithdrawalQueue__factory.connect(await alpSave.emergencyWithdrawalQueue(), provider),
       polygonDegen: StrategyVault__factory.connect(polygonDegenData.address, provider),
       polygonLeverage: chainId === 137 ? Vault__factory.connect(polygonLeverageData.address, provider) : undefined,
-      affineGenesis: chainId === 137 ? AffineGenesis__factory.connect(affineGenesisData.address, provider) : undefined,
+      affineGenesis:
+        chainId === 137 && typeof affineGenesisData !== "undefined"
+          ? AffineGenesis__factory.connect(affineGenesisData.address, provider)
+          : undefined,
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);

@@ -1,3 +1,4 @@
+import { AlpineDeFiSDK } from "../core";
 import { ALLOWED_CHAIN_IDS, DEFAULT_RAW_CHAIN_ID } from "../core/constants";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet } from "../types/account";
@@ -77,8 +78,8 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
-  const chainId = 5 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "ethEarn";
+  const chainId = 137 as AllowedChainId;
+  const _productToBuy: AlpineProduct = "polygonDegen";
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -105,6 +106,10 @@ const main = async () => {
 
   console.log("sold: ", _productToBuy, "of amount: ", 1);
   console.log("basket bal after sell ", await readAcc.getTokenInfo(_productToBuy));
+
+  const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
+
+  console.log("tvlCap: ", tvlCap);
 
   // const res = await alpAccount.isStrategyLiquid();
   // console.log({ res });

@@ -8,6 +8,7 @@ import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
 import { MAX_APPROVAL_AMOUNT } from "./constants";
+import { StrategyVault } from "../typechain";
 
 /**
  * Get the current best estimate for gas price
@@ -301,4 +302,21 @@ export async function saleIsActive(): Promise<boolean> {
   const contracts = getContracts() as AlpineContracts;
   const { affineGenesis } = contracts;
   return affineGenesis?.saleIsActive() ?? false;
+}
+
+/**
+ * This function will return the tvl cap of the product,
+ * but some of the products don't have tvl cap so it will return error in that case.
+ * So, make sure to handle the error or use try catch block.
+ * @param product {AlpineProduct} the product name
+ * @returns {Promise<string>} the tvl cap of the product in unit
+ */
+export async function getTVLCap(product: AlpineProduct): Promise<string> {
+  const contracts = getContracts() as AlpineContracts;
+  const _asset = ["ethLeverage", "polygonLeverage", "ethWethEarn"].includes(product) ? contracts.weth : contracts.usdc;
+  const _contract = contracts[product] as StrategyVault;
+
+  const tvlCap = await _contract.tvlCap();
+  const decimals = await _asset.decimals();
+  return _removeDecimals(tvlCap, decimals);
 }
