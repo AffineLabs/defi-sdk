@@ -139,12 +139,15 @@ export async function getAllContracts(
       router: Router__factory.connect(ethRouter.address, provider),
     };
   } else if (chainId == 8453 || chainId == 84531) {
-    const baseUsdEarn = VaultV2__factory.connect(baseUsdEarnData.address, provider);
-    console.log("baseUsdEarn USDC: ", await baseUsdEarn.asset());
+    const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
 
     return {
       baseUsdEarn,
-      usdc: new ethers.Contract(await baseUsdEarn.asset(), erc20Abi, provider),
+      usdc: new ethers.Contract(
+        baseUsdEarn ? await baseUsdEarn.asset() : "0x2e668Bb88287675e34c8dF82686dfd0b7F0c0383",
+        erc20Abi,
+        provider,
+      ),
       weth: new ethers.Contract("0x4200000000000000000000000000000000000006", erc20Abi, provider),
     };
   } else {

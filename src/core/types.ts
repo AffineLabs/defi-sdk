@@ -8,6 +8,7 @@ import {
   StrategyVault,
   WithdrawalEscrow,
   AffineGenesis,
+  VaultV2,
 } from "../typechain";
 import { ethers } from "ethers";
 
@@ -87,7 +88,7 @@ export interface EthContracts extends BothContracts {
 }
 
 export interface BaseContracts extends BothContracts {
-  baseUsdEarn: Vault;
+  baseUsdEarn?: VaultV2;
 }
 
 export interface AlpineContracts extends PolygonContracts, EthContracts, BaseContracts {}

@@ -112,7 +112,8 @@ describe("Buy products Base", () => __awaiter(void 0, void 0, void 0, function* 
         contracts = (0, cache_1.getBaseContracts)();
     }));
     it("Buy/Sell usdEarnBase", () => __awaiter(void 0, void 0, void 0, function* () {
-        const { baseUsdEarn } = contracts;
+        let { baseUsdEarn } = contracts;
+        baseUsdEarn = baseUsdEarn;
         yield (0, AlpineDeFiSDK_1.approve)("baseUsdEarn", "100000");
         yield (0, product_1.buyProduct)("baseUsdEarn", 10);
         console.log("shares bought");

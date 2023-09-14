@@ -103,11 +103,10 @@ function getAllContracts(provider, version) {
             };
         }
         else if (chainId == 8453 || chainId == 84531) {
-            const baseUsdEarn = typechain_1.VaultV2__factory.connect(baseUsdEarnData.address, provider);
-            console.log("baseUsdEarn USDC: ", yield baseUsdEarn.asset());
+            const baseUsdEarn = chainId == 8453 ? typechain_1.VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
             return {
                 baseUsdEarn,
-                usdc: new ethers_1.ethers.Contract(yield baseUsdEarn.asset(), erc20Abi, provider),
+                usdc: new ethers_1.ethers.Contract(baseUsdEarn ? yield baseUsdEarn.asset() : "0x2e668Bb88287675e34c8dF82686dfd0b7F0c0383", erc20Abi, provider),
                 weth: new ethers_1.ethers.Contract("0x4200000000000000000000000000000000000006", erc20Abi, provider),
             };
         }

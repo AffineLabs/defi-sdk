@@ -7,6 +7,7 @@ import { getBaseContracts, getContracts, getEthContracts, getPolygonContracts, i
 import { buyProduct, sellProduct, getTokenInfo } from "../product";
 import { BaseContracts, EthContracts, PolygonContracts } from "../types";
 import { getTestProvider, oneUSDC, setBaseUsdcBalance } from "./utils";
+import { VaultV2 } from "../../typechain";
 
 describe("Buy products", async () => {
   let wallet: ethers.Wallet;
@@ -123,7 +124,10 @@ describe("Buy products Base", async () => {
   });
 
   it("Buy/Sell usdEarnBase", async () => {
-    const { baseUsdEarn } = contracts;
+    let { baseUsdEarn } = contracts;
+
+    baseUsdEarn = baseUsdEarn as any as VaultV2;
+
     await approve("baseUsdEarn", "100000");
     await buyProduct("baseUsdEarn", 10);
     console.log("shares bought");
