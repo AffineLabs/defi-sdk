@@ -140,15 +140,18 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     ssvEthUSDEarn,
     degen,
     polygonDegen,
-    ethLeverage,
     weth,
     polygonLeverage,
     baseUsdEarn,
+    ethWethEarn,
+    baseLeverage,
+    ethLeverage,
   } = getContracts() as AlpineContracts;
 
-  if (product === "ethWethEarn") return true;
+  if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product)) return true;
 
-  const asset = ["ethLeverage", "polygonLeverage"].includes(product) ? weth : usdc;
+  const asset = product == "polygonLeverage" ? weth : usdc;
+
   const productToSpender = {
     alpSave,
     alpLarge: router,
@@ -156,9 +159,13 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     ssvEthUSDEarn,
     degen,
     polygonDegen,
-    ethLeverage,
     polygonLeverage,
     baseUsdEarn,
+
+    // No approvals needed for these
+    ethWethEarn,
+    ethLeverage,
+    baseLeverage,
   };
 
   if (!productToSpender[product]) {

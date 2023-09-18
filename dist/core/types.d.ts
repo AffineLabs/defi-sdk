@@ -18,7 +18,7 @@ export interface SmallTxReceipt extends GasInfo {
     blockNumber: string;
     txnHash: string;
 }
-export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen", "polygonDegen", "ethLeverage", "polygonLeverage", "baseUsdEarn"];
+export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen", "polygonDegen", "ethLeverage", "polygonLeverage", "baseUsdEarn", "baseLeverage"];
 export type AlpineProduct = typeof alpineProducts[number];
 export declare const polygonProducts: readonly ["alpSave", "alpLarge", "polygonDegen"];
 export type PolygonProduct = typeof polygonProducts[number];
@@ -34,12 +34,12 @@ export type productAllocation = {
 export interface BothContracts {
     usdc: ethers.Contract;
     weth: ethers.Contract;
+    router: Router;
 }
 export interface PolygonContracts extends BothContracts {
     alpSave: L2Vault;
     alpLarge: TwoAssetBasket;
     forwarder: Forwarder;
-    router: Router;
     ewQueue: EmergencyWithdrawalQueue;
     polygonDegen: StrategyVault;
     polygonLeverage?: Vault;
@@ -50,12 +50,12 @@ export interface EthContracts extends BothContracts {
     ethWethEarn: Vault;
     ssvEthUSDEarn: StrategyVault;
     withdrawalEscrow: WithdrawalEscrow;
-    router: Router;
     degen: Vault;
     ethLeverage?: Vault;
 }
 export interface BaseContracts extends BothContracts {
     baseUsdEarn?: VaultV2;
+    baseLeverage: VaultV2;
 }
 export interface AlpineContracts extends PolygonContracts, EthContracts, BaseContracts {
 }

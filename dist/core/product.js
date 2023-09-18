@@ -17,12 +17,12 @@ const typechain_1 = require("../typechain");
 const AlpineDeFiSDK_1 = require("./AlpineDeFiSDK");
 const cache_1 = require("./cache");
 const constants_1 = require("./constants");
-const types_1 = require("./types");
 function _getVaultAndAsset(product) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { alpSave, alpLarge, polygonDegen, router: polyRouter, polygonLeverage } = (0, cache_1.getPolygonContracts)();
-        const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, router: ethRouter, ethLeverage } = (0, cache_1.getEthContracts)();
-        const { baseUsdEarn } = (0, cache_1.getBaseContracts)();
+        const { alpSave, alpLarge, polygonDegen, polygonLeverage } = (0, cache_1.getPolygonContracts)();
+        const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = (0, cache_1.getEthContracts)();
+        const { baseUsdEarn, baseLeverage } = (0, cache_1.getBaseContracts)();
+        const { router } = (0, cache_1.getContracts)();
         const productToVault = {
             alpSave,
             alpLarge: alpLarge,
@@ -34,12 +34,12 @@ function _getVaultAndAsset(product) {
             ethLeverage,
             polygonLeverage,
             baseUsdEarn,
+            baseLeverage,
         };
         const vault = productToVault[product];
         if (!vault)
             throw new Error("Invalid product");
         const asset = typechain_1.MockERC20__factory.connect(yield vault.asset(), vault.provider);
-        const router = product in types_1.polygonProducts ? polyRouter : ethRouter;
         return { vault, asset, router };
     });
 }
@@ -49,7 +49,7 @@ function buyProduct(product, amount, slippageBps = 500) {
         if (product == "alpLarge") {
             return buyBtCEthShares(vault, amount, slippageBps, asset, router);
         }
-        else if (product == "ethWethEarn" || product == "ethLeverage") {
+        else if (product == "ethWethEarn" || product == "ethLeverage" || product == "baseLeverage") {
             return buySharesByEthThroughWeth(amount, vault);
         }
         return buyVault(vault, amount, asset);
@@ -106,7 +106,7 @@ function buySharesByEthThroughWeth(amountWeth, vault) {
     return __awaiter(this, void 0, void 0, function* () {
         const ethDecimals = 18;
         const { assets: amount, basicInfo } = yield getBasicTxInfo(vault, amountWeth, ethDecimals);
-        const { weth, router } = (0, cache_1.getEthContracts)();
+        const { weth, router } = (0, cache_1.getContracts)();
         const shareDecimals = yield vault.decimals();
         if (amount.isNegative() || amount.isZero()) {
             throw new Error("amount must be positive.");
@@ -233,7 +233,7 @@ function getTokenInfo(product) {
                 equity: numWeth,
             };
         }
-        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, } = (0, cache_1.getContracts)();
+        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, } = (0, cache_1.getContracts)();
         const productToContract = {
             alpSave,
             ethEarn,
@@ -242,9 +242,10 @@ function getTokenInfo(product) {
             polygonDegen,
             ethLeverage,
             polygonLeverage,
-            baseUsdEarn,
             alpLarge,
             ethWethEarn,
+            baseLeverage,
+            baseUsdEarn,
         };
         const contract = productToContract[product];
         if (!contract)

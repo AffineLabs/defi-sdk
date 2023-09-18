@@ -105,7 +105,8 @@ describe("Buy products Base", () => __awaiter(void 0, void 0, void 0, function* 
         const testProvider = (0, utils_1.getTestProvider)("base");
         wallet = ethers_1.ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
         yield (0, cache_1.init)(wallet, undefined, "v1.0-beta", 8453);
-        yield testProvider.send("anvil_setBalance", [wallet.address, ethers_1.ethers.BigNumber.from(10).pow(18).toHexString()]);
+        const oneEth = ethers_1.ethers.BigNumber.from(10).pow(18);
+        yield testProvider.send("anvil_setBalance", [wallet.address, oneEth.mul(100).toHexString()]);
         console.log("INIT DONE");
         yield (0, utils_1.setBaseUsdcBalance)(wallet.address, ethers_1.ethers.BigNumber.from(100).mul(utils_1.oneUSDC));
         console.log("usdc balance set");
@@ -127,6 +128,15 @@ describe("Buy products Base", () => __awaiter(void 0, void 0, void 0, function* 
         const baseInfo = yield (0, product_1.getTokenInfo)("baseUsdEarn");
         console.log({ baseInfo });
         expect(Number(baseInfo.amount) * Number(baseInfo.price)).to.closeTo(Number(baseInfo.equity), 1);
+    }));
+    it("Buy/Sell baseLeverage", () => __awaiter(void 0, void 0, void 0, function* () {
+        const { baseLeverage } = contracts;
+        yield (0, product_1.buyProduct)("baseLeverage", 2);
+        const shares = yield baseLeverage.balanceOf(wallet.address);
+        expect(shares.gt(0)).to.be.true;
+        yield (0, product_1.sellProduct)("baseLeverage", 1);
+        const newBal = yield baseLeverage.balanceOf(wallet.address);
+        expect(newBal.lt(shares)).to.be.true;
     }));
 }));
 describe("Product info", () => __awaiter(void 0, void 0, void 0, function* () {

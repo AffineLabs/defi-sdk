@@ -116,7 +116,8 @@ describe("Buy products Base", async () => {
     wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
 
     await init(wallet, undefined, "v1.0-beta", 8453);
-    await testProvider.send("anvil_setBalance", [wallet.address, ethers.BigNumber.from(10).pow(18).toHexString()]);
+    const oneEth = ethers.BigNumber.from(10).pow(18);
+    await testProvider.send("anvil_setBalance", [wallet.address, oneEth.mul(100).toHexString()]);
     console.log("INIT DONE");
     await setBaseUsdcBalance(wallet.address, ethers.BigNumber.from(100).mul(oneUSDC));
     console.log("usdc balance set");
@@ -143,6 +144,17 @@ describe("Buy products Base", async () => {
     const baseInfo = await getTokenInfo("baseUsdEarn");
     console.log({ baseInfo });
     expect(Number(baseInfo.amount) * Number(baseInfo.price)).to.closeTo(Number(baseInfo.equity), 1);
+  });
+
+  it("Buy/Sell baseLeverage", async () => {
+    const { baseLeverage } = contracts;
+    await buyProduct("baseLeverage", 2);
+    const shares = await baseLeverage.balanceOf(wallet.address);
+    expect(shares.gt(0)).to.be.true;
+
+    await sellProduct("baseLeverage", 1);
+    const newBal = await baseLeverage.balanceOf(wallet.address);
+    expect(newBal.lt(shares)).to.be.true;
   });
 });
 
