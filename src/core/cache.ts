@@ -97,6 +97,8 @@ export async function getAllContracts(
     PolygonStEthLev: polygonLeverageData,
     AffineGenesis: affineGenesisData,
     BaseUsdEarn: baseUsdEarnData,
+    BaseStEthLev: baseStEthLevData,
+    BaseRouter: baseRouterData,
   } = allData;
 
   const chainId = getChainId();
@@ -140,15 +142,21 @@ export async function getAllContracts(
     };
   } else if (chainId == 8453 || chainId == 84531) {
     const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
+    const baseLeverage = VaultV2__factory.connect(baseStEthLevData.address, provider);
+
+    console.log("baseLeveages:", baseLeverage.address);
+    console.log("router address: ", baseRouterData.address);
 
     return {
       baseUsdEarn,
+      baseLeverage,
       usdc: new ethers.Contract(
         baseUsdEarn ? await baseUsdEarn.asset() : "0x2e668Bb88287675e34c8dF82686dfd0b7F0c0383",
         erc20Abi,
         provider,
       ),
       weth: new ethers.Contract("0x4200000000000000000000000000000000000006", erc20Abi, provider),
+      router: Router__factory.connect(baseRouterData.address, provider),
     };
   } else {
     throw Error("Bad chainId");

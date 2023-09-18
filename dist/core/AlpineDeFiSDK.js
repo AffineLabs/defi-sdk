@@ -127,10 +127,10 @@ exports.blockchainCall = blockchainCall;
 function isApproved(product, amount) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, weth, polygonLeverage, baseUsdEarn, } = (0, cache_1.getContracts)();
-        if (product === "ethWethEarn")
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, } = (0, cache_1.getContracts)();
+        if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product))
             return true;
-        const asset = ["ethLeverage", "polygonLeverage"].includes(product) ? weth : usdc;
+        const asset = product == "polygonLeverage" ? weth : usdc;
         const productToSpender = {
             alpSave,
             alpLarge: router,
@@ -138,9 +138,12 @@ function isApproved(product, amount) {
             ssvEthUSDEarn,
             degen,
             polygonDegen,
-            ethLeverage,
             polygonLeverage,
             baseUsdEarn,
+            // No approvals needed for these
+            ethWethEarn,
+            ethLeverage,
+            baseLeverage,
         };
         if (!productToSpender[product]) {
             throw new Error("Product not found");

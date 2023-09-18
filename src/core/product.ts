@@ -40,9 +40,11 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   asset: MockERC20;
   router: Router;
 }> {
-  const { alpSave, alpLarge, polygonDegen, router: polyRouter, polygonLeverage } = getPolygonContracts();
-  const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, router: ethRouter, ethLeverage } = getEthContracts();
-  const { baseUsdEarn } = getBaseContracts();
+  const { alpSave, alpLarge, polygonDegen, polygonLeverage } = getPolygonContracts();
+  const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = getEthContracts();
+  const { baseUsdEarn, baseLeverage } = getBaseContracts();
+
+  const { router } = getContracts();
 
   const productToVault: { [key in AlpineProduct]?: ERC4626Upgradeable } = {
     alpSave,
@@ -55,13 +57,12 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
     ethLeverage,
     polygonLeverage,
     baseUsdEarn,
+    baseLeverage,
   };
 
   const vault = productToVault[product];
   if (!vault) throw new Error("Invalid product");
   const asset = MockERC20__factory.connect(await vault.asset(), vault.provider);
-
-  const router: Router = product in polygonProducts ? polyRouter : ethRouter;
   return { vault, asset, router };
 }
 export async function buyProduct(product: AlpineProduct, amount: number, slippageBps = 500) {
@@ -69,7 +70,7 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
 
   if (product == "alpLarge") {
     return buyBtCEthShares(vault, amount, slippageBps, asset, router);
-  } else if (product == "ethWethEarn" || product == "ethLeverage") {
+  } else if (product == "ethWethEarn" || product == "ethLeverage" || product == "baseLeverage") {
     return buySharesByEthThroughWeth(amount, vault);
   }
   return buyVault(vault, amount, asset);
@@ -135,7 +136,7 @@ async function buySharesByEthThroughWeth(
   const ethDecimals = 18;
   const { assets: amount, basicInfo } = await getBasicTxInfo(vault, amountWeth, ethDecimals);
 
-  const { weth, router } = getEthContracts();
+  const { weth, router } = getContracts();
   const shareDecimals = await vault.decimals();
 
   if (amount.isNegative() || amount.isZero()) {
@@ -299,6 +300,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     ethLeverage,
     polygonLeverage,
     baseUsdEarn,
+    baseLeverage,
   } = getContracts() as AlpineContracts;
 
   const productToContract: { [key in AlpineProduct]: Contract | undefined } = {
@@ -309,9 +311,10 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     polygonDegen,
     ethLeverage,
     polygonLeverage,
-    baseUsdEarn,
     alpLarge,
     ethWethEarn,
+    baseLeverage,
+    baseUsdEarn,
   };
 
   const contract = productToContract[product];
