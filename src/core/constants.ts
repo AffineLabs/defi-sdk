@@ -15,7 +15,7 @@ export function getChainIdFromRaw(chainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID
 export const NETWORK_TYPE: "testnet" | "mainnet" =
   process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet" ? "mainnet" : "testnet";
 
-export const ALLOWED_CHAIN_IDS: AllowedChainId[] = NETWORK_TYPE === "mainnet" ? [1, 137] : [5, 80001];
+export const ALLOWED_CHAIN_IDS: AllowedChainId[] = NETWORK_TYPE === "mainnet" ? [1, 137, 8453] : [5, 80001, 84531];
 
 export const MAX_UINT = ethers.BigNumber.from(2).pow(256).sub(1);
 
@@ -28,6 +28,8 @@ export const IS_USING_FORKED_MAINNET: boolean = process.env.IS_USING_FORKED_MAIN
 export const FORKED_NODE_URL_FOR_ETH = process.env.FORKED_NODE_URL_FOR_ETH || "";
 
 export const FORKED_NODE_URL_FOR_MATIC = process.env.FORKED_NODE_URL_FOR_MATIC || "";
+
+export const FORKED_NODE_URL_FOR_BASE = process.env.FORKED_NODE_URL_FOR_BASE || "";
 
 export const NETWORK_PARAMS: { [index: number]: NetworkParams } = {
   1: {
@@ -71,5 +73,26 @@ export const NETWORK_PARAMS: { [index: number]: NetworkParams } = {
     },
     rpcUrls: ["https://matic-mumbai.chainstacklabs.com"],
     blockExplorerUrls: ["https://mumbai.polygonscan.com"],
+  },
+  8453: {
+    chainName: `Base Protocol Mainnet${IS_USING_FORKED_MAINNET ? " (Forked)" : ""}`,
+    nativeCurrency: {
+      name: "Ether",
+      symbol: "ETH",
+      decimals: 18,
+    },
+    rpcUrls:
+      IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_BASE ? [FORKED_NODE_URL_FOR_BASE] : ["https://mainnet.base.org"],
+    blockExplorerUrls: ["https://basescan.org"],
+  },
+  84531: {
+    chainName: "Base Goerli",
+    nativeCurrency: {
+      name: "Ether",
+      symbol: "ETH",
+      decimals: 18,
+    },
+    rpcUrls: ["https://goerli.base.org"],
+    blockExplorerUrls: ["https://goerli.basescan.org"],
   },
 };

@@ -32,7 +32,9 @@ exports.RPC_URLS = {
         ? constants_1.FORKED_NODE_URL_FOR_MATIC
         : `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
     80001: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
-    8453: `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_BASE_MAINNET_KEY}`,
+    8453: constants_1.IS_USING_FORKED_MAINNET && constants_1.FORKED_NODE_URL_FOR_BASE
+        ? constants_1.FORKED_NODE_URL_FOR_BASE
+        : `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_BASE_MAINNET_KEY}`,
     84531: `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_BASE_TESTNET_KEY}`,
 };
 function getProviderByChainId(chainId) {
