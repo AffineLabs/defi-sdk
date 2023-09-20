@@ -31,26 +31,24 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
 
 const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 
-const { ALCHEMY_API_KEY, ALCHEMY_BASE_TESTNET_KEY, ALCHEMY_BASE_MAINNET_KEY } = process.env;
-
 export let PROVIDER: ethers.providers.StaticJsonRpcProvider;
 
 export const RPC_URLS: { [index: AllowedChainId]: string } = {
   1:
     IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_ETH
       ? FORKED_NODE_URL_FOR_ETH
-      : `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-  5: `https://eth-goerli.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
+      : `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+  5: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
   137:
     IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_MATIC
       ? FORKED_NODE_URL_FOR_MATIC
-      : `https://polygon-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
-  80001: `https://polygon-mumbai.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
+      : `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+  80001: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
   8453:
     IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_BASE
       ? FORKED_NODE_URL_FOR_BASE
-      : `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_BASE_MAINNET_KEY}`,
-  84531: `https://base-mainnet.g.alchemy.com/v2/${ALCHEMY_BASE_TESTNET_KEY}`,
+      : `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_MAINNET_KEY}`,
+  84531: `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_TESTNET_KEY}`,
 };
 
 export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.StaticJsonRpcProvider {
