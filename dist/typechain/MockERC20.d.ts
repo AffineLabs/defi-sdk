@@ -69,23 +69,23 @@ export interface ApprovalEventObject {
     spender: string;
     amount: BigNumber;
 }
-export type ApprovalEvent = TypedEvent<[
+export declare type ApprovalEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], ApprovalEventObject>;
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export declare type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 export interface TransferEventObject {
     from: string;
     to: string;
     amount: BigNumber;
 }
-export type TransferEvent = TypedEvent<[
+export declare type TransferEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], TransferEventObject>;
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
+export declare type TransferEventFilter = TypedEventFilter<TransferEvent>;
 export interface MockERC20 extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

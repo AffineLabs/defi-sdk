@@ -146,6 +146,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     ethWethEarn,
     baseLeverage,
     ethLeverage,
+    baseUsdcDegen,
   } = getContracts() as AlpineContracts;
 
   if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product)) return true;
@@ -161,6 +162,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     polygonDegen,
     polygonLeverage,
     baseUsdEarn,
+    baseUsdcDegen,
 
     // No approvals needed for these
     ethWethEarn,

@@ -215,7 +215,7 @@ export interface BorrowEventObject {
     borrowRate: BigNumber;
     referral: number;
 }
-export type BorrowEvent = TypedEvent<[
+export declare type BorrowEvent = TypedEvent<[
     string,
     string,
     string,
@@ -224,7 +224,7 @@ export type BorrowEvent = TypedEvent<[
     BigNumber,
     number
 ], BorrowEventObject>;
-export type BorrowEventFilter = TypedEventFilter<BorrowEvent>;
+export declare type BorrowEventFilter = TypedEventFilter<BorrowEvent>;
 export interface DepositEventObject {
     reserve: string;
     user: string;
@@ -232,14 +232,14 @@ export interface DepositEventObject {
     amount: BigNumber;
     referral: number;
 }
-export type DepositEvent = TypedEvent<[
+export declare type DepositEvent = TypedEvent<[
     string,
     string,
     string,
     BigNumber,
     number
 ], DepositEventObject>;
-export type DepositEventFilter = TypedEventFilter<DepositEvent>;
+export declare type DepositEventFilter = TypedEventFilter<DepositEvent>;
 export interface FlashLoanEventObject {
     target: string;
     initiator: string;
@@ -248,7 +248,7 @@ export interface FlashLoanEventObject {
     premium: BigNumber;
     referralCode: number;
 }
-export type FlashLoanEvent = TypedEvent<[
+export declare type FlashLoanEvent = TypedEvent<[
     string,
     string,
     string,
@@ -256,7 +256,7 @@ export type FlashLoanEvent = TypedEvent<[
     BigNumber,
     number
 ], FlashLoanEventObject>;
-export type FlashLoanEventFilter = TypedEventFilter<FlashLoanEvent>;
+export declare type FlashLoanEventFilter = TypedEventFilter<FlashLoanEvent>;
 export interface LiquidationCallEventObject {
     collateralAsset: string;
     debtAsset: string;
@@ -266,7 +266,7 @@ export interface LiquidationCallEventObject {
     liquidator: string;
     receiveAToken: boolean;
 }
-export type LiquidationCallEvent = TypedEvent<[
+export declare type LiquidationCallEvent = TypedEvent<[
     string,
     string,
     string,
@@ -275,33 +275,33 @@ export type LiquidationCallEvent = TypedEvent<[
     string,
     boolean
 ], LiquidationCallEventObject>;
-export type LiquidationCallEventFilter = TypedEventFilter<LiquidationCallEvent>;
+export declare type LiquidationCallEventFilter = TypedEventFilter<LiquidationCallEvent>;
 export interface PausedEventObject {
 }
-export type PausedEvent = TypedEvent<[], PausedEventObject>;
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+export declare type PausedEvent = TypedEvent<[], PausedEventObject>;
+export declare type PausedEventFilter = TypedEventFilter<PausedEvent>;
 export interface RebalanceStableBorrowRateEventObject {
     reserve: string;
     user: string;
 }
-export type RebalanceStableBorrowRateEvent = TypedEvent<[
+export declare type RebalanceStableBorrowRateEvent = TypedEvent<[
     string,
     string
 ], RebalanceStableBorrowRateEventObject>;
-export type RebalanceStableBorrowRateEventFilter = TypedEventFilter<RebalanceStableBorrowRateEvent>;
+export declare type RebalanceStableBorrowRateEventFilter = TypedEventFilter<RebalanceStableBorrowRateEvent>;
 export interface RepayEventObject {
     reserve: string;
     user: string;
     repayer: string;
     amount: BigNumber;
 }
-export type RepayEvent = TypedEvent<[
+export declare type RepayEvent = TypedEvent<[
     string,
     string,
     string,
     BigNumber
 ], RepayEventObject>;
-export type RepayEventFilter = TypedEventFilter<RepayEvent>;
+export declare type RepayEventFilter = TypedEventFilter<RepayEvent>;
 export interface ReserveDataUpdatedEventObject {
     reserve: string;
     liquidityRate: BigNumber;
@@ -310,7 +310,7 @@ export interface ReserveDataUpdatedEventObject {
     liquidityIndex: BigNumber;
     variableBorrowIndex: BigNumber;
 }
-export type ReserveDataUpdatedEvent = TypedEvent<[
+export declare type ReserveDataUpdatedEvent = TypedEvent<[
     string,
     BigNumber,
     BigNumber,
@@ -318,53 +318,53 @@ export type ReserveDataUpdatedEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], ReserveDataUpdatedEventObject>;
-export type ReserveDataUpdatedEventFilter = TypedEventFilter<ReserveDataUpdatedEvent>;
+export declare type ReserveDataUpdatedEventFilter = TypedEventFilter<ReserveDataUpdatedEvent>;
 export interface ReserveUsedAsCollateralDisabledEventObject {
     reserve: string;
     user: string;
 }
-export type ReserveUsedAsCollateralDisabledEvent = TypedEvent<[
+export declare type ReserveUsedAsCollateralDisabledEvent = TypedEvent<[
     string,
     string
 ], ReserveUsedAsCollateralDisabledEventObject>;
-export type ReserveUsedAsCollateralDisabledEventFilter = TypedEventFilter<ReserveUsedAsCollateralDisabledEvent>;
+export declare type ReserveUsedAsCollateralDisabledEventFilter = TypedEventFilter<ReserveUsedAsCollateralDisabledEvent>;
 export interface ReserveUsedAsCollateralEnabledEventObject {
     reserve: string;
     user: string;
 }
-export type ReserveUsedAsCollateralEnabledEvent = TypedEvent<[
+export declare type ReserveUsedAsCollateralEnabledEvent = TypedEvent<[
     string,
     string
 ], ReserveUsedAsCollateralEnabledEventObject>;
-export type ReserveUsedAsCollateralEnabledEventFilter = TypedEventFilter<ReserveUsedAsCollateralEnabledEvent>;
+export declare type ReserveUsedAsCollateralEnabledEventFilter = TypedEventFilter<ReserveUsedAsCollateralEnabledEvent>;
 export interface SwapEventObject {
     reserve: string;
     user: string;
     rateMode: BigNumber;
 }
-export type SwapEvent = TypedEvent<[
+export declare type SwapEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], SwapEventObject>;
-export type SwapEventFilter = TypedEventFilter<SwapEvent>;
+export declare type SwapEventFilter = TypedEventFilter<SwapEvent>;
 export interface UnpausedEventObject {
 }
-export type UnpausedEvent = TypedEvent<[], UnpausedEventObject>;
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+export declare type UnpausedEvent = TypedEvent<[], UnpausedEventObject>;
+export declare type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 export interface WithdrawEventObject {
     reserve: string;
     user: string;
     to: string;
     amount: BigNumber;
 }
-export type WithdrawEvent = TypedEvent<[
+export declare type WithdrawEvent = TypedEvent<[
     string,
     string,
     string,
     BigNumber
 ], WithdrawEventObject>;
-export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
+export declare type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
 export interface ILendingPool extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

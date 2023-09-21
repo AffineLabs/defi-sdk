@@ -17,8 +17,8 @@ export interface RebalanceModuleInterface extends utils.Interface {
 export interface RebalanceEventObject {
     vault: string;
 }
-export type RebalanceEvent = TypedEvent<[string], RebalanceEventObject>;
-export type RebalanceEventFilter = TypedEventFilter<RebalanceEvent>;
+export declare type RebalanceEvent = TypedEvent<[string], RebalanceEventObject>;
+export declare type RebalanceEventFilter = TypedEventFilter<RebalanceEvent>;
 export interface RebalanceModule extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

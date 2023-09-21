@@ -304,176 +304,176 @@ export interface AdminChangedEventObject {
     previousAdmin: string;
     newAdmin: string;
 }
-export type AdminChangedEvent = TypedEvent<[
+export declare type AdminChangedEvent = TypedEvent<[
     string,
     string
 ], AdminChangedEventObject>;
-export type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
+export declare type AdminChangedEventFilter = TypedEventFilter<AdminChangedEvent>;
 export interface ApprovalEventObject {
     owner: string;
     spender: string;
     value: BigNumber;
 }
-export type ApprovalEvent = TypedEvent<[
+export declare type ApprovalEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], ApprovalEventObject>;
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export declare type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 export interface BeaconUpgradedEventObject {
     beacon: string;
 }
-export type BeaconUpgradedEvent = TypedEvent<[
+export declare type BeaconUpgradedEvent = TypedEvent<[
     string
 ], BeaconUpgradedEventObject>;
-export type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
+export declare type BeaconUpgradedEventFilter = TypedEventFilter<BeaconUpgradedEvent>;
 export interface DepositEventObject {
     caller: string;
     owner: string;
     assets: BigNumber;
     shares: BigNumber;
 }
-export type DepositEvent = TypedEvent<[
+export declare type DepositEvent = TypedEvent<[
     string,
     string,
     BigNumber,
     BigNumber
 ], DepositEventObject>;
-export type DepositEventFilter = TypedEventFilter<DepositEvent>;
+export declare type DepositEventFilter = TypedEventFilter<DepositEvent>;
 export interface HarvestEventObject {
     user: string;
     strategies: string[];
 }
-export type HarvestEvent = TypedEvent<[string, string[]], HarvestEventObject>;
-export type HarvestEventFilter = TypedEventFilter<HarvestEvent>;
+export declare type HarvestEvent = TypedEvent<[string, string[]], HarvestEventObject>;
+export declare type HarvestEventFilter = TypedEventFilter<HarvestEvent>;
 export interface InitializedEventObject {
     version: number;
 }
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+export declare type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+export declare type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 export interface LiquidationEventObject {
     assetsRequested: BigNumber;
     assetsLiquidated: BigNumber;
 }
-export type LiquidationEvent = TypedEvent<[
+export declare type LiquidationEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], LiquidationEventObject>;
-export type LiquidationEventFilter = TypedEventFilter<LiquidationEvent>;
+export declare type LiquidationEventFilter = TypedEventFilter<LiquidationEvent>;
 export interface ManagementFeeSetEventObject {
     oldFee: BigNumber;
     newFee: BigNumber;
 }
-export type ManagementFeeSetEvent = TypedEvent<[
+export declare type ManagementFeeSetEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], ManagementFeeSetEventObject>;
-export type ManagementFeeSetEventFilter = TypedEventFilter<ManagementFeeSetEvent>;
+export declare type ManagementFeeSetEventFilter = TypedEventFilter<ManagementFeeSetEvent>;
 export interface PausedEventObject {
     account: string;
 }
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+export declare type PausedEvent = TypedEvent<[string], PausedEventObject>;
+export declare type PausedEventFilter = TypedEventFilter<PausedEvent>;
 export interface RebalanceEventObject {
     caller: string;
 }
-export type RebalanceEvent = TypedEvent<[string], RebalanceEventObject>;
-export type RebalanceEventFilter = TypedEventFilter<RebalanceEvent>;
+export declare type RebalanceEvent = TypedEvent<[string], RebalanceEventObject>;
+export declare type RebalanceEventFilter = TypedEventFilter<RebalanceEvent>;
 export interface RoleAdminChangedEventObject {
     role: string;
     previousAdminRole: string;
     newAdminRole: string;
 }
-export type RoleAdminChangedEvent = TypedEvent<[
+export declare type RoleAdminChangedEvent = TypedEvent<[
     string,
     string,
     string
 ], RoleAdminChangedEventObject>;
-export type RoleAdminChangedEventFilter = TypedEventFilter<RoleAdminChangedEvent>;
+export declare type RoleAdminChangedEventFilter = TypedEventFilter<RoleAdminChangedEvent>;
 export interface RoleGrantedEventObject {
     role: string;
     account: string;
     sender: string;
 }
-export type RoleGrantedEvent = TypedEvent<[
+export declare type RoleGrantedEvent = TypedEvent<[
     string,
     string,
     string
 ], RoleGrantedEventObject>;
-export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+export declare type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
 export interface RoleRevokedEventObject {
     role: string;
     account: string;
     sender: string;
 }
-export type RoleRevokedEvent = TypedEvent<[
+export declare type RoleRevokedEvent = TypedEvent<[
     string,
     string,
     string
 ], RoleRevokedEventObject>;
-export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+export declare type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 export interface StrategyAddedEventObject {
     strategy: string;
 }
-export type StrategyAddedEvent = TypedEvent<[string], StrategyAddedEventObject>;
-export type StrategyAddedEventFilter = TypedEventFilter<StrategyAddedEvent>;
+export declare type StrategyAddedEvent = TypedEvent<[string], StrategyAddedEventObject>;
+export declare type StrategyAddedEventFilter = TypedEventFilter<StrategyAddedEvent>;
 export interface StrategyAllocsUpdatedEventObject {
     strategyList: string[];
     strategyBps: number[];
 }
-export type StrategyAllocsUpdatedEvent = TypedEvent<[
+export declare type StrategyAllocsUpdatedEvent = TypedEvent<[
     string[],
     number[]
 ], StrategyAllocsUpdatedEventObject>;
-export type StrategyAllocsUpdatedEventFilter = TypedEventFilter<StrategyAllocsUpdatedEvent>;
+export declare type StrategyAllocsUpdatedEventFilter = TypedEventFilter<StrategyAllocsUpdatedEvent>;
 export interface StrategyDepositEventObject {
     strategy: string;
     assets: BigNumber;
 }
-export type StrategyDepositEvent = TypedEvent<[
+export declare type StrategyDepositEvent = TypedEvent<[
     string,
     BigNumber
 ], StrategyDepositEventObject>;
-export type StrategyDepositEventFilter = TypedEventFilter<StrategyDepositEvent>;
+export declare type StrategyDepositEventFilter = TypedEventFilter<StrategyDepositEvent>;
 export interface StrategyRemovedEventObject {
     strategy: string;
 }
-export type StrategyRemovedEvent = TypedEvent<[
+export declare type StrategyRemovedEvent = TypedEvent<[
     string
 ], StrategyRemovedEventObject>;
-export type StrategyRemovedEventFilter = TypedEventFilter<StrategyRemovedEvent>;
+export declare type StrategyRemovedEventFilter = TypedEventFilter<StrategyRemovedEvent>;
 export interface StrategyWithdrawalEventObject {
     strategy: string;
     assetsRequested: BigNumber;
     assetsReceived: BigNumber;
 }
-export type StrategyWithdrawalEvent = TypedEvent<[
+export declare type StrategyWithdrawalEvent = TypedEvent<[
     string,
     BigNumber,
     BigNumber
 ], StrategyWithdrawalEventObject>;
-export type StrategyWithdrawalEventFilter = TypedEventFilter<StrategyWithdrawalEvent>;
+export declare type StrategyWithdrawalEventFilter = TypedEventFilter<StrategyWithdrawalEvent>;
 export interface TransferEventObject {
     from: string;
     to: string;
     value: BigNumber;
 }
-export type TransferEvent = TypedEvent<[
+export declare type TransferEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], TransferEventObject>;
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
+export declare type TransferEventFilter = TypedEventFilter<TransferEvent>;
 export interface UnpausedEventObject {
     account: string;
 }
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+export declare type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
+export declare type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 export interface UpgradedEventObject {
     implementation: string;
 }
-export type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
-export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
+export declare type UpgradedEvent = TypedEvent<[string], UpgradedEventObject>;
+export declare type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
 export interface WithdrawEventObject {
     caller: string;
     receiver: string;
@@ -481,30 +481,30 @@ export interface WithdrawEventObject {
     assets: BigNumber;
     shares: BigNumber;
 }
-export type WithdrawEvent = TypedEvent<[
+export declare type WithdrawEvent = TypedEvent<[
     string,
     string,
     string,
     BigNumber,
     BigNumber
 ], WithdrawEventObject>;
-export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
+export declare type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
 export interface WithdrawalFeeSetEventObject {
     oldFee: BigNumber;
     newFee: BigNumber;
 }
-export type WithdrawalFeeSetEvent = TypedEvent<[
+export declare type WithdrawalFeeSetEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], WithdrawalFeeSetEventObject>;
-export type WithdrawalFeeSetEventFilter = TypedEventFilter<WithdrawalFeeSetEvent>;
+export declare type WithdrawalFeeSetEventFilter = TypedEventFilter<WithdrawalFeeSetEvent>;
 export interface WithdrawalQueueSetEventObject {
     newQueue: string[];
 }
-export type WithdrawalQueueSetEvent = TypedEvent<[
+export declare type WithdrawalQueueSetEvent = TypedEvent<[
     string[]
 ], WithdrawalQueueSetEventObject>;
-export type WithdrawalQueueSetEventFilter = TypedEventFilter<WithdrawalQueueSetEvent>;
+export declare type WithdrawalQueueSetEventFilter = TypedEventFilter<WithdrawalQueueSetEvent>;
 export interface EthVault extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

@@ -21,18 +21,18 @@ export interface PausableUpgradeableInterface extends utils.Interface {
 export interface InitializedEventObject {
     version: number;
 }
-export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+export declare type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
+export declare type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 export interface PausedEventObject {
     account: string;
 }
-export type PausedEvent = TypedEvent<[string], PausedEventObject>;
-export type PausedEventFilter = TypedEventFilter<PausedEvent>;
+export declare type PausedEvent = TypedEvent<[string], PausedEventObject>;
+export declare type PausedEventFilter = TypedEventFilter<PausedEvent>;
 export interface UnpausedEventObject {
     account: string;
 }
-export type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
-export type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
+export declare type UnpausedEvent = TypedEvent<[string], UnpausedEventObject>;
+export declare type UnpausedEventFilter = TypedEventFilter<UnpausedEvent>;
 export interface PausableUpgradeable extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

@@ -92,109 +92,109 @@ export interface ACLAdminUpdatedEventObject {
     oldAddress: string;
     newAddress: string;
 }
-export type ACLAdminUpdatedEvent = TypedEvent<[
+export declare type ACLAdminUpdatedEvent = TypedEvent<[
     string,
     string
 ], ACLAdminUpdatedEventObject>;
-export type ACLAdminUpdatedEventFilter = TypedEventFilter<ACLAdminUpdatedEvent>;
+export declare type ACLAdminUpdatedEventFilter = TypedEventFilter<ACLAdminUpdatedEvent>;
 export interface ACLManagerUpdatedEventObject {
     oldAddress: string;
     newAddress: string;
 }
-export type ACLManagerUpdatedEvent = TypedEvent<[
+export declare type ACLManagerUpdatedEvent = TypedEvent<[
     string,
     string
 ], ACLManagerUpdatedEventObject>;
-export type ACLManagerUpdatedEventFilter = TypedEventFilter<ACLManagerUpdatedEvent>;
+export declare type ACLManagerUpdatedEventFilter = TypedEventFilter<ACLManagerUpdatedEvent>;
 export interface AddressSetEventObject {
     id: string;
     oldAddress: string;
     newAddress: string;
 }
-export type AddressSetEvent = TypedEvent<[
+export declare type AddressSetEvent = TypedEvent<[
     string,
     string,
     string
 ], AddressSetEventObject>;
-export type AddressSetEventFilter = TypedEventFilter<AddressSetEvent>;
+export declare type AddressSetEventFilter = TypedEventFilter<AddressSetEvent>;
 export interface AddressSetAsProxyEventObject {
     id: string;
     proxyAddress: string;
     oldImplementationAddress: string;
     newImplementationAddress: string;
 }
-export type AddressSetAsProxyEvent = TypedEvent<[
+export declare type AddressSetAsProxyEvent = TypedEvent<[
     string,
     string,
     string,
     string
 ], AddressSetAsProxyEventObject>;
-export type AddressSetAsProxyEventFilter = TypedEventFilter<AddressSetAsProxyEvent>;
+export declare type AddressSetAsProxyEventFilter = TypedEventFilter<AddressSetAsProxyEvent>;
 export interface MarketIdSetEventObject {
     oldMarketId: string;
     newMarketId: string;
 }
-export type MarketIdSetEvent = TypedEvent<[
+export declare type MarketIdSetEvent = TypedEvent<[
     string,
     string
 ], MarketIdSetEventObject>;
-export type MarketIdSetEventFilter = TypedEventFilter<MarketIdSetEvent>;
+export declare type MarketIdSetEventFilter = TypedEventFilter<MarketIdSetEvent>;
 export interface PoolConfiguratorUpdatedEventObject {
     oldAddress: string;
     newAddress: string;
 }
-export type PoolConfiguratorUpdatedEvent = TypedEvent<[
+export declare type PoolConfiguratorUpdatedEvent = TypedEvent<[
     string,
     string
 ], PoolConfiguratorUpdatedEventObject>;
-export type PoolConfiguratorUpdatedEventFilter = TypedEventFilter<PoolConfiguratorUpdatedEvent>;
+export declare type PoolConfiguratorUpdatedEventFilter = TypedEventFilter<PoolConfiguratorUpdatedEvent>;
 export interface PoolDataProviderUpdatedEventObject {
     oldAddress: string;
     newAddress: string;
 }
-export type PoolDataProviderUpdatedEvent = TypedEvent<[
+export declare type PoolDataProviderUpdatedEvent = TypedEvent<[
     string,
     string
 ], PoolDataProviderUpdatedEventObject>;
-export type PoolDataProviderUpdatedEventFilter = TypedEventFilter<PoolDataProviderUpdatedEvent>;
+export declare type PoolDataProviderUpdatedEventFilter = TypedEventFilter<PoolDataProviderUpdatedEvent>;
 export interface PoolUpdatedEventObject {
     oldAddress: string;
     newAddress: string;
 }
-export type PoolUpdatedEvent = TypedEvent<[
+export declare type PoolUpdatedEvent = TypedEvent<[
     string,
     string
 ], PoolUpdatedEventObject>;
-export type PoolUpdatedEventFilter = TypedEventFilter<PoolUpdatedEvent>;
+export declare type PoolUpdatedEventFilter = TypedEventFilter<PoolUpdatedEvent>;
 export interface PriceOracleSentinelUpdatedEventObject {
     oldAddress: string;
     newAddress: string;
 }
-export type PriceOracleSentinelUpdatedEvent = TypedEvent<[
+export declare type PriceOracleSentinelUpdatedEvent = TypedEvent<[
     string,
     string
 ], PriceOracleSentinelUpdatedEventObject>;
-export type PriceOracleSentinelUpdatedEventFilter = TypedEventFilter<PriceOracleSentinelUpdatedEvent>;
+export declare type PriceOracleSentinelUpdatedEventFilter = TypedEventFilter<PriceOracleSentinelUpdatedEvent>;
 export interface PriceOracleUpdatedEventObject {
     oldAddress: string;
     newAddress: string;
 }
-export type PriceOracleUpdatedEvent = TypedEvent<[
+export declare type PriceOracleUpdatedEvent = TypedEvent<[
     string,
     string
 ], PriceOracleUpdatedEventObject>;
-export type PriceOracleUpdatedEventFilter = TypedEventFilter<PriceOracleUpdatedEvent>;
+export declare type PriceOracleUpdatedEventFilter = TypedEventFilter<PriceOracleUpdatedEvent>;
 export interface ProxyCreatedEventObject {
     id: string;
     proxyAddress: string;
     implementationAddress: string;
 }
-export type ProxyCreatedEvent = TypedEvent<[
+export declare type ProxyCreatedEvent = TypedEvent<[
     string,
     string,
     string
 ], ProxyCreatedEventObject>;
-export type ProxyCreatedEventFilter = TypedEventFilter<ProxyCreatedEvent>;
+export declare type ProxyCreatedEventFilter = TypedEventFilter<ProxyCreatedEvent>;
 export interface IPoolAddressesProvider extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;
