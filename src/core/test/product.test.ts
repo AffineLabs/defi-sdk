@@ -125,23 +125,23 @@ describe("Buy products Base", async () => {
   });
 
   it("Buy/Sell usdEarnBase", async () => {
-    let { baseUsdEarn } = contracts;
+    let { baseUsdcDegen } = contracts;
 
-    baseUsdEarn = baseUsdEarn as any as VaultV2;
+    baseUsdcDegen = baseUsdcDegen as any as VaultV2;
 
-    await approve("baseUsdEarn", "100000");
-    await buyProduct("baseUsdEarn", 10);
+    await approve("baseUsdcDegen", "100000");
+    await buyProduct("baseUsdcDegen", 10);
     console.log("shares bought");
-    const shares = await baseUsdEarn.balanceOf(wallet.address);
+    const shares = await baseUsdcDegen.balanceOf(wallet.address);
     expect(shares.gt(0)).to.be.true;
 
-    await sellProduct("baseUsdEarn", 9);
-    const newBal = await baseUsdEarn.balanceOf(wallet.address);
+    await sellProduct("baseUsdcDegen", 9);
+    const newBal = await baseUsdcDegen.balanceOf(wallet.address);
     expect(newBal.lt(shares)).to.be.true;
   });
 
-  it("BaseUsdEarn info", async () => {
-    const baseInfo = await getTokenInfo("baseUsdEarn");
+  it("baseUsdcDegen info", async () => {
+    const baseInfo = await getTokenInfo("baseUsdcDegen");
     console.log({ baseInfo });
     expect(Number(baseInfo.amount) * Number(baseInfo.price)).to.closeTo(Number(baseInfo.equity), 1);
   });

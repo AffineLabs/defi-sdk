@@ -142,7 +142,6 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     polygonDegen,
     weth,
     polygonLeverage,
-    baseUsdEarn,
     ethWethEarn,
     baseLeverage,
     ethLeverage,
@@ -161,7 +160,6 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     degen,
     polygonDegen,
     polygonLeverage,
-    baseUsdEarn,
     baseUsdcDegen,
 
     // No approvals needed for these

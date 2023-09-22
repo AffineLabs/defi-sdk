@@ -42,7 +42,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
 }> {
   const { alpSave, alpLarge, polygonDegen, polygonLeverage } = getPolygonContracts();
   const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = getEthContracts();
-  const { baseUsdEarn, baseLeverage, baseUsdcDegen } = getBaseContracts();
+  const { baseLeverage, baseUsdcDegen } = getBaseContracts();
 
   const { router } = getContracts();
 
@@ -56,7 +56,6 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
     degen,
     ethLeverage,
     polygonLeverage,
-    baseUsdEarn,
     baseLeverage,
     baseUsdcDegen,
   };
@@ -300,7 +299,6 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     polygonDegen,
     ethLeverage,
     polygonLeverage,
-    baseUsdEarn,
     baseLeverage,
     baseUsdcDegen,
   } = getContracts() as AlpineContracts;
@@ -316,7 +314,6 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     alpLarge,
     ethWethEarn,
     baseLeverage,
-    baseUsdEarn,
     baseUsdcDegen,
   };
 

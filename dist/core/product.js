@@ -21,7 +21,7 @@ function _getVaultAndAsset(product) {
     return __awaiter(this, void 0, void 0, function* () {
         const { alpSave, alpLarge, polygonDegen, polygonLeverage } = (0, cache_1.getPolygonContracts)();
         const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = (0, cache_1.getEthContracts)();
-        const { baseUsdEarn, baseLeverage, baseUsdcDegen } = (0, cache_1.getBaseContracts)();
+        const { baseLeverage, baseUsdcDegen } = (0, cache_1.getBaseContracts)();
         const { router } = (0, cache_1.getContracts)();
         const productToVault = {
             alpSave,
@@ -33,7 +33,6 @@ function _getVaultAndAsset(product) {
             degen,
             ethLeverage,
             polygonLeverage,
-            baseUsdEarn,
             baseLeverage,
             baseUsdcDegen,
         };
@@ -234,7 +233,7 @@ function getTokenInfo(product) {
                 equity: numWeth,
             };
         }
-        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, baseUsdcDegen, } = (0, cache_1.getContracts)();
+        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseLeverage, baseUsdcDegen, } = (0, cache_1.getContracts)();
         const productToContract = {
             alpSave,
             ethEarn,
@@ -246,7 +245,6 @@ function getTokenInfo(product) {
             alpLarge,
             ethWethEarn,
             baseLeverage,
-            baseUsdEarn,
             baseUsdcDegen,
         };
         const contract = productToContract[product];
