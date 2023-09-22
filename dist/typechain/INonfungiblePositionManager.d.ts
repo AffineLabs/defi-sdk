@@ -248,73 +248,73 @@ export interface ApprovalEventObject {
     approved: string;
     tokenId: BigNumber;
 }
-export type ApprovalEvent = TypedEvent<[
+export declare type ApprovalEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], ApprovalEventObject>;
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export declare type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 export interface ApprovalForAllEventObject {
     owner: string;
     operator: string;
     approved: boolean;
 }
-export type ApprovalForAllEvent = TypedEvent<[
+export declare type ApprovalForAllEvent = TypedEvent<[
     string,
     string,
     boolean
 ], ApprovalForAllEventObject>;
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+export declare type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 export interface CollectEventObject {
     tokenId: BigNumber;
     recipient: string;
     amount0: BigNumber;
     amount1: BigNumber;
 }
-export type CollectEvent = TypedEvent<[
+export declare type CollectEvent = TypedEvent<[
     BigNumber,
     string,
     BigNumber,
     BigNumber
 ], CollectEventObject>;
-export type CollectEventFilter = TypedEventFilter<CollectEvent>;
+export declare type CollectEventFilter = TypedEventFilter<CollectEvent>;
 export interface DecreaseLiquidityEventObject {
     tokenId: BigNumber;
     liquidity: BigNumber;
     amount0: BigNumber;
     amount1: BigNumber;
 }
-export type DecreaseLiquidityEvent = TypedEvent<[
+export declare type DecreaseLiquidityEvent = TypedEvent<[
     BigNumber,
     BigNumber,
     BigNumber,
     BigNumber
 ], DecreaseLiquidityEventObject>;
-export type DecreaseLiquidityEventFilter = TypedEventFilter<DecreaseLiquidityEvent>;
+export declare type DecreaseLiquidityEventFilter = TypedEventFilter<DecreaseLiquidityEvent>;
 export interface IncreaseLiquidityEventObject {
     tokenId: BigNumber;
     liquidity: BigNumber;
     amount0: BigNumber;
     amount1: BigNumber;
 }
-export type IncreaseLiquidityEvent = TypedEvent<[
+export declare type IncreaseLiquidityEvent = TypedEvent<[
     BigNumber,
     BigNumber,
     BigNumber,
     BigNumber
 ], IncreaseLiquidityEventObject>;
-export type IncreaseLiquidityEventFilter = TypedEventFilter<IncreaseLiquidityEvent>;
+export declare type IncreaseLiquidityEventFilter = TypedEventFilter<IncreaseLiquidityEvent>;
 export interface TransferEventObject {
     from: string;
     to: string;
     tokenId: BigNumber;
 }
-export type TransferEvent = TypedEvent<[
+export declare type TransferEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], TransferEventObject>;
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
+export declare type TransferEventFilter = TypedEventFilter<TransferEvent>;
 export interface INonfungiblePositionManager extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

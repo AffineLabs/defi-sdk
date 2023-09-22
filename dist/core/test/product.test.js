@@ -113,19 +113,19 @@ describe("Buy products Base", () => __awaiter(void 0, void 0, void 0, function* 
         contracts = (0, cache_1.getBaseContracts)();
     }));
     it("Buy/Sell usdEarnBase", () => __awaiter(void 0, void 0, void 0, function* () {
-        let { baseUsdEarn } = contracts;
-        baseUsdEarn = baseUsdEarn;
-        yield (0, AlpineDeFiSDK_1.approve)("baseUsdEarn", "100000");
-        yield (0, product_1.buyProduct)("baseUsdEarn", 10);
+        let { baseUsdcDegen } = contracts;
+        baseUsdcDegen = baseUsdcDegen;
+        yield (0, AlpineDeFiSDK_1.approve)("baseUsdcDegen", "100000");
+        yield (0, product_1.buyProduct)("baseUsdcDegen", 10);
         console.log("shares bought");
-        const shares = yield baseUsdEarn.balanceOf(wallet.address);
+        const shares = yield baseUsdcDegen.balanceOf(wallet.address);
         expect(shares.gt(0)).to.be.true;
-        yield (0, product_1.sellProduct)("baseUsdEarn", 9);
-        const newBal = yield baseUsdEarn.balanceOf(wallet.address);
+        yield (0, product_1.sellProduct)("baseUsdcDegen", 9);
+        const newBal = yield baseUsdcDegen.balanceOf(wallet.address);
         expect(newBal.lt(shares)).to.be.true;
     }));
-    it("BaseUsdEarn info", () => __awaiter(void 0, void 0, void 0, function* () {
-        const baseInfo = yield (0, product_1.getTokenInfo)("baseUsdEarn");
+    it("baseUsdcDegen info", () => __awaiter(void 0, void 0, void 0, function* () {
+        const baseInfo = yield (0, product_1.getTokenInfo)("baseUsdcDegen");
         console.log({ baseInfo });
         expect(Number(baseInfo.amount) * Number(baseInfo.price)).to.closeTo(Number(baseInfo.equity), 1);
     }));

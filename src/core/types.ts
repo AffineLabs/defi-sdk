@@ -42,8 +42,8 @@ export const alpineProducts = [
   "polygonDegen",
   "ethLeverage",
   "polygonLeverage",
-  "baseUsdEarn",
   "baseLeverage",
+  "baseUsdcDegen",
 ] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
@@ -88,8 +88,8 @@ export interface EthContracts extends BothContracts {
 }
 
 export interface BaseContracts extends BothContracts {
-  baseUsdEarn?: VaultV2;
   baseLeverage: VaultV2;
+  baseUsdcDegen?: VaultV2;
 }
 
 export interface AlpineContracts extends PolygonContracts, EthContracts, BaseContracts {}

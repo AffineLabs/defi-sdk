@@ -98,9 +98,9 @@ export async function getAllContracts(
     EthStEthLev: ethLeverageData,
     PolygonStEthLev: polygonLeverageData,
     AffineGenesis: affineGenesisData,
-    BaseUsdEarn: baseUsdEarnData,
     BaseStEthLev: baseStEthLevData,
     BaseRouter: baseRouterData,
+    BaseUsdcDegen: baseUsdcDegenData,
   } = allData;
 
   const chainId = getChainId();
@@ -143,17 +143,16 @@ export async function getAllContracts(
       router: Router__factory.connect(ethRouter.address, provider),
     };
   } else if (chainId == 8453 || chainId == 84531) {
-    const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
     const baseLeverage = VaultV2__factory.connect(baseStEthLevData.address, provider);
+    const baseUsdcDegen = chainId == 8453 ? VaultV2__factory.connect(baseUsdcDegenData.address, provider) : undefined;
 
-    console.log("baseLeveages:", baseLeverage.address);
     console.log("router address: ", baseRouterData.address);
 
     return {
-      baseUsdEarn,
       baseLeverage,
+      baseUsdcDegen,
       usdc: new ethers.Contract(
-        baseUsdEarn ? await baseUsdEarn.asset() : "0x2e668Bb88287675e34c8dF82686dfd0b7F0c0383",
+        baseUsdcDegen ? await baseUsdcDegen.asset() : "0x2e668Bb88287675e34c8dF82686dfd0b7F0c0383",
         erc20Abi,
         provider,
       ),

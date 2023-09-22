@@ -143,7 +143,7 @@ export interface PositionEndEventObject {
     borrowDebtPaid: BigNumber;
     timestamp: BigNumber;
 }
-export type PositionEndEvent = TypedEvent<[
+export declare type PositionEndEvent = TypedEvent<[
     number,
     BigNumber,
     BigNumber,
@@ -160,7 +160,7 @@ export type PositionEndEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], PositionEndEventObject>;
-export type PositionEndEventFilter = TypedEventFilter<PositionEndEvent>;
+export declare type PositionEndEventFilter = TypedEventFilter<PositionEndEvent>;
 export interface PositionStartEventObject {
     position: number;
     assetCollateral: BigNumber;
@@ -172,7 +172,7 @@ export interface PositionStartEventObject {
     borrowsToUni: BigNumber;
     timestamp: BigNumber;
 }
-export type PositionStartEvent = TypedEvent<[
+export declare type PositionStartEvent = TypedEvent<[
     number,
     BigNumber,
     BigNumber,
@@ -186,40 +186,40 @@ export type PositionStartEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], PositionStartEventObject>;
-export type PositionStartEventFilter = TypedEventFilter<PositionStartEvent>;
+export declare type PositionStartEventFilter = TypedEventFilter<PositionStartEvent>;
 export interface RoleAdminChangedEventObject {
     role: string;
     previousAdminRole: string;
     newAdminRole: string;
 }
-export type RoleAdminChangedEvent = TypedEvent<[
+export declare type RoleAdminChangedEvent = TypedEvent<[
     string,
     string,
     string
 ], RoleAdminChangedEventObject>;
-export type RoleAdminChangedEventFilter = TypedEventFilter<RoleAdminChangedEvent>;
+export declare type RoleAdminChangedEventFilter = TypedEventFilter<RoleAdminChangedEvent>;
 export interface RoleGrantedEventObject {
     role: string;
     account: string;
     sender: string;
 }
-export type RoleGrantedEvent = TypedEvent<[
+export declare type RoleGrantedEvent = TypedEvent<[
     string,
     string,
     string
 ], RoleGrantedEventObject>;
-export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+export declare type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
 export interface RoleRevokedEventObject {
     role: string;
     account: string;
     sender: string;
 }
-export type RoleRevokedEvent = TypedEvent<[
+export declare type RoleRevokedEvent = TypedEvent<[
     string,
     string,
     string
 ], RoleRevokedEventObject>;
-export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+export declare type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 export interface DeltaNeutralLpV3 extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

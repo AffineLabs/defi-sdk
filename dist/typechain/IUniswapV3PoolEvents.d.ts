@@ -33,7 +33,7 @@ export interface BurnEventObject {
     amount0: BigNumber;
     amount1: BigNumber;
 }
-export type BurnEvent = TypedEvent<[
+export declare type BurnEvent = TypedEvent<[
     string,
     number,
     number,
@@ -41,7 +41,7 @@ export type BurnEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], BurnEventObject>;
-export type BurnEventFilter = TypedEventFilter<BurnEvent>;
+export declare type BurnEventFilter = TypedEventFilter<BurnEvent>;
 export interface CollectEventObject {
     owner: string;
     recipient: string;
@@ -50,7 +50,7 @@ export interface CollectEventObject {
     amount0: BigNumber;
     amount1: BigNumber;
 }
-export type CollectEvent = TypedEvent<[
+export declare type CollectEvent = TypedEvent<[
     string,
     string,
     number,
@@ -58,20 +58,20 @@ export type CollectEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], CollectEventObject>;
-export type CollectEventFilter = TypedEventFilter<CollectEvent>;
+export declare type CollectEventFilter = TypedEventFilter<CollectEvent>;
 export interface CollectProtocolEventObject {
     sender: string;
     recipient: string;
     amount0: BigNumber;
     amount1: BigNumber;
 }
-export type CollectProtocolEvent = TypedEvent<[
+export declare type CollectProtocolEvent = TypedEvent<[
     string,
     string,
     BigNumber,
     BigNumber
 ], CollectProtocolEventObject>;
-export type CollectProtocolEventFilter = TypedEventFilter<CollectProtocolEvent>;
+export declare type CollectProtocolEventFilter = TypedEventFilter<CollectProtocolEvent>;
 export interface FlashEventObject {
     sender: string;
     recipient: string;
@@ -80,7 +80,7 @@ export interface FlashEventObject {
     paid0: BigNumber;
     paid1: BigNumber;
 }
-export type FlashEvent = TypedEvent<[
+export declare type FlashEvent = TypedEvent<[
     string,
     string,
     BigNumber,
@@ -88,25 +88,25 @@ export type FlashEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], FlashEventObject>;
-export type FlashEventFilter = TypedEventFilter<FlashEvent>;
+export declare type FlashEventFilter = TypedEventFilter<FlashEvent>;
 export interface IncreaseObservationCardinalityNextEventObject {
     observationCardinalityNextOld: number;
     observationCardinalityNextNew: number;
 }
-export type IncreaseObservationCardinalityNextEvent = TypedEvent<[
+export declare type IncreaseObservationCardinalityNextEvent = TypedEvent<[
     number,
     number
 ], IncreaseObservationCardinalityNextEventObject>;
-export type IncreaseObservationCardinalityNextEventFilter = TypedEventFilter<IncreaseObservationCardinalityNextEvent>;
+export declare type IncreaseObservationCardinalityNextEventFilter = TypedEventFilter<IncreaseObservationCardinalityNextEvent>;
 export interface InitializeEventObject {
     sqrtPriceX96: BigNumber;
     tick: number;
 }
-export type InitializeEvent = TypedEvent<[
+export declare type InitializeEvent = TypedEvent<[
     BigNumber,
     number
 ], InitializeEventObject>;
-export type InitializeEventFilter = TypedEventFilter<InitializeEvent>;
+export declare type InitializeEventFilter = TypedEventFilter<InitializeEvent>;
 export interface MintEventObject {
     sender: string;
     owner: string;
@@ -116,7 +116,7 @@ export interface MintEventObject {
     amount0: BigNumber;
     amount1: BigNumber;
 }
-export type MintEvent = TypedEvent<[
+export declare type MintEvent = TypedEvent<[
     string,
     string,
     number,
@@ -125,20 +125,20 @@ export type MintEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], MintEventObject>;
-export type MintEventFilter = TypedEventFilter<MintEvent>;
+export declare type MintEventFilter = TypedEventFilter<MintEvent>;
 export interface SetFeeProtocolEventObject {
     feeProtocol0Old: number;
     feeProtocol1Old: number;
     feeProtocol0New: number;
     feeProtocol1New: number;
 }
-export type SetFeeProtocolEvent = TypedEvent<[
+export declare type SetFeeProtocolEvent = TypedEvent<[
     number,
     number,
     number,
     number
 ], SetFeeProtocolEventObject>;
-export type SetFeeProtocolEventFilter = TypedEventFilter<SetFeeProtocolEvent>;
+export declare type SetFeeProtocolEventFilter = TypedEventFilter<SetFeeProtocolEvent>;
 export interface SwapEventObject {
     sender: string;
     recipient: string;
@@ -148,7 +148,7 @@ export interface SwapEventObject {
     liquidity: BigNumber;
     tick: number;
 }
-export type SwapEvent = TypedEvent<[
+export declare type SwapEvent = TypedEvent<[
     string,
     string,
     BigNumber,
@@ -157,7 +157,7 @@ export type SwapEvent = TypedEvent<[
     BigNumber,
     number
 ], SwapEventObject>;
-export type SwapEventFilter = TypedEventFilter<SwapEvent>;
+export declare type SwapEventFilter = TypedEventFilter<SwapEvent>;
 export interface IUniswapV3PoolEvents extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

@@ -64,7 +64,7 @@ function getAllContracts(provider, version) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, } = allData;
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, BaseUsdcDegen: baseUsdcDegenData, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
@@ -104,14 +104,13 @@ function getAllContracts(provider, version) {
             };
         }
         else if (chainId == 8453 || chainId == 84531) {
-            const baseUsdEarn = chainId == 8453 ? typechain_1.VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
             const baseLeverage = typechain_1.VaultV2__factory.connect(baseStEthLevData.address, provider);
-            console.log("baseLeveages:", baseLeverage.address);
+            const baseUsdcDegen = chainId == 8453 ? typechain_1.VaultV2__factory.connect(baseUsdcDegenData.address, provider) : undefined;
             console.log("router address: ", baseRouterData.address);
             return {
-                baseUsdEarn,
                 baseLeverage,
-                usdc: new ethers_1.ethers.Contract(baseUsdEarn ? yield baseUsdEarn.asset() : "0x2e668Bb88287675e34c8dF82686dfd0b7F0c0383", erc20Abi, provider),
+                baseUsdcDegen,
+                usdc: new ethers_1.ethers.Contract(baseUsdcDegen ? yield baseUsdcDegen.asset() : "0x2e668Bb88287675e34c8dF82686dfd0b7F0c0383", erc20Abi, provider),
                 weth: new ethers_1.ethers.Contract("0x4200000000000000000000000000000000000006", erc20Abi, provider),
                 router: typechain_1.Router__factory.connect(baseRouterData.address, provider),
             };

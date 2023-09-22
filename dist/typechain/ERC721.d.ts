@@ -72,34 +72,34 @@ export interface ApprovalEventObject {
     spender: string;
     id: BigNumber;
 }
-export type ApprovalEvent = TypedEvent<[
+export declare type ApprovalEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], ApprovalEventObject>;
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export declare type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 export interface ApprovalForAllEventObject {
     owner: string;
     operator: string;
     approved: boolean;
 }
-export type ApprovalForAllEvent = TypedEvent<[
+export declare type ApprovalForAllEvent = TypedEvent<[
     string,
     string,
     boolean
 ], ApprovalForAllEventObject>;
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+export declare type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 export interface TransferEventObject {
     from: string;
     to: string;
     id: BigNumber;
 }
-export type TransferEvent = TypedEvent<[
+export declare type TransferEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], TransferEventObject>;
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
+export declare type TransferEventFilter = TypedEventFilter<TransferEvent>;
 export interface ERC721 extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

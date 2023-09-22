@@ -75,13 +75,13 @@ export interface DepositEventObject {
     assets: BigNumber;
     shares: BigNumber;
 }
-export type DepositEvent = TypedEvent<[
+export declare type DepositEvent = TypedEvent<[
     string,
     string,
     BigNumber,
     BigNumber
 ], DepositEventObject>;
-export type DepositEventFilter = TypedEventFilter<DepositEvent>;
+export declare type DepositEventFilter = TypedEventFilter<DepositEvent>;
 export interface WithdrawEventObject {
     caller: string;
     receiver: string;
@@ -89,14 +89,14 @@ export interface WithdrawEventObject {
     assets: BigNumber;
     shares: BigNumber;
 }
-export type WithdrawEvent = TypedEvent<[
+export declare type WithdrawEvent = TypedEvent<[
     string,
     string,
     string,
     BigNumber,
     BigNumber
 ], WithdrawEventObject>;
-export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
+export declare type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
 export interface IERC4626 extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

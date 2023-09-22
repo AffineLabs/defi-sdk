@@ -153,63 +153,63 @@ export interface ApprovalEventObject {
     approved: string;
     tokenId: BigNumber;
 }
-export type ApprovalEvent = TypedEvent<[
+export declare type ApprovalEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], ApprovalEventObject>;
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export declare type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 export interface ApprovalForAllEventObject {
     owner: string;
     operator: string;
     approved: boolean;
 }
-export type ApprovalForAllEvent = TypedEvent<[
+export declare type ApprovalForAllEvent = TypedEvent<[
     string,
     string,
     boolean
 ], ApprovalForAllEventObject>;
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
+export declare type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 export interface ConsecutiveTransferEventObject {
     fromTokenId: BigNumber;
     toTokenId: BigNumber;
     from: string;
     to: string;
 }
-export type ConsecutiveTransferEvent = TypedEvent<[
+export declare type ConsecutiveTransferEvent = TypedEvent<[
     BigNumber,
     BigNumber,
     string,
     string
 ], ConsecutiveTransferEventObject>;
-export type ConsecutiveTransferEventFilter = TypedEventFilter<ConsecutiveTransferEvent>;
+export declare type ConsecutiveTransferEventFilter = TypedEventFilter<ConsecutiveTransferEvent>;
 export interface OwnershipTransferredEventObject {
     previousOwner: string;
     newOwner: string;
 }
-export type OwnershipTransferredEvent = TypedEvent<[
+export declare type OwnershipTransferredEvent = TypedEvent<[
     string,
     string
 ], OwnershipTransferredEventObject>;
-export type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>;
+export declare type OwnershipTransferredEventFilter = TypedEventFilter<OwnershipTransferredEvent>;
 export interface TransferEventObject {
     from: string;
     to: string;
     tokenId: BigNumber;
 }
-export type TransferEvent = TypedEvent<[
+export declare type TransferEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], TransferEventObject>;
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
+export declare type TransferEventFilter = TypedEventFilter<TransferEvent>;
 export interface WhitelistMerkleRootUpdatedEventObject {
     merkleRoot: string;
 }
-export type WhitelistMerkleRootUpdatedEvent = TypedEvent<[
+export declare type WhitelistMerkleRootUpdatedEvent = TypedEvent<[
     string
 ], WhitelistMerkleRootUpdatedEventObject>;
-export type WhitelistMerkleRootUpdatedEventFilter = TypedEventFilter<WhitelistMerkleRootUpdatedEvent>;
+export declare type WhitelistMerkleRootUpdatedEventFilter = TypedEventFilter<WhitelistMerkleRootUpdatedEvent>;
 export interface AffineGenesis extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

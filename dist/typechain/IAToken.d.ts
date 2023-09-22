@@ -106,38 +106,38 @@ export interface ApprovalEventObject {
     spender: string;
     value: BigNumber;
 }
-export type ApprovalEvent = TypedEvent<[
+export declare type ApprovalEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], ApprovalEventObject>;
-export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export declare type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
 export interface BalanceTransferEventObject {
     from: string;
     to: string;
     value: BigNumber;
     index: BigNumber;
 }
-export type BalanceTransferEvent = TypedEvent<[
+export declare type BalanceTransferEvent = TypedEvent<[
     string,
     string,
     BigNumber,
     BigNumber
 ], BalanceTransferEventObject>;
-export type BalanceTransferEventFilter = TypedEventFilter<BalanceTransferEvent>;
+export declare type BalanceTransferEventFilter = TypedEventFilter<BalanceTransferEvent>;
 export interface BurnEventObject {
     from: string;
     target: string;
     value: BigNumber;
     index: BigNumber;
 }
-export type BurnEvent = TypedEvent<[
+export declare type BurnEvent = TypedEvent<[
     string,
     string,
     BigNumber,
     BigNumber
 ], BurnEventObject>;
-export type BurnEventFilter = TypedEventFilter<BurnEvent>;
+export declare type BurnEventFilter = TypedEventFilter<BurnEvent>;
 export interface InitializedEventObject {
     underlyingAsset: string;
     pool: string;
@@ -148,7 +148,7 @@ export interface InitializedEventObject {
     aTokenSymbol: string;
     params: string;
 }
-export type InitializedEvent = TypedEvent<[
+export declare type InitializedEvent = TypedEvent<[
     string,
     string,
     string,
@@ -158,29 +158,29 @@ export type InitializedEvent = TypedEvent<[
     string,
     string
 ], InitializedEventObject>;
-export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
+export declare type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 export interface MintEventObject {
     from: string;
     value: BigNumber;
     index: BigNumber;
 }
-export type MintEvent = TypedEvent<[
+export declare type MintEvent = TypedEvent<[
     string,
     BigNumber,
     BigNumber
 ], MintEventObject>;
-export type MintEventFilter = TypedEventFilter<MintEvent>;
+export declare type MintEventFilter = TypedEventFilter<MintEvent>;
 export interface TransferEventObject {
     from: string;
     to: string;
     value: BigNumber;
 }
-export type TransferEvent = TypedEvent<[
+export declare type TransferEvent = TypedEvent<[
     string,
     string,
     BigNumber
 ], TransferEventObject>;
-export type TransferEventFilter = TypedEventFilter<TransferEvent>;
+export declare type TransferEventFilter = TypedEventFilter<TransferEvent>;
 export interface IAToken extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

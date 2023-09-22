@@ -2,14 +2,14 @@ import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, C
 import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "./common";
-export type LendingInfoStruct = {
+export declare type LendingInfoStruct = {
     pool: PromiseOrValue<string>;
     borrow: PromiseOrValue<string>;
     priceFeed: PromiseOrValue<string>;
     assetToDepositRatioBps: PromiseOrValue<BigNumberish>;
     collateralToBorrowRatioBps: PromiseOrValue<BigNumberish>;
 };
-export type LendingInfoStructOutput = [
+export declare type LendingInfoStructOutput = [
     string,
     string,
     string,
@@ -22,7 +22,7 @@ export type LendingInfoStructOutput = [
     assetToDepositRatioBps: BigNumber;
     collateralToBorrowRatioBps: BigNumber;
 };
-export type LpInfoStruct = {
+export declare type LpInfoStruct = {
     router: PromiseOrValue<string>;
     masterChef: PromiseOrValue<string>;
     masterChefPid: PromiseOrValue<BigNumberish>;
@@ -30,7 +30,7 @@ export type LpInfoStruct = {
     sushiToken: PromiseOrValue<string>;
     pool: PromiseOrValue<string>;
 };
-export type LpInfoStructOutput = [
+export declare type LpInfoStructOutput = [
     string,
     string,
     BigNumber,
@@ -189,7 +189,7 @@ export interface PositionEndEventObject {
     borrowDebtPaid: BigNumber;
     timestamp: BigNumber;
 }
-export type PositionEndEvent = TypedEvent<[
+export declare type PositionEndEvent = TypedEvent<[
     number,
     BigNumber,
     BigNumber,
@@ -205,7 +205,7 @@ export type PositionEndEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], PositionEndEventObject>;
-export type PositionEndEventFilter = TypedEventFilter<PositionEndEvent>;
+export declare type PositionEndEventFilter = TypedEventFilter<PositionEndEvent>;
 export interface PositionStartEventObject {
     position: number;
     assetCollateral: BigNumber;
@@ -215,7 +215,7 @@ export interface PositionStartEventObject {
     borrowsToSushi: BigNumber;
     timestamp: BigNumber;
 }
-export type PositionStartEvent = TypedEvent<[
+export declare type PositionStartEvent = TypedEvent<[
     number,
     BigNumber,
     BigNumber,
@@ -227,40 +227,40 @@ export type PositionStartEvent = TypedEvent<[
     BigNumber,
     BigNumber
 ], PositionStartEventObject>;
-export type PositionStartEventFilter = TypedEventFilter<PositionStartEvent>;
+export declare type PositionStartEventFilter = TypedEventFilter<PositionStartEvent>;
 export interface RoleAdminChangedEventObject {
     role: string;
     previousAdminRole: string;
     newAdminRole: string;
 }
-export type RoleAdminChangedEvent = TypedEvent<[
+export declare type RoleAdminChangedEvent = TypedEvent<[
     string,
     string,
     string
 ], RoleAdminChangedEventObject>;
-export type RoleAdminChangedEventFilter = TypedEventFilter<RoleAdminChangedEvent>;
+export declare type RoleAdminChangedEventFilter = TypedEventFilter<RoleAdminChangedEvent>;
 export interface RoleGrantedEventObject {
     role: string;
     account: string;
     sender: string;
 }
-export type RoleGrantedEvent = TypedEvent<[
+export declare type RoleGrantedEvent = TypedEvent<[
     string,
     string,
     string
 ], RoleGrantedEventObject>;
-export type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
+export declare type RoleGrantedEventFilter = TypedEventFilter<RoleGrantedEvent>;
 export interface RoleRevokedEventObject {
     role: string;
     account: string;
     sender: string;
 }
-export type RoleRevokedEvent = TypedEvent<[
+export declare type RoleRevokedEvent = TypedEvent<[
     string,
     string,
     string
 ], RoleRevokedEventObject>;
-export type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
+export declare type RoleRevokedEventFilter = TypedEventFilter<RoleRevokedEvent>;
 export interface SSVDeltaNeutralLp extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

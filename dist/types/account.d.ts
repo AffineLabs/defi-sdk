@@ -1,6 +1,6 @@
 import { NETWORK_PARAMS } from "../core/constants";
-export type AllowedWallet = "magic" | "metamask" | "coinbase" | "walletConnect";
-export type AllowedChainId = keyof typeof NETWORK_PARAMS;
+export declare type AllowedWallet = "magic" | "metamask" | "coinbase" | "walletConnect";
+export declare type AllowedChainId = keyof typeof NETWORK_PARAMS;
 export interface IConnectAccount {
     email?: string;
     walletType: AllowedWallet;

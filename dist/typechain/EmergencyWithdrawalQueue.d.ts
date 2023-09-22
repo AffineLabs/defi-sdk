@@ -53,26 +53,26 @@ export interface PopEventObject {
     receiver: string;
     shares: BigNumber;
 }
-export type PopEvent = TypedEvent<[
+export declare type PopEvent = TypedEvent<[
     BigNumber,
     string,
     string,
     BigNumber
 ], PopEventObject>;
-export type PopEventFilter = TypedEventFilter<PopEvent>;
+export declare type PopEventFilter = TypedEventFilter<PopEvent>;
 export interface PushEventObject {
     pos: BigNumber;
     owner: string;
     receiver: string;
     shares: BigNumber;
 }
-export type PushEvent = TypedEvent<[
+export declare type PushEvent = TypedEvent<[
     BigNumber,
     string,
     string,
     BigNumber
 ], PushEventObject>;
-export type PushEventFilter = TypedEventFilter<PushEvent>;
+export declare type PushEventFilter = TypedEventFilter<PushEvent>;
 export interface EmergencyWithdrawalQueue extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;

@@ -26,10 +26,10 @@ export interface HarvestStorageInterface extends utils.Interface {
 export interface PerformanceFeeWithdrawnEventObject {
     amount: BigNumber;
 }
-export type PerformanceFeeWithdrawnEvent = TypedEvent<[
+export declare type PerformanceFeeWithdrawnEvent = TypedEvent<[
     BigNumber
 ], PerformanceFeeWithdrawnEventObject>;
-export type PerformanceFeeWithdrawnEventFilter = TypedEventFilter<PerformanceFeeWithdrawnEvent>;
+export declare type PerformanceFeeWithdrawnEventFilter = TypedEventFilter<PerformanceFeeWithdrawnEvent>;
 export interface HarvestStorage extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;
