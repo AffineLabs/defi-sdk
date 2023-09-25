@@ -9,12 +9,15 @@ export interface IBeefyVaultInterface extends utils.Interface {
         "available()": FunctionFragment;
         "balance()": FunctionFragment;
         "balanceOf(address)": FunctionFragment;
+        "decimals()": FunctionFragment;
         "deposit(uint256)": FunctionFragment;
         "depositAll()": FunctionFragment;
         "earn()": FunctionFragment;
         "getPricePerFullShare()": FunctionFragment;
         "inCaseTokensGetStuck(address)": FunctionFragment;
+        "name()": FunctionFragment;
         "proposeStrat(address)": FunctionFragment;
+        "symbol()": FunctionFragment;
         "totalSupply()": FunctionFragment;
         "transfer(address,uint256)": FunctionFragment;
         "transferFrom(address,address,uint256)": FunctionFragment;
@@ -23,18 +26,21 @@ export interface IBeefyVaultInterface extends utils.Interface {
         "withdraw(uint256)": FunctionFragment;
         "withdrawAll()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "allowance" | "approve" | "available" | "balance" | "balanceOf" | "deposit" | "depositAll" | "earn" | "getPricePerFullShare" | "inCaseTokensGetStuck" | "proposeStrat" | "totalSupply" | "transfer" | "transferFrom" | "upgradeStrat" | "want" | "withdraw" | "withdrawAll"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "allowance" | "approve" | "available" | "balance" | "balanceOf" | "decimals" | "deposit" | "depositAll" | "earn" | "getPricePerFullShare" | "inCaseTokensGetStuck" | "name" | "proposeStrat" | "symbol" | "totalSupply" | "transfer" | "transferFrom" | "upgradeStrat" | "want" | "withdraw" | "withdrawAll"): FunctionFragment;
     encodeFunctionData(functionFragment: "allowance", values: [PromiseOrValue<string>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "approve", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "available", values?: undefined): string;
     encodeFunctionData(functionFragment: "balance", values?: undefined): string;
     encodeFunctionData(functionFragment: "balanceOf", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
     encodeFunctionData(functionFragment: "deposit", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "depositAll", values?: undefined): string;
     encodeFunctionData(functionFragment: "earn", values?: undefined): string;
     encodeFunctionData(functionFragment: "getPricePerFullShare", values?: undefined): string;
     encodeFunctionData(functionFragment: "inCaseTokensGetStuck", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "name", values?: undefined): string;
     encodeFunctionData(functionFragment: "proposeStrat", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
     encodeFunctionData(functionFragment: "totalSupply", values?: undefined): string;
     encodeFunctionData(functionFragment: "transfer", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "transferFrom", values: [
@@ -51,12 +57,15 @@ export interface IBeefyVaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "available", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "balance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "depositAll", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "earn", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getPricePerFullShare", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "inCaseTokensGetStuck", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "proposeStrat", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "totalSupply", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "transferFrom", data: BytesLike): Result;
@@ -115,6 +124,7 @@ export interface IBeefyVault extends BaseContract {
         available(overrides?: CallOverrides): Promise<[BigNumber]>;
         balance(overrides?: CallOverrides): Promise<[BigNumber]>;
         balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
+        decimals(overrides?: CallOverrides): Promise<[number]>;
         deposit(_amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -128,9 +138,11 @@ export interface IBeefyVault extends BaseContract {
         inCaseTokensGetStuck(_token: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        name(overrides?: CallOverrides): Promise<[string]>;
         proposeStrat(_implementation: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        symbol(overrides?: CallOverrides): Promise<[string]>;
         totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -156,6 +168,7 @@ export interface IBeefyVault extends BaseContract {
     available(overrides?: CallOverrides): Promise<BigNumber>;
     balance(overrides?: CallOverrides): Promise<BigNumber>;
     balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+    decimals(overrides?: CallOverrides): Promise<number>;
     deposit(_amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -169,9 +182,11 @@ export interface IBeefyVault extends BaseContract {
     inCaseTokensGetStuck(_token: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    name(overrides?: CallOverrides): Promise<string>;
     proposeStrat(_implementation: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    symbol(overrides?: CallOverrides): Promise<string>;
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
     transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
@@ -195,12 +210,15 @@ export interface IBeefyVault extends BaseContract {
         available(overrides?: CallOverrides): Promise<BigNumber>;
         balance(overrides?: CallOverrides): Promise<BigNumber>;
         balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        decimals(overrides?: CallOverrides): Promise<number>;
         deposit(_amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         depositAll(overrides?: CallOverrides): Promise<void>;
         earn(overrides?: CallOverrides): Promise<void>;
         getPricePerFullShare(overrides?: CallOverrides): Promise<BigNumber>;
         inCaseTokensGetStuck(_token: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+        name(overrides?: CallOverrides): Promise<string>;
         proposeStrat(_implementation: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+        symbol(overrides?: CallOverrides): Promise<string>;
         totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         transferFrom(from: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
@@ -223,6 +241,7 @@ export interface IBeefyVault extends BaseContract {
         available(overrides?: CallOverrides): Promise<BigNumber>;
         balance(overrides?: CallOverrides): Promise<BigNumber>;
         balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        decimals(overrides?: CallOverrides): Promise<BigNumber>;
         deposit(_amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -236,9 +255,11 @@ export interface IBeefyVault extends BaseContract {
         inCaseTokensGetStuck(_token: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        name(overrides?: CallOverrides): Promise<BigNumber>;
         proposeStrat(_implementation: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        symbol(overrides?: CallOverrides): Promise<BigNumber>;
         totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -265,6 +286,7 @@ export interface IBeefyVault extends BaseContract {
         available(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         balance(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         deposit(_amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -278,9 +300,11 @@ export interface IBeefyVault extends BaseContract {
         inCaseTokensGetStuck(_token: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
+        name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         proposeStrat(_implementation: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
+        symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;

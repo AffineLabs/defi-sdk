@@ -4,6 +4,10 @@ import type { StrategyVault, StrategyVaultInterface } from "../StrategyVault";
 export declare class StrategyVault__factory {
     static readonly abi: readonly [{
         readonly inputs: readonly [];
+        readonly name: "TvlLimitReached";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "ZeroShares";
         readonly type: "error";
     }, {

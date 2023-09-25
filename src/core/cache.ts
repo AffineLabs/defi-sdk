@@ -11,6 +11,7 @@ import {
   WithdrawalEscrow__factory,
   StrategyVault__factory,
   AffineGenesis__factory,
+  AffinePass__factory,
   VaultV2__factory,
 } from "../typechain";
 import { AllowedChainId } from "../types/account";
@@ -98,6 +99,7 @@ export async function getAllContracts(
     EthStEthLev: ethLeverageData,
     PolygonStEthLev: polygonLeverageData,
     AffineGenesis: affineGenesisData,
+    AffinePass: affinePassData,
     BaseUsdEarn: baseUsdEarnData,
     BaseStEthLev: baseStEthLevData,
     BaseRouter: baseRouterData,
@@ -122,6 +124,10 @@ export async function getAllContracts(
       affineGenesis:
         chainId === 137 && typeof affineGenesisData !== "undefined"
           ? AffineGenesis__factory.connect(affineGenesisData.address, provider)
+          : undefined,
+      affinePass:
+        chainId === 137 && typeof affinePassData !== "undefined"
+          ? AffinePass__factory.connect(affinePassData.address, provider)
           : undefined,
     };
   } else if (chainId === 1 || chainId === 5) {

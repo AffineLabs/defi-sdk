@@ -52,20 +52,49 @@ export declare function transfer(to: string, amountUSDC: string): Promise<GasInf
 export declare function mintUSDC(to: string, amountUSDC: number | BigNumber): Promise<GasInfo | SmallTxReceipt>;
 /**
  * Mint NFTs for whitelisted users.
- * @param quantity how many NFTs to mint
  * @param proof a merkle proof generated using the Whitelist merkle tree
  */
-export declare function mintWhitelist(quantity: number, proof: string[]): Promise<GasInfo | SmallTxReceipt>;
+export declare function mintWhitelist(proof: string[]): Promise<GasInfo | SmallTxReceipt>;
 /**
  * Mint NFTs during public sale.
  * @param quantity how many NFTs to mint
  */
-export declare function mint(quantity: number): Promise<GasInfo | SmallTxReceipt>;
+export declare function mint(): Promise<GasInfo | SmallTxReceipt>;
+/**
+ * Mint NFTs for Accolades.
+ * @param quantity how many NFTs to mint
+ */
+export declare function mintGuaranteed(): Promise<GasInfo | SmallTxReceipt>;
 /**
  * check if the user is whitelisted.
  * @returns boolean
  */
 export declare function isWhitelisted(address: string, proof: string[]): Promise<boolean>;
+/**
+ * check if the user has an Accolade.
+ * @returns boolean
+ */
+export declare function isAccolade(address: string): Promise<boolean>;
+/**
+ * check the user's accolade allocation.
+ * @returns number
+ */
+export declare function accoladeAllocation(address: string): Promise<number>;
+/**
+ * check if there is remaining supply minus the guaranatees.
+ * @returns boolean
+ */
+export declare function hasRemainingSupply(): Promise<boolean>;
+/**
+ * check if the user has minted during whitelist.
+ * @returns boolean
+ */
+export declare function hasMintedWhitelist(address: string): Promise<boolean>;
+/**
+ * check if a user minted during the public sale.
+ * @returns boolean
+ */
+export declare function hasMinted(address: string): Promise<boolean>;
 /**
  * check affine pass whitelist mint is live.
  * @returns boolean

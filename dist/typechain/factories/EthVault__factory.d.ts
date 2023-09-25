@@ -1254,16 +1254,6 @@ export declare class EthVault__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "weth";
-        readonly outputs: readonly [{
-            readonly internalType: "contract IWETH";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "pure";
-        readonly type: "function";
-    }, {
         readonly inputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "assets";

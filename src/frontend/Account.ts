@@ -232,12 +232,12 @@ class Account {
     return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
   }
 
-  async mintAffinePass(amount: number) {
-    return AlpineDeFiSDK.mint(amount);
+  async mintAffinePass() {
+    return AlpineDeFiSDK.mint();
   }
 
-  async mintWhitelistAffinePass(amount: number, proof: string[]) {
-    return AlpineDeFiSDK.mintWhitelist(amount, proof);
+  async mintWhitelistAffinePass(proof: string[]) {
+    return AlpineDeFiSDK.mintWhitelist(proof);
   }
 
   async getUserEmergencyWithdrawalQueueRequests(product: AlpineProduct): Promise<EmergencyWithdrawalQueueRequest[]> {
@@ -452,12 +452,12 @@ class ReadAccount {
     return AlpineDeFiSDK.isWhitelisted(address, proof);
   }
 
-  async mint(quantity: number) {
-    return AlpineDeFiSDK.mint(quantity);
+  async mint() {
+    return AlpineDeFiSDK.mint();
   }
 
-  async mintWhitelist(quantity: number, proof: string[]) {
-    return AlpineDeFiSDK.mintWhitelist(quantity, proof);
+  async mintWhitelist(proof: string[]) {
+    return AlpineDeFiSDK.mintWhitelist(proof);
   }
 
   async getTokenInfo(product: AlpineProduct | "usdc" | "weth") {

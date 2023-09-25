@@ -1742,19 +1742,6 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [],
-        name: "weth",
-        outputs: [
-            {
-                internalType: "contract IWETH",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "pure",
-        type: "function",
-    },
-    {
         inputs: [
             {
                 internalType: "uint256",

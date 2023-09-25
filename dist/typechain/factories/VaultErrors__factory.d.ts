@@ -24,6 +24,10 @@ export declare class VaultErrors__factory {
         readonly type: "error";
     }, {
         readonly inputs: readonly [];
+        readonly name: "TvlLimitReached";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "ZeroShares";
         readonly type: "error";
     }];
