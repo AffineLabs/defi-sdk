@@ -33,6 +33,11 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "TvlLimitReached",
+        type: "error",
+    },
+    {
+        inputs: [],
         name: "ZeroShares",
         type: "error",
     },

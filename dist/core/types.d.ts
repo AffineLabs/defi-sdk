@@ -1,4 +1,4 @@
-import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue, Vault, StrategyVault, WithdrawalEscrow, AffineGenesis, VaultV2 } from "../typechain";
+import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue, Vault, StrategyVault, WithdrawalEscrow, AffineGenesis, AffinePass, VaultV2 } from "../typechain";
 import { ethers } from "ethers";
 export interface GasInfo {
     txnCost: string;
@@ -44,6 +44,7 @@ export interface PolygonContracts extends BothContracts {
     polygonDegen: StrategyVault;
     polygonLeverage?: Vault;
     affineGenesis?: AffineGenesis;
+    affinePass?: AffinePass;
 }
 export interface EthContracts extends BothContracts {
     ethEarn: Vault;

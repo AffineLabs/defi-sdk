@@ -8,6 +8,11 @@ const ethers_1 = require("ethers");
 const _abi = [
     {
         inputs: [],
+        name: "TvlLimitReached",
+        type: "error",
+    },
+    {
+        inputs: [],
         name: "ZeroShares",
         type: "error",
     },

@@ -113,6 +113,16 @@ export declare class IBeefyVault__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [];
+        readonly name: "decimals";
+        readonly outputs: readonly [{
+            readonly internalType: "uint8";
+            readonly name: "";
+            readonly type: "uint8";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "_amount";
@@ -155,6 +165,16 @@ export declare class IBeefyVault__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [];
+        readonly name: "name";
+        readonly outputs: readonly [{
+            readonly internalType: "string";
+            readonly name: "";
+            readonly type: "string";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [{
             readonly internalType: "address";
             readonly name: "_implementation";
@@ -163,6 +183,16 @@ export declare class IBeefyVault__factory {
         readonly name: "proposeStrat";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "symbol";
+        readonly outputs: readonly [{
+            readonly internalType: "string";
+            readonly name: "";
+            readonly type: "string";
+        }];
+        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -224,7 +254,7 @@ export declare class IBeefyVault__factory {
         readonly inputs: readonly [];
         readonly name: "want";
         readonly outputs: readonly [{
-            readonly internalType: "contract IERC20";
+            readonly internalType: "contract IERC20Metadata";
             readonly name: "";
             readonly type: "address";
         }];

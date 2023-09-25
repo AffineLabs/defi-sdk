@@ -234,14 +234,14 @@ class Account {
             return core_1.AlpineDeFiSDK.mintUSDC(to, amountUSDC);
         });
     }
-    mintAffinePass(amount) {
+    mintAffinePass() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mint(amount);
+            return core_1.AlpineDeFiSDK.mint();
         });
     }
-    mintWhitelistAffinePass(amount, proof) {
+    mintWhitelistAffinePass(proof) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mintWhitelist(amount, proof);
+            return core_1.AlpineDeFiSDK.mintWhitelist(proof);
         });
     }
     getUserEmergencyWithdrawalQueueRequests(product) {
@@ -464,14 +464,14 @@ class ReadAccount {
             return core_1.AlpineDeFiSDK.isWhitelisted(address, proof);
         });
     }
-    mint(quantity) {
+    mint() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mint(quantity);
+            return core_1.AlpineDeFiSDK.mint();
         });
     }
-    mintWhitelist(quantity, proof) {
+    mintWhitelist(proof) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mintWhitelist(quantity, proof);
+            return core_1.AlpineDeFiSDK.mintWhitelist(proof);
         });
     }
     getTokenInfo(product) {

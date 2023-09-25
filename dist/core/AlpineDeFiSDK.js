@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTVLCap = exports.saleIsActive = exports.whitelistSaleIsActive = exports.isWhitelisted = exports.mint = exports.mintWhitelist = exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
+exports.getTVLCap = exports.saleIsActive = exports.whitelistSaleIsActive = exports.hasMinted = exports.hasMintedWhitelist = exports.hasRemainingSupply = exports.accoladeAllocation = exports.isAccolade = exports.isWhitelisted = exports.mintGuaranteed = exports.mint = exports.mintWhitelist = exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
 const ethers_1 = require("ethers");
 const cache_1 = require("./cache");
 const biconomy_1 = require("./biconomy");
@@ -233,16 +233,15 @@ exports.mintUSDC = mintUSDC;
 // AffinePass
 /**
  * Mint NFTs for whitelisted users.
- * @param quantity how many NFTs to mint
  * @param proof a merkle proof generated using the Whitelist merkle tree
  */
-function mintWhitelist(quantity, proof) {
+function mintWhitelist(proof) {
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
-        const { affineGenesis } = contracts;
-        if (!affineGenesis)
-            throw new Error("AffineGenesis contract not found");
-        return blockchainCall(affineGenesis, "mintWhitelist", [quantity, proof]);
+        const { affinePass } = contracts;
+        if (!affinePass)
+            throw new Error("affinePass contract not found");
+        return blockchainCall(affinePass, "mintWhitelist", [proof]);
     });
 }
 exports.mintWhitelist = mintWhitelist;
@@ -250,16 +249,30 @@ exports.mintWhitelist = mintWhitelist;
  * Mint NFTs during public sale.
  * @param quantity how many NFTs to mint
  */
-function mint(quantity) {
+function mint() {
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
-        const { affineGenesis } = contracts;
-        if (!affineGenesis)
-            throw new Error("AffineGenesis contract not found");
-        return blockchainCall(affineGenesis, "mint", [quantity]);
+        const { affinePass } = contracts;
+        if (!affinePass)
+            throw new Error("affinePass contract not found");
+        return blockchainCall(affinePass, "mint", []);
     });
 }
 exports.mint = mint;
+/**
+ * Mint NFTs for Accolades.
+ * @param quantity how many NFTs to mint
+ */
+function mintGuaranteed() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affinePass } = contracts;
+        if (!affinePass)
+            throw new Error("affinePass contract not found");
+        return blockchainCall(affinePass, "mintGuaranteed", []);
+    });
+}
+exports.mintGuaranteed = mintGuaranteed;
 /**
  * check if the user is whitelisted.
  * @returns boolean
@@ -268,11 +281,75 @@ function isWhitelisted(address, proof) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
-        const { affineGenesis } = contracts;
-        return (_a = affineGenesis === null || affineGenesis === void 0 ? void 0 : affineGenesis.isWhitelisted(address, proof)) !== null && _a !== void 0 ? _a : false;
+        const { affinePass } = contracts;
+        return (_a = affinePass === null || affinePass === void 0 ? void 0 : affinePass.isWhitelisted(address, proof)) !== null && _a !== void 0 ? _a : false;
     });
 }
 exports.isWhitelisted = isWhitelisted;
+/**
+ * check if the user has an Accolade.
+ * @returns boolean
+ */
+function isAccolade(address) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affinePass } = contracts;
+        return (_a = affinePass === null || affinePass === void 0 ? void 0 : affinePass.isAccolade(address)) !== null && _a !== void 0 ? _a : false;
+    });
+}
+exports.isAccolade = isAccolade;
+/**
+ * check the user's accolade allocation.
+ * @returns number
+ */
+function accoladeAllocation(address) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affinePass } = contracts;
+        return affinePass ? (yield affinePass.accoladeAllocation(address)).toNumber() : 0;
+    });
+}
+exports.accoladeAllocation = accoladeAllocation;
+/**
+ * check if there is remaining supply minus the guaranatees.
+ * @returns boolean
+ */
+function hasRemainingSupply() {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affinePass } = contracts;
+        return (_a = affinePass === null || affinePass === void 0 ? void 0 : affinePass.hasRemainingSupply()) !== null && _a !== void 0 ? _a : false;
+    });
+}
+exports.hasRemainingSupply = hasRemainingSupply;
+/**
+ * check if the user has minted during whitelist.
+ * @returns boolean
+ */
+function hasMintedWhitelist(address) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affinePass } = contracts;
+        return (_a = affinePass === null || affinePass === void 0 ? void 0 : affinePass.hasMintedWhitelist(address)) !== null && _a !== void 0 ? _a : false;
+    });
+}
+exports.hasMintedWhitelist = hasMintedWhitelist;
+/**
+ * check if a user minted during the public sale.
+ * @returns boolean
+ */
+function hasMinted(address) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affinePass } = contracts;
+        return (_a = affinePass === null || affinePass === void 0 ? void 0 : affinePass.hasMinted(address)) !== null && _a !== void 0 ? _a : false;
+    });
+}
+exports.hasMinted = hasMinted;
 /**
  * check affine pass whitelist mint is live.
  * @returns boolean
@@ -281,8 +358,8 @@ function whitelistSaleIsActive() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
-        const { affineGenesis } = contracts;
-        return (_a = affineGenesis === null || affineGenesis === void 0 ? void 0 : affineGenesis.whitelistSaleIsActive()) !== null && _a !== void 0 ? _a : false;
+        const { affinePass } = contracts;
+        return (_a = affinePass === null || affinePass === void 0 ? void 0 : affinePass.whitelistSaleIsActive()) !== null && _a !== void 0 ? _a : false;
     });
 }
 exports.whitelistSaleIsActive = whitelistSaleIsActive;
@@ -294,8 +371,8 @@ function saleIsActive() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
-        const { affineGenesis } = contracts;
-        return (_a = affineGenesis === null || affineGenesis === void 0 ? void 0 : affineGenesis.saleIsActive()) !== null && _a !== void 0 ? _a : false;
+        const { affinePass } = contracts;
+        return (_a = affinePass === null || affinePass === void 0 ? void 0 : affinePass.saleIsActive()) !== null && _a !== void 0 ? _a : false;
     });
 }
 exports.saleIsActive = saleIsActive;

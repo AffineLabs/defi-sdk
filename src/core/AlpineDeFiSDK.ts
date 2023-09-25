@@ -318,7 +318,7 @@ export async function isAccolade(address: string): Promise<boolean> {
 export async function accoladeAllocation(address: string): Promise<number> {
   const contracts = getContracts() as AlpineContracts;
   const { affinePass } = contracts;
-  return affinePass?.accoladeAllocation(address) ?? 0;
+  return affinePass ? (await affinePass.accoladeAllocation(address)).toNumber() : 0;
 }
 
 /**

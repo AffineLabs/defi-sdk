@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IWStEth__factory = void 0;
+exports.IWSTETH__factory = void 0;
 const ethers_1 = require("ethers");
 const _abi = [
     {
@@ -342,7 +342,7 @@ const _abi = [
         type: "function",
     },
 ];
-class IWStEth__factory {
+class IWSTETH__factory {
     static createInterface() {
         return new ethers_1.utils.Interface(_abi);
     }
@@ -350,5 +350,5 @@ class IWStEth__factory {
         return new ethers_1.Contract(address, _abi, signerOrProvider);
     }
 }
-exports.IWStEth__factory = IWStEth__factory;
-IWStEth__factory.abi = _abi;
+exports.IWSTETH__factory = IWSTETH__factory;
+IWSTETH__factory.abi = _abi;

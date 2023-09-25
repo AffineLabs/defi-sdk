@@ -1,7 +1,7 @@
 import { Signer } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { IWStEth, IWStEthInterface } from "../IWStEth";
-export declare class IWStEth__factory {
+import type { IWSTETH, IWSTETHInterface } from "../IWSTETH";
+export declare class IWSTETH__factory {
     static readonly abi: readonly [{
         readonly anonymous: false;
         readonly inputs: readonly [{
@@ -259,6 +259,6 @@ export declare class IWStEth__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }];
-    static createInterface(): IWStEthInterface;
-    static connect(address: string, signerOrProvider: Signer | Provider): IWStEth;
+    static createInterface(): IWSTETHInterface;
+    static connect(address: string, signerOrProvider: Signer | Provider): IWSTETH;
 }
