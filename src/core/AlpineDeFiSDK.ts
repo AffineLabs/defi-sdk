@@ -260,25 +260,35 @@ export async function mintUSDC(to: string, amountUSDC: number | BigNumber) {
 
 /**
  * Mint NFTs for whitelisted users.
- * @param quantity how many NFTs to mint
  * @param proof a merkle proof generated using the Whitelist merkle tree
  */
-export async function mintWhitelist(quantity: number, proof: string[]) {
+export async function mintWhitelist(proof: string[]) {
   const contracts = getContracts() as AlpineContracts;
-  const { affineGenesis } = contracts;
-  if (!affineGenesis) throw new Error("AffineGenesis contract not found");
-  return blockchainCall(affineGenesis, "mintWhitelist", [quantity, proof]);
+  const { affinePass } = contracts;
+  if (!affinePass) throw new Error("affinePass contract not found");
+  return blockchainCall(affinePass, "mintWhitelist", [proof]);
 }
 
 /**
  * Mint NFTs during public sale.
  * @param quantity how many NFTs to mint
  */
-export async function mint(quantity: number) {
+export async function mint() {
   const contracts = getContracts() as AlpineContracts;
-  const { affineGenesis } = contracts;
-  if (!affineGenesis) throw new Error("AffineGenesis contract not found");
-  return blockchainCall(affineGenesis, "mint", [quantity]);
+  const { affinePass } = contracts;
+  if (!affinePass) throw new Error("affinePass contract not found");
+  return blockchainCall(affinePass, "mint", []);
+}
+
+/**
+ * Mint NFTs for Accolades.
+ * @param quantity how many NFTs to mint
+ */
+export async function mintGuaranteed() {
+  const contracts = getContracts() as AlpineContracts;
+  const { affinePass } = contracts;
+  if (!affinePass) throw new Error("affinePass contract not found");
+  return blockchainCall(affinePass, "mintGuaranteed", []);
 }
 
 /**
@@ -287,8 +297,58 @@ export async function mint(quantity: number) {
  */
 export async function isWhitelisted(address: string, proof: string[]): Promise<boolean> {
   const contracts = getContracts() as AlpineContracts;
-  const { affineGenesis } = contracts;
-  return affineGenesis?.isWhitelisted(address, proof) ?? false;
+  const { affinePass } = contracts;
+  return affinePass?.isWhitelisted(address, proof) ?? false;
+}
+
+/**
+ * check if the user has an Accolade.
+ * @returns boolean
+ */
+export async function isAccolade(address: string): Promise<boolean> {
+  const contracts = getContracts() as AlpineContracts;
+  const { affinePass } = contracts;
+  return affinePass?.isAccolade(address) ?? false;
+}
+
+/**
+ * check the user's accolade allocation.
+ * @returns number
+ */
+export async function accoladeAllocation(address: string): Promise<number> {
+  const contracts = getContracts() as AlpineContracts;
+  const { affinePass } = contracts;
+  return affinePass?.accoladeAllocation(address) ?? 0;
+}
+
+/**
+ * check if there is remaining supply minus the guaranatees.
+ * @returns boolean
+ */
+export async function hasRemainingSupply(): Promise<boolean> {
+  const contracts = getContracts() as AlpineContracts;
+  const { affinePass } = contracts;
+  return affinePass?.hasRemainingSupply() ?? false;
+}
+
+/**
+ * check if the user has minted during whitelist.
+ * @returns boolean
+ */
+export async function hasMintedWhitelist(address: string): Promise<boolean> {
+  const contracts = getContracts() as AlpineContracts;
+  const { affinePass } = contracts;
+  return affinePass?.hasMintedWhitelist(address) ?? false;
+}
+
+/**
+ * check if a user minted during the public sale.
+ * @returns boolean
+ */
+export async function hasMinted(address: string): Promise<boolean> {
+  const contracts = getContracts() as AlpineContracts;
+  const { affinePass } = contracts;
+  return affinePass?.hasMinted(address) ?? false;
 }
 
 /**
@@ -297,8 +357,8 @@ export async function isWhitelisted(address: string, proof: string[]): Promise<b
  */
 export async function whitelistSaleIsActive(): Promise<boolean> {
   const contracts = getContracts() as AlpineContracts;
-  const { affineGenesis } = contracts;
-  return affineGenesis?.whitelistSaleIsActive() ?? false;
+  const { affinePass } = contracts;
+  return affinePass?.whitelistSaleIsActive() ?? false;
 }
 
 /**
@@ -307,8 +367,8 @@ export async function whitelistSaleIsActive(): Promise<boolean> {
  */
 export async function saleIsActive(): Promise<boolean> {
   const contracts = getContracts() as AlpineContracts;
-  const { affineGenesis } = contracts;
-  return affineGenesis?.saleIsActive() ?? false;
+  const { affinePass } = contracts;
+  return affinePass?.saleIsActive() ?? false;
 }
 
 /**
