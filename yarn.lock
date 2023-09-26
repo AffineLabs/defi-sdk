@@ -35,7 +35,7 @@ __metadata:
     chai: ^4.3.6
     commander: ^9.0.0
     concurrently: ^7.0.0
-    contracts: "https://github.com/AffineLabs/contracts.git#2f8a78b7f82bc820e6fc278832593097a1641b21"
+    contracts: "https://github.com/AffineLabs/contracts.git#d7232b09e9e25b19b5f1d162a5b5571b3b5f0cd6"
     dotenv: ^16.0.0
     eslint: ^8.16.0
     ethers: 5.7.2
@@ -4407,9 +4407,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"contracts@https://github.com/AffineLabs/contracts.git#2f8a78b7f82bc820e6fc278832593097a1641b21":
+"contracts@https://github.com/AffineLabs/contracts.git#d7232b09e9e25b19b5f1d162a5b5571b3b5f0cd6":
   version: 0.0.1
-  resolution: "contracts@https://github.com/AffineLabs/contracts.git#commit=2f8a78b7f82bc820e6fc278832593097a1641b21"
+  resolution: "contracts@https://github.com/AffineLabs/contracts.git#commit=d7232b09e9e25b19b5f1d162a5b5571b3b5f0cd6"
   dependencies:
     "@aave/core-v3": ^1.18.0
     "@certusone/wormhole-sdk": ^0.1.4
