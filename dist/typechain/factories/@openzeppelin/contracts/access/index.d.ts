@@ -1,2 +1,0 @@
-export { AccessControl__factory } from "./AccessControl__factory";
-export { IAccessControl__factory } from "./IAccessControl__factory";

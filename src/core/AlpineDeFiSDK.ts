@@ -322,6 +322,17 @@ export async function accoladeAllocation(address: string): Promise<number> {
 }
 
 /**
+ * check the user's Affine Pass balance.
+ * @returns number
+ */
+export async function passBalanceOf(address: string): Promise<number> {
+  const contracts = getContracts() as AlpineContracts;
+  const { affinePass } = contracts;
+  return affinePass ? (await affinePass.balanceOf(address)).toNumber() : 0;
+}
+
+
+/**
  * check if there is remaining supply minus the guaranatees.
  * @returns boolean
  */
