@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTVLCap = exports.saleIsActive = exports.whitelistSaleIsActive = exports.hasMinted = exports.hasMintedWhitelist = exports.hasRemainingSupply = exports.accoladeAllocation = exports.isAccolade = exports.isWhitelisted = exports.mintGuaranteed = exports.mint = exports.mintWhitelist = exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
+exports.getTVLCap = exports.saleIsActive = exports.whitelistSaleIsActive = exports.hasMinted = exports.hasMintedWhitelist = exports.hasRemainingSupply = exports.passBalanceOf = exports.accoladeAllocation = exports.isAccolade = exports.isWhitelisted = exports.mintGuaranteed = exports.mint = exports.mintWhitelist = exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
 const ethers_1 = require("ethers");
 const cache_1 = require("./cache");
 const biconomy_1 = require("./biconomy");
@@ -311,6 +311,18 @@ function accoladeAllocation(address) {
     });
 }
 exports.accoladeAllocation = accoladeAllocation;
+/**
+ * check the user's Affine Pass balance.
+ * @returns number
+ */
+function passBalanceOf(address) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affinePass } = contracts;
+        return affinePass ? (yield affinePass.balanceOf(address)).toNumber() : 0;
+    });
+}
+exports.passBalanceOf = passBalanceOf;
 /**
  * check if there is remaining supply minus the guaranatees.
  * @returns boolean
