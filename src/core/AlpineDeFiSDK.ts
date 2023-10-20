@@ -7,7 +7,7 @@ import { SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE, getContracts } from 
 import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
-import { MAX_APPROVAL_AMOUNT } from "./constants";
+import { MAX_APPROVAL_AMOUNT, CCIP_NETWORK_SELECTOR } from "./constants";
 import { StrategyVault } from "../typechain";
 
 /**
@@ -398,3 +398,40 @@ export async function getTVLCap(product: AlpineProduct): Promise<string> {
   const decimals = await _asset.decimals();
   return _removeDecimals(tvlCap, decimals);
 }
+
+export async function ccipFee(destinationChianId: number): Promise<number> {
+  const contracts = getContracts() as AlpineContracts;
+  if (![1, 137].includes(destinationChianId)) {
+    throw new Error("Invalid chain id. Only 1 and 137 are supported.");
+  }
+  if(destinationChianId === 1) {
+    const { affinePassBridgeEthereum } = contracts;
+    return affinePassBridgeEthereum?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId]) ?? 0;
+  }
+  else if(destinationChianId === 137) {
+    const { affinePassBridgePolygon } = contracts;
+    return affinePassBridgePolygon?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId]) ?? 0;
+  }
+  else{
+    return 0;
+  }
+}
+
+export async function bridgePass(destinationChianId: number, destinationAddress: string, tokenId: number, fee: number) {
+  const contracts = getContracts() as AlpineContracts;
+  if (![1, 137].includes(destinationChianId)) {
+    throw new Error("Invalid chain id. Only 1 and 137 are supported.");
+  }
+  if(destinationChianId === 1) {
+    const { affinePassBridgeEthereum } = contracts;
+    return blockchainCall(affinePassBridgeEthereum, "bridgePass", [CCIP_NETWORK_SELECTOR[destinationChianId], destinationAddress, tokenId], false, ethers.BigNumber.from(fee));
+  }
+  else if(destinationChianId === 137) {
+    const { affinePassBridgePolygon } = contracts;
+    return blockchainCall(affinePassBridgePolygon, "bridgePass", [CCIP_NETWORK_SELECTOR[destinationChianId], destinationAddress, tokenId], false, ethers.BigNumber.from(fee));
+  }
+}
+
+
+
+
