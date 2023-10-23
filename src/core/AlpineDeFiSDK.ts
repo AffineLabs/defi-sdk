@@ -399,6 +399,11 @@ export async function getTVLCap(product: AlpineProduct): Promise<string> {
   return _removeDecimals(tvlCap, decimals);
 }
 
+/**
+ * Get the fee in native asset for bridging pass to destination chain
+ * @param destinationChianId the destination chain id
+ * @returns 
+ */
 export async function ccipFee(destinationChianId: number): Promise<number> {
   const contracts = getContracts() as AlpineContracts;
   if (![1, 137].includes(destinationChianId)) {
@@ -417,6 +422,14 @@ export async function ccipFee(destinationChianId: number): Promise<number> {
   }
 }
 
+/**
+ * Bridge pass to destination chain
+ * @param destinationChianId the destination chain id
+ * @param destinationAddress the destination address
+ * @param tokenId token id of the pass
+ * @param fee fee in native asset
+ * @returns 
+ */
 export async function bridgePass(destinationChianId: number, destinationAddress: string, tokenId: number, fee: number) {
   const contracts = getContracts() as AlpineContracts;
   if (![1, 137].includes(destinationChianId)) {
