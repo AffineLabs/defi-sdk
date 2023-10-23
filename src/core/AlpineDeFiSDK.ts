@@ -406,11 +406,11 @@ export async function ccipFee(destinationChianId: number): Promise<number> {
   }
   if(destinationChianId === 1) {
     const { affinePassBridgeEthereum } = contracts;
-    return affinePassBridgeEthereum?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId]) ?? 0;
+    return ((affinePassBridgeEthereum?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber())*1.05 ?? 0;
   }
   else if(destinationChianId === 137) {
     const { affinePassBridgePolygon } = contracts;
-    return affinePassBridgePolygon?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId]) ?? 0;
+    return ((affinePassBridgePolygon?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber())*1.05 ?? 0;
   }
   else{
     return 0;
