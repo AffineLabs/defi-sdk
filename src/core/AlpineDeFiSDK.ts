@@ -407,14 +407,14 @@ export async function ccipFee(destinationChianId: number): Promise<number> {
     throw new Error("Invalid chain id. Only 1 and 137 are supported.");
   }
   if (destinationChianId === 1) {
-    const { affinePassBridgeEthereum } = contracts;
-    return affinePassBridgeEthereum
-      ? (await affinePassBridgeEthereum.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
-      : 0;
-  } else if (destinationChianId === 137) {
     const { affinePassBridgePolygon } = contracts;
     return affinePassBridgePolygon
       ? (await affinePassBridgePolygon.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
+      : 0;
+  } else if (destinationChianId === 137) {
+    const { affinePassBridgeEthereum } = contracts;
+    return affinePassBridgeEthereum
+      ? (await affinePassBridgeEthereum.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
       : 0;
   } else {
     return 0;
