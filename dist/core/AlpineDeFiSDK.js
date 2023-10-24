@@ -415,15 +415,15 @@ function ccipFee(destinationChianId) {
             throw new Error("Invalid chain id. Only 1 and 137 are supported.");
         }
         if (destinationChianId === 1) {
-            const { affinePassBridgeEthereum } = contracts;
-            return affinePassBridgeEthereum
-                ? (yield affinePassBridgeEthereum.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
-                : 0;
-        }
-        else if (destinationChianId === 137) {
             const { affinePassBridgePolygon } = contracts;
             return affinePassBridgePolygon
                 ? (yield affinePassBridgePolygon.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
+                : 0;
+        }
+        else if (destinationChianId === 137) {
+            const { affinePassBridgeEthereum } = contracts;
+            return affinePassBridgeEthereum
+                ? (yield affinePassBridgeEthereum.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
                 : 0;
         }
         else {
