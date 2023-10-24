@@ -408,14 +408,14 @@ export async function ccipFee(destinationChianId: number): Promise<number> {
   }
   if (destinationChianId === 1) {
     const { affinePassBridgePolygon } = contracts;
-    return affinePassBridgePolygon
-      ? (await affinePassBridgePolygon.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
-      : 0;
+    const _fee = await affinePassBridgePolygon.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId]);
+    const ethAmmount = parseFloat(ethers.utils.formatEther(_fee)) * 1.05;
+    return ethAmmount;
   } else if (destinationChianId === 137) {
     const { affinePassBridgeEthereum } = contracts;
-    return affinePassBridgeEthereum
-      ? (await affinePassBridgeEthereum.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
-      : 0;
+    const _fee = affinePassBridgeEthereum.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId]);
+    const ethAmmount = parseFloat(ethers.utils.formatEther(_fee)) * 1.05;
+    return ethAmmount;
   } else {
     return 0;
   }
@@ -455,7 +455,7 @@ export async function bridgePass(
       "bridgePass",
       [CCIP_NETWORK_SELECTOR[destinationChianId], destinationAddress, tokenId],
       false,
-      ethers.BigNumber.from(fee),
+      ethers.utils.parseEther(fee.toString()),
     );
   }
 }
