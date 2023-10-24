@@ -416,15 +416,15 @@ function ccipFee(destinationChianId) {
         }
         if (destinationChianId === 1) {
             const { affinePassBridgePolygon } = contracts;
-            return affinePassBridgePolygon
-                ? (yield affinePassBridgePolygon.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
-                : 0;
+            const _fee = affinePassBridgePolygon ? yield (affinePassBridgePolygon === null || affinePassBridgePolygon === void 0 ? void 0 : affinePassBridgePolygon.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])) : 0;
+            const ethAmmount = parseFloat(ethers_1.ethers.utils.formatEther(_fee)) * 1.05;
+            return ethAmmount;
         }
         else if (destinationChianId === 137) {
             const { affinePassBridgeEthereum } = contracts;
-            return affinePassBridgeEthereum
-                ? (yield affinePassBridgeEthereum.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
-                : 0;
+            const _fee = affinePassBridgeEthereum ? yield (affinePassBridgeEthereum === null || affinePassBridgeEthereum === void 0 ? void 0 : affinePassBridgeEthereum.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])) : 0;
+            const ethAmmount = parseFloat(ethers_1.ethers.utils.formatEther(_fee)) * 1.05;
+            return ethAmmount;
         }
         else {
             return 0;
@@ -456,7 +456,7 @@ function bridgePass(destinationChianId, destinationAddress, tokenId, fee) {
             bridge = affinePassBridgeEthereum;
         }
         if (bridge) {
-            return blockchainCall(bridge, "bridgePass", [constants_1.CCIP_NETWORK_SELECTOR[destinationChianId], destinationAddress, tokenId], false, ethers_1.ethers.BigNumber.from(fee));
+            return blockchainCall(bridge, "bridgePass", [constants_1.CCIP_NETWORK_SELECTOR[destinationChianId], destinationAddress, tokenId], false, ethers_1.ethers.utils.parseEther(fee.toString()));
         }
     });
 }
