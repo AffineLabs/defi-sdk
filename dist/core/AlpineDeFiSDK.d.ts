@@ -81,6 +81,11 @@ export declare function isAccolade(address: string): Promise<boolean>;
  */
 export declare function accoladeAllocation(address: string): Promise<number>;
 /**
+ * check the user's Affine Pass balance.
+ * @returns number
+ */
+export declare function passBalanceOf(address: string): Promise<number>;
+/**
  * check if there is remaining supply minus the guaranatees.
  * @returns boolean
  */
