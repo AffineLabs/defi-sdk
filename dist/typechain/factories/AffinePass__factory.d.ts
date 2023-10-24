@@ -7,10 +7,6 @@ export declare class AffinePass__factory {
             readonly internalType: "bytes32";
             readonly name: "_merkleRoot";
             readonly type: "bytes32";
-        }, {
-            readonly internalType: "address";
-            readonly name: "_accolades";
-            readonly type: "address";
         }];
         readonly stateMutability: "nonpayable";
         readonly type: "constructor";
@@ -101,6 +97,16 @@ export declare class AffinePass__factory {
         readonly type: "event";
     }, {
         readonly inputs: readonly [];
+        readonly name: "MAX_MINTABLE_SUPPLY";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "MAX_PUBLIC_MINT";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
@@ -131,45 +137,11 @@ export declare class AffinePass__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "MAX_SUPPLY_ACCOLADES";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
         readonly name: "MAX_WHITELIST_MINT";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "";
             readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "address";
-            readonly name: "_address";
-            readonly type: "address";
-        }];
-        readonly name: "accoladeAllocation";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "allocation";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "accolades";
-        readonly outputs: readonly [{
-            readonly internalType: "contract IERC1155";
-            readonly name: "";
-            readonly type: "address";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -300,20 +272,6 @@ export declare class AffinePass__factory {
     }, {
         readonly inputs: readonly [{
             readonly internalType: "address";
-            readonly name: "account";
-            readonly type: "address";
-        }];
-        readonly name: "isAccolade";
-        readonly outputs: readonly [{
-            readonly internalType: "bool";
-            readonly name: "";
-            readonly type: "bool";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "address";
             readonly name: "owner";
             readonly type: "address";
         }, {
@@ -364,8 +322,16 @@ export declare class AffinePass__factory {
         readonly stateMutability: "payable";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "mintGuaranteed";
+        readonly inputs: readonly [{
+            readonly internalType: "address[]";
+            readonly name: "recipients";
+            readonly type: "address[]";
+        }, {
+            readonly internalType: "uint256[]";
+            readonly name: "quantities";
+            readonly type: "uint256[]";
+        }];
+        readonly name: "mintDrop";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
@@ -388,6 +354,16 @@ export declare class AffinePass__factory {
         readonly name: "mintWhitelist";
         readonly outputs: readonly [];
         readonly stateMutability: "payable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "mintedReserveTokens";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -428,16 +404,6 @@ export declare class AffinePass__factory {
         readonly name: "renounceOwnership";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "reserveTokens";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
@@ -488,16 +454,6 @@ export declare class AffinePass__factory {
             readonly type: "bool";
         }];
         readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "address";
-            readonly name: "_accolades";
-            readonly type: "address";
-        }];
-        readonly name: "setAccolades";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [{

@@ -34,7 +34,7 @@ export const FORKED_NODE_URL_FOR_BASE = process.env.FORKED_NODE_URL_FOR_BASE || 
 export const CCIP_NETWORK_SELECTOR = {
   1: `5009297550715157269`,
   137: `4051577828743386545`,
-}
+};
 
 export const NETWORK_PARAMS: { [index: number]: NetworkParams } = {
   1: {

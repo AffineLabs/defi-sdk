@@ -8,7 +8,7 @@ import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
 import { MAX_APPROVAL_AMOUNT, CCIP_NETWORK_SELECTOR } from "./constants";
-import { StrategyVault } from "../typechain";
+import { StrategyVault, AffinePassBridge } from "../typechain";
 
 /**
  * Get the current best estimate for gas price
@@ -301,24 +301,22 @@ export async function isWhitelisted(address: string, proof: string[]): Promise<b
   return affinePass?.isWhitelisted(address, proof) ?? false;
 }
 
+// TODO: Need to be removed after FE confirmation
 /**
  * check if the user has an Accolade.
  * @returns boolean
  */
 export async function isAccolade(address: string): Promise<boolean> {
-  const contracts = getContracts() as AlpineContracts;
-  const { affinePass } = contracts;
-  return affinePass?.isAccolade(address) ?? false;
+  return false;
 }
 
+// TODO: Need to be removed after FE confirmation
 /**
  * check the user's accolade allocation.
  * @returns number
  */
 export async function accoladeAllocation(address: string): Promise<number> {
-  const contracts = getContracts() as AlpineContracts;
-  const { affinePass } = contracts;
-  return affinePass ? (await affinePass.accoladeAllocation(address)).toNumber() : 0;
+  return 0;
 }
 
 /**
@@ -330,7 +328,6 @@ export async function passBalanceOf(address: string): Promise<number> {
   const { affinePass } = contracts;
   return affinePass ? (await affinePass.balanceOf(address)).toNumber() : 0;
 }
-
 
 /**
  * check if there is remaining supply minus the guaranatees.
@@ -402,22 +399,24 @@ export async function getTVLCap(product: AlpineProduct): Promise<string> {
 /**
  * Get the fee in native asset for bridging pass to destination chain
  * @param destinationChianId the destination chain id
- * @returns 
+ * @returns
  */
 export async function ccipFee(destinationChianId: number): Promise<number> {
   const contracts = getContracts() as AlpineContracts;
   if (![1, 137].includes(destinationChianId)) {
     throw new Error("Invalid chain id. Only 1 and 137 are supported.");
   }
-  if(destinationChianId === 1) {
+  if (destinationChianId === 1) {
     const { affinePassBridgeEthereum } = contracts;
-    return ((affinePassBridgeEthereum?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber())*1.05 ?? 0;
-  }
-  else if(destinationChianId === 137) {
+    return affinePassBridgeEthereum
+      ? (await affinePassBridgeEthereum.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
+      : 0;
+  } else if (destinationChianId === 137) {
     const { affinePassBridgePolygon } = contracts;
-    return ((affinePassBridgePolygon?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber())*1.05 ?? 0;
-  }
-  else{
+    return affinePassBridgePolygon
+      ? (await affinePassBridgePolygon.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
+      : 0;
+  } else {
     return 0;
   }
 }
@@ -428,23 +427,35 @@ export async function ccipFee(destinationChianId: number): Promise<number> {
  * @param destinationAddress the destination address
  * @param tokenId token id of the pass
  * @param fee fee in native asset
- * @returns 
+ * @returns
  */
-export async function bridgePass(destinationChianId: number, destinationAddress: string, tokenId: number, fee: number) {
+export async function bridgePass(
+  destinationChianId: 1 | 137,
+  destinationAddress: string,
+  tokenId: number,
+  fee: number,
+) {
   const contracts = getContracts() as AlpineContracts;
   if (![1, 137].includes(destinationChianId)) {
     throw new Error("Invalid chain id. Only 1 and 137 are supported.");
   }
-  if(destinationChianId === 1) {
-    const { affinePassBridgeEthereum } = contracts;
-    return blockchainCall(affinePassBridgeEthereum, "bridgePass", [CCIP_NETWORK_SELECTOR[destinationChianId], destinationAddress, tokenId], false, ethers.BigNumber.from(fee));
-  }
-  else if(destinationChianId === 137) {
+
+  let bridge: AffinePassBridge | undefined = undefined;
+  if (destinationChianId === 1) {
     const { affinePassBridgePolygon } = contracts;
-    return blockchainCall(affinePassBridgePolygon, "bridgePass", [CCIP_NETWORK_SELECTOR[destinationChianId], destinationAddress, tokenId], false, ethers.BigNumber.from(fee));
+    bridge = affinePassBridgePolygon;
+  } else {
+    const { affinePassBridgeEthereum } = contracts;
+    bridge = affinePassBridgeEthereum;
+  }
+
+  if (bridge) {
+    return blockchainCall(
+      bridge,
+      "bridgePass",
+      [CCIP_NETWORK_SELECTOR[destinationChianId], destinationAddress, tokenId],
+      false,
+      ethers.BigNumber.from(fee),
+    );
   }
 }
-
-
-
-

@@ -64,7 +64,7 @@ function getAllContracts(provider, version) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, } = allData;
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
@@ -85,6 +85,9 @@ function getAllContracts(provider, version) {
                 affinePass: chainId === 137 && typeof affinePassData !== "undefined"
                     ? typechain_1.AffinePass__factory.connect(affinePassData.address, provider)
                     : undefined,
+                affinePassBridgePolygon: chainId === 137 && typeof affinePassBridgePolygonData !== "undefined"
+                    ? typechain_1.AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
+                    : undefined,
             };
         }
         else if (chainId === 1 || chainId === 5) {
@@ -104,6 +107,9 @@ function getAllContracts(provider, version) {
                 usdc: new ethers_1.ethers.Contract(yield ethEarn.asset(), erc20Abi, provider),
                 weth: new ethers_1.ethers.Contract(yield ethWethEarn.asset(), erc20Abi, provider),
                 router: typechain_1.Router__factory.connect(ethRouter.address, provider),
+                affinePassBridgeEthereum: chainId === 1 && typeof affinePassBridgeEthereumData !== "undefined"
+                    ? typechain_1.AffinePassBridge__factory.connect(affinePassBridgeEthereumData.address, provider)
+                    : undefined,
             };
         }
         else if (chainId == 8453 || chainId == 84531) {

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTVLCap = exports.saleIsActive = exports.whitelistSaleIsActive = exports.hasMinted = exports.hasMintedWhitelist = exports.hasRemainingSupply = exports.accoladeAllocation = exports.isAccolade = exports.isWhitelisted = exports.mintGuaranteed = exports.mint = exports.mintWhitelist = exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
+exports.bridgePass = exports.ccipFee = exports.getTVLCap = exports.saleIsActive = exports.whitelistSaleIsActive = exports.hasMinted = exports.hasMintedWhitelist = exports.hasRemainingSupply = exports.passBalanceOf = exports.accoladeAllocation = exports.isAccolade = exports.isWhitelisted = exports.mintGuaranteed = exports.mint = exports.mintWhitelist = exports.mintUSDC = exports.transfer = exports.approve = exports.isApproved = exports.blockchainCall = exports._removeDecimals = exports._addDecimals = exports.getGasBalance = exports.getGasPrice = void 0;
 const ethers_1 = require("ethers");
 const cache_1 = require("./cache");
 const biconomy_1 = require("./biconomy");
@@ -286,31 +286,40 @@ function isWhitelisted(address, proof) {
     });
 }
 exports.isWhitelisted = isWhitelisted;
+// TODO: Need to be removed after FE confirmation
 /**
  * check if the user has an Accolade.
  * @returns boolean
  */
 function isAccolade(address) {
-    var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const contracts = (0, cache_1.getContracts)();
-        const { affinePass } = contracts;
-        return (_a = affinePass === null || affinePass === void 0 ? void 0 : affinePass.isAccolade(address)) !== null && _a !== void 0 ? _a : false;
+        return false;
     });
 }
 exports.isAccolade = isAccolade;
+// TODO: Need to be removed after FE confirmation
 /**
  * check the user's accolade allocation.
  * @returns number
  */
 function accoladeAllocation(address) {
     return __awaiter(this, void 0, void 0, function* () {
-        const contracts = (0, cache_1.getContracts)();
-        const { affinePass } = contracts;
-        return affinePass ? (yield affinePass.accoladeAllocation(address)).toNumber() : 0;
+        return 0;
     });
 }
 exports.accoladeAllocation = accoladeAllocation;
+/**
+ * check the user's Affine Pass balance.
+ * @returns number
+ */
+function passBalanceOf(address) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        const { affinePass } = contracts;
+        return affinePass ? (yield affinePass.balanceOf(address)).toNumber() : 0;
+    });
+}
+exports.passBalanceOf = passBalanceOf;
 /**
  * check if there is remaining supply minus the guaranatees.
  * @returns boolean
@@ -394,3 +403,61 @@ function getTVLCap(product) {
     });
 }
 exports.getTVLCap = getTVLCap;
+/**
+ * Get the fee in native asset for bridging pass to destination chain
+ * @param destinationChianId the destination chain id
+ * @returns
+ */
+function ccipFee(destinationChianId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        if (![1, 137].includes(destinationChianId)) {
+            throw new Error("Invalid chain id. Only 1 and 137 are supported.");
+        }
+        if (destinationChianId === 1) {
+            const { affinePassBridgeEthereum } = contracts;
+            return affinePassBridgeEthereum
+                ? (yield affinePassBridgeEthereum.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
+                : 0;
+        }
+        else if (destinationChianId === 137) {
+            const { affinePassBridgePolygon } = contracts;
+            return affinePassBridgePolygon
+                ? (yield affinePassBridgePolygon.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])).toNumber() * 1.05
+                : 0;
+        }
+        else {
+            return 0;
+        }
+    });
+}
+exports.ccipFee = ccipFee;
+/**
+ * Bridge pass to destination chain
+ * @param destinationChianId the destination chain id
+ * @param destinationAddress the destination address
+ * @param tokenId token id of the pass
+ * @param fee fee in native asset
+ * @returns
+ */
+function bridgePass(destinationChianId, destinationAddress, tokenId, fee) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const contracts = (0, cache_1.getContracts)();
+        if (![1, 137].includes(destinationChianId)) {
+            throw new Error("Invalid chain id. Only 1 and 137 are supported.");
+        }
+        let bridge = undefined;
+        if (destinationChianId === 1) {
+            const { affinePassBridgePolygon } = contracts;
+            bridge = affinePassBridgePolygon;
+        }
+        else {
+            const { affinePassBridgeEthereum } = contracts;
+            bridge = affinePassBridgeEthereum;
+        }
+        if (bridge) {
+            return blockchainCall(bridge, "bridgePass", [constants_1.CCIP_NETWORK_SELECTOR[destinationChianId], destinationAddress, tokenId], false, ethers_1.ethers.BigNumber.from(fee));
+        }
+    });
+}
+exports.bridgePass = bridgePass;

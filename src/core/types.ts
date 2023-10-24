@@ -9,8 +9,7 @@ import {
   WithdrawalEscrow,
   AffineGenesis,
   AffinePass,
-  AffinePassBridgeEthereum,
-  AffinePassBridgePolygon,
+  AffinePassBridge,
   VaultV2,
 } from "../typechain";
 import { ethers } from "ethers";
@@ -80,7 +79,7 @@ export interface PolygonContracts extends BothContracts {
   polygonLeverage?: Vault;
   affineGenesis?: AffineGenesis;
   affinePass?: AffinePass;
-  affinePassBridgePolygon?: AffinePassBridgePolygon;
+  affinePassBridgePolygon?: AffinePassBridge;
 }
 
 export interface EthContracts extends BothContracts {
@@ -90,7 +89,7 @@ export interface EthContracts extends BothContracts {
   withdrawalEscrow: WithdrawalEscrow;
   degen: Vault;
   ethLeverage?: Vault;
-  affinePassBridgeEthereum?: AffinePassBridgeEthereum;
+  affinePassBridgeEthereum?: AffinePassBridge;
 }
 
 export interface BaseContracts extends BothContracts {
