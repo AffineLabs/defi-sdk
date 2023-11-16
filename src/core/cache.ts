@@ -103,6 +103,7 @@ export async function getAllContracts(
     BaseUsdEarn: baseUsdEarnData,
     BaseStEthLev: baseStEthLevData,
     BaseRouter: baseRouterData,
+    EthDegenEth: ethDegenEthData,
   } = allData;
 
   const chainId = getChainId();
@@ -137,6 +138,7 @@ export async function getAllContracts(
     const withdrawalEscrow = WithdrawalEscrow__factory.connect(await ssvEthUSDEarn.debtEscrow(), provider);
     const degen = Vault__factory.connect(degenData.address, provider);
     const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
+    const ethDegenEth = chainId == 1 ? Vault__factory.connect(ethDegenEthData.address, provider) : undefined;
     return {
       ethEarn,
       ethWethEarn,
@@ -144,6 +146,7 @@ export async function getAllContracts(
       withdrawalEscrow,
       degen,
       ethLeverage,
+      ethDegenEth,
       usdc: new ethers.Contract(await ethEarn.asset(), erc20Abi, provider),
       weth: new ethers.Contract(await ethWethEarn.asset(), erc20Abi, provider),
       router: Router__factory.connect(ethRouter.address, provider),

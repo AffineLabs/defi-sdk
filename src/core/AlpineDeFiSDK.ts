@@ -146,9 +146,10 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     ethWethEarn,
     baseLeverage,
     ethLeverage,
+    ethDegenEth,
   } = getContracts() as AlpineContracts;
 
-  if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product)) return true;
+  if (["ethWethEarn", "baseLeverage", "ethLeverage", "ethDegenEth"].includes(product)) return true;
 
   const asset = product == "polygonLeverage" ? weth : usdc;
 
@@ -166,6 +167,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     ethWethEarn,
     ethLeverage,
     baseLeverage,
+    ethDegenEth,
   };
 
   if (!productToSpender[product]) {
@@ -304,21 +306,19 @@ export async function isWhitelisted(address: string, proof: string[]): Promise<b
 /**
  * check if the user has an Accolade.
  * @returns boolean
+ * TODO: remove this function after FE confirms
  */
 export async function isAccolade(address: string): Promise<boolean> {
-  const contracts = getContracts() as AlpineContracts;
-  const { affinePass } = contracts;
-  return affinePass?.isAccolade(address) ?? false;
+  return false;
 }
 
 /**
  * check the user's accolade allocation.
  * @returns number
+ * TODO: Remove this function after FE confirms
  */
 export async function accoladeAllocation(address: string): Promise<number> {
-  const contracts = getContracts() as AlpineContracts;
-  const { affinePass } = contracts;
-  return affinePass ? (await affinePass.accoladeAllocation(address)).toNumber() : 0;
+  return 0;
 }
 
 /**
@@ -330,7 +330,6 @@ export async function passBalanceOf(address: string): Promise<number> {
   const { affinePass } = contracts;
   return affinePass ? (await affinePass.balanceOf(address)).toNumber() : 0;
 }
-
 
 /**
  * check if there is remaining supply minus the guaranatees.

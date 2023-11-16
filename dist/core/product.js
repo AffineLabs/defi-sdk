@@ -49,7 +49,10 @@ function buyProduct(product, amount, slippageBps = 500) {
         if (product == "alpLarge") {
             return buyBtCEthShares(vault, amount, slippageBps, asset, router);
         }
-        else if (product == "ethWethEarn" || product == "ethLeverage" || product == "baseLeverage") {
+        else if (product == "ethWethEarn" ||
+            product == "ethLeverage" ||
+            product == "baseLeverage" ||
+            product == "ethDegenEth") {
             return buySharesByEthThroughWeth(amount, vault);
         }
         return buyVault(vault, amount, asset);
@@ -233,7 +236,7 @@ function getTokenInfo(product) {
                 equity: numWeth,
             };
         }
-        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, } = (0, cache_1.getContracts)();
+        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, ethDegenEth, } = (0, cache_1.getContracts)();
         const productToContract = {
             alpSave,
             ethEarn,
@@ -246,6 +249,7 @@ function getTokenInfo(product) {
             ethWethEarn,
             baseLeverage,
             baseUsdEarn,
+            ethDegenEth,
         };
         const contract = productToContract[product];
         if (!contract)

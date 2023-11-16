@@ -45,6 +45,7 @@ export const alpineProducts = [
   "polygonLeverage",
   "baseUsdEarn",
   "baseLeverage",
+  "ethDegenEth",
 ] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
@@ -87,6 +88,7 @@ export interface EthContracts extends BothContracts {
   withdrawalEscrow: WithdrawalEscrow;
   degen: Vault;
   ethLeverage?: Vault;
+  ethDegenEth?: Vault;
 }
 
 export interface BaseContracts extends BothContracts {

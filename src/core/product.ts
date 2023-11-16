@@ -70,7 +70,12 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
 
   if (product == "alpLarge") {
     return buyBtCEthShares(vault, amount, slippageBps, asset, router);
-  } else if (product == "ethWethEarn" || product == "ethLeverage" || product == "baseLeverage") {
+  } else if (
+    product == "ethWethEarn" ||
+    product == "ethLeverage" ||
+    product == "baseLeverage" ||
+    product == "ethDegenEth"
+  ) {
     return buySharesByEthThroughWeth(amount, vault);
   }
   return buyVault(vault, amount, asset);
@@ -301,6 +306,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     polygonLeverage,
     baseUsdEarn,
     baseLeverage,
+    ethDegenEth,
   } = getContracts() as AlpineContracts;
 
   const productToContract: { [key in AlpineProduct]: Contract | undefined } = {
@@ -315,6 +321,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     ethWethEarn,
     baseLeverage,
     baseUsdEarn,
+    ethDegenEth,
   };
 
   const contract = productToContract[product];
