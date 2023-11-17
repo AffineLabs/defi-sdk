@@ -20,7 +20,7 @@ const constants_1 = require("./constants");
 function _getVaultAndAsset(product) {
     return __awaiter(this, void 0, void 0, function* () {
         const { alpSave, alpLarge, polygonDegen, polygonLeverage } = (0, cache_1.getPolygonContracts)();
-        const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = (0, cache_1.getEthContracts)();
+        const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage, ethDegenEth } = (0, cache_1.getEthContracts)();
         const { baseUsdEarn, baseLeverage } = (0, cache_1.getBaseContracts)();
         const { router } = (0, cache_1.getContracts)();
         const productToVault = {
@@ -35,6 +35,7 @@ function _getVaultAndAsset(product) {
             polygonLeverage,
             baseUsdEarn,
             baseLeverage,
+            ethDegenEth
         };
         const vault = productToVault[product];
         if (!vault)
