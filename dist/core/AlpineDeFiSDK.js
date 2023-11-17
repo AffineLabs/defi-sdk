@@ -127,8 +127,8 @@ exports.blockchainCall = blockchainCall;
 function isApproved(product, amount) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, } = (0, cache_1.getContracts)();
-        if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product))
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, ethDegenEth, } = (0, cache_1.getContracts)();
+        if (["ethWethEarn", "baseLeverage", "ethLeverage", "ethDegenEth"].includes(product))
             return true;
         const asset = product == "polygonLeverage" ? weth : usdc;
         const productToSpender = {
@@ -144,6 +144,7 @@ function isApproved(product, amount) {
             ethWethEarn,
             ethLeverage,
             baseLeverage,
+            ethDegenEth,
         };
         if (!productToSpender[product]) {
             throw new Error("Product not found");
@@ -290,6 +291,7 @@ exports.isWhitelisted = isWhitelisted;
 /**
  * check if the user has an Accolade.
  * @returns boolean
+ * TODO: remove this function after FE confirms
  */
 function isAccolade(address) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -301,6 +303,7 @@ exports.isAccolade = isAccolade;
 /**
  * check the user's accolade allocation.
  * @returns number
+ * TODO: Remove this function after FE confirms
  */
 function accoladeAllocation(address) {
     return __awaiter(this, void 0, void 0, function* () {

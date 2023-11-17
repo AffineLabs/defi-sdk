@@ -73,11 +73,13 @@ export declare function isWhitelisted(address: string, proof: string[]): Promise
 /**
  * check if the user has an Accolade.
  * @returns boolean
+ * TODO: remove this function after FE confirms
  */
 export declare function isAccolade(address: string): Promise<boolean>;
 /**
  * check the user's accolade allocation.
  * @returns number
+ * TODO: Remove this function after FE confirms
  */
 export declare function accoladeAllocation(address: string): Promise<number>;
 /**

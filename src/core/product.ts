@@ -41,7 +41,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   router: Router;
 }> {
   const { alpSave, alpLarge, polygonDegen, polygonLeverage } = getPolygonContracts();
-  const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = getEthContracts();
+  const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage, ethDegenEth } = getEthContracts();
   const { baseUsdEarn, baseLeverage } = getBaseContracts();
 
   const { router } = getContracts();
@@ -58,6 +58,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
     polygonLeverage,
     baseUsdEarn,
     baseLeverage,
+    ethDegenEth
   };
 
   const vault = productToVault[product];
@@ -70,7 +71,12 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
 
   if (product == "alpLarge") {
     return buyBtCEthShares(vault, amount, slippageBps, asset, router);
-  } else if (product == "ethWethEarn" || product == "ethLeverage" || product == "baseLeverage") {
+  } else if (
+    product == "ethWethEarn" ||
+    product == "ethLeverage" ||
+    product == "baseLeverage" ||
+    product == "ethDegenEth"
+  ) {
     return buySharesByEthThroughWeth(amount, vault);
   }
   return buyVault(vault, amount, asset);
@@ -301,6 +307,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     polygonLeverage,
     baseUsdEarn,
     baseLeverage,
+    ethDegenEth,
   } = getContracts() as AlpineContracts;
 
   const productToContract: { [key in AlpineProduct]: Contract | undefined } = {
@@ -315,6 +322,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     ethWethEarn,
     baseLeverage,
     baseUsdEarn,
+    ethDegenEth,
   };
 
   const contract = productToContract[product];

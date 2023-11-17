@@ -146,9 +146,10 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     ethWethEarn,
     baseLeverage,
     ethLeverage,
+    ethDegenEth,
   } = getContracts() as AlpineContracts;
 
-  if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product)) return true;
+  if (["ethWethEarn", "baseLeverage", "ethLeverage", "ethDegenEth"].includes(product)) return true;
 
   const asset = product == "polygonLeverage" ? weth : usdc;
 
@@ -166,6 +167,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     ethWethEarn,
     ethLeverage,
     baseLeverage,
+    ethDegenEth,
   };
 
   if (!productToSpender[product]) {
@@ -305,6 +307,7 @@ export async function isWhitelisted(address: string, proof: string[]): Promise<b
 /**
  * check if the user has an Accolade.
  * @returns boolean
+ * TODO: remove this function after FE confirms
  */
 export async function isAccolade(address: string): Promise<boolean> {
   return false;
@@ -314,6 +317,7 @@ export async function isAccolade(address: string): Promise<boolean> {
 /**
  * check the user's accolade allocation.
  * @returns number
+ * TODO: Remove this function after FE confirms
  */
 export async function accoladeAllocation(address: string): Promise<number> {
   return 0;

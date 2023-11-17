@@ -64,7 +64,7 @@ function getAllContracts(provider, version) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, } = allData;
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, EthDegenEth: ethDegenEthData, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
@@ -97,6 +97,7 @@ function getAllContracts(provider, version) {
             const withdrawalEscrow = typechain_1.WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
             const degen = typechain_1.Vault__factory.connect(degenData.address, provider);
             const ethLeverage = chainId === 1 ? typechain_1.Vault__factory.connect(ethLeverageData.address, provider) : undefined;
+            const ethDegenEth = chainId == 1 ? typechain_1.Vault__factory.connect(ethDegenEthData.address, provider) : undefined;
             return {
                 ethEarn,
                 ethWethEarn,
@@ -104,6 +105,7 @@ function getAllContracts(provider, version) {
                 withdrawalEscrow,
                 degen,
                 ethLeverage,
+                ethDegenEth,
                 usdc: new ethers_1.ethers.Contract(yield ethEarn.asset(), erc20Abi, provider),
                 weth: new ethers_1.ethers.Contract(yield ethWethEarn.asset(), erc20Abi, provider),
                 router: typechain_1.Router__factory.connect(ethRouter.address, provider),
