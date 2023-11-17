@@ -120,3 +120,18 @@ export declare function saleIsActive(): Promise<boolean>;
  * @returns {Promise<string>} the tvl cap of the product in unit
  */
 export declare function getTVLCap(product: AlpineProduct): Promise<string>;
+/**
+ * Get the fee in native asset for bridging pass to destination chain
+ * @param destinationChianId the destination chain id
+ * @returns
+ */
+export declare function ccipFee(destinationChianId: number): Promise<number>;
+/**
+ * Bridge pass to destination chain
+ * @param destinationChianId the destination chain id
+ * @param destinationAddress the destination address
+ * @param tokenId token id of the pass
+ * @param fee fee in native asset
+ * @returns
+ */
+export declare function bridgePass(destinationChianId: 1 | 137, destinationAddress: string, tokenId: number, fee: number): Promise<GasInfo | undefined>;
