@@ -13,11 +13,6 @@ const _abi = [
                 name: "_merkleRoot",
                 type: "bytes32",
             },
-            {
-                internalType: "address",
-                name: "_accolades",
-                type: "address",
-            },
         ],
         stateMutability: "nonpayable",
         type: "constructor",
@@ -131,6 +126,19 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "MAX_MINTABLE_SUPPLY",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "MAX_PUBLIC_MINT",
         outputs: [
             {
@@ -170,57 +178,12 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "MAX_SUPPLY_ACCOLADES",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
         name: "MAX_WHITELIST_MINT",
         outputs: [
             {
                 internalType: "uint256",
                 name: "",
                 type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "address",
-                name: "_address",
-                type: "address",
-            },
-        ],
-        name: "accoladeAllocation",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "allocation",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "accolades",
-        outputs: [
-            {
-                internalType: "contract IERC1155",
-                name: "",
-                type: "address",
             },
         ],
         stateMutability: "view",
@@ -394,25 +357,6 @@ const _abi = [
         inputs: [
             {
                 internalType: "address",
-                name: "account",
-                type: "address",
-            },
-        ],
-        name: "isAccolade",
-        outputs: [
-            {
-                internalType: "bool",
-                name: "",
-                type: "bool",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "address",
                 name: "owner",
                 type: "address",
             },
@@ -478,8 +422,19 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [],
-        name: "mintGuaranteed",
+        inputs: [
+            {
+                internalType: "address[]",
+                name: "recipients",
+                type: "address[]",
+            },
+            {
+                internalType: "uint256[]",
+                name: "quantities",
+                type: "uint256[]",
+            },
+        ],
+        name: "mintDrop",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -508,6 +463,19 @@ const _abi = [
         name: "mintWhitelist",
         outputs: [],
         stateMutability: "payable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "mintedReserveTokens",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
         type: "function",
     },
     {
@@ -560,19 +528,6 @@ const _abi = [
         name: "renounceOwnership",
         outputs: [],
         stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "reserveTokens",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
         type: "function",
     },
     {
@@ -637,19 +592,6 @@ const _abi = [
             },
         ],
         stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "address",
-                name: "_accolades",
-                type: "address",
-            },
-        ],
-        name: "setAccolades",
-        outputs: [],
-        stateMutability: "nonpayable",
         type: "function",
     },
     {

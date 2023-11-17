@@ -12,6 +12,7 @@ import {
   StrategyVault__factory,
   AffineGenesis__factory,
   AffinePass__factory,
+  AffinePassBridge__factory,
   VaultV2__factory,
 } from "../typechain";
 import { AllowedChainId } from "../types/account";
@@ -100,6 +101,8 @@ export async function getAllContracts(
     PolygonStEthLev: polygonLeverageData,
     AffineGenesis: affineGenesisData,
     AffinePass: affinePassData,
+    AffinePassBridgePolygon: affinePassBridgePolygonData,
+    AffinePassBridgeEthereum: affinePassBridgeEthereumData,
     BaseUsdEarn: baseUsdEarnData,
     BaseStEthLev: baseStEthLevData,
     BaseRouter: baseRouterData,
@@ -129,6 +132,10 @@ export async function getAllContracts(
         chainId === 137 && typeof affinePassData !== "undefined"
           ? AffinePass__factory.connect(affinePassData.address, provider)
           : undefined,
+      affinePassBridgePolygon:
+        chainId === 137 && typeof affinePassBridgePolygonData !== "undefined"
+          ? AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
+          : undefined,
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
@@ -147,6 +154,10 @@ export async function getAllContracts(
       usdc: new ethers.Contract(await ethEarn.asset(), erc20Abi, provider),
       weth: new ethers.Contract(await ethWethEarn.asset(), erc20Abi, provider),
       router: Router__factory.connect(ethRouter.address, provider),
+      affinePassBridgeEthereum:
+        chainId === 1 && typeof affinePassBridgeEthereumData !== "undefined"
+          ? AffinePassBridge__factory.connect(affinePassBridgeEthereumData.address, provider)
+          : undefined,
     };
   } else if (chainId == 8453 || chainId == 84531) {
     const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;

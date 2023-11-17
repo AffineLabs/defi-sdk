@@ -7,8 +7,8 @@ import { SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE, getContracts } from 
 import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
-import { MAX_APPROVAL_AMOUNT } from "./constants";
-import { StrategyVault } from "../typechain";
+import { MAX_APPROVAL_AMOUNT, CCIP_NETWORK_SELECTOR } from "./constants";
+import { StrategyVault, AffinePassBridge } from "../typechain";
 
 /**
  * Get the current best estimate for gas price
@@ -301,24 +301,22 @@ export async function isWhitelisted(address: string, proof: string[]): Promise<b
   return affinePass?.isWhitelisted(address, proof) ?? false;
 }
 
+// TODO: Need to be removed after FE confirmation
 /**
  * check if the user has an Accolade.
  * @returns boolean
  */
 export async function isAccolade(address: string): Promise<boolean> {
-  const contracts = getContracts() as AlpineContracts;
-  const { affinePass } = contracts;
-  return affinePass?.isAccolade(address) ?? false;
+  return false;
 }
 
+// TODO: Need to be removed after FE confirmation
 /**
  * check the user's accolade allocation.
  * @returns number
  */
 export async function accoladeAllocation(address: string): Promise<number> {
-  const contracts = getContracts() as AlpineContracts;
-  const { affinePass } = contracts;
-  return affinePass ? (await affinePass.accoladeAllocation(address)).toNumber() : 0;
+  return 0;
 }
 
 /**
@@ -330,7 +328,6 @@ export async function passBalanceOf(address: string): Promise<number> {
   const { affinePass } = contracts;
   return affinePass ? (await affinePass.balanceOf(address)).toNumber() : 0;
 }
-
 
 /**
  * check if there is remaining supply minus the guaranatees.
@@ -397,4 +394,69 @@ export async function getTVLCap(product: AlpineProduct): Promise<string> {
   const tvlCap = await _contract.tvlCap();
   const decimals = await _asset.decimals();
   return _removeDecimals(tvlCap, decimals);
+}
+
+/**
+ * Get the fee in native asset for bridging pass to destination chain
+ * @param destinationChianId the destination chain id
+ * @returns
+ */
+export async function ccipFee(destinationChianId: number): Promise<number> {
+  const contracts = getContracts() as AlpineContracts;
+  if (![1, 137].includes(destinationChianId)) {
+    throw new Error("Invalid chain id. Only 1 and 137 are supported.");
+  }
+  if (destinationChianId === 1) {
+    const { affinePassBridgePolygon } = contracts;
+    const _fee = affinePassBridgePolygon ?  await affinePassBridgePolygon?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId]) : 0;
+
+    const ethAmmount = parseFloat(ethers.utils.formatEther(_fee)) * 1.05;
+    return ethAmmount;
+  } else if (destinationChianId === 137) {
+    const { affinePassBridgeEthereum } = contracts;
+    const _fee = affinePassBridgeEthereum ? await affinePassBridgeEthereum?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId]) : 0;
+    const ethAmmount = parseFloat(ethers.utils.formatEther(_fee)) * 1.05;
+    return ethAmmount;
+  } else {
+    return 0;
+  }
+}
+
+/**
+ * Bridge pass to destination chain
+ * @param destinationChianId the destination chain id
+ * @param destinationAddress the destination address
+ * @param tokenId token id of the pass
+ * @param fee fee in native asset
+ * @returns
+ */
+export async function bridgePass(
+  destinationChianId: 1 | 137,
+  destinationAddress: string,
+  tokenId: number,
+  fee: number,
+) {
+  const contracts = getContracts() as AlpineContracts;
+  if (![1, 137].includes(destinationChianId)) {
+    throw new Error("Invalid chain id. Only 1 and 137 are supported.");
+  }
+
+  let bridge: AffinePassBridge | undefined = undefined;
+  if (destinationChianId === 1) {
+    const { affinePassBridgePolygon } = contracts;
+    bridge = affinePassBridgePolygon;
+  } else {
+    const { affinePassBridgeEthereum } = contracts;
+    bridge = affinePassBridgeEthereum;
+  }
+
+  if (bridge) {
+    return blockchainCall(
+      bridge,
+      "bridgePass",
+      [CCIP_NETWORK_SELECTOR[destinationChianId], destinationAddress, tokenId],
+      false,
+      ethers.utils.parseEther(fee.toString()),
+    );
+  }
 }

@@ -12,6 +12,10 @@ export declare const IS_USING_FORKED_MAINNET: boolean;
 export declare const FORKED_NODE_URL_FOR_ETH: string;
 export declare const FORKED_NODE_URL_FOR_MATIC: string;
 export declare const FORKED_NODE_URL_FOR_BASE: string;
+export declare const CCIP_NETWORK_SELECTOR: {
+    1: string;
+    137: string;
+};
 export declare const NETWORK_PARAMS: {
     [index: number]: NetworkParams;
 };

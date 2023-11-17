@@ -65,6 +65,32 @@ export declare class ICurvePool__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "x";
+            readonly type: "uint256";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "y";
+            readonly type: "uint256";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "dx";
+            readonly type: "uint256";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "min_dy";
+            readonly type: "uint256";
+        }];
+        readonly name: "exchange";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [];
         readonly name: "get_virtual_price";
         readonly outputs: readonly [{
