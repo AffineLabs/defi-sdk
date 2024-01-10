@@ -37,6 +37,10 @@ export const CCIP_NETWORK_SELECTOR = {
   137: `4051577828743386545`,
 };
 
+/**
+ * We will use this to show the slippage for the withdraw/ sell of the product/ baskets.
+ * * Note: Please add the slippage here if you want to include a new product.
+ */
 export const WITHDRAW_SLIPPAGE_BY_PRODUCT: WithdrawSlippageByProduct = {
   ethLeverage: {
     max: 1,
