@@ -1,5 +1,6 @@
 import { BigNumber, ethers } from "ethers";
 import { AllowedChainId, NetworkParams } from "../types/account";
+import { WithdrawSlippageByProduct } from "./types";
 
 export const DEFAULT_WALLET = "magic";
 
@@ -34,6 +35,32 @@ export const FORKED_NODE_URL_FOR_BASE = process.env.FORKED_NODE_URL_FOR_BASE || 
 export const CCIP_NETWORK_SELECTOR = {
   1: `5009297550715157269`,
   137: `4051577828743386545`,
+};
+
+export const WITHDRAW_SLIPPAGE_BY_PRODUCT: WithdrawSlippageByProduct = {
+  ethLeverage: {
+    max: 1,
+    avg: 0.4,
+  },
+  ethEarn: {
+    max: 1,
+    avg: 0.5,
+  },
+  alpLarge: {
+    max: 1,
+    avg: 0.5,
+  },
+  ethWethEarn: {
+    max: 1,
+    avg: 0.5,
+  },
+  alpSave: {},
+  degen: {},
+  polygonDegen: {},
+  polygonLeverage: {},
+  baseUsdEarn: {},
+  baseLeverage: {},
+  ssvEthUSDEarn: {},
 };
 
 export const NETWORK_PARAMS: { [index: number]: NetworkParams } = {
