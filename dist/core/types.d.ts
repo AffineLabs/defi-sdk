@@ -100,3 +100,10 @@ export interface SSVWithdrawalRequestInfo {
     claimed: boolean;
     claimable: boolean;
 }
+export type WithdrawSlippage = {
+    max?: number;
+    avg?: number;
+};
+export type WithdrawSlippageByProduct = {
+    [key in AlpineProduct]: WithdrawSlippage;
+};

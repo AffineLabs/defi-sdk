@@ -1,5 +1,6 @@
 import { BigNumber } from "ethers";
 import { AllowedChainId, NetworkParams } from "../types/account";
+import { WithdrawSlippageByProduct } from "./types";
 export declare const DEFAULT_WALLET = "magic";
 export declare const DEFAULT_RAW_CHAIN_ID: AllowedChainId;
 export declare function getChainIdFromRaw(chainId?: AllowedChainId): string;
@@ -16,6 +17,11 @@ export declare const CCIP_NETWORK_SELECTOR: {
     1: string;
     137: string;
 };
+/**
+ * We will use this to show the slippage for the withdraw/ sell of the product/ baskets.
+ * * Note: Please add the slippage here if you want to include a new product.
+ */
+export declare const WITHDRAW_SLIPPAGE_BY_PRODUCT: WithdrawSlippageByProduct;
 export declare const NETWORK_PARAMS: {
     [index: number]: NetworkParams;
 };
