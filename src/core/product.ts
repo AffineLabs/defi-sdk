@@ -71,9 +71,9 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
 
   if (product == "alpLarge") {
     return buyBtCEthShares(vault, amount, slippageBps, asset, router);
-  } else if (product == "ethWethEarn" || product == "ethLeverage" || product == "baseLeverage") {
-    return buySharesByEthThroughWeth(amount, vault);
-  }
+  } else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX"].includes(product)) {
+    return buySharesByEthThroughWeth(amount, vault, asset);
+  } 
   return buyVault(vault, amount, asset);
 }
 
@@ -133,11 +133,12 @@ export async function sellVault(vault: ERC4626Upgradeable, rawAssets: number, as
 async function buySharesByEthThroughWeth(
   amountWeth: number,
   vault: ERC4626Upgradeable,
+  asset: Contract,
 ): Promise<DryRunReceipt | FullTxReceipt> {
   const ethDecimals = 18;
   const { assets: amount, basicInfo } = await getBasicTxInfo(vault, amountWeth, ethDecimals);
 
-  const { weth, router } = getContracts();
+  const { router } = getContracts();
   const shareDecimals = await vault.decimals();
 
   if (amount.isNegative() || amount.isZero()) {
@@ -150,7 +151,7 @@ async function buySharesByEthThroughWeth(
 
   const data: string[] = [];
   data.push(router.interface.encodeFunctionData("depositNative"));
-  data.push(router.interface.encodeFunctionData("approve", [weth.address, vault.address, MAX_UINT]));
+  data.push(router.interface.encodeFunctionData("approve", [asset.address, vault.address, MAX_UINT]));
   data.push(router.interface.encodeFunctionData("deposit", [vault.address, userAddress, amount, 0]));
 
   const beforeBal: ethers.BigNumber = await vault.balanceOf(userAddress);
