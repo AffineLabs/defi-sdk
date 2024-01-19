@@ -87,7 +87,7 @@ export async function getWalletconnectProvider(
   modal.closeModal();
 
   //  Create Web3 Provider
-  const web3Provider = new ethers.providers.Web3Provider(wcProvider);
+  const web3Provider = new ethers.providers.Web3Provider(wcProvider, "any");
   console.log("web3Provider ====>", web3Provider.getSigner());
   return web3Provider;
 
