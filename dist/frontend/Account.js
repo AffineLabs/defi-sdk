@@ -315,7 +315,8 @@ class Account {
                     method: "wallet_switchEthereumChain",
                     params: [{ chainId: (0, constants_1.getChainIdFromRaw)(chainId) }],
                 });
-                return;
+                this.selectedChainId = chainId;
+                return yield (0, core_1.init)(this.signer, this.biconomy, undefined, chainId);
             }
             const _provider = yield (0, wallets_1.getWeb3Provider)(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
             if (!_provider) {
