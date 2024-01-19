@@ -80,9 +80,9 @@ const main = async () => {
   const chainId = 137 as AllowedChainId;
   const _productToBuy: AlpineProduct = "alpSave";
 
-  if(walletType === "walletConnect"){
+  if (walletType === "walletConnect") {
     const modal = await initiateWeb3Modal();
-    if(modal) await alpAccount.initWalletConnectProvider(modal);
+    if (modal) await alpAccount.initWalletConnectProvider(modal);
   }
 
   console.log(

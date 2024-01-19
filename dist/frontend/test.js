@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const standalone_1 = require("@web3modal/standalone");
 const core_1 = require("../core");
 const constants_1 = require("../core/constants");
 const Account_1 = require("./Account");
@@ -48,10 +49,8 @@ const connectAndWrite = ({ walletType = "metamask", account, chainId, }) => __aw
     // connect
     console.time("entire-connect");
     try {
-        if (walletType === "metamask") {
-            // switch to the chainId
-            yield account.switchWalletToAllowedNetwork(walletType, chainId);
-        }
+        // switch to the chainId
+        yield account.switchWalletToAllowedNetwork(walletType, chainId);
         console.log("connecting to", walletType, "on chain", chainId, account);
         yield account.connect({ walletType, chainId, email });
         console.log("address: ", yield account.getUserAddress());
@@ -60,7 +59,7 @@ const connectAndWrite = ({ walletType = "metamask", account, chainId, }) => __aw
         console.error("Error in connect: ", error);
     }
     console.timeEnd("entire-connect");
-    yield testRead(account.userAddress || "", chainId);
+    // await testRead(account.userAddress || "", chainId);
 });
 const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, function* () {
     // check if user is approved max amount
@@ -76,9 +75,14 @@ const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, f
 });
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     const alpAccount = new Account_1.Account();
-    const walletType = "metamask";
+    const walletType = "walletConnect";
     const chainId = 137;
-    const _productToBuy = "polygonDegen";
+    const _productToBuy = "alpSave";
+    if (walletType === "walletConnect") {
+        const modal = yield initiateWeb3Modal();
+        if (modal)
+            yield alpAccount.initWalletConnectProvider(modal);
+    }
     console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS: constants_1.ALLOWED_CHAIN_IDS }, constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
     yield connectAndWrite({ walletType, account: alpAccount, chainId });
     const readAcc = new Account_1.ReadAccount(alpAccount.userAddress || "", chainId);
@@ -88,6 +92,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("basket bal: ", yield readAcc.getTokenInfo(_productToBuy));
     // console.log("sale state", await readAcc.saleIsActive());
     // console.log("whitelist state", await readAcc.whitelistSaleIsActive());
+    yield alpAccount.switchWalletToAllowedNetwork(walletType, chainId);
     yield alpAccount.setSimulationMode(false);
     yield buy(alpAccount, _productToBuy, 2);
     console.log("bought: ", _productToBuy, "of amount: ", 1);
@@ -139,5 +144,22 @@ const handleButtonClick = () => {
         });
     }, false);
 };
+const initiateWeb3Modal = () => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const web3Modal = new standalone_1.Web3Modal({
+            projectId: (_a = process.env.WALLETCONNECT_PROJECT_ID) !== null && _a !== void 0 ? _a : "",
+            walletConnectVersion: 2,
+        });
+        web3Modal.setTheme({
+            themeMode: "light",
+        });
+        return web3Modal;
+    }
+    catch (err) {
+        console.error("Error in initiateWeb3Modal", err);
+    }
+    return;
+});
 main();
 handleButtonClick();

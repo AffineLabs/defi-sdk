@@ -416,13 +416,17 @@ function ccipFee(destinationChianId) {
         }
         if (destinationChianId === 1) {
             const { affinePassBridgePolygon } = contracts;
-            const _fee = affinePassBridgePolygon ? yield (affinePassBridgePolygon === null || affinePassBridgePolygon === void 0 ? void 0 : affinePassBridgePolygon.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])) : 0;
+            const _fee = affinePassBridgePolygon
+                ? yield (affinePassBridgePolygon === null || affinePassBridgePolygon === void 0 ? void 0 : affinePassBridgePolygon.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId]))
+                : 0;
             const ethAmmount = parseFloat(ethers_1.ethers.utils.formatEther(_fee)) * 1.05;
             return ethAmmount;
         }
         else if (destinationChianId === 137) {
             const { affinePassBridgeEthereum } = contracts;
-            const _fee = affinePassBridgeEthereum ? yield (affinePassBridgeEthereum === null || affinePassBridgeEthereum === void 0 ? void 0 : affinePassBridgeEthereum.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])) : 0;
+            const _fee = affinePassBridgeEthereum
+                ? yield (affinePassBridgeEthereum === null || affinePassBridgeEthereum === void 0 ? void 0 : affinePassBridgeEthereum.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId]))
+                : 0;
             const ethAmmount = parseFloat(ethers_1.ethers.utils.formatEther(_fee)) * 1.05;
             return ethAmmount;
         }

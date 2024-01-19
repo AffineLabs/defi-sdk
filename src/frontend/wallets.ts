@@ -63,7 +63,14 @@ export async function getWalletconnectProvider(
     .connect({
       namespaces: {
         eip155: {
-          methods: ["eth_sendTransaction", "eth_signTransaction", "eth_sign", "personal_sign", "eth_signTypedData", "wallet_switchEthereumChain"],
+          methods: [
+            "eth_sendTransaction",
+            "eth_signTransaction",
+            "eth_sign",
+            "personal_sign",
+            "eth_signTypedData",
+            "wallet_switchEthereumChain",
+          ],
           chains: ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
           events: ["chainChanged", "accountsChanged"],
           rpcMap: RPC_URLS,
