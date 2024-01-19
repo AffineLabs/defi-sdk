@@ -90,12 +90,12 @@ const main = async () => {
   await connectAndRead({ walletType, account: alpAccount, chainId });
   const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
   await readAcc.init();
-  console.log("usdc bal: ", await readAcc.getTokenInfo("usdc"));
-  console.log("native bal: ", await readAcc.getGasBalance());
+  // console.log("usdc bal: ", await readAcc.getTokenInfo("usdc"));
+  // console.log("native bal: ", await readAcc.getGasBalance());
   console.log("basket bal of:",_productToBuy, await readAcc.getTokenInfo(_productToBuy));
 
-  console.log("withdrawSlippageByProduct 2", WITHDRAW_SLIPPAGE_BY_PRODUCT);
-  console.log("withdrawSlippageByProduct", alpAccount.withdrawSlippageByProduct);
+  // console.log("withdrawSlippageByProduct 2", WITHDRAW_SLIPPAGE_BY_PRODUCT);
+  // console.log("withdrawSlippageByProduct", alpAccount.withdrawSlippageByProduct);
 
   let _isApproved;
   _isApproved = await alpAccount.isApproved(_productToBuy,_amountToBuy);

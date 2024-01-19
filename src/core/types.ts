@@ -82,7 +82,7 @@ export interface PolygonContracts extends BothContracts {
   affinePass?: AffinePass;
   affinePassBridgePolygon?: AffinePassBridge;
   polygonLevMaticX?: Vault;
-  matic?: ethers.Contract;
+  matic: ethers.Contract;
 }
 
 export interface EthContracts extends BothContracts {

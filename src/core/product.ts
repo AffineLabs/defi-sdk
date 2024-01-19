@@ -71,9 +71,12 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
 
   if (product == "alpLarge") {
     return buyBtCEthShares(vault, amount, slippageBps, asset, router);
-  } else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX"].includes(product)) {
+  } else if (["ethWethEarn", "ethLeverage", "baseLeverage"].includes(product)) {
     return buySharesByEthThroughWeth(amount, vault, asset);
   } 
+
+  console.log("buying", product, amount);
+
   return buyVault(vault, amount, asset);
 }
 
@@ -114,6 +117,8 @@ export async function buyVault(
   asset: MockERC20,
 ): Promise<DryRunReceipt & (SmallTxReceipt | GasInfo)> {
   const { assets, basicInfo } = await getBasicTxInfo(vault, rawAssets, await asset.decimals());
+
+  console.log("buying", { asset, basicInfo });
 
   const receipt = SIMULATE
     ? ((await blockchainCall(vault, "deposit", [assets, userAddress], true)) as GasInfo)
