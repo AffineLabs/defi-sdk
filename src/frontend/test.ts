@@ -110,40 +110,12 @@ const main = async () => {
   }
 
   if(_isApproved){
+    alpAccount.setSimulationMode(false);
     const _buy = await alpAccount.buyProduct(_productToBuy, _amountToBuy);
     console.log("buy res: ", _buy);
     console.log("bought: ", _productToBuy, "of amount: ", _amountToBuy);
     console.log("basket bal after purchase ", await readAcc.getTokenInfo(_productToBuy));
   }
-
-  // console.log("sale state", await readAcc.saleIsActive());
-  // console.log("whitelist state", await readAcc.whitelistSaleIsActive());
-
-  // await alpAccount.setSimulationMode(false);
-  // await buy(alpAccount, _productToBuy, 1);
-
-  // console.log("bought: ", _productToBuy, "of amount: ", 1);
-  // console.log("basket bal after purchase ", await readAcc.getTokenInfo(_productToBuy));
-
-  // await alpAccount.sellProduct(_productToBuy, 1);
-
-  // console.log("sold: ", _productToBuy, "of amount: ", 1);
-  // console.log("basket bal after sell ", await readAcc.getTokenInfo(_productToBuy));
-
-  // const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
-
-  // console.log("tvlCap: ", tvlCap);
-
-  // const res = await alpAccount.isStrategyLiquid();
-  // console.log({ res });
-  // const requests = await alpAccount.getWithdrawalRequest();
-  // console.log({ requests });
-  // const allAssets = await alpAccount.getTotalWithdrawableAssets();
-  // console.log({ allAssets });
-
-  // await buy(alpAccount, _productToBuy);
-  // const sell = await alpAccount.sellProduct("ssvEthUSDEarn", 1);
-  // console.log("sell res: ", sell);
 
   console.log("exiting");
 };
