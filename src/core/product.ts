@@ -40,7 +40,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   asset: MockERC20;
   router: Router;
 }> {
-  const { alpSave, alpLarge, polygonDegen, polygonLeverage } = getPolygonContracts();
+  const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX } = getPolygonContracts();
   const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = getEthContracts();
   const { baseUsdEarn, baseLeverage } = getBaseContracts();
 
@@ -58,6 +58,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
     polygonLeverage,
     baseUsdEarn,
     baseLeverage,
+    polygonLevMaticX
   };
 
   const vault = productToVault[product];
@@ -301,6 +302,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     polygonLeverage,
     baseUsdEarn,
     baseLeverage,
+    polygonLevMaticX
   } = getContracts() as AlpineContracts;
 
   const productToContract: { [key in AlpineProduct]: Contract | undefined } = {
@@ -315,6 +317,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     ethWethEarn,
     baseLeverage,
     baseUsdEarn,
+    polygonLevMaticX
   };
 
   const contract = productToContract[product];

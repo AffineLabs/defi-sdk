@@ -106,6 +106,7 @@ export async function getAllContracts(
     BaseUsdEarn: baseUsdEarnData,
     BaseStEthLev: baseStEthLevData,
     BaseRouter: baseRouterData,
+    PolygonLevMaticX: polygonLevMaticXData,
   } = allData;
 
   const chainId = getChainId();
@@ -136,6 +137,9 @@ export async function getAllContracts(
         chainId === 137 && typeof affinePassBridgePolygonData !== "undefined"
           ? AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
           : undefined,
+      polygonLevMaticX: 
+        chainId === 137 && typeof polygonLevMaticXData !== "undefined" ? 
+          Vault__factory.connect(polygonLevMaticXData.address, provider) : undefined,
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);

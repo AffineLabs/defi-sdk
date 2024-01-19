@@ -1,5 +1,5 @@
-import { AlpineDeFiSDK } from "../core";
-import { ALLOWED_CHAIN_IDS, DEFAULT_RAW_CHAIN_ID } from "../core/constants";
+// import { AlpineDeFiSDK } from "../core";
+import { ALLOWED_CHAIN_IDS, DEFAULT_RAW_CHAIN_ID, WITHDRAW_SLIPPAGE_BY_PRODUCT } from "../core/constants";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet } from "../types/account";
 import { Account, ReadAccount } from "./Account";
@@ -34,7 +34,7 @@ const testRead = async (user: string, chainId: AllowedChainId) => {
     console.error("Error in read account: ", error);
   }
 };
-const connectAndWrite = async ({
+const connectAndRead = async ({
   walletType = "metamask",
   account,
   chainId,
@@ -79,37 +79,60 @@ const main = async () => {
   const alpAccount = new Account();
   const walletType = "metamask";
   const chainId = 137 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "polygonDegen";
+  const _productToBuy: AlpineProduct = "polygonLevMaticX";
+  const _amountToBuy = 0.01;
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
     { ALLOWED_CHAIN_IDS },
     ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
   );
-  await connectAndWrite({ walletType, account: alpAccount, chainId });
+  await connectAndRead({ walletType, account: alpAccount, chainId });
   const readAcc = new ReadAccount(alpAccount.userAddress || "", chainId);
   await readAcc.init();
   console.log("usdc bal: ", await readAcc.getTokenInfo("usdc"));
   console.log("native bal: ", await readAcc.getGasBalance());
-  console.log("basket bal: ", await readAcc.getTokenInfo(_productToBuy));
+  console.log("basket bal of:",_productToBuy, await readAcc.getTokenInfo(_productToBuy));
+
+  console.log("withdrawSlippageByProduct 2", WITHDRAW_SLIPPAGE_BY_PRODUCT);
+  console.log("withdrawSlippageByProduct", alpAccount.withdrawSlippageByProduct);
+
+  let _isApproved;
+  _isApproved = await alpAccount.isApproved(_productToBuy,_amountToBuy);
+  console.log("isApproved: ", _isApproved);
+  if(!_isApproved){
+    // approve max amount if not approved
+    const _approve = await alpAccount.approve(_productToBuy);
+    console.log("approve res: ", _approve);
+    console.log("approved: ", _productToBuy);
+    _isApproved = await alpAccount.isApproved(_productToBuy, _amountToBuy);
+    console.log("isApproved after `approve`: ", _isApproved);
+  }
+
+  if(_isApproved){
+    const _buy = await alpAccount.buyProduct(_productToBuy, _amountToBuy);
+    console.log("buy res: ", _buy);
+    console.log("bought: ", _productToBuy, "of amount: ", _amountToBuy);
+    console.log("basket bal after purchase ", await readAcc.getTokenInfo(_productToBuy));
+  }
 
   // console.log("sale state", await readAcc.saleIsActive());
   // console.log("whitelist state", await readAcc.whitelistSaleIsActive());
 
-  await alpAccount.setSimulationMode(false);
-  await buy(alpAccount, _productToBuy, 2);
+  // await alpAccount.setSimulationMode(false);
+  // await buy(alpAccount, _productToBuy, 1);
 
-  console.log("bought: ", _productToBuy, "of amount: ", 1);
-  console.log("basket bal after purchase ", await readAcc.getTokenInfo(_productToBuy));
+  // console.log("bought: ", _productToBuy, "of amount: ", 1);
+  // console.log("basket bal after purchase ", await readAcc.getTokenInfo(_productToBuy));
 
-  await alpAccount.sellProduct(_productToBuy, 1);
+  // await alpAccount.sellProduct(_productToBuy, 1);
 
-  console.log("sold: ", _productToBuy, "of amount: ", 1);
-  console.log("basket bal after sell ", await readAcc.getTokenInfo(_productToBuy));
+  // console.log("sold: ", _productToBuy, "of amount: ", 1);
+  // console.log("basket bal after sell ", await readAcc.getTokenInfo(_productToBuy));
 
-  const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
+  // const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
 
-  console.log("tvlCap: ", tvlCap);
+  // console.log("tvlCap: ", tvlCap);
 
   // const res = await alpAccount.isStrategyLiquid();
   // console.log({ res });

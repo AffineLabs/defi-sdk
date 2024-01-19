@@ -28,7 +28,7 @@ __metadata:
     chai: ^4.3.6
     commander: ^9.0.0
     concurrently: ^7.0.0
-    contracts: "https://github.com/AffineLabs/contracts.git#9c3320fdaa9c0122c8c9d5dc3c59b12df4d10d03"
+    contracts: "https://github.com/AffineLabs/contracts.git#a10732318dfd1cc7edbe50923fb9c02527e5822c"
     dotenv: ^16.0.0
     eslint: ^8.16.0
     ethers: 5.7.2
@@ -3695,10 +3695,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"contracts@https://github.com/AffineLabs/contracts.git#9c3320fdaa9c0122c8c9d5dc3c59b12df4d10d03":
+"contracts@https://github.com/AffineLabs/contracts.git#a10732318dfd1cc7edbe50923fb9c02527e5822c":
   version: 0.0.1
-  resolution: "contracts@https://github.com/AffineLabs/contracts.git#commit=9c3320fdaa9c0122c8c9d5dc3c59b12df4d10d03"
-  checksum: 4844435e8921f1d1e0e1571b44337c70a3a62e6869b933f785718b546e26f9ad716702eea9bf476c25ba06ebfdce1e980f23525dc37c122ed0ba628e58e79df0
+  resolution: "contracts@https://github.com/AffineLabs/contracts.git#commit=a10732318dfd1cc7edbe50923fb9c02527e5822c"
+  checksum: 1fbdef82b0dfef9153245fb491397315442eb45d0bdbda5f1dd51843e14ae01285542022ae3150e02f79a17f63af622fab5ea1aad506b3216abd9f60d98f5d0d
   languageName: node
   linkType: hard
 

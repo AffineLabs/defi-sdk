@@ -9,6 +9,7 @@ import {
   EmergencyWithdrawalQueueRequest,
   EmergencyWithdrawalQueueTransfer,
   SSVWithdrawalRequestInfo,
+  WithdrawSlippageByProduct,
   productAllocation,
 } from "../core/types";
 import { portfolioSell, portfolioPurchase } from "../core/portfolio";
@@ -24,6 +25,7 @@ import {
   getChainIdFromRaw,
   NETWORK_PARAMS,
   WALLETCONNECT_PROJECT_ID,
+  WITHDRAW_SLIPPAGE_BY_PRODUCT,
 } from "../core/constants";
 import {
   getEmergencyWithdrawalQueueTransfers,
@@ -46,6 +48,7 @@ class Account {
   selectedChainId?: AllowedChainId = DEFAULT_RAW_CHAIN_ID;
   walletConnectProvider?: Provider;
   web3ModalInstance?: import("@web3modal/standalone").Web3Modal;
+  withdrawSlippageByProduct?: WithdrawSlippageByProduct;
 
   /**
    * Creates an alpine account object
@@ -88,6 +91,7 @@ class Account {
     this.userAddress = await this.signer.getAddress();
     this.walletType = walletType;
     this.selectedChainId = chainId;
+    this.withdrawSlippageByProduct = WITHDRAW_SLIPPAGE_BY_PRODUCT;
 
     if (getMessage && verify) {
       // case - user's wallet needs to be verified with nonce
