@@ -58,7 +58,14 @@ function getWalletconnectProvider(chainId, wcProvider, modal) {
             .connect({
             namespaces: {
                 eip155: {
-                    methods: ["eth_sendTransaction", "eth_signTransaction", "eth_sign", "personal_sign", "eth_signTypedData"],
+                    methods: [
+                        "eth_sendTransaction",
+                        "eth_signTransaction",
+                        "eth_sign",
+                        "personal_sign",
+                        "eth_signTypedData",
+                        "wallet_switchEthereumChain",
+                    ],
                     chains: constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
                     events: ["chainChanged", "accountsChanged"],
                     rpcMap: cache_1.RPC_URLS,

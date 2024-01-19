@@ -145,8 +145,8 @@ export interface SSVWithdrawalRequestInfo {
 export type WithdrawSlippage = {
   max?: number;
   avg?: number;
-}
+};
 
 export type WithdrawSlippageByProduct = {
   [key in AlpineProduct]: WithdrawSlippage;
-}
+};

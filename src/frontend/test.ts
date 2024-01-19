@@ -1,3 +1,4 @@
+import { Web3Modal } from "@web3modal/standalone";
 import { AlpineDeFiSDK } from "../core";
 import { ALLOWED_CHAIN_IDS, DEFAULT_RAW_CHAIN_ID } from "../core/constants";
 import { AlpineProduct } from "../core/types";
@@ -47,10 +48,8 @@ const connectAndWrite = async ({
   // connect
   console.time("entire-connect");
   try {
-    if (walletType === "metamask") {
-      // switch to the chainId
-      await account.switchWalletToAllowedNetwork(walletType, chainId);
-    }
+    // switch to the chainId
+    await account.switchWalletToAllowedNetwork(walletType, chainId);
     console.log("connecting to", walletType, "on chain", chainId, account);
     await account.connect({ walletType, chainId, email });
     console.log("address: ", await account.getUserAddress());
@@ -58,7 +57,7 @@ const connectAndWrite = async ({
     console.error("Error in connect: ", error);
   }
   console.timeEnd("entire-connect");
-  await testRead(account.userAddress || "", chainId);
+  // await testRead(account.userAddress || "", chainId);
 };
 
 const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) => {
@@ -77,9 +76,14 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 
 const main = async () => {
   const alpAccount = new Account();
-  const walletType = "metamask";
+  const walletType: AllowedWallet = "walletConnect";
   const chainId = 137 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "polygonDegen";
+  const _productToBuy: AlpineProduct = "alpSave";
+
+  if (walletType === "walletConnect") {
+    const modal = await initiateWeb3Modal();
+    if (modal) await alpAccount.initWalletConnectProvider(modal);
+  }
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -95,7 +99,7 @@ const main = async () => {
 
   // console.log("sale state", await readAcc.saleIsActive());
   // console.log("whitelist state", await readAcc.whitelistSaleIsActive());
-
+  await alpAccount.switchWalletToAllowedNetwork(walletType, chainId);
   await alpAccount.setSimulationMode(false);
   await buy(alpAccount, _productToBuy, 2);
 
@@ -160,6 +164,24 @@ const handleButtonClick = () => {
     },
     false,
   );
+};
+
+const initiateWeb3Modal = async (): Promise<Web3Modal | undefined> => {
+  try {
+    const web3Modal = new Web3Modal({
+      projectId: process.env.WALLETCONNECT_PROJECT_ID ?? "",
+      walletConnectVersion: 2,
+    });
+
+    web3Modal.setTheme({
+      themeMode: "light",
+    });
+
+    return web3Modal;
+  } catch (err) {
+    console.error("Error in initiateWeb3Modal", err);
+  }
+  return;
 };
 
 main();

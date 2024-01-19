@@ -304,7 +304,10 @@ class Account {
       throw new Error("Metamask is not installed!");
     } else if (walletType === "walletConnect" && this.walletConnectProvider) {
       console.log("Switching wallet to allowed network for wallet connect", chainId, this.walletConnectProvider);
-      this.walletConnectProvider.setDefaultChain(`eip155:${chainId}`);
+      await this.walletConnectProvider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: getChainIdFromRaw(chainId) }],
+      });
       return;
     }
 
