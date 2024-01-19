@@ -308,7 +308,8 @@ class Account {
         method: "wallet_switchEthereumChain",
         params: [{ chainId: getChainIdFromRaw(chainId) }],
       });
-      return;
+      this.selectedChainId = chainId;
+      return await init(this.signer, this.biconomy, undefined, chainId);
     }
 
     const _provider = await getWeb3Provider(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
