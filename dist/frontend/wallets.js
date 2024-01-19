@@ -79,7 +79,7 @@ function getWalletconnectProvider(chainId, wcProvider, modal) {
         wcProvider.setDefaultChain(`eip155:${chainId}`);
         modal.closeModal();
         //  Create Web3 Provider
-        const web3Provider = new ethers_1.ethers.providers.Web3Provider(wcProvider);
+        const web3Provider = new ethers_1.ethers.providers.Web3Provider(wcProvider, "any");
         console.log("web3Provider ====>", web3Provider.getSigner());
         return web3Provider;
         // Trigger `display_uri` event
