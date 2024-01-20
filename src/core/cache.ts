@@ -110,6 +110,8 @@ export async function getAllContracts(
 
   const chainId = getChainId();
 
+  console.log("getAllContracts -> chainId", chainId)
+
   if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
     const alpLarge = TwoAssetBasket__factory.connect(alpLargeData.address, provider);
@@ -183,6 +185,7 @@ export async function getAllContracts(
 }
 
 export function getContracts(): PolygonContracts | EthContracts | BaseContracts {
+  console.log("getContracts: ", CONTRACTS);
   return CONTRACTS;
 }
 export function getEthContracts(): EthContracts {
