@@ -166,6 +166,8 @@ const handleSwitchNetwork = () => {
             const _chainId = alpAccount.selectedChainId === 137 ? 1 : 137;
             yield alpAccount.switchWalletToAllowedNetwork(walletType, _chainId);
             // await connectAndWrite({ walletType, account: alpAccount, chainId });
+            const tokenInfo = yield alpAccount.getTokenInfo("usdc");
+            console.log("tokenInfo: ", tokenInfo);
             // change button text to current network
             element.innerHTML = `Current Network: ${_chainId}, Switch to ${alpAccount.selectedChainId === 137 ? 1 : 137}`;
         });

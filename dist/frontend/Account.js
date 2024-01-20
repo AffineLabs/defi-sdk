@@ -326,7 +326,12 @@ class Account {
                     params: [{ chainId: _chain }],
                 });
                 this.selectedChainId = chainId;
-                return yield (0, core_1.init)(this.signer, this.biconomy, chainId);
+                let _signer;
+                if (this.walletProvider) {
+                    _signer = this.walletProvider.getSigner();
+                }
+                console.log("Account -> switchWalletToAllowedNetwork -> this.walletProvider", this.walletProvider, "walletConnectProvider", this.walletConnectProvider, "_signer", _signer);
+                return yield (0, core_1.init)(_signer !== null && _signer !== void 0 ? _signer : this.signer, this.biconomy, chainId);
             }
             const _provider = yield (0, wallets_1.getWeb3Provider)(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
             if (!_provider) {
