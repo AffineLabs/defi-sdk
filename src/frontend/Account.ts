@@ -323,7 +323,13 @@ class Account {
         _signer = this.walletProvider.getSigner();
       }
       console.log("Account -> switchWalletToAllowedNetwork -> this.walletProvider", this.walletProvider, "walletConnectProvider", this.walletConnectProvider, "_signer", _signer);
-      return await init(_signer ?? this.signer, this.biconomy, chainId);
+      if(!_signer){
+        this.walletProvider = new ethers.providers.Web3Provider(this.walletConnectProvider);
+        _signer = this.walletProvider.getSigner();
+      }
+      console.log("Account -> switchWalletToAllowedNetwork -> this.walletProvider", this.walletProvider, "walletConnectProvider", this.walletConnectProvider, "_signer", _signer);
+      this.signer = _signer;
+      return await init(_signer, this.biconomy, chainId);
     }
 
     const _provider = await getWeb3Provider(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
