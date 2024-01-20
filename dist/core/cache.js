@@ -66,6 +66,7 @@ function getAllContracts(provider, version) {
         ];
         const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, } = allData;
         const chainId = getChainId();
+        console.log("getAllContracts -> chainId", chainId);
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
             const alpLarge = typechain_1.TwoAssetBasket__factory.connect(alpLargeData.address, provider);
@@ -132,6 +133,7 @@ function getAllContracts(provider, version) {
 }
 exports.getAllContracts = getAllContracts;
 function getContracts() {
+    console.log("getContracts: ", CONTRACTS);
     return CONTRACTS;
 }
 exports.getContracts = getContracts;
