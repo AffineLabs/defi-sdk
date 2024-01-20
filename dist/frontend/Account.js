@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReadAccount = exports.Account = void 0;
+exports.Account = void 0;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const mexa_1 = require("@biconomy/mexa");
@@ -51,7 +51,6 @@ class Account {
         this.walletType = constants_1.DEFAULT_WALLET;
         // if true, send regular transaction, if false, use biconomy
         this.gas = false;
-        this.selectedChainId = constants_1.DEFAULT_RAW_CHAIN_ID;
     }
     /**
      * Creates an alpine account object
@@ -310,10 +309,11 @@ class Account {
                 throw new Error("Metamask is not installed!");
             }
             else if (walletType === "walletConnect" && this.walletConnectProvider) {
-                console.log("Switching wallet to allowed network for wallet connect", chainId, this.walletConnectProvider);
+                const _chain = (0, constants_1.getChainIdFromRaw)(chainId);
+                console.log("Switching wallet to allowed network for wallet connect", { chainId, _chain }, this.walletConnectProvider);
                 yield this.walletConnectProvider.request({
                     method: "wallet_switchEthereumChain",
-                    params: [{ chainId: (0, constants_1.getChainIdFromRaw)(chainId) }],
+                    params: [{ chainId: _chain }],
                 });
                 this.selectedChainId = chainId;
                 return yield (0, core_1.init)(this.signer, this.biconomy, undefined, chainId);
@@ -427,18 +427,6 @@ class Account {
             return lockedWithdrawal.epochStartTime();
         });
     }
-}
-exports.Account = Account;
-class ReadAccount {
-    constructor(userAddress, chainId) {
-        this.userAddress = userAddress;
-        this.chainId = chainId;
-    }
-    init() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (0, core_1.init)(this.userAddress, undefined, undefined, this.chainId);
-        });
-    }
     /**
      * get the current best estimate for gas price
      * @returns {Promise<String>} the best estimate for gas price in eth
@@ -484,4 +472,4 @@ class ReadAccount {
         });
     }
 }
-exports.ReadAccount = ReadAccount;
+exports.Account = Account;

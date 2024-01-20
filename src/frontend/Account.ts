@@ -19,7 +19,6 @@ import { setSimulationMode } from "../core/cache";
 import * as lockedWithdrawal from "../core/singleStrategy";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
 import {
-  DEFAULT_RAW_CHAIN_ID,
   DEFAULT_WALLET,
   getChainIdFromRaw,
   NETWORK_PARAMS,
@@ -43,7 +42,7 @@ class Account {
   walletProvider?: ethers.providers.Web3Provider;
   // if true, send regular transaction, if false, use biconomy
   gas = false;
-  selectedChainId?: AllowedChainId = DEFAULT_RAW_CHAIN_ID;
+  selectedChainId?: AllowedChainId;
   walletConnectProvider?: Provider;
   web3ModalInstance?: import("@web3modal/standalone").Web3Modal;
 
@@ -303,10 +302,11 @@ class Account {
     if (!window.ethereum && walletType === "metamask") {
       throw new Error("Metamask is not installed!");
     } else if (walletType === "walletConnect" && this.walletConnectProvider) {
-      console.log("Switching wallet to allowed network for wallet connect", chainId, this.walletConnectProvider);
+      const _chain =  getChainIdFromRaw(chainId);
+      console.log("Switching wallet to allowed network for wallet connect", {chainId, _chain}, this.walletConnectProvider);
       await this.walletConnectProvider.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: getChainIdFromRaw(chainId) }],
+        params: [{ chainId: _chain }],
       });
       this.selectedChainId = chainId;
       return await init(this.signer, this.biconomy, undefined, chainId);
@@ -419,20 +419,7 @@ class Account {
   async lastEpochBeginUTCTime(): Promise<number> {
     return lockedWithdrawal.epochStartTime();
   }
-}
 
-class ReadAccount {
-  userAddress: string;
-  chainId: AllowedChainId;
-
-  constructor(userAddress: string, chainId: AllowedChainId) {
-    this.userAddress = userAddress;
-    this.chainId = chainId;
-  }
-
-  async init() {
-    return init(this.userAddress, undefined, undefined, this.chainId);
-  }
   /**
    * get the current best estimate for gas price
    * @returns {Promise<String>} the best estimate for gas price in eth
@@ -469,4 +456,4 @@ class ReadAccount {
   }
 }
 
-export { Account, ReadAccount };
+export { Account };

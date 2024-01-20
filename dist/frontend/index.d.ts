@@ -1,2 +1,2 @@
-import { Account, ReadAccount } from "./Account";
-export { Account, ReadAccount };
+import { Account } from "./Account";
+export { Account };
