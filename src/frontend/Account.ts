@@ -103,8 +103,16 @@ class Account {
     }
 
     console.time("init-contracts");
-    await init(this.signer, this.biconomy, undefined, chainId);
+    await init(this.signer, this.biconomy, chainId);
     console.timeEnd("init-contracts");
+  }
+
+  async initContracts(chainId: AllowedChainId, address?: string) {
+    if(!address && !this.signer) {
+      throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
+    }
+
+    await init(this.signer ?? address, this.biconomy, chainId);
   }
 
   async setSimulationMode(mode: boolean) {
@@ -174,7 +182,7 @@ class Account {
     // this.biconomy is created upon connection and will always exist
     this.gas = useGas;
     const biconomyProvider = useGas ? undefined : this.biconomy;
-    return init(this.signer, biconomyProvider, undefined, this.selectedChainId);
+    return init(this.signer, biconomyProvider, this.selectedChainId);
   }
 
   /**
@@ -302,6 +310,7 @@ class Account {
     if (!window.ethereum && walletType === "metamask") {
       throw new Error("Metamask is not installed!");
     } else if (walletType === "walletConnect" && this.walletConnectProvider) {
+      // case - user is using walletConnect
       const _chain =  getChainIdFromRaw(chainId);
       console.log("Switching wallet to allowed network for wallet connect", {chainId, _chain}, this.walletConnectProvider);
       await this.walletConnectProvider.request({
@@ -309,7 +318,7 @@ class Account {
         params: [{ chainId: _chain }],
       });
       this.selectedChainId = chainId;
-      return await init(this.signer, this.biconomy, undefined, chainId);
+      return await init(this.signer, this.biconomy, chainId);
     }
 
     const _provider = await getWeb3Provider(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
@@ -347,7 +356,7 @@ class Account {
     if (chainId !== this.selectedChainId && _provider) {
       this.signer = _provider.getSigner();
       this.selectedChainId = chainId;
-      return init(this.signer, this.biconomy, undefined, this.selectedChainId);
+      return init(this.signer, this.biconomy, this.selectedChainId);
     }
   }
 

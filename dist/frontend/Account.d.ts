@@ -25,6 +25,7 @@ declare class Account {
      * @param email user's email address
      */
     connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, }: IConnectAccount): Promise<void>;
+    initContracts(chainId: AllowedChainId, address?: string): Promise<void>;
     setSimulationMode(mode: boolean): Promise<void>;
     private initBiconomy;
     /**

@@ -102,8 +102,17 @@ class Account {
                 }
             }
             console.time("init-contracts");
-            yield (0, core_1.init)(this.signer, this.biconomy, undefined, chainId);
+            yield (0, core_1.init)(this.signer, this.biconomy, chainId);
             console.timeEnd("init-contracts");
+        });
+    }
+    initContracts(chainId, address) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!address && !this.signer) {
+                throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
+            }
+            yield (0, core_1.init)((_a = this.signer) !== null && _a !== void 0 ? _a : address, this.biconomy, chainId);
         });
     }
     setSimulationMode(mode) {
@@ -178,7 +187,7 @@ class Account {
             // this.biconomy is created upon connection and will always exist
             this.gas = useGas;
             const biconomyProvider = useGas ? undefined : this.biconomy;
-            return (0, core_1.init)(this.signer, biconomyProvider, undefined, this.selectedChainId);
+            return (0, core_1.init)(this.signer, biconomyProvider, this.selectedChainId);
         });
     }
     /**
@@ -309,6 +318,7 @@ class Account {
                 throw new Error("Metamask is not installed!");
             }
             else if (walletType === "walletConnect" && this.walletConnectProvider) {
+                // case - user is using walletConnect
                 const _chain = (0, constants_1.getChainIdFromRaw)(chainId);
                 console.log("Switching wallet to allowed network for wallet connect", { chainId, _chain }, this.walletConnectProvider);
                 yield this.walletConnectProvider.request({
@@ -316,7 +326,7 @@ class Account {
                     params: [{ chainId: _chain }],
                 });
                 this.selectedChainId = chainId;
-                return yield (0, core_1.init)(this.signer, this.biconomy, undefined, chainId);
+                return yield (0, core_1.init)(this.signer, this.biconomy, chainId);
             }
             const _provider = yield (0, wallets_1.getWeb3Provider)(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
             if (!_provider) {
@@ -351,7 +361,7 @@ class Account {
             if (chainId !== this.selectedChainId && _provider) {
                 this.signer = _provider.getSigner();
                 this.selectedChainId = chainId;
-                return (0, core_1.init)(this.signer, this.biconomy, undefined, this.selectedChainId);
+                return (0, core_1.init)(this.signer, this.biconomy, this.selectedChainId);
             }
         });
     }

@@ -46,9 +46,9 @@ exports.getProviderByChainId = getProviderByChainId;
  * @param version The addressbook version
  * @returns A map of contract names to ethers.Contract objects
  */
-function getAllContracts(provider, version) {
+function getAllContracts(provider) {
     return __awaiter(this, void 0, void 0, function* () {
-        const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${version}`;
+        const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${CONTRACT_VERSION}`;
         const allData = (yield axios_1.default.get(`${s3Root}/addressbook.json`)).data;
         // Using this abi so that we mint usdc (the tests run on testnet)
         const erc20Abi = [
@@ -149,9 +149,13 @@ function getBaseContracts() {
     return CONTRACTS;
 }
 exports.getBaseContracts = getBaseContracts;
-function init(signerOrAddress, biconomy, contractVersion = CONTRACT_VERSION, chainId = constants_1.DEFAULT_RAW_CHAIN_ID) {
+function init(signerOrAddress, biconomy, chainId = constants_1.DEFAULT_RAW_CHAIN_ID) {
     return __awaiter(this, void 0, void 0, function* () {
         CHAIN_ID = chainId;
+        console.log("init -> CHAIN_ID", CHAIN_ID);
+        console.log("init -> signerOrAddress", signerOrAddress);
+        console.log("init -> biconomy", biconomy);
+        console.log("init -> isSigner", ethers_1.ethers.Signer.isSigner(signerOrAddress));
         // Use the user's wallet's provider if possible
         if (ethers_1.ethers.Signer.isSigner(signerOrAddress)) {
             exports.SIGNER = signerOrAddress;
@@ -162,7 +166,10 @@ function init(signerOrAddress, biconomy, contractVersion = CONTRACT_VERSION, cha
             exports.PROVIDER = getProviderByChainId(chainId);
             exports.userAddress = signerOrAddress;
         }
-        CONTRACTS = yield getAllContracts(exports.PROVIDER, contractVersion);
+        console.log("init -> PROVIDER", exports.PROVIDER);
+        console.log("init -> userAddress", exports.userAddress);
+        CONTRACTS = yield getAllContracts(exports.PROVIDER);
+        console.log("init -> CONTRACTS", CONTRACTS);
         exports.BICONOMY = biconomy;
     });
 }

@@ -65,7 +65,7 @@ describe("Buy products Eth", async () => {
   before(async () => {
     testProvider = new ethers.providers.JsonRpcProvider("http://localhost:8546");
     wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
-    await init(wallet, undefined, undefined, 5);
+    await init(wallet, undefined, 5);
     await mintUSDC(wallet.address, 100);
     contracts = getEthContracts();
   });
@@ -115,7 +115,7 @@ describe("Buy products Base", async () => {
     const testProvider = getTestProvider("base");
     wallet = ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
 
-    await init(wallet, undefined, "v1.0-beta", 8453);
+    await init(wallet, undefined, 8453);
     const oneEth = ethers.BigNumber.from(10).pow(18);
     await testProvider.send("anvil_setBalance", [wallet.address, oneEth.mul(100).toHexString()]);
     console.log("INIT DONE");
