@@ -469,10 +469,6 @@ export declare class TwoAssetBasket__factory {
             readonly name: "_governance";
             readonly type: "address";
         }, {
-            readonly internalType: "address";
-            readonly name: "forwarder";
-            readonly type: "address";
-        }, {
             readonly internalType: "contract ERC20";
             readonly name: "_asset";
             readonly type: "address";
@@ -492,20 +488,6 @@ export declare class TwoAssetBasket__factory {
         readonly name: "initialize";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "address";
-            readonly name: "forwarder";
-            readonly type: "address";
-        }];
-        readonly name: "isTrustedForwarder";
-        readonly outputs: readonly [{
-            readonly internalType: "bool";
-            readonly name: "";
-            readonly type: "bool";
-        }];
-        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -627,6 +609,16 @@ export declare class TwoAssetBasket__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
+            readonly internalType: "bytes";
+            readonly name: "users";
+            readonly type: "bytes";
+        }];
+        readonly name: "tearDown";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
             readonly internalType: "contract ERC20";
             readonly name: "";
             readonly type: "address";
@@ -738,16 +730,6 @@ export declare class TwoAssetBasket__factory {
             readonly type: "uint256";
         }];
         readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "versionRecipient";
-        readonly outputs: readonly [{
-            readonly internalType: "string";
-            readonly name: "";
-            readonly type: "string";
-        }];
-        readonly stateMutability: "pure";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];

@@ -124,7 +124,21 @@ export declare class IWSTETH__factory {
             readonly name: "";
             readonly type: "uint256";
         }];
-        readonly stateMutability: "nonpayable";
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "_stETHAmount";
+            readonly type: "uint256";
+        }];
+        readonly name: "getWstETHByStETH";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -186,11 +200,31 @@ export declare class IWSTETH__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
+        readonly name: "stEthPerToken";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "symbol";
         readonly outputs: readonly [{
             readonly internalType: "string";
             readonly name: "";
             readonly type: "string";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "tokensPerStEth";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -251,6 +285,20 @@ export declare class IWSTETH__factory {
             readonly type: "uint256";
         }];
         readonly name: "unwrap";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "_stETHAmount";
+            readonly type: "uint256";
+        }];
+        readonly name: "wrap";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "";

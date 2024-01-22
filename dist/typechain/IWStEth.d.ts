@@ -10,22 +10,27 @@ export interface IWSTETHInterface extends utils.Interface {
         "balanceOf(address)": FunctionFragment;
         "decimals()": FunctionFragment;
         "getStETHByWstETH(uint256)": FunctionFragment;
+        "getWstETHByStETH(uint256)": FunctionFragment;
         "name()": FunctionFragment;
         "nonces(address)": FunctionFragment;
         "permit(address,address,uint256,uint256,uint8,bytes32,bytes32)": FunctionFragment;
+        "stEthPerToken()": FunctionFragment;
         "symbol()": FunctionFragment;
+        "tokensPerStEth()": FunctionFragment;
         "totalSupply()": FunctionFragment;
         "transfer(address,uint256)": FunctionFragment;
         "transferFrom(address,address,uint256)": FunctionFragment;
         "unwrap(uint256)": FunctionFragment;
+        "wrap(uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DOMAIN_SEPARATOR" | "allowance" | "approve" | "balanceOf" | "decimals" | "getStETHByWstETH" | "name" | "nonces" | "permit" | "symbol" | "totalSupply" | "transfer" | "transferFrom" | "unwrap"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DOMAIN_SEPARATOR" | "allowance" | "approve" | "balanceOf" | "decimals" | "getStETHByWstETH" | "getWstETHByStETH" | "name" | "nonces" | "permit" | "stEthPerToken" | "symbol" | "tokensPerStEth" | "totalSupply" | "transfer" | "transferFrom" | "unwrap" | "wrap"): FunctionFragment;
     encodeFunctionData(functionFragment: "DOMAIN_SEPARATOR", values?: undefined): string;
     encodeFunctionData(functionFragment: "allowance", values: [PromiseOrValue<string>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "approve", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "balanceOf", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "decimals", values?: undefined): string;
     encodeFunctionData(functionFragment: "getStETHByWstETH", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "getWstETHByStETH", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "name", values?: undefined): string;
     encodeFunctionData(functionFragment: "nonces", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "permit", values: [
@@ -37,7 +42,9 @@ export interface IWSTETHInterface extends utils.Interface {
         PromiseOrValue<BytesLike>,
         PromiseOrValue<BytesLike>
     ]): string;
+    encodeFunctionData(functionFragment: "stEthPerToken", values?: undefined): string;
     encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
+    encodeFunctionData(functionFragment: "tokensPerStEth", values?: undefined): string;
     encodeFunctionData(functionFragment: "totalSupply", values?: undefined): string;
     encodeFunctionData(functionFragment: "transfer", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "transferFrom", values: [
@@ -46,20 +53,25 @@ export interface IWSTETHInterface extends utils.Interface {
         PromiseOrValue<BigNumberish>
     ]): string;
     encodeFunctionData(functionFragment: "unwrap", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "wrap", values: [PromiseOrValue<BigNumberish>]): string;
     decodeFunctionResult(functionFragment: "DOMAIN_SEPARATOR", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "decimals", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getStETHByWstETH", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getWstETHByStETH", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "nonces", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "permit", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "stEthPerToken", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "tokensPerStEth", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "totalSupply", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "transferFrom", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "unwrap", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "wrap", data: BytesLike): Result;
     events: {
         "Approval(address,address,uint256)": EventFragment;
         "Transfer(address,address,uint256)": EventFragment;
@@ -111,15 +123,16 @@ export interface IWSTETH extends BaseContract {
         }): Promise<ContractTransaction>;
         balanceOf(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
         decimals(overrides?: CallOverrides): Promise<[number]>;
-        getStETHByWstETH(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
+        getStETHByWstETH(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
+        getWstETHByStETH(_stETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
         name(overrides?: CallOverrides): Promise<[string]>;
         nonces(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
         permit(owner: PromiseOrValue<string>, spender: PromiseOrValue<string>, value: PromiseOrValue<BigNumberish>, deadline: PromiseOrValue<BigNumberish>, v: PromiseOrValue<BigNumberish>, r: PromiseOrValue<BytesLike>, s: PromiseOrValue<BytesLike>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        stEthPerToken(overrides?: CallOverrides): Promise<[BigNumber]>;
         symbol(overrides?: CallOverrides): Promise<[string]>;
+        tokensPerStEth(overrides?: CallOverrides): Promise<[BigNumber]>;
         totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -130,6 +143,9 @@ export interface IWSTETH extends BaseContract {
         unwrap(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        wrap(_stETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
     };
     DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
     allowance(arg0: PromiseOrValue<string>, arg1: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -138,15 +154,16 @@ export interface IWSTETH extends BaseContract {
     }): Promise<ContractTransaction>;
     balanceOf(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     decimals(overrides?: CallOverrides): Promise<number>;
-    getStETHByWstETH(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
+    getStETHByWstETH(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    getWstETHByStETH(_stETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     name(overrides?: CallOverrides): Promise<string>;
     nonces(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     permit(owner: PromiseOrValue<string>, spender: PromiseOrValue<string>, value: PromiseOrValue<BigNumberish>, deadline: PromiseOrValue<BigNumberish>, v: PromiseOrValue<BigNumberish>, r: PromiseOrValue<BytesLike>, s: PromiseOrValue<BytesLike>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    stEthPerToken(overrides?: CallOverrides): Promise<BigNumber>;
     symbol(overrides?: CallOverrides): Promise<string>;
+    tokensPerStEth(overrides?: CallOverrides): Promise<BigNumber>;
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
     transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
@@ -157,6 +174,9 @@ export interface IWSTETH extends BaseContract {
     unwrap(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    wrap(_stETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     callStatic: {
         DOMAIN_SEPARATOR(overrides?: CallOverrides): Promise<string>;
         allowance(arg0: PromiseOrValue<string>, arg1: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -164,14 +184,18 @@ export interface IWSTETH extends BaseContract {
         balanceOf(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         decimals(overrides?: CallOverrides): Promise<number>;
         getStETHByWstETH(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        getWstETHByStETH(_stETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         name(overrides?: CallOverrides): Promise<string>;
         nonces(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         permit(owner: PromiseOrValue<string>, spender: PromiseOrValue<string>, value: PromiseOrValue<BigNumberish>, deadline: PromiseOrValue<BigNumberish>, v: PromiseOrValue<BigNumberish>, r: PromiseOrValue<BytesLike>, s: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<void>;
+        stEthPerToken(overrides?: CallOverrides): Promise<BigNumber>;
         symbol(overrides?: CallOverrides): Promise<string>;
+        tokensPerStEth(overrides?: CallOverrides): Promise<BigNumber>;
         totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         transferFrom(from: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         unwrap(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        wrap(_stETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     };
     filters: {
         "Approval(address,address,uint256)"(owner?: PromiseOrValue<string> | null, spender?: PromiseOrValue<string> | null, amount?: null): ApprovalEventFilter;
@@ -187,15 +211,16 @@ export interface IWSTETH extends BaseContract {
         }): Promise<BigNumber>;
         balanceOf(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         decimals(overrides?: CallOverrides): Promise<BigNumber>;
-        getStETHByWstETH(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
+        getStETHByWstETH(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        getWstETHByStETH(_stETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         name(overrides?: CallOverrides): Promise<BigNumber>;
         nonces(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         permit(owner: PromiseOrValue<string>, spender: PromiseOrValue<string>, value: PromiseOrValue<BigNumberish>, deadline: PromiseOrValue<BigNumberish>, v: PromiseOrValue<BigNumberish>, r: PromiseOrValue<BytesLike>, s: PromiseOrValue<BytesLike>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        stEthPerToken(overrides?: CallOverrides): Promise<BigNumber>;
         symbol(overrides?: CallOverrides): Promise<BigNumber>;
+        tokensPerStEth(overrides?: CallOverrides): Promise<BigNumber>;
         totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -204,6 +229,9 @@ export interface IWSTETH extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         unwrap(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        wrap(_stETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
     };
@@ -215,15 +243,16 @@ export interface IWSTETH extends BaseContract {
         }): Promise<PopulatedTransaction>;
         balanceOf(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         decimals(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        getStETHByWstETH(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
+        getStETHByWstETH(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getWstETHByStETH(_stETHAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         nonces(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         permit(owner: PromiseOrValue<string>, spender: PromiseOrValue<string>, value: PromiseOrValue<BigNumberish>, deadline: PromiseOrValue<BigNumberish>, v: PromiseOrValue<BigNumberish>, r: PromiseOrValue<BytesLike>, s: PromiseOrValue<BytesLike>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
+        stEthPerToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        tokensPerStEth(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -232,6 +261,9 @@ export interface IWSTETH extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         unwrap(_wstETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        wrap(_stETHAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
     };

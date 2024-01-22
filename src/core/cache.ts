@@ -139,7 +139,7 @@ export async function getAllContracts(
           ? AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
           : undefined,
       polygonLevMaticX,
-      matic
+      matic,
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);

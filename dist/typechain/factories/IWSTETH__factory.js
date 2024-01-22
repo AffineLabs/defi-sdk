@@ -165,7 +165,26 @@ const _abi = [
                 type: "uint256",
             },
         ],
-        stateMutability: "nonpayable",
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "_stETHAmount",
+                type: "uint256",
+            },
+        ],
+        name: "getWstETHByStETH",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
         type: "function",
     },
     {
@@ -245,12 +264,38 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "stEthPerToken",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "symbol",
         outputs: [
             {
                 internalType: "string",
                 name: "",
                 type: "string",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "tokensPerStEth",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
             },
         ],
         stateMutability: "view",
@@ -331,6 +376,25 @@ const _abi = [
             },
         ],
         name: "unwrap",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "_stETHAmount",
+                type: "uint256",
+            },
+        ],
+        name: "wrap",
         outputs: [
             {
                 internalType: "uint256",

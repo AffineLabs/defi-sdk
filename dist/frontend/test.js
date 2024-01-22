@@ -9,38 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const standalone_1 = require("@web3modal/standalone");
-const core_1 = require("../core");
 const constants_1 = require("../core/constants");
 const Account_1 = require("./Account");
-// const getTokenInfo = async (token: AlpineProduct | "usdc" | "weth", readAcc: ReadAccount) => {
-//   try {
-//     const _tokenInfo = await readAcc.getTokenInfo(token);
-//     console.log(token, " token: ", _tokenInfo);
-//   } catch (error) {
-//     console.error("Error in getTokenInfo: ", token, error);
-//   }
-// };
-// const testRead = async (user: string, chainId: AllowedChainId) => {
-//   try {
-//     const readAcc = new ReadAccount(user || "", chainId);
-//     await readAcc.init();
-//     const gas = await readAcc.getGasPrice();
-//     const balance = await readAcc.getGasBalance();
-//     console.log({ gas, balance });
-//     await getTokenInfo("usdc", readAcc);
-//     await getTokenInfo("weth", readAcc);
-//     if (chainId === 80001 || chainId === 137) {
-//       await getTokenInfo("alpSave", readAcc);
-//       await getTokenInfo("alpLarge", readAcc);
-//     } else {
-//       await getTokenInfo("ethEarn", readAcc);
-//       await getTokenInfo("degen", readAcc);
-//     }
-//   } catch (error) {
-//     console.error("Error in read account: ", error);
-//   }
-// };
 const connectAndWrite = ({ walletType = "metamask", account, chainId, }) => __awaiter(void 0, void 0, void 0, function* () {
     const email = process.env.EMAIL || "";
     // connect
@@ -65,7 +35,7 @@ const connectAndWrite = ({ walletType = "metamask", account, chainId, }) => __aw
 });
 const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, function* () {
     // check if user is approved max amount
-    const isApproved = yield alpAccount.isApproved(product, 1);
+    const isApproved = yield alpAccount.isApproved(product, amount);
     console.log("isApproved: ", isApproved);
     // approve max amount if not approved
     if (!isApproved) {
@@ -76,16 +46,15 @@ const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, f
     yield alpAccount.buyProduct(product, amount);
 });
 const alpAccount = new Account_1.Account();
-const walletType = "walletConnect";
+const walletType = "metamask";
 const chainId = 137;
-const _productToBuy = "alpSave";
-const amountToBuy = 0.1;
+const _productToBuy = "polygonLevMaticX";
+const amountToBuy = 0.01;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
-    if (walletType === "walletConnect") {
-        const modal = yield initiateWeb3Modal();
-        if (modal)
-            yield alpAccount.initWalletConnectProvider(modal);
-    }
+    // if (walletType === "walletConnect") {
+    //   const modal = await initiateWeb3Modal();
+    //   if (modal) await alpAccount.initWalletConnectProvider(modal);
+    // }
     console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS: constants_1.ALLOWED_CHAIN_IDS }, constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
     yield connectAndWrite({ walletType, account: alpAccount, chainId });
     // console.log("sale state", await readAcc.saleIsActive());
@@ -98,8 +67,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // await alpAccount.sellProduct(_productToBuy, 1);
     // console.log("sold: ", _productToBuy, "of amount: ", 1);
     // console.log("basket bal after sell ", await readAcc.getTokenInfo(_productToBuy));
-    const tvlCap = yield core_1.AlpineDeFiSDK.getTVLCap(_productToBuy);
-    console.log("tvlCap: ", tvlCap);
+    // const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
+    // console.log("tvlCap: ", tvlCap);
     // const res = await alpAccount.isStrategyLiquid();
     // console.log({ res });
     // const requests = await alpAccount.getWithdrawalRequest();
@@ -133,23 +102,21 @@ const handleButtonClick = () => {
         });
     }, false);
 };
-const initiateWeb3Modal = () => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    try {
-        const web3Modal = new standalone_1.Web3Modal({
-            projectId: (_a = process.env.WALLETCONNECT_PROJECT_ID) !== null && _a !== void 0 ? _a : "",
-            walletConnectVersion: 2,
-        });
-        web3Modal.setTheme({
-            themeMode: "light",
-        });
-        return web3Modal;
-    }
-    catch (err) {
-        console.error("Error in initiateWeb3Modal", err);
-    }
-    return;
-});
+// const initiateWeb3Modal = async (): Promise<Web3Modal | undefined> => {
+//   try {
+//     const web3Modal = new Web3Modal({
+//       projectId: process.env.WALLETCONNECT_PROJECT_ID ?? "",
+//       walletConnectVersion: 2,
+//     });
+//     web3Modal.setTheme({
+//       themeMode: "light",
+//     });
+//     return web3Modal;
+//   } catch (err) {
+//     console.error("Error in initiateWeb3Modal", err);
+//   }
+//   return;
+// };
 const handleSwitchNetwork = () => {
     document.addEventListener("click", function (event) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -1204,6 +1204,16 @@ export declare class VaultV2__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [{
+            readonly internalType: "bytes";
+            readonly name: "users";
+            readonly type: "bytes";
+        }];
+        readonly name: "tearDown";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [];
         readonly name: "totalAssets";
         readonly outputs: readonly [{

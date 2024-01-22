@@ -8,10 +8,6 @@ export declare class Router__factory {
             readonly name: "name";
             readonly type: "string";
         }, {
-            readonly internalType: "address";
-            readonly name: "forwarder";
-            readonly type: "address";
-        }, {
             readonly internalType: "contract IWETH";
             readonly name: "_weth";
             readonly type: "address";
@@ -134,20 +130,6 @@ export declare class Router__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
-            readonly internalType: "address";
-            readonly name: "forwarder";
-            readonly type: "address";
-        }];
-        readonly name: "isTrustedForwarder";
-        readonly outputs: readonly [{
-            readonly internalType: "bool";
-            readonly name: "";
-            readonly type: "bool";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
             readonly internalType: "contract IERC4626";
             readonly name: "vault";
             readonly type: "address";
@@ -263,26 +245,6 @@ export declare class Router__factory {
             readonly type: "uint256";
         }];
         readonly stateMutability: "payable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "trustedForwarder";
-        readonly outputs: readonly [{
-            readonly internalType: "address";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "versionRecipient";
-        readonly outputs: readonly [{
-            readonly internalType: "string";
-            readonly name: "";
-            readonly type: "string";
-        }];
-        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];

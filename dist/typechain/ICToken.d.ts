@@ -12,6 +12,7 @@ export interface ICTokenInterface extends utils.Interface {
         "borrowBalanceCurrent(address)": FunctionFragment;
         "borrowRatePerBlock()": FunctionFragment;
         "exchangeRateCurrent()": FunctionFragment;
+        "mint()": FunctionFragment;
         "mint(uint256)": FunctionFragment;
         "redeemUnderlying(uint256)": FunctionFragment;
         "repayBorrow(uint256)": FunctionFragment;
@@ -20,7 +21,7 @@ export interface ICTokenInterface extends utils.Interface {
         "transfer(address,uint256)": FunctionFragment;
         "transferFrom(address,address,uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "allowance" | "approve" | "balanceOf" | "balanceOfUnderlying" | "borrow" | "borrowBalanceCurrent" | "borrowRatePerBlock" | "exchangeRateCurrent" | "mint" | "redeemUnderlying" | "repayBorrow(uint256)" | "repayBorrow()" | "totalSupply" | "transfer" | "transferFrom"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "allowance" | "approve" | "balanceOf" | "balanceOfUnderlying" | "borrow" | "borrowBalanceCurrent" | "borrowRatePerBlock" | "exchangeRateCurrent" | "mint()" | "mint(uint256)" | "redeemUnderlying" | "repayBorrow(uint256)" | "repayBorrow()" | "totalSupply" | "transfer" | "transferFrom"): FunctionFragment;
     encodeFunctionData(functionFragment: "allowance", values: [PromiseOrValue<string>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "approve", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "balanceOf", values: [PromiseOrValue<string>]): string;
@@ -29,7 +30,8 @@ export interface ICTokenInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "borrowBalanceCurrent", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "borrowRatePerBlock", values?: undefined): string;
     encodeFunctionData(functionFragment: "exchangeRateCurrent", values?: undefined): string;
-    encodeFunctionData(functionFragment: "mint", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "mint()", values?: undefined): string;
+    encodeFunctionData(functionFragment: "mint(uint256)", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "redeemUnderlying", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "repayBorrow(uint256)", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "repayBorrow()", values?: undefined): string;
@@ -48,7 +50,8 @@ export interface ICTokenInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "borrowBalanceCurrent", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "borrowRatePerBlock", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "exchangeRateCurrent", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "mint()", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "mint(uint256)", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "redeemUnderlying", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "repayBorrow(uint256)", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "repayBorrow()", data: BytesLike): Result;
@@ -117,7 +120,10 @@ export interface ICToken extends BaseContract {
         exchangeRateCurrent(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        mint(underlying: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+        "mint()"(overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        "mint(uint256)"(underlying: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         redeemUnderlying(arg0: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -155,7 +161,10 @@ export interface ICToken extends BaseContract {
     exchangeRateCurrent(overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    mint(underlying: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+    "mint()"(overrides?: PayableOverrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    "mint(uint256)"(underlying: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     redeemUnderlying(arg0: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -183,7 +192,8 @@ export interface ICToken extends BaseContract {
         borrowBalanceCurrent(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         borrowRatePerBlock(overrides?: CallOverrides): Promise<BigNumber>;
         exchangeRateCurrent(overrides?: CallOverrides): Promise<BigNumber>;
-        mint(underlying: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        "mint()"(overrides?: CallOverrides): Promise<void>;
+        "mint(uint256)"(underlying: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         redeemUnderlying(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         "repayBorrow(uint256)"(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         "repayBorrow()"(overrides?: CallOverrides): Promise<void>;
@@ -216,7 +226,10 @@ export interface ICToken extends BaseContract {
         exchangeRateCurrent(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        mint(underlying: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+        "mint()"(overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        "mint(uint256)"(underlying: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         redeemUnderlying(arg0: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -255,7 +268,10 @@ export interface ICToken extends BaseContract {
         exchangeRateCurrent(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        mint(underlying: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+        "mint()"(overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        "mint(uint256)"(underlying: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         redeemUnderlying(arg0: PromiseOrValue<BigNumberish>, overrides?: Overrides & {

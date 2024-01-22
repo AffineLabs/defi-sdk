@@ -614,11 +614,6 @@ const _abi = [
                 type: "address",
             },
             {
-                internalType: "address",
-                name: "forwarder",
-                type: "address",
-            },
-            {
                 internalType: "contract ERC20",
                 name: "_asset",
                 type: "address",
@@ -642,25 +637,6 @@ const _abi = [
         name: "initialize",
         outputs: [],
         stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "address",
-                name: "forwarder",
-                type: "address",
-            },
-        ],
-        name: "isTrustedForwarder",
-        outputs: [
-            {
-                internalType: "bool",
-                name: "",
-                type: "bool",
-            },
-        ],
-        stateMutability: "view",
         type: "function",
     },
     {
@@ -820,6 +796,19 @@ const _abi = [
     {
         inputs: [
             {
+                internalType: "bytes",
+                name: "users",
+                type: "bytes",
+            },
+        ],
+        name: "tearDown",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
                 internalType: "contract ERC20",
                 name: "",
                 type: "address",
@@ -964,19 +953,6 @@ const _abi = [
             },
         ],
         stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "versionRecipient",
-        outputs: [
-            {
-                internalType: "string",
-                name: "",
-                type: "string",
-            },
-        ],
-        stateMutability: "pure",
         type: "function",
     },
     {

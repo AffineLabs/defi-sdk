@@ -1,15 +1,6 @@
 import { BigNumber, Contract, ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
-import {
-  ERC4626Upgradeable,
-  L2Vault,
-  MockERC20,
-  Router,
-  StrategyVault,
-  TwoAssetBasket,
-  Vault,
-  VaultV2,
-} from "../typechain";
+import { ERC4626Upgradeable, MockERC20, Router } from "../typechain";
 // Implementation of erc20, as contract uses two erc20 implementation oz, solmate,
 // replacing it with mockERC20 which is an extension of ERC20
 import { MockERC20__factory } from "../typechain";
@@ -25,15 +16,7 @@ import {
 } from "./cache";
 import { MAX_UINT } from "./constants";
 
-import {
-  AlpineProduct,
-  BasicReceiptInfo,
-  DryRunReceipt,
-  FullTxReceipt,
-  TokenInfo,
-  polygonProducts,
-  AlpineContracts,
-} from "./types";
+import { AlpineProduct, BasicReceiptInfo, DryRunReceipt, FullTxReceipt, TokenInfo, AlpineContracts } from "./types";
 
 async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   vault: ERC4626Upgradeable;
@@ -58,7 +41,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
     polygonLeverage,
     baseUsdEarn,
     baseLeverage,
-    polygonLevMaticX
+    polygonLevMaticX,
   };
 
   const vault = productToVault[product];
@@ -71,11 +54,9 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
 
   if (product == "alpLarge") {
     return buyBtCEthShares(vault, amount, slippageBps, asset, router);
-  } else if (["ethWethEarn", "ethLeverage", "baseLeverage"].includes(product)) {
+  } else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX"].includes(product)) {
     return buySharesByEthThroughWeth(amount, vault, asset);
-  } 
-
-  console.log("buying", product, amount);
+  }
 
   return buyVault(vault, amount, asset);
 }
@@ -160,7 +141,7 @@ async function buySharesByEthThroughWeth(
   data.push(router.interface.encodeFunctionData("deposit", [vault.address, userAddress, amount, 0]));
 
   const beforeBal: ethers.BigNumber = await vault.balanceOf(userAddress);
-  console.log({ amount });
+
   if (SIMULATE) {
     const dryRunInfo = (await blockchainCall(router, "multicall", [data], true, amount)) as GasInfo;
     return {
@@ -308,7 +289,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     polygonLeverage,
     baseUsdEarn,
     baseLeverage,
-    polygonLevMaticX
+    polygonLevMaticX,
   } = getContracts() as AlpineContracts;
 
   const productToContract: { [key in AlpineProduct]: Contract | undefined } = {
@@ -323,7 +304,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     ethWethEarn,
     baseLeverage,
     baseUsdEarn,
-    polygonLevMaticX
+    polygonLevMaticX,
   };
 
   const contract = productToContract[product];

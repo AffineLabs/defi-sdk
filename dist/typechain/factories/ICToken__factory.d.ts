@@ -155,6 +155,12 @@ export declare class ICToken__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [];
+        readonly name: "mint";
+        readonly outputs: readonly [];
+        readonly stateMutability: "payable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "underlying";

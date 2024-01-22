@@ -1,40 +1,10 @@
-import { Web3Modal } from "@web3modal/standalone";
+// import { Web3Modal } from "@web3modal/standalone";
 import { AlpineDeFiSDK } from "../core";
 import { ALLOWED_CHAIN_IDS } from "../core/constants";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet } from "../types/account";
 import { Account } from "./Account";
 
-// const getTokenInfo = async (token: AlpineProduct | "usdc" | "weth", readAcc: ReadAccount) => {
-//   try {
-//     const _tokenInfo = await readAcc.getTokenInfo(token);
-//     console.log(token, " token: ", _tokenInfo);
-//   } catch (error) {
-//     console.error("Error in getTokenInfo: ", token, error);
-//   }
-// };
-
-// const testRead = async (user: string, chainId: AllowedChainId) => {
-//   try {
-//     const readAcc = new ReadAccount(user || "", chainId);
-//     await readAcc.init();
-//     const gas = await readAcc.getGasPrice();
-//     const balance = await readAcc.getGasBalance();
-//     console.log({ gas, balance });
-//     await getTokenInfo("usdc", readAcc);
-//     await getTokenInfo("weth", readAcc);
-
-//     if (chainId === 80001 || chainId === 137) {
-//       await getTokenInfo("alpSave", readAcc);
-//       await getTokenInfo("alpLarge", readAcc);
-//     } else {
-//       await getTokenInfo("ethEarn", readAcc);
-//       await getTokenInfo("degen", readAcc);
-//     }
-//   } catch (error) {
-//     console.error("Error in read account: ", error);
-//   }
-// };
 const connectAndWrite = async ({
   walletType = "metamask",
   account,
@@ -66,7 +36,7 @@ const connectAndWrite = async ({
 
 const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) => {
   // check if user is approved max amount
-  const isApproved = await alpAccount.isApproved(product, 1);
+  const isApproved = await alpAccount.isApproved(product, amount);
   console.log("isApproved: ", isApproved);
 
   // approve max amount if not approved
@@ -79,16 +49,16 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 };
 
 const alpAccount = new Account();
-const walletType: AllowedWallet = "walletConnect";
+const walletType: AllowedWallet = "metamask";
 const chainId = 137 as AllowedChainId;
-const _productToBuy: AlpineProduct = "alpSave";
-const amountToBuy = 0.1;
+const _productToBuy: AlpineProduct = "polygonLevMaticX";
+const amountToBuy = 0.01;
 
 const main = async () => {
-  if (walletType === "walletConnect") {
-    const modal = await initiateWeb3Modal();
-    if (modal) await alpAccount.initWalletConnectProvider(modal);
-  }
+  // if (walletType === "walletConnect") {
+  //   const modal = await initiateWeb3Modal();
+  //   if (modal) await alpAccount.initWalletConnectProvider(modal);
+  // }
 
   console.log(
     `connecting to ${walletType} on chain ${chainId}`,
@@ -111,9 +81,9 @@ const main = async () => {
   // console.log("sold: ", _productToBuy, "of amount: ", 1);
   // console.log("basket bal after sell ", await readAcc.getTokenInfo(_productToBuy));
 
-  const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
+  // const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
 
-  console.log("tvlCap: ", tvlCap);
+  // console.log("tvlCap: ", tvlCap);
 
   // const res = await alpAccount.isStrategyLiquid();
   // console.log({ res });
@@ -160,23 +130,23 @@ const handleButtonClick = () => {
   );
 };
 
-const initiateWeb3Modal = async (): Promise<Web3Modal | undefined> => {
-  try {
-    const web3Modal = new Web3Modal({
-      projectId: process.env.WALLETCONNECT_PROJECT_ID ?? "",
-      walletConnectVersion: 2,
-    });
+// const initiateWeb3Modal = async (): Promise<Web3Modal | undefined> => {
+//   try {
+//     const web3Modal = new Web3Modal({
+//       projectId: process.env.WALLETCONNECT_PROJECT_ID ?? "",
+//       walletConnectVersion: 2,
+//     });
 
-    web3Modal.setTheme({
-      themeMode: "light",
-    });
+//     web3Modal.setTheme({
+//       themeMode: "light",
+//     });
 
-    return web3Modal;
-  } catch (err) {
-    console.error("Error in initiateWeb3Modal", err);
-  }
-  return;
-};
+//     return web3Modal;
+//   } catch (err) {
+//     console.error("Error in initiateWeb3Modal", err);
+//   }
+//   return;
+// };
 
 const handleSwitchNetwork = () => {
   document.addEventListener(

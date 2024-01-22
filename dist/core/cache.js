@@ -91,7 +91,7 @@ function getAllContracts(provider) {
                     ? typechain_1.AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
                     : undefined,
                 polygonLevMaticX,
-                matic
+                matic,
             };
         }
         else if (chainId === 1 || chainId === 5) {

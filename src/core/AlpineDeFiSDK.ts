@@ -147,7 +147,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     baseLeverage,
     ethLeverage,
     polygonLevMaticX,
-    matic
+    matic,
   } = getContracts() as AlpineContracts;
 
   if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product)) return true;
@@ -202,7 +202,7 @@ export async function approve(product: AlpineProduct, amountAsset?: string): Pro
   let asset = usdc;
   if (["ethWethEarn", "ethLeverage", "polygonLeverage"].includes(product)) {
     asset = weth;
-  } else if(matic && ["polygonLevMaticX"].includes(product)) {
+  } else if (matic && ["polygonLevMaticX"].includes(product)) {
     asset = matic;
   }
   const decimals = await asset.decimals();

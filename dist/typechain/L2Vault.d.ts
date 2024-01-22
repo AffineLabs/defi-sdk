@@ -47,8 +47,7 @@ export interface L2VaultInterface extends utils.Interface {
         "harvest(address[])": FunctionFragment;
         "hasRole(bytes32,address)": FunctionFragment;
         "increaseAllowance(address,uint256)": FunctionFragment;
-        "initialize(address,address,address,address,address,address,uint8[2],uint256[2],uint256[2])": FunctionFragment;
-        "isTrustedForwarder(address)": FunctionFragment;
+        "initialize(address,address,address,address,address,uint8[2],uint256[2],uint256[2])": FunctionFragment;
         "l1Ratio()": FunctionFragment;
         "l1TotalLockedValue()": FunctionFragment;
         "l2Ratio()": FunctionFragment;
@@ -102,14 +101,13 @@ export interface L2VaultInterface extends utils.Interface {
         "upgradeTo(address)": FunctionFragment;
         "upgradeToAndCall(address,bytes)": FunctionFragment;
         "vaultTVL()": FunctionFragment;
-        "versionRecipient()": FunctionFragment;
         "withdraw(uint256,address,address)": FunctionFragment;
         "withdrawFromStrategy(address,uint256)": FunctionFragment;
         "withdrawalFee()": FunctionFragment;
         "withdrawalQueue(uint256)": FunctionFragment;
         "wormholeRouter()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "afterReceive" | "allowance" | "approve" | "asset" | "balanceOf" | "bridgeEscrow" | "canRequestFromL1" | "canTransferToL1" | "convertToAssets" | "convertToShares" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "depositIntoStrategy" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "emergencyWithdrawalQueue" | "ewqMinAssets" | "ewqMinFee" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialize" | "isTrustedForwarder" | "l1Ratio" | "l1TotalLockedValue" | "l2Ratio" | "lastHarvest" | "lockedProfit" | "lockedTVL" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "rebalance" | "rebalanceDelta" | "receiveTVL" | "redeem" | "removeStrategy" | "renounceRole" | "revokeRole" | "setBridgeEscrow" | "setEwq" | "setEwqParams" | "setLayerRatios" | "setManagementFee" | "setRebalanceDelta" | "setTrustedForwarder" | "setWithdrawalFee" | "setWithdrawalQueue" | "setWormholeRouter" | "strategies" | "supportsInterface" | "symbol" | "totalAssets" | "totalBps" | "totalStrategyHoldings" | "totalSupply" | "transfer" | "transferFrom" | "trustedForwarder" | "unpause" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "versionRecipient" | "withdraw" | "withdrawFromStrategy" | "withdrawalFee" | "withdrawalQueue" | "wormholeRouter"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "afterReceive" | "allowance" | "approve" | "asset" | "balanceOf" | "bridgeEscrow" | "canRequestFromL1" | "canTransferToL1" | "convertToAssets" | "convertToShares" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "depositIntoStrategy" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "emergencyWithdrawalQueue" | "ewqMinAssets" | "ewqMinFee" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialize" | "l1Ratio" | "l1TotalLockedValue" | "l2Ratio" | "lastHarvest" | "lockedProfit" | "lockedTVL" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "rebalance" | "rebalanceDelta" | "receiveTVL" | "redeem" | "removeStrategy" | "renounceRole" | "revokeRole" | "setBridgeEscrow" | "setEwq" | "setEwqParams" | "setLayerRatios" | "setManagementFee" | "setRebalanceDelta" | "setTrustedForwarder" | "setWithdrawalFee" | "setWithdrawalQueue" | "setWormholeRouter" | "strategies" | "supportsInterface" | "symbol" | "totalAssets" | "totalBps" | "totalStrategyHoldings" | "totalSupply" | "transfer" | "transferFrom" | "trustedForwarder" | "unpause" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "withdraw" | "withdrawFromStrategy" | "withdrawalFee" | "withdrawalQueue" | "wormholeRouter"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "GUARDIAN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
@@ -149,7 +147,6 @@ export interface L2VaultInterface extends utils.Interface {
         PromiseOrValue<string>,
         PromiseOrValue<string>,
         PromiseOrValue<string>,
-        PromiseOrValue<string>,
         [
             PromiseOrValue<BigNumberish>,
             PromiseOrValue<BigNumberish>
@@ -163,7 +160,6 @@ export interface L2VaultInterface extends utils.Interface {
             PromiseOrValue<BigNumberish>
         ]
     ]): string;
-    encodeFunctionData(functionFragment: "isTrustedForwarder", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "l1Ratio", values?: undefined): string;
     encodeFunctionData(functionFragment: "l1TotalLockedValue", values?: undefined): string;
     encodeFunctionData(functionFragment: "l2Ratio", values?: undefined): string;
@@ -225,7 +221,6 @@ export interface L2VaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "upgradeTo", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "upgradeToAndCall", values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "vaultTVL", values?: undefined): string;
-    encodeFunctionData(functionFragment: "versionRecipient", values?: undefined): string;
     encodeFunctionData(functionFragment: "withdraw", values: [
         PromiseOrValue<BigNumberish>,
         PromiseOrValue<string>,
@@ -269,7 +264,6 @@ export interface L2VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "increaseAllowance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "isTrustedForwarder", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "l1Ratio", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "l1TotalLockedValue", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "l2Ratio", data: BytesLike): Result;
@@ -323,7 +317,6 @@ export interface L2VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "upgradeToAndCall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "vaultTVL", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "versionRecipient", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawFromStrategy", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawalFee", data: BytesLike): Result;
@@ -711,10 +704,9 @@ export interface L2Vault extends BaseContract {
         increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        initialize(_governance: PromiseOrValue<string>, _vaultAsset: PromiseOrValue<string>, _wormholeRouter: PromiseOrValue<string>, _bridgeEscrow: PromiseOrValue<string>, _emergencyWithdrawalQueue: PromiseOrValue<string>, forwarder: PromiseOrValue<string>, layerRatios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], fees: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], ewqParams: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], overrides?: Overrides & {
+        initialize(_governance: PromiseOrValue<string>, _vaultAsset: PromiseOrValue<string>, _wormholeRouter: PromiseOrValue<string>, _bridgeEscrow: PromiseOrValue<string>, _emergencyWithdrawalQueue: PromiseOrValue<string>, layerRatios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], fees: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], ewqParams: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean]>;
         l1Ratio(overrides?: CallOverrides): Promise<[number]>;
         l1TotalLockedValue(overrides?: CallOverrides): Promise<[BigNumber]>;
         l2Ratio(overrides?: CallOverrides): Promise<[number]>;
@@ -842,7 +834,6 @@ export interface L2Vault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<[BigNumber]>;
-        versionRecipient(overrides?: CallOverrides): Promise<[string]>;
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -906,10 +897,9 @@ export interface L2Vault extends BaseContract {
     increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    initialize(_governance: PromiseOrValue<string>, _vaultAsset: PromiseOrValue<string>, _wormholeRouter: PromiseOrValue<string>, _bridgeEscrow: PromiseOrValue<string>, _emergencyWithdrawalQueue: PromiseOrValue<string>, forwarder: PromiseOrValue<string>, layerRatios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], fees: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], ewqParams: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], overrides?: Overrides & {
+    initialize(_governance: PromiseOrValue<string>, _vaultAsset: PromiseOrValue<string>, _wormholeRouter: PromiseOrValue<string>, _bridgeEscrow: PromiseOrValue<string>, _emergencyWithdrawalQueue: PromiseOrValue<string>, layerRatios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], fees: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], ewqParams: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
     l1Ratio(overrides?: CallOverrides): Promise<number>;
     l1TotalLockedValue(overrides?: CallOverrides): Promise<BigNumber>;
     l2Ratio(overrides?: CallOverrides): Promise<number>;
@@ -1019,7 +1009,6 @@ export interface L2Vault extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
-    versionRecipient(overrides?: CallOverrides): Promise<string>;
     withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -1063,8 +1052,7 @@ export interface L2Vault extends BaseContract {
         harvest(strategyList: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<void>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
         increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
-        initialize(_governance: PromiseOrValue<string>, _vaultAsset: PromiseOrValue<string>, _wormholeRouter: PromiseOrValue<string>, _bridgeEscrow: PromiseOrValue<string>, _emergencyWithdrawalQueue: PromiseOrValue<string>, forwarder: PromiseOrValue<string>, layerRatios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], fees: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], ewqParams: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], overrides?: CallOverrides): Promise<void>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
+        initialize(_governance: PromiseOrValue<string>, _vaultAsset: PromiseOrValue<string>, _wormholeRouter: PromiseOrValue<string>, _bridgeEscrow: PromiseOrValue<string>, _emergencyWithdrawalQueue: PromiseOrValue<string>, layerRatios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], fees: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], ewqParams: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], overrides?: CallOverrides): Promise<void>;
         l1Ratio(overrides?: CallOverrides): Promise<number>;
         l1TotalLockedValue(overrides?: CallOverrides): Promise<BigNumber>;
         l2Ratio(overrides?: CallOverrides): Promise<number>;
@@ -1126,7 +1114,6 @@ export interface L2Vault extends BaseContract {
         upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<void>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
-        versionRecipient(overrides?: CallOverrides): Promise<string>;
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         withdrawFromStrategy(strategy: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1245,10 +1232,9 @@ export interface L2Vault extends BaseContract {
         increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        initialize(_governance: PromiseOrValue<string>, _vaultAsset: PromiseOrValue<string>, _wormholeRouter: PromiseOrValue<string>, _bridgeEscrow: PromiseOrValue<string>, _emergencyWithdrawalQueue: PromiseOrValue<string>, forwarder: PromiseOrValue<string>, layerRatios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], fees: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], ewqParams: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], overrides?: Overrides & {
+        initialize(_governance: PromiseOrValue<string>, _vaultAsset: PromiseOrValue<string>, _wormholeRouter: PromiseOrValue<string>, _bridgeEscrow: PromiseOrValue<string>, _emergencyWithdrawalQueue: PromiseOrValue<string>, layerRatios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], fees: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], ewqParams: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         l1Ratio(overrides?: CallOverrides): Promise<BigNumber>;
         l1TotalLockedValue(overrides?: CallOverrides): Promise<BigNumber>;
         l2Ratio(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1350,7 +1336,6 @@ export interface L2Vault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         vaultTVL(overrides?: CallOverrides): Promise<BigNumber>;
-        versionRecipient(overrides?: CallOverrides): Promise<BigNumber>;
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -1415,10 +1400,9 @@ export interface L2Vault extends BaseContract {
         increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        initialize(_governance: PromiseOrValue<string>, _vaultAsset: PromiseOrValue<string>, _wormholeRouter: PromiseOrValue<string>, _bridgeEscrow: PromiseOrValue<string>, _emergencyWithdrawalQueue: PromiseOrValue<string>, forwarder: PromiseOrValue<string>, layerRatios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], fees: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], ewqParams: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], overrides?: Overrides & {
+        initialize(_governance: PromiseOrValue<string>, _vaultAsset: PromiseOrValue<string>, _wormholeRouter: PromiseOrValue<string>, _bridgeEscrow: PromiseOrValue<string>, _emergencyWithdrawalQueue: PromiseOrValue<string>, layerRatios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], fees: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], ewqParams: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         l1Ratio(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         l1TotalLockedValue(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         l2Ratio(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1520,7 +1504,6 @@ export interface L2Vault extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         vaultTVL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        versionRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         withdraw(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
