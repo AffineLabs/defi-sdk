@@ -46,9 +46,9 @@ exports.getProviderByChainId = getProviderByChainId;
  * @param version The addressbook version
  * @returns A map of contract names to ethers.Contract objects
  */
-function getAllContracts(provider, version) {
+function getAllContracts(provider) {
     return __awaiter(this, void 0, void 0, function* () {
-        const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${version}`;
+        const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${CONTRACT_VERSION}`;
         const allData = (yield axios_1.default.get(`${s3Root}/addressbook.json`)).data;
         // Using this abi so that we mint usdc (the tests run on testnet)
         const erc20Abi = [
@@ -64,11 +64,13 @@ function getAllContracts(provider, version) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, } = allData;
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, PolygonLevMaticX: polygonLevMaticXData, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
             const alpLarge = typechain_1.TwoAssetBasket__factory.connect(alpLargeData.address, provider);
+            const polygonLevMaticX = typechain_1.Vault__factory.connect(polygonLevMaticXData.address, provider);
+            const matic = new ethers_1.ethers.Contract(yield polygonLevMaticX.asset(), erc20Abi, provider);
             return {
                 alpSave,
                 alpLarge,
@@ -88,6 +90,8 @@ function getAllContracts(provider, version) {
                 affinePassBridgePolygon: chainId === 137 && typeof affinePassBridgePolygonData !== "undefined"
                     ? typechain_1.AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
                     : undefined,
+                polygonLevMaticX,
+                matic
             };
         }
         else if (chainId === 1 || chainId === 5) {
@@ -115,8 +119,6 @@ function getAllContracts(provider, version) {
         else if (chainId == 8453 || chainId == 84531) {
             const baseUsdEarn = chainId == 8453 ? typechain_1.VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
             const baseLeverage = typechain_1.VaultV2__factory.connect(baseStEthLevData.address, provider);
-            console.log("baseLeveages:", baseLeverage.address);
-            console.log("router address: ", baseRouterData.address);
             return {
                 baseUsdEarn,
                 baseLeverage,
@@ -132,6 +134,7 @@ function getAllContracts(provider, version) {
 }
 exports.getAllContracts = getAllContracts;
 function getContracts() {
+    console.log("getContracts: ", CONTRACTS);
     return CONTRACTS;
 }
 exports.getContracts = getContracts;
@@ -147,7 +150,7 @@ function getBaseContracts() {
     return CONTRACTS;
 }
 exports.getBaseContracts = getBaseContracts;
-function init(signerOrAddress, biconomy, contractVersion = CONTRACT_VERSION, chainId = constants_1.DEFAULT_RAW_CHAIN_ID) {
+function init(signerOrAddress, biconomy, chainId = constants_1.DEFAULT_RAW_CHAIN_ID) {
     return __awaiter(this, void 0, void 0, function* () {
         CHAIN_ID = chainId;
         // Use the user's wallet's provider if possible
@@ -160,7 +163,7 @@ function init(signerOrAddress, biconomy, contractVersion = CONTRACT_VERSION, cha
             exports.PROVIDER = getProviderByChainId(chainId);
             exports.userAddress = signerOrAddress;
         }
-        CONTRACTS = yield getAllContracts(exports.PROVIDER, contractVersion);
+        CONTRACTS = yield getAllContracts(exports.PROVIDER);
         exports.BICONOMY = biconomy;
     });
 }

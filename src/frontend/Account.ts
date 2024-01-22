@@ -20,7 +20,6 @@ import { setSimulationMode } from "../core/cache";
 import * as lockedWithdrawal from "../core/singleStrategy";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
 import {
-  DEFAULT_RAW_CHAIN_ID,
   DEFAULT_WALLET,
   getChainIdFromRaw,
   NETWORK_PARAMS,
@@ -45,7 +44,7 @@ class Account {
   walletProvider?: ethers.providers.Web3Provider;
   // if true, send regular transaction, if false, use biconomy
   gas = false;
-  selectedChainId?: AllowedChainId = DEFAULT_RAW_CHAIN_ID;
+  selectedChainId?: AllowedChainId;
   walletConnectProvider?: Provider;
   web3ModalInstance?: import("@web3modal/standalone").Web3Modal;
   withdrawSlippageByProduct?: WithdrawSlippageByProduct;
@@ -108,8 +107,16 @@ class Account {
     }
 
     console.time("init-contracts");
-    await init(this.signer, this.biconomy, undefined, chainId);
+    await init(this.signer, this.biconomy, chainId);
     console.timeEnd("init-contracts");
+  }
+
+  async initContracts(chainId: AllowedChainId, address?: string) {
+    if (!address && !this.signer) {
+      throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
+    }
+
+    await init(this.signer ?? address, this.biconomy, chainId);
   }
 
   async setSimulationMode(mode: boolean) {
@@ -179,7 +186,7 @@ class Account {
     // this.biconomy is created upon connection and will always exist
     this.gas = useGas;
     const biconomyProvider = useGas ? undefined : this.biconomy;
-    return init(this.signer, biconomyProvider, undefined, this.selectedChainId);
+    return init(this.signer, biconomyProvider, this.selectedChainId);
   }
 
   /**
@@ -307,9 +314,27 @@ class Account {
     if (!window.ethereum && walletType === "metamask") {
       throw new Error("Metamask is not installed!");
     } else if (walletType === "walletConnect" && this.walletConnectProvider) {
-      console.log("Switching wallet to allowed network for wallet connect", chainId, this.walletConnectProvider);
-      this.walletConnectProvider.setDefaultChain(`eip155:${chainId}`);
-      return;
+      // case - user is using walletConnect
+      const _chain = getChainIdFromRaw(chainId);
+      await this.walletConnectProvider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: _chain }],
+      });
+      this.selectedChainId = chainId;
+      let _signer: ethers.Signer | undefined;
+
+      if (this.walletProvider) {
+        _signer = this.walletProvider.getSigner();
+      }
+
+      if (!_signer) {
+        // find signer from the provider
+        this.walletProvider = new ethers.providers.Web3Provider(this.walletConnectProvider);
+        _signer = this.walletProvider.getSigner();
+      }
+
+      this.signer = _signer;
+      return await init(_signer, this.biconomy, chainId);
     }
 
     const _provider = await getWeb3Provider(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
@@ -347,7 +372,7 @@ class Account {
     if (chainId !== this.selectedChainId && _provider) {
       this.signer = _provider.getSigner();
       this.selectedChainId = chainId;
-      return init(this.signer, this.biconomy, undefined, this.selectedChainId);
+      return init(this.signer, this.biconomy, this.selectedChainId);
     }
   }
 
@@ -419,20 +444,7 @@ class Account {
   async lastEpochBeginUTCTime(): Promise<number> {
     return lockedWithdrawal.epochStartTime();
   }
-}
 
-class ReadAccount {
-  userAddress: string;
-  chainId: AllowedChainId;
-
-  constructor(userAddress: string, chainId: AllowedChainId) {
-    this.userAddress = userAddress;
-    this.chainId = chainId;
-  }
-
-  async init() {
-    return init(this.userAddress, undefined, undefined, this.chainId);
-  }
   /**
    * get the current best estimate for gas price
    * @returns {Promise<String>} the best estimate for gas price in eth
@@ -469,4 +481,4 @@ class ReadAccount {
   }
 }
 
-export { Account, ReadAccount };
+export { Account };

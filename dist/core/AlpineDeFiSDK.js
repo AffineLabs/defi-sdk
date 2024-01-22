@@ -127,10 +127,10 @@ exports.blockchainCall = blockchainCall;
 function isApproved(product, amount) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, } = (0, cache_1.getContracts)();
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, matic } = (0, cache_1.getContracts)();
         if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product))
             return true;
-        const asset = product == "polygonLeverage" ? weth : usdc;
+        const asset = product == "polygonLeverage" ? weth : product === "polygonLevMaticX" ? matic : usdc;
         const productToSpender = {
             alpSave,
             alpLarge: router,
@@ -140,6 +140,7 @@ function isApproved(product, amount) {
             polygonDegen,
             polygonLeverage,
             baseUsdEarn,
+            polygonLevMaticX,
             // No approvals needed for these
             ethWethEarn,
             ethLeverage,
@@ -173,10 +174,13 @@ function approve(product, amountAsset) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
-        const { usdc, router, weth } = contracts;
+        const { usdc, router, weth, matic } = contracts;
         let asset = usdc;
         if (["ethWethEarn", "ethLeverage", "polygonLeverage"].includes(product)) {
             asset = weth;
+        }
+        else if (matic && ["polygonLevMaticX"].includes(product)) {
+            asset = matic;
         }
         const decimals = yield asset.decimals();
         const amount = amountAsset ? _addDecimals(amountAsset, decimals) : constants_1.MAX_APPROVAL_AMOUNT;
@@ -416,13 +420,17 @@ function ccipFee(destinationChianId) {
         }
         if (destinationChianId === 1) {
             const { affinePassBridgePolygon } = contracts;
-            const _fee = affinePassBridgePolygon ? yield (affinePassBridgePolygon === null || affinePassBridgePolygon === void 0 ? void 0 : affinePassBridgePolygon.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])) : 0;
+            const _fee = affinePassBridgePolygon
+                ? yield (affinePassBridgePolygon === null || affinePassBridgePolygon === void 0 ? void 0 : affinePassBridgePolygon.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId]))
+                : 0;
             const ethAmmount = parseFloat(ethers_1.ethers.utils.formatEther(_fee)) * 1.05;
             return ethAmmount;
         }
         else if (destinationChianId === 137) {
             const { affinePassBridgeEthereum } = contracts;
-            const _fee = affinePassBridgeEthereum ? yield (affinePassBridgeEthereum === null || affinePassBridgeEthereum === void 0 ? void 0 : affinePassBridgeEthereum.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId])) : 0;
+            const _fee = affinePassBridgeEthereum
+                ? yield (affinePassBridgeEthereum === null || affinePassBridgeEthereum === void 0 ? void 0 : affinePassBridgeEthereum.ccipFee(constants_1.CCIP_NETWORK_SELECTOR[destinationChianId]))
+                : 0;
             const ethAmmount = parseFloat(ethers_1.ethers.utils.formatEther(_fee)) * 1.05;
             return ethAmmount;
         }

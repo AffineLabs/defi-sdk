@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReadAccount = exports.Account = void 0;
+exports.Account = void 0;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const mexa_1 = require("@biconomy/mexa");
@@ -51,7 +51,6 @@ class Account {
         this.walletType = constants_1.DEFAULT_WALLET;
         // if true, send regular transaction, if false, use biconomy
         this.gas = false;
-        this.selectedChainId = constants_1.DEFAULT_RAW_CHAIN_ID;
     }
     /**
      * Creates an alpine account object
@@ -87,6 +86,7 @@ class Account {
             this.userAddress = yield this.signer.getAddress();
             this.walletType = walletType;
             this.selectedChainId = chainId;
+            this.withdrawSlippageByProduct = constants_1.WITHDRAW_SLIPPAGE_BY_PRODUCT;
             if (getMessage && verify) {
                 // case - user's wallet needs to be verified with nonce
                 try {
@@ -103,8 +103,17 @@ class Account {
                 }
             }
             console.time("init-contracts");
-            yield (0, core_1.init)(this.signer, this.biconomy, undefined, chainId);
+            yield (0, core_1.init)(this.signer, this.biconomy, chainId);
             console.timeEnd("init-contracts");
+        });
+    }
+    initContracts(chainId, address) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!address && !this.signer) {
+                throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
+            }
+            yield (0, core_1.init)((_a = this.signer) !== null && _a !== void 0 ? _a : address, this.biconomy, chainId);
         });
     }
     setSimulationMode(mode) {
@@ -179,7 +188,7 @@ class Account {
             // this.biconomy is created upon connection and will always exist
             this.gas = useGas;
             const biconomyProvider = useGas ? undefined : this.biconomy;
-            return (0, core_1.init)(this.signer, biconomyProvider, undefined, this.selectedChainId);
+            return (0, core_1.init)(this.signer, biconomyProvider, this.selectedChainId);
         });
     }
     /**
@@ -310,9 +319,24 @@ class Account {
                 throw new Error("Metamask is not installed!");
             }
             else if (walletType === "walletConnect" && this.walletConnectProvider) {
-                console.log("Switching wallet to allowed network for wallet connect", chainId, this.walletConnectProvider);
-                this.walletConnectProvider.setDefaultChain(`eip155:${chainId}`);
-                return;
+                // case - user is using walletConnect
+                const _chain = (0, constants_1.getChainIdFromRaw)(chainId);
+                yield this.walletConnectProvider.request({
+                    method: "wallet_switchEthereumChain",
+                    params: [{ chainId: _chain }],
+                });
+                this.selectedChainId = chainId;
+                let _signer;
+                if (this.walletProvider) {
+                    _signer = this.walletProvider.getSigner();
+                }
+                if (!_signer) {
+                    // find signer from the provider
+                    this.walletProvider = new ethers_1.ethers.providers.Web3Provider(this.walletConnectProvider);
+                    _signer = this.walletProvider.getSigner();
+                }
+                this.signer = _signer;
+                return yield (0, core_1.init)(_signer, this.biconomy, chainId);
             }
             const _provider = yield (0, wallets_1.getWeb3Provider)(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
             if (!_provider) {
@@ -347,7 +371,7 @@ class Account {
             if (chainId !== this.selectedChainId && _provider) {
                 this.signer = _provider.getSigner();
                 this.selectedChainId = chainId;
-                return (0, core_1.init)(this.signer, this.biconomy, undefined, this.selectedChainId);
+                return (0, core_1.init)(this.signer, this.biconomy, this.selectedChainId);
             }
         });
     }
@@ -423,18 +447,6 @@ class Account {
             return lockedWithdrawal.epochStartTime();
         });
     }
-}
-exports.Account = Account;
-class ReadAccount {
-    constructor(userAddress, chainId) {
-        this.userAddress = userAddress;
-        this.chainId = chainId;
-    }
-    init() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return (0, core_1.init)(this.userAddress, undefined, undefined, this.chainId);
-        });
-    }
     /**
      * get the current best estimate for gas price
      * @returns {Promise<String>} the best estimate for gas price in eth
@@ -480,4 +492,4 @@ class ReadAccount {
         });
     }
 }
-exports.ReadAccount = ReadAccount;
+exports.Account = Account;

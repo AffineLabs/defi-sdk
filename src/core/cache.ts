@@ -65,9 +65,8 @@ export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.
  */
 export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider,
-  version: string,
 ): Promise<PolygonContracts | EthContracts | BaseContracts> {
-  const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${version}`;
+  const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${CONTRACT_VERSION}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
   // Using this abi so that we mint usdc (the tests run on testnet)
@@ -168,9 +167,6 @@ export async function getAllContracts(
     const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
     const baseLeverage = VaultV2__factory.connect(baseStEthLevData.address, provider);
 
-    console.log("baseLeveages:", baseLeverage.address);
-    console.log("router address: ", baseRouterData.address);
-
     return {
       baseUsdEarn,
       baseLeverage,
@@ -188,6 +184,7 @@ export async function getAllContracts(
 }
 
 export function getContracts(): PolygonContracts | EthContracts | BaseContracts {
+  console.log("getContracts: ", CONTRACTS);
   return CONTRACTS;
 }
 export function getEthContracts(): EthContracts {
@@ -203,7 +200,6 @@ export function getBaseContracts(): BaseContracts {
 export async function init(
   signerOrAddress: ethers.Signer | string,
   biconomy: ethers.providers.Web3Provider | undefined,
-  contractVersion: string = CONTRACT_VERSION,
   chainId: AllowedChainId = DEFAULT_RAW_CHAIN_ID,
 ) {
   CHAIN_ID = chainId;
@@ -218,7 +214,7 @@ export async function init(
     userAddress = signerOrAddress;
   }
 
-  CONTRACTS = await getAllContracts(PROVIDER, contractVersion);
+  CONTRACTS = await getAllContracts(PROVIDER);
 
   BICONOMY = biconomy;
 }

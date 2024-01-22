@@ -18,7 +18,7 @@ export interface SmallTxReceipt extends GasInfo {
     blockNumber: string;
     txnHash: string;
 }
-export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen", "polygonDegen", "ethLeverage", "polygonLeverage", "baseUsdEarn", "baseLeverage"];
+export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen", "polygonDegen", "ethLeverage", "polygonLeverage", "baseUsdEarn", "baseLeverage", "polygonLevMaticX"];
 export type AlpineProduct = typeof alpineProducts[number];
 export declare const polygonProducts: readonly ["alpSave", "alpLarge", "polygonDegen"];
 export type PolygonProduct = typeof polygonProducts[number];
@@ -46,6 +46,8 @@ export interface PolygonContracts extends BothContracts {
     affineGenesis?: AffineGenesis;
     affinePass?: AffinePass;
     affinePassBridgePolygon?: AffinePassBridge;
+    polygonLevMaticX?: Vault;
+    matic: ethers.Contract;
 }
 export interface EthContracts extends BothContracts {
     ethEarn: Vault;

@@ -413,13 +413,17 @@ export async function ccipFee(destinationChianId: number): Promise<number> {
   }
   if (destinationChianId === 1) {
     const { affinePassBridgePolygon } = contracts;
-    const _fee = affinePassBridgePolygon ?  await affinePassBridgePolygon?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId]) : 0;
+    const _fee = affinePassBridgePolygon
+      ? await affinePassBridgePolygon?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])
+      : 0;
 
     const ethAmmount = parseFloat(ethers.utils.formatEther(_fee)) * 1.05;
     return ethAmmount;
   } else if (destinationChianId === 137) {
     const { affinePassBridgeEthereum } = contracts;
-    const _fee = affinePassBridgeEthereum ? await affinePassBridgeEthereum?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId]) : 0;
+    const _fee = affinePassBridgeEthereum
+      ? await affinePassBridgeEthereum?.ccipFee(CCIP_NETWORK_SELECTOR[destinationChianId])
+      : 0;
     const ethAmmount = parseFloat(ethers.utils.formatEther(_fee)) * 1.05;
     return ethAmmount;
   } else {

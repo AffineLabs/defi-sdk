@@ -14,10 +14,9 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AlpineDeFiSDK = exports.ReadAccount = exports.Account = void 0;
+exports.AlpineDeFiSDK = exports.Account = void 0;
 const frontend_1 = require("./frontend");
 Object.defineProperty(exports, "Account", { enumerable: true, get: function () { return frontend_1.Account; } });
-Object.defineProperty(exports, "ReadAccount", { enumerable: true, get: function () { return frontend_1.ReadAccount; } });
 const core_1 = require("./core");
 Object.defineProperty(exports, "AlpineDeFiSDK", { enumerable: true, get: function () { return core_1.AlpineDeFiSDK; } });
 __exportStar(require("./core/types"), exports);
