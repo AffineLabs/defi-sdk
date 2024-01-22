@@ -109,8 +109,6 @@ export async function getAllContracts(
 
   const chainId = getChainId();
 
-  console.log("getAllContracts -> chainId", chainId)
-
   if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
     const alpLarge = TwoAssetBasket__factory.connect(alpLargeData.address, provider);
@@ -164,9 +162,6 @@ export async function getAllContracts(
     const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
     const baseLeverage = VaultV2__factory.connect(baseStEthLevData.address, provider);
 
-    console.log("baseLeveages:", baseLeverage.address);
-    console.log("router address: ", baseRouterData.address);
-
     return {
       baseUsdEarn,
       baseLeverage,
@@ -204,11 +199,6 @@ export async function init(
 ) {
   CHAIN_ID = chainId;
 
-  console.log("init -> CHAIN_ID", CHAIN_ID);
-  console.log("init -> signerOrAddress", signerOrAddress);
-  console.log("init -> biconomy", biconomy);
-  console.log("init -> isSigner", ethers.Signer.isSigner(signerOrAddress));
-
   // Use the user's wallet's provider if possible
   if (ethers.Signer.isSigner(signerOrAddress)) {
     SIGNER = signerOrAddress;
@@ -219,12 +209,7 @@ export async function init(
     userAddress = signerOrAddress;
   }
 
-  console.log("init -> PROVIDER", PROVIDER);
-  console.log("init -> userAddress", userAddress);
-
   CONTRACTS = await getAllContracts(PROVIDER);
-
-  console.log("init -> CONTRACTS", CONTRACTS);
 
   BICONOMY = biconomy;
 }

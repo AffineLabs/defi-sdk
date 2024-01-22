@@ -66,7 +66,6 @@ function getAllContracts(provider) {
         ];
         const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, } = allData;
         const chainId = getChainId();
-        console.log("getAllContracts -> chainId", chainId);
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
             const alpLarge = typechain_1.TwoAssetBasket__factory.connect(alpLargeData.address, provider);
@@ -116,8 +115,6 @@ function getAllContracts(provider) {
         else if (chainId == 8453 || chainId == 84531) {
             const baseUsdEarn = chainId == 8453 ? typechain_1.VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
             const baseLeverage = typechain_1.VaultV2__factory.connect(baseStEthLevData.address, provider);
-            console.log("baseLeveages:", baseLeverage.address);
-            console.log("router address: ", baseRouterData.address);
             return {
                 baseUsdEarn,
                 baseLeverage,
@@ -152,10 +149,6 @@ exports.getBaseContracts = getBaseContracts;
 function init(signerOrAddress, biconomy, chainId = constants_1.DEFAULT_RAW_CHAIN_ID) {
     return __awaiter(this, void 0, void 0, function* () {
         CHAIN_ID = chainId;
-        console.log("init -> CHAIN_ID", CHAIN_ID);
-        console.log("init -> signerOrAddress", signerOrAddress);
-        console.log("init -> biconomy", biconomy);
-        console.log("init -> isSigner", ethers_1.ethers.Signer.isSigner(signerOrAddress));
         // Use the user's wallet's provider if possible
         if (ethers_1.ethers.Signer.isSigner(signerOrAddress)) {
             exports.SIGNER = signerOrAddress;
@@ -166,10 +159,7 @@ function init(signerOrAddress, biconomy, chainId = constants_1.DEFAULT_RAW_CHAIN
             exports.PROVIDER = getProviderByChainId(chainId);
             exports.userAddress = signerOrAddress;
         }
-        console.log("init -> PROVIDER", exports.PROVIDER);
-        console.log("init -> userAddress", exports.userAddress);
         CONTRACTS = yield getAllContracts(exports.PROVIDER);
-        console.log("init -> CONTRACTS", CONTRACTS);
         exports.BICONOMY = biconomy;
     });
 }

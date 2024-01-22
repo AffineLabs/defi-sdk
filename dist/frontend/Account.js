@@ -320,7 +320,6 @@ class Account {
             else if (walletType === "walletConnect" && this.walletConnectProvider) {
                 // case - user is using walletConnect
                 const _chain = (0, constants_1.getChainIdFromRaw)(chainId);
-                console.log("Switching wallet to allowed network for wallet connect", { chainId, _chain }, this.walletConnectProvider);
                 yield this.walletConnectProvider.request({
                     method: "wallet_switchEthereumChain",
                     params: [{ chainId: _chain }],
@@ -330,12 +329,11 @@ class Account {
                 if (this.walletProvider) {
                     _signer = this.walletProvider.getSigner();
                 }
-                console.log("Account -> switchWalletToAllowedNetwork -> this.walletProvider", this.walletProvider, "walletConnectProvider", this.walletConnectProvider, "_signer", _signer);
                 if (!_signer) {
+                    // find signer from the provider
                     this.walletProvider = new ethers_1.ethers.providers.Web3Provider(this.walletConnectProvider);
                     _signer = this.walletProvider.getSigner();
                 }
-                console.log("Account -> switchWalletToAllowedNetwork -> this.walletProvider", this.walletProvider, "walletConnectProvider", this.walletConnectProvider, "_signer", _signer);
                 this.signer = _signer;
                 return yield (0, core_1.init)(_signer, this.biconomy, chainId);
             }

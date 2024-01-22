@@ -18,12 +18,7 @@ import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
 import * as lockedWithdrawal from "../core/singleStrategy";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
-import {
-  DEFAULT_WALLET,
-  getChainIdFromRaw,
-  NETWORK_PARAMS,
-  WALLETCONNECT_PROJECT_ID,
-} from "../core/constants";
+import { DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WALLETCONNECT_PROJECT_ID } from "../core/constants";
 import {
   getEmergencyWithdrawalQueueTransfers,
   getUserEmergencyWithdrawalQueueRequests,
@@ -108,7 +103,7 @@ class Account {
   }
 
   async initContracts(chainId: AllowedChainId, address?: string) {
-    if(!address && !this.signer) {
+    if (!address && !this.signer) {
       throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
     }
 
@@ -311,23 +306,24 @@ class Account {
       throw new Error("Metamask is not installed!");
     } else if (walletType === "walletConnect" && this.walletConnectProvider) {
       // case - user is using walletConnect
-      const _chain =  getChainIdFromRaw(chainId);
-      console.log("Switching wallet to allowed network for wallet connect", {chainId, _chain}, this.walletConnectProvider);
+      const _chain = getChainIdFromRaw(chainId);
       await this.walletConnectProvider.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: _chain }],
       });
       this.selectedChainId = chainId;
       let _signer: ethers.Signer | undefined;
-      if(this.walletProvider) {
+
+      if (this.walletProvider) {
         _signer = this.walletProvider.getSigner();
       }
-      console.log("Account -> switchWalletToAllowedNetwork -> this.walletProvider", this.walletProvider, "walletConnectProvider", this.walletConnectProvider, "_signer", _signer);
-      if(!_signer){
+
+      if (!_signer) {
+        // find signer from the provider
         this.walletProvider = new ethers.providers.Web3Provider(this.walletConnectProvider);
         _signer = this.walletProvider.getSigner();
       }
-      console.log("Account -> switchWalletToAllowedNetwork -> this.walletProvider", this.walletProvider, "walletConnectProvider", this.walletConnectProvider, "_signer", _signer);
+
       this.signer = _signer;
       return await init(_signer, this.biconomy, chainId);
     }

@@ -57,7 +57,6 @@ const connectAndWrite = async ({
     // we will update the DOM element of <p id="userAddress"> with the user address
     const userAddressElement = document.getElementById("userAddress");
     if (userAddressElement) userAddressElement.innerHTML = _address || "Not connected";
-
   } catch (error) {
     console.error("Error in connect: ", error);
   }
@@ -80,14 +79,12 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 };
 
 const alpAccount = new Account();
-  const walletType: AllowedWallet = "walletConnect";
-  const chainId = 137 as AllowedChainId;
-  const _productToBuy: AlpineProduct = "alpSave";
-  const amountToBuy = 0.1;
+const walletType: AllowedWallet = "walletConnect";
+const chainId = 137 as AllowedChainId;
+const _productToBuy: AlpineProduct = "alpSave";
+const amountToBuy = 0.1;
 
 const main = async () => {
-  
-
   if (walletType === "walletConnect") {
     const modal = await initiateWeb3Modal();
     if (modal) await alpAccount.initWalletConnectProvider(modal);
@@ -150,14 +147,14 @@ const handleButtonClick = () => {
       console.log(event.target);
 
       await alpAccount.switchWalletToAllowedNetwork(walletType, chainId);
-  await alpAccount.setSimulationMode(false);
-  await buy(alpAccount, _productToBuy, amountToBuy);
+      await alpAccount.setSimulationMode(false);
+      await buy(alpAccount, _productToBuy, amountToBuy);
 
-  console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
+      console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
 
-  await alpAccount.sellProduct(_productToBuy, amountToBuy);
+      await alpAccount.sellProduct(_productToBuy, amountToBuy);
 
-  console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
+      console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
     },
     false,
   );
@@ -198,14 +195,13 @@ const handleSwitchNetwork = () => {
       // Log the clicked element in the console
       console.log(event.target);
 
-        const _chainId = alpAccount.selectedChainId === 137 ? 1 : 137;
-        await alpAccount.switchWalletToAllowedNetwork(walletType, _chainId);
-        // await connectAndWrite({ walletType, account: alpAccount, chainId });
-        const tokenInfo = await alpAccount.getTokenInfo("usdc");
-        console.log("tokenInfo: ", tokenInfo);
-        // change button text to current network
-        element.innerHTML = `Current Network: ${_chainId}, Switch to ${alpAccount.selectedChainId === 137 ? 1 : 137}`;
-
+      const _chainId = alpAccount.selectedChainId === 137 ? 1 : 137;
+      await alpAccount.switchWalletToAllowedNetwork(walletType, _chainId);
+      // await connectAndWrite({ walletType, account: alpAccount, chainId });
+      const tokenInfo = await alpAccount.getTokenInfo("usdc");
+      console.log("tokenInfo: ", tokenInfo);
+      // change button text to current network
+      element.innerHTML = `Current Network: ${_chainId}, Switch to ${alpAccount.selectedChainId === 137 ? 1 : 137}`;
     },
     false,
   );
