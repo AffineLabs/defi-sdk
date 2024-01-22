@@ -154,3 +154,8 @@ typings/
 # Ignore typechain except in dist/ folder
 typechain
 !dist/typechain
+dist/index.62f90388.js
+dist/index.62f90388.js.map
+dist/index.es.31fa1ab0.js
+dist/index.es.31fa1ab0.js.map
+dist/index.html

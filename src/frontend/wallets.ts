@@ -51,7 +51,6 @@ export async function getWalletconnectProvider(
   wcProvider?: Provider,
   modal?: import("@web3modal/standalone").Web3Modal,
 ): Promise<ethers.providers.Web3Provider | undefined> {
-  console.log("getWalletconnectProvider", chainId, wcProvider, modal);
   if (!wcProvider || !modal) {
     throw new Error("WalletConnect provider or Web3Modal is not initialized");
   }
@@ -88,36 +87,7 @@ export async function getWalletconnectProvider(
 
   //  Create Web3 Provider
   const web3Provider = new ethers.providers.Web3Provider(wcProvider, "any");
-  console.log("web3Provider ====>", web3Provider.getSigner());
   return web3Provider;
-
-  // Trigger `display_uri` event
-  // await wcProvider
-  //   .connect({
-  //     namespaces: {
-  //       eip155: {
-  //         methods: ["eth_sendTransaction", "eth_signTransaction", "eth_sign", "personal_sign", "eth_signTypedData"],
-  //         chains: ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
-  //         events: ["chainChanged", "accountsChanged"],
-  //         rpcMap: RPC_URLS,
-  //       },
-  //     },
-  //   })
-  //   .then(e => console.log(e))
-  //   .catch((e: Error) => console.error("Error on wcProvider.connect: ", e));
-  // console.log("finished triggering display_uri event");
-
-  // wcProvider.setDefaultChain(`eip155:${chainId}`);
-  // console.log("closing modal");
-  // modal.closeModal();
-
-  // console.log("wcProvider ====>", wcProvider);
-
-  // const _web3Provider = new ethers.providers.Web3Provider(
-  //   wcProvider as unknown as ethers.providers.ExternalProvider,
-  //   "any",
-  // );
-  // return _web3Provider;
 }
 
 // This is for getting the wallet provider (except the Magic one)

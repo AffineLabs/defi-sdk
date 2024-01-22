@@ -25,6 +25,7 @@ declare class Account {
      * @param email user's email address
      */
     connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, }: IConnectAccount): Promise<void>;
+    initContracts(chainId: AllowedChainId, address?: string): Promise<void>;
     setSimulationMode(mode: boolean): Promise<void>;
     private initBiconomy;
     /**
@@ -93,12 +94,6 @@ declare class Account {
     redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<import("../core/types").FullTxReceipt>;
     getTotalWithdrawableAssets(): Promise<string>;
     lastEpochBeginUTCTime(): Promise<number>;
-}
-declare class ReadAccount {
-    userAddress: string;
-    chainId: AllowedChainId;
-    constructor(userAddress: string, chainId: AllowedChainId);
-    init(): Promise<void>;
     /**
      * get the current best estimate for gas price
      * @returns {Promise<String>} the best estimate for gas price in eth
@@ -112,4 +107,4 @@ declare class ReadAccount {
     mintWhitelist(proof: string[]): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<import("../core/types").TokenInfo>;
 }
-export { Account, ReadAccount };
+export { Account };

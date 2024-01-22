@@ -63,7 +63,7 @@ describe("Buy products Eth", () => __awaiter(void 0, void 0, void 0, function* (
     before(() => __awaiter(void 0, void 0, void 0, function* () {
         testProvider = new ethers_1.ethers.providers.JsonRpcProvider("http://localhost:8546");
         wallet = ethers_1.ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
-        yield (0, cache_1.init)(wallet, undefined, undefined, 5);
+        yield (0, cache_1.init)(wallet, undefined, 5);
         yield (0, AlpineDeFiSDK_1.mintUSDC)(wallet.address, 100);
         contracts = (0, cache_1.getEthContracts)();
     }));
@@ -104,7 +104,7 @@ describe("Buy products Base", () => __awaiter(void 0, void 0, void 0, function* 
     before(() => __awaiter(void 0, void 0, void 0, function* () {
         const testProvider = (0, utils_1.getTestProvider)("base");
         wallet = ethers_1.ethers.Wallet.fromMnemonic(process.env.MNEMONIC || "").connect(testProvider);
-        yield (0, cache_1.init)(wallet, undefined, "v1.0-beta", 8453);
+        yield (0, cache_1.init)(wallet, undefined, 8453);
         const oneEth = ethers_1.ethers.BigNumber.from(10).pow(18);
         yield testProvider.send("anvil_setBalance", [wallet.address, oneEth.mul(100).toHexString()]);
         console.log("INIT DONE");
