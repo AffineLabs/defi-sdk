@@ -315,11 +315,11 @@ class Account {
       throw new Error("Metamask is not installed!");
     } else if (walletType === "walletConnect" && this.walletConnectProvider) {
       // case - user is using walletConnect
-      const _chain = getChainIdFromRaw(chainId);
-      await this.walletConnectProvider.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: _chain }],
-      });
+      // await this.walletConnectProvider.request({
+      //   method: "wallet_switchEthereumChain",
+      //   params: [{ chainId: _chain }],
+      // });
+      this.walletConnectProvider.setDefaultChain(`eip155:${chainId}`);
       this.selectedChainId = chainId;
       let _signer: ethers.Signer | undefined;
 

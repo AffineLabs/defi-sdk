@@ -127,10 +127,10 @@ exports.blockchainCall = blockchainCall;
 function isApproved(product, amount) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, matic, } = (0, cache_1.getContracts)();
-        if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product))
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, } = (0, cache_1.getContracts)();
+        if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX"].includes(product))
             return true;
-        const asset = product == "polygonLeverage" ? weth : product === "polygonLevMaticX" ? matic : usdc;
+        const asset = product == "polygonLeverage" ? weth : usdc;
         const productToSpender = {
             alpSave,
             alpLarge: router,

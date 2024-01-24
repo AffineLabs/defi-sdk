@@ -63,7 +63,6 @@ function getWalletconnectProvider(chainId, wcProvider, modal) {
                         "eth_sign",
                         "personal_sign",
                         "eth_signTypedData",
-                        "wallet_switchEthereumChain",
                     ],
                     chains: constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
                     events: ["chainChanged", "accountsChanged"],
