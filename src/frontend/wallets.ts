@@ -68,7 +68,6 @@ export async function getWalletconnectProvider(
             "eth_sign",
             "personal_sign",
             "eth_signTypedData",
-            "wallet_switchEthereumChain",
           ],
           chains: ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
           events: ["chainChanged", "accountsChanged"],

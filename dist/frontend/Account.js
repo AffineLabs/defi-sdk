@@ -319,11 +319,11 @@ class Account {
             }
             else if (walletType === "walletConnect" && this.walletConnectProvider) {
                 // case - user is using walletConnect
-                const _chain = (0, constants_1.getChainIdFromRaw)(chainId);
-                yield this.walletConnectProvider.request({
-                    method: "wallet_switchEthereumChain",
-                    params: [{ chainId: _chain }],
-                });
+                // await this.walletConnectProvider.request({
+                //   method: "wallet_switchEthereumChain",
+                //   params: [{ chainId: _chain }],
+                // });
+                this.walletConnectProvider.setDefaultChain(`eip155:${chainId}`);
                 this.selectedChainId = chainId;
                 let _signer;
                 if (this.walletProvider) {
