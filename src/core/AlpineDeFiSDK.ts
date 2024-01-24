@@ -146,9 +146,10 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     ethWethEarn,
     baseLeverage,
     ethLeverage,
+    polygonLevMaticX,
   } = getContracts() as AlpineContracts;
 
-  if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product)) return true;
+  if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX"].includes(product)) return true;
 
   const asset = product == "polygonLeverage" ? weth : usdc;
 
@@ -161,6 +162,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     polygonDegen,
     polygonLeverage,
     baseUsdEarn,
+    polygonLevMaticX,
 
     // No approvals needed for these
     ethWethEarn,
@@ -194,11 +196,13 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
  */
 export async function approve(product: AlpineProduct, amountAsset?: string): Promise<DryRunReceipt | FullTxReceipt> {
   const contracts = getContracts() as AlpineContracts;
-  const { usdc, router, weth } = contracts;
+  const { usdc, router, weth, matic } = contracts;
 
   let asset = usdc;
   if (["ethWethEarn", "ethLeverage", "polygonLeverage"].includes(product)) {
     asset = weth;
+  } else if (matic && ["polygonLevMaticX"].includes(product)) {
+    asset = matic;
   }
   const decimals = await asset.decimals();
 

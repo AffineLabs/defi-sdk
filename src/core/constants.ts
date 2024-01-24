@@ -65,6 +65,7 @@ export const WITHDRAW_SLIPPAGE_BY_PRODUCT: WithdrawSlippageByProduct = {
   baseUsdEarn: {},
   baseLeverage: {},
   ssvEthUSDEarn: {},
+  polygonLevMaticX: {},
 };
 
 export const NETWORK_PARAMS: { [index: number]: NetworkParams } = {

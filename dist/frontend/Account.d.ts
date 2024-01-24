@@ -1,6 +1,6 @@
 import { Magic } from "magic-sdk";
 import { ethers } from "ethers";
-import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, SSVWithdrawalRequestInfo, productAllocation } from "../core/types";
+import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, SSVWithdrawalRequestInfo, WithdrawSlippageByProduct, productAllocation } from "../core/types";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet, IConnectAccount } from "../types/account";
 import Provider from "@walletconnect/universal-provider";
@@ -15,6 +15,7 @@ declare class Account {
     selectedChainId?: AllowedChainId;
     walletConnectProvider?: Provider;
     web3ModalInstance?: import("@web3modal/standalone").Web3Modal;
+    withdrawSlippageByProduct?: WithdrawSlippageByProduct;
     /**
      * Creates an alpine account object
      */

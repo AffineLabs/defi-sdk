@@ -46,6 +46,7 @@ export const alpineProducts = [
   "polygonLeverage",
   "baseUsdEarn",
   "baseLeverage",
+  "polygonLevMaticX",
 ] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
@@ -80,6 +81,8 @@ export interface PolygonContracts extends BothContracts {
   affineGenesis?: AffineGenesis;
   affinePass?: AffinePass;
   affinePassBridgePolygon?: AffinePassBridge;
+  polygonLevMaticX?: Vault;
+  matic: ethers.Contract;
 }
 
 export interface EthContracts extends BothContracts {

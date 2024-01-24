@@ -63,25 +63,6 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "address",
-                name: "forwarder",
-                type: "address",
-            },
-        ],
-        name: "isTrustedForwarder",
-        outputs: [
-            {
-                internalType: "bool",
-                name: "",
-                type: "bool",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
                 internalType: "contract IERC4626",
                 name: "vault",
                 type: "address",
@@ -164,32 +145,6 @@ const _abi = [
             },
         ],
         stateMutability: "payable",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "trustedForwarder",
-        outputs: [
-            {
-                internalType: "address",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "versionRecipient",
-        outputs: [
-            {
-                internalType: "string",
-                name: "",
-                type: "string",
-            },
-        ],
-        stateMutability: "view",
         type: "function",
     },
     {

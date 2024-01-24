@@ -105,6 +105,7 @@ export async function getAllContracts(
     BaseUsdEarn: baseUsdEarnData,
     BaseStEthLev: baseStEthLevData,
     BaseRouter: baseRouterData,
+    PolygonLevMaticX: polygonLevMaticXData,
   } = allData;
 
   const chainId = getChainId();
@@ -112,6 +113,8 @@ export async function getAllContracts(
   if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
     const alpLarge = TwoAssetBasket__factory.connect(alpLargeData.address, provider);
+    const polygonLevMaticX = Vault__factory.connect(polygonLevMaticXData.address, provider);
+    const matic = new ethers.Contract(await polygonLevMaticX.asset(), erc20Abi, provider);
 
     return {
       alpSave,
@@ -135,6 +138,8 @@ export async function getAllContracts(
         chainId === 137 && typeof affinePassBridgePolygonData !== "undefined"
           ? AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
           : undefined,
+      polygonLevMaticX,
+      matic,
     };
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);

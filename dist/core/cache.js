@@ -64,11 +64,13 @@ function getAllContracts(provider) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, } = allData;
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, PolygonLevMaticX: polygonLevMaticXData, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
             const alpLarge = typechain_1.TwoAssetBasket__factory.connect(alpLargeData.address, provider);
+            const polygonLevMaticX = typechain_1.Vault__factory.connect(polygonLevMaticXData.address, provider);
+            const matic = new ethers_1.ethers.Contract(yield polygonLevMaticX.asset(), erc20Abi, provider);
             return {
                 alpSave,
                 alpLarge,
@@ -88,6 +90,8 @@ function getAllContracts(provider) {
                 affinePassBridgePolygon: chainId === 137 && typeof affinePassBridgePolygonData !== "undefined"
                     ? typechain_1.AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
                     : undefined,
+                polygonLevMaticX,
+                matic,
             };
         }
         else if (chainId === 1 || chainId === 5) {

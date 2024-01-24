@@ -901,10 +901,6 @@ export declare class L2Vault__factory {
             readonly name: "_emergencyWithdrawalQueue";
             readonly type: "address";
         }, {
-            readonly internalType: "address";
-            readonly name: "forwarder";
-            readonly type: "address";
-        }, {
             readonly internalType: "uint8[2]";
             readonly name: "layerRatios";
             readonly type: "uint8[2]";
@@ -920,20 +916,6 @@ export declare class L2Vault__factory {
         readonly name: "initialize";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "address";
-            readonly name: "forwarder";
-            readonly type: "address";
-        }];
-        readonly name: "isTrustedForwarder";
-        readonly outputs: readonly [{
-            readonly internalType: "bool";
-            readonly name: "";
-            readonly type: "bool";
-        }];
-        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -1568,16 +1550,6 @@ export declare class L2Vault__factory {
             readonly type: "uint256";
         }];
         readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "versionRecipient";
-        readonly outputs: readonly [{
-            readonly internalType: "string";
-            readonly name: "";
-            readonly type: "string";
-        }];
-        readonly stateMutability: "pure";
         readonly type: "function";
     }, {
         readonly inputs: readonly [{

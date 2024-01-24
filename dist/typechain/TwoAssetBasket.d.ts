@@ -33,8 +33,7 @@ export interface TwoAssetBasketInterface extends utils.Interface {
         "detailedTotalSupply()": FunctionFragment;
         "governance()": FunctionFragment;
         "increaseAllowance(address,uint256)": FunctionFragment;
-        "initialize(address,address,address,address[2],uint256[2],address[3])": FunctionFragment;
-        "isTrustedForwarder(address)": FunctionFragment;
+        "initialize(address,address,address[2],uint256[2],address[3])": FunctionFragment;
         "name()": FunctionFragment;
         "pause()": FunctionFragment;
         "paused()": FunctionFragment;
@@ -44,6 +43,7 @@ export interface TwoAssetBasketInterface extends utils.Interface {
         "redeem(uint256,address,address)": FunctionFragment;
         "setTrustedForwarder(address)": FunctionFragment;
         "symbol()": FunctionFragment;
+        "tearDown(bytes)": FunctionFragment;
         "tokenToOracle(address)": FunctionFragment;
         "totalSupply()": FunctionFragment;
         "transfer(address,uint256)": FunctionFragment;
@@ -53,12 +53,11 @@ export interface TwoAssetBasketInterface extends utils.Interface {
         "upgradeTo(address)": FunctionFragment;
         "upgradeToAndCall(address,bytes)": FunctionFragment;
         "valueOfVault()": FunctionFragment;
-        "versionRecipient()": FunctionFragment;
         "weth()": FunctionFragment;
         "withdraw(uint256,address,address,uint256)": FunctionFragment;
         "withdraw(uint256,address,address)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "ROUTER" | "_getBuySplits" | "_getSellSplits" | "_valueOfToken" | "_valueOfVaultComponents" | "allowance" | "approve" | "asset" | "balanceOf" | "btc" | "decimals" | "decreaseAllowance" | "deposit(uint256,address)" | "deposit(uint256,address,uint256)" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "governance" | "increaseAllowance" | "initialize" | "isTrustedForwarder" | "name" | "pause" | "paused" | "proxiableUUID" | "ratios" | "redeem(uint256,address,address,uint256)" | "redeem(uint256,address,address)" | "setTrustedForwarder" | "symbol" | "tokenToOracle" | "totalSupply" | "transfer" | "transferFrom" | "trustedForwarder" | "unpause" | "upgradeTo" | "upgradeToAndCall" | "valueOfVault" | "versionRecipient" | "weth" | "withdraw(uint256,address,address,uint256)" | "withdraw(uint256,address,address)"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "ROUTER" | "_getBuySplits" | "_getSellSplits" | "_valueOfToken" | "_valueOfVaultComponents" | "allowance" | "approve" | "asset" | "balanceOf" | "btc" | "decimals" | "decreaseAllowance" | "deposit(uint256,address)" | "deposit(uint256,address,uint256)" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "governance" | "increaseAllowance" | "initialize" | "name" | "pause" | "paused" | "proxiableUUID" | "ratios" | "redeem(uint256,address,address,uint256)" | "redeem(uint256,address,address)" | "setTrustedForwarder" | "symbol" | "tearDown" | "tokenToOracle" | "totalSupply" | "transfer" | "transferFrom" | "trustedForwarder" | "unpause" | "upgradeTo" | "upgradeToAndCall" | "valueOfVault" | "weth" | "withdraw(uint256,address,address,uint256)" | "withdraw(uint256,address,address)"): FunctionFragment;
     encodeFunctionData(functionFragment: "ROUTER", values?: undefined): string;
     encodeFunctionData(functionFragment: "_getBuySplits", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "_getSellSplits", values: [PromiseOrValue<BigNumberish>]): string;
@@ -85,7 +84,6 @@ export interface TwoAssetBasketInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "initialize", values: [
         PromiseOrValue<string>,
         PromiseOrValue<string>,
-        PromiseOrValue<string>,
         [
             PromiseOrValue<string>,
             PromiseOrValue<string>
@@ -100,7 +98,6 @@ export interface TwoAssetBasketInterface extends utils.Interface {
             PromiseOrValue<string>
         ]
     ]): string;
-    encodeFunctionData(functionFragment: "isTrustedForwarder", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "name", values?: undefined): string;
     encodeFunctionData(functionFragment: "pause", values?: undefined): string;
     encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -119,6 +116,7 @@ export interface TwoAssetBasketInterface extends utils.Interface {
     ]): string;
     encodeFunctionData(functionFragment: "setTrustedForwarder", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
+    encodeFunctionData(functionFragment: "tearDown", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "tokenToOracle", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "totalSupply", values?: undefined): string;
     encodeFunctionData(functionFragment: "transfer", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
@@ -132,7 +130,6 @@ export interface TwoAssetBasketInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "upgradeTo", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "upgradeToAndCall", values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "valueOfVault", values?: undefined): string;
-    encodeFunctionData(functionFragment: "versionRecipient", values?: undefined): string;
     encodeFunctionData(functionFragment: "weth", values?: undefined): string;
     encodeFunctionData(functionFragment: "withdraw(uint256,address,address,uint256)", values: [
         PromiseOrValue<BigNumberish>,
@@ -165,7 +162,6 @@ export interface TwoAssetBasketInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "governance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "increaseAllowance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "isTrustedForwarder", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
@@ -175,6 +171,7 @@ export interface TwoAssetBasketInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "redeem(uint256,address,address)", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setTrustedForwarder", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "tearDown", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "tokenToOracle", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "totalSupply", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
@@ -184,7 +181,6 @@ export interface TwoAssetBasketInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "upgradeToAndCall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "valueOfVault", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "versionRecipient", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "weth", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdraw(uint256,address,address,uint256)", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdraw(uint256,address,address)", data: BytesLike): Result;
@@ -359,14 +355,13 @@ export interface TwoAssetBasket extends BaseContract {
         increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        initialize(_governance: PromiseOrValue<string>, forwarder: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _tokens: [PromiseOrValue<string>, PromiseOrValue<string>], _ratios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _priceFeeds: [
+        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _tokens: [PromiseOrValue<string>, PromiseOrValue<string>], _ratios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _priceFeeds: [
             PromiseOrValue<string>,
             PromiseOrValue<string>,
             PromiseOrValue<string>
         ], overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean]>;
         name(overrides?: CallOverrides): Promise<[string]>;
         pause(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -384,6 +379,9 @@ export interface TwoAssetBasket extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         symbol(overrides?: CallOverrides): Promise<[string]>;
+        tearDown(users: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         tokenToOracle(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[string]>;
         totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -403,7 +401,6 @@ export interface TwoAssetBasket extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         valueOfVault(overrides?: CallOverrides): Promise<[BigNumber]>;
-        versionRecipient(overrides?: CallOverrides): Promise<[string]>;
         weth(overrides?: CallOverrides): Promise<[string]>;
         "withdraw(uint256,address,address,uint256)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, maxSharesBurned: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -447,14 +444,13 @@ export interface TwoAssetBasket extends BaseContract {
     increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    initialize(_governance: PromiseOrValue<string>, forwarder: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _tokens: [PromiseOrValue<string>, PromiseOrValue<string>], _ratios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _priceFeeds: [
+    initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _tokens: [PromiseOrValue<string>, PromiseOrValue<string>], _ratios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _priceFeeds: [
         PromiseOrValue<string>,
         PromiseOrValue<string>,
         PromiseOrValue<string>
     ], overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
     name(overrides?: CallOverrides): Promise<string>;
     pause(overrides?: Overrides & {
         from?: PromiseOrValue<string>;
@@ -472,6 +468,9 @@ export interface TwoAssetBasket extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     symbol(overrides?: CallOverrides): Promise<string>;
+    tearDown(users: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     tokenToOracle(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<string>;
     totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
     transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -491,7 +490,6 @@ export interface TwoAssetBasket extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     valueOfVault(overrides?: CallOverrides): Promise<BigNumber>;
-    versionRecipient(overrides?: CallOverrides): Promise<string>;
     weth(overrides?: CallOverrides): Promise<string>;
     "withdraw(uint256,address,address,uint256)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, maxSharesBurned: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
@@ -525,12 +523,11 @@ export interface TwoAssetBasket extends BaseContract {
         detailedTotalSupply(overrides?: CallOverrides): Promise<DetailedShare.NumberStructOutput>;
         governance(overrides?: CallOverrides): Promise<string>;
         increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
-        initialize(_governance: PromiseOrValue<string>, forwarder: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _tokens: [PromiseOrValue<string>, PromiseOrValue<string>], _ratios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _priceFeeds: [
+        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _tokens: [PromiseOrValue<string>, PromiseOrValue<string>], _ratios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _priceFeeds: [
             PromiseOrValue<string>,
             PromiseOrValue<string>,
             PromiseOrValue<string>
         ], overrides?: CallOverrides): Promise<void>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
         name(overrides?: CallOverrides): Promise<string>;
         pause(overrides?: CallOverrides): Promise<void>;
         paused(overrides?: CallOverrides): Promise<boolean>;
@@ -540,6 +537,7 @@ export interface TwoAssetBasket extends BaseContract {
         "redeem(uint256,address,address)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         setTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         symbol(overrides?: CallOverrides): Promise<string>;
+        tearDown(users: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<void>;
         tokenToOracle(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<string>;
         totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
@@ -549,7 +547,6 @@ export interface TwoAssetBasket extends BaseContract {
         upgradeTo(newImplementation: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         upgradeToAndCall(newImplementation: PromiseOrValue<string>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<void>;
         valueOfVault(overrides?: CallOverrides): Promise<BigNumber>;
-        versionRecipient(overrides?: CallOverrides): Promise<string>;
         weth(overrides?: CallOverrides): Promise<string>;
         "withdraw(uint256,address,address,uint256)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, maxSharesBurned: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         "withdraw(uint256,address,address)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -606,14 +603,13 @@ export interface TwoAssetBasket extends BaseContract {
         increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        initialize(_governance: PromiseOrValue<string>, forwarder: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _tokens: [PromiseOrValue<string>, PromiseOrValue<string>], _ratios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _priceFeeds: [
+        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _tokens: [PromiseOrValue<string>, PromiseOrValue<string>], _ratios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _priceFeeds: [
             PromiseOrValue<string>,
             PromiseOrValue<string>,
             PromiseOrValue<string>
         ], overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         name(overrides?: CallOverrides): Promise<BigNumber>;
         pause(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -631,6 +627,9 @@ export interface TwoAssetBasket extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         symbol(overrides?: CallOverrides): Promise<BigNumber>;
+        tearDown(users: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         tokenToOracle(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -650,7 +649,6 @@ export interface TwoAssetBasket extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         valueOfVault(overrides?: CallOverrides): Promise<BigNumber>;
-        versionRecipient(overrides?: CallOverrides): Promise<BigNumber>;
         weth(overrides?: CallOverrides): Promise<BigNumber>;
         "withdraw(uint256,address,address,uint256)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, maxSharesBurned: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -689,14 +687,13 @@ export interface TwoAssetBasket extends BaseContract {
         increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        initialize(_governance: PromiseOrValue<string>, forwarder: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _tokens: [PromiseOrValue<string>, PromiseOrValue<string>], _ratios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _priceFeeds: [
+        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _tokens: [PromiseOrValue<string>, PromiseOrValue<string>], _ratios: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>], _priceFeeds: [
             PromiseOrValue<string>,
             PromiseOrValue<string>,
             PromiseOrValue<string>
         ], overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         pause(overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -714,6 +711,9 @@ export interface TwoAssetBasket extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        tearDown(users: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         tokenToOracle(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -733,7 +733,6 @@ export interface TwoAssetBasket extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         valueOfVault(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        versionRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         weth(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         "withdraw(uint256,address,address,uint256)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, owner: PromiseOrValue<string>, maxSharesBurned: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;

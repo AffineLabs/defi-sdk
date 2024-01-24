@@ -13,5 +13,6 @@ exports.alpineProducts = [
     "polygonLeverage",
     "baseUsdEarn",
     "baseLeverage",
+    "polygonLevMaticX",
 ];
 exports.polygonProducts = ["alpSave", "alpLarge", "polygonDegen"];

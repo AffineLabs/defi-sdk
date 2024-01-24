@@ -1459,6 +1459,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [
+            {
+                internalType: "bytes",
+                name: "users",
+                type: "bytes",
+            },
+        ],
+        name: "tearDown",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
         inputs: [],
         name: "totalAssets",
         outputs: [

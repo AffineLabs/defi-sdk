@@ -8,18 +8,15 @@ export interface ERC4626RouterInterface extends utils.Interface {
         "deposit(address,address,uint256,uint256)": FunctionFragment;
         "depositMax(address,address,uint256)": FunctionFragment;
         "depositToVault(address,address,uint256,uint256)": FunctionFragment;
-        "isTrustedForwarder(address)": FunctionFragment;
         "mint(address,address,uint256,uint256)": FunctionFragment;
         "multicall(bytes[])": FunctionFragment;
         "redeem(address,address,uint256,uint256)": FunctionFragment;
         "redeemMax(address,address,uint256)": FunctionFragment;
         "redeemToDeposit(address,address,address,uint256,uint256)": FunctionFragment;
-        "trustedForwarder()": FunctionFragment;
-        "versionRecipient()": FunctionFragment;
         "withdraw(address,address,uint256,uint256)": FunctionFragment;
         "withdrawToDeposit(address,address,address,uint256,uint256,uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "approve" | "deposit" | "depositMax" | "depositToVault" | "isTrustedForwarder" | "mint" | "multicall" | "redeem" | "redeemMax" | "redeemToDeposit" | "trustedForwarder" | "versionRecipient" | "withdraw" | "withdrawToDeposit"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "approve" | "deposit" | "depositMax" | "depositToVault" | "mint" | "multicall" | "redeem" | "redeemMax" | "redeemToDeposit" | "withdraw" | "withdrawToDeposit"): FunctionFragment;
     encodeFunctionData(functionFragment: "approve", values: [
         PromiseOrValue<string>,
         PromiseOrValue<string>,
@@ -42,7 +39,6 @@ export interface ERC4626RouterInterface extends utils.Interface {
         PromiseOrValue<BigNumberish>,
         PromiseOrValue<BigNumberish>
     ]): string;
-    encodeFunctionData(functionFragment: "isTrustedForwarder", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "mint", values: [
         PromiseOrValue<string>,
         PromiseOrValue<string>,
@@ -68,8 +64,6 @@ export interface ERC4626RouterInterface extends utils.Interface {
         PromiseOrValue<BigNumberish>,
         PromiseOrValue<BigNumberish>
     ]): string;
-    encodeFunctionData(functionFragment: "trustedForwarder", values?: undefined): string;
-    encodeFunctionData(functionFragment: "versionRecipient", values?: undefined): string;
     encodeFunctionData(functionFragment: "withdraw", values: [
         PromiseOrValue<string>,
         PromiseOrValue<string>,
@@ -88,14 +82,11 @@ export interface ERC4626RouterInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "depositMax", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "depositToVault", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "isTrustedForwarder", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "redeem", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "redeemMax", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "redeemToDeposit", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "trustedForwarder", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "versionRecipient", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "withdrawToDeposit", data: BytesLike): Result;
     events: {};
@@ -127,7 +118,6 @@ export interface ERC4626Router extends BaseContract {
         depositToVault(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean]>;
         mint(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, maxAmountIn: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -143,8 +133,6 @@ export interface ERC4626Router extends BaseContract {
         redeemToDeposit(fromVault: PromiseOrValue<string>, toVault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        trustedForwarder(overrides?: CallOverrides): Promise<[string]>;
-        versionRecipient(overrides?: CallOverrides): Promise<[string]>;
         withdraw(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
@@ -164,7 +152,6 @@ export interface ERC4626Router extends BaseContract {
     depositToVault(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
     mint(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, maxAmountIn: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -180,8 +167,6 @@ export interface ERC4626Router extends BaseContract {
     redeemToDeposit(fromVault: PromiseOrValue<string>, toVault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    trustedForwarder(overrides?: CallOverrides): Promise<string>;
-    versionRecipient(overrides?: CallOverrides): Promise<string>;
     withdraw(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
@@ -193,14 +178,11 @@ export interface ERC4626Router extends BaseContract {
         deposit(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         depositMax(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         depositToVault(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
         mint(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, maxAmountIn: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         multicall(data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<string[]>;
         redeem(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, minAmountOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         redeemMax(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, minAmountOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         redeemToDeposit(fromVault: PromiseOrValue<string>, toVault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
-        trustedForwarder(overrides?: CallOverrides): Promise<string>;
-        versionRecipient(overrides?: CallOverrides): Promise<string>;
         withdraw(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
         withdrawToDeposit(fromVault: PromiseOrValue<string>, toVault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesIn: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     };
@@ -218,7 +200,6 @@ export interface ERC4626Router extends BaseContract {
         depositToVault(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         mint(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, maxAmountIn: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -234,8 +215,6 @@ export interface ERC4626Router extends BaseContract {
         redeemToDeposit(fromVault: PromiseOrValue<string>, toVault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        trustedForwarder(overrides?: CallOverrides): Promise<BigNumber>;
-        versionRecipient(overrides?: CallOverrides): Promise<BigNumber>;
         withdraw(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
@@ -256,7 +235,6 @@ export interface ERC4626Router extends BaseContract {
         depositToVault(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        isTrustedForwarder(forwarder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         mint(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, maxAmountIn: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
@@ -272,8 +250,6 @@ export interface ERC4626Router extends BaseContract {
         redeemToDeposit(fromVault: PromiseOrValue<string>, toVault: PromiseOrValue<string>, to: PromiseOrValue<string>, shares: PromiseOrValue<BigNumberish>, minSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        trustedForwarder(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        versionRecipient(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         withdraw(vault: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, maxSharesOut: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;

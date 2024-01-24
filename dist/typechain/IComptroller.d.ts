@@ -5,18 +5,24 @@ import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrVal
 export interface IComptrollerInterface extends utils.Interface {
     functions: {
         "claimComp(address,address[])": FunctionFragment;
+        "claimStrike(address)": FunctionFragment;
+        "claimStrike(address,address[])": FunctionFragment;
         "compAccrued(address)": FunctionFragment;
         "enterMarkets(address[])": FunctionFragment;
         "getAccountLiquidity(address)": FunctionFragment;
         "markets(address)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "claimComp" | "compAccrued" | "enterMarkets" | "getAccountLiquidity" | "markets"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "claimComp" | "claimStrike(address)" | "claimStrike(address,address[])" | "compAccrued" | "enterMarkets" | "getAccountLiquidity" | "markets"): FunctionFragment;
     encodeFunctionData(functionFragment: "claimComp", values: [PromiseOrValue<string>, PromiseOrValue<string>[]]): string;
+    encodeFunctionData(functionFragment: "claimStrike(address)", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "claimStrike(address,address[])", values: [PromiseOrValue<string>, PromiseOrValue<string>[]]): string;
     encodeFunctionData(functionFragment: "compAccrued", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "enterMarkets", values: [PromiseOrValue<string>[]]): string;
     encodeFunctionData(functionFragment: "getAccountLiquidity", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "markets", values: [PromiseOrValue<string>]): string;
     decodeFunctionResult(functionFragment: "claimComp", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "claimStrike(address)", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "claimStrike(address,address[])", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "compAccrued", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "enterMarkets", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getAccountLiquidity", data: BytesLike): Result;
@@ -41,6 +47,12 @@ export interface IComptroller extends BaseContract {
         claimComp(holder: PromiseOrValue<string>, cTokens: PromiseOrValue<string>[], overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        "claimStrike(address)"(holder: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        "claimStrike(address,address[])"(holder: PromiseOrValue<string>, cTokens: PromiseOrValue<string>[], overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         compAccrued(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
         enterMarkets(arg0: PromiseOrValue<string>[], overrides?: Overrides & {
             from?: PromiseOrValue<string>;
@@ -53,6 +65,12 @@ export interface IComptroller extends BaseContract {
     claimComp(holder: PromiseOrValue<string>, cTokens: PromiseOrValue<string>[], overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    "claimStrike(address)"(holder: PromiseOrValue<string>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    "claimStrike(address,address[])"(holder: PromiseOrValue<string>, cTokens: PromiseOrValue<string>[], overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     compAccrued(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     enterMarkets(arg0: PromiseOrValue<string>[], overrides?: Overrides & {
         from?: PromiseOrValue<string>;
@@ -63,6 +81,8 @@ export interface IComptroller extends BaseContract {
     }): Promise<ContractTransaction>;
     callStatic: {
         claimComp(holder: PromiseOrValue<string>, cTokens: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<void>;
+        "claimStrike(address)"(holder: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+        "claimStrike(address,address[])"(holder: PromiseOrValue<string>, cTokens: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<void>;
         compAccrued(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         enterMarkets(arg0: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<BigNumber[]>;
         getAccountLiquidity(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber, BigNumber, BigNumber]>;
@@ -71,6 +91,12 @@ export interface IComptroller extends BaseContract {
     filters: {};
     estimateGas: {
         claimComp(holder: PromiseOrValue<string>, cTokens: PromiseOrValue<string>[], overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        "claimStrike(address)"(holder: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        "claimStrike(address,address[])"(holder: PromiseOrValue<string>, cTokens: PromiseOrValue<string>[], overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         compAccrued(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
@@ -84,6 +110,12 @@ export interface IComptroller extends BaseContract {
     };
     populateTransaction: {
         claimComp(holder: PromiseOrValue<string>, cTokens: PromiseOrValue<string>[], overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        "claimStrike(address)"(holder: PromiseOrValue<string>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        "claimStrike(address,address[])"(holder: PromiseOrValue<string>, cTokens: PromiseOrValue<string>[], overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         compAccrued(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;

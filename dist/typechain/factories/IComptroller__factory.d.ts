@@ -19,6 +19,30 @@ export declare class IComptroller__factory {
     }, {
         readonly inputs: readonly [{
             readonly internalType: "address";
+            readonly name: "holder";
+            readonly type: "address";
+        }];
+        readonly name: "claimStrike";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "address";
+            readonly name: "holder";
+            readonly type: "address";
+        }, {
+            readonly internalType: "contract ICToken[]";
+            readonly name: "cTokens";
+            readonly type: "address[]";
+        }];
+        readonly name: "claimStrike";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "address";
             readonly name: "";
             readonly type: "address";
         }];

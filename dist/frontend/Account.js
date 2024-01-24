@@ -86,6 +86,7 @@ class Account {
             this.userAddress = yield this.signer.getAddress();
             this.walletType = walletType;
             this.selectedChainId = chainId;
+            this.withdrawSlippageByProduct = constants_1.WITHDRAW_SLIPPAGE_BY_PRODUCT;
             if (getMessage && verify) {
                 // case - user's wallet needs to be verified with nonce
                 try {

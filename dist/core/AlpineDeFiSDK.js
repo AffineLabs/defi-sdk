@@ -127,8 +127,8 @@ exports.blockchainCall = blockchainCall;
 function isApproved(product, amount) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, } = (0, cache_1.getContracts)();
-        if (["ethWethEarn", "baseLeverage", "ethLeverage"].includes(product))
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, } = (0, cache_1.getContracts)();
+        if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX"].includes(product))
             return true;
         const asset = product == "polygonLeverage" ? weth : usdc;
         const productToSpender = {
@@ -140,6 +140,7 @@ function isApproved(product, amount) {
             polygonDegen,
             polygonLeverage,
             baseUsdEarn,
+            polygonLevMaticX,
             // No approvals needed for these
             ethWethEarn,
             ethLeverage,
@@ -173,10 +174,13 @@ function approve(product, amountAsset) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
-        const { usdc, router, weth } = contracts;
+        const { usdc, router, weth, matic } = contracts;
         let asset = usdc;
         if (["ethWethEarn", "ethLeverage", "polygonLeverage"].includes(product)) {
             asset = weth;
+        }
+        else if (matic && ["polygonLevMaticX"].includes(product)) {
+            asset = matic;
         }
         const decimals = yield asset.decimals();
         const amount = amountAsset ? _addDecimals(amountAsset, decimals) : constants_1.MAX_APPROVAL_AMOUNT;

@@ -19,7 +19,7 @@ const cache_1 = require("./cache");
 const constants_1 = require("./constants");
 function _getVaultAndAsset(product) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { alpSave, alpLarge, polygonDegen, polygonLeverage } = (0, cache_1.getPolygonContracts)();
+        const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX } = (0, cache_1.getPolygonContracts)();
         const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = (0, cache_1.getEthContracts)();
         const { baseUsdEarn, baseLeverage } = (0, cache_1.getBaseContracts)();
         const { router } = (0, cache_1.getContracts)();
@@ -35,6 +35,7 @@ function _getVaultAndAsset(product) {
             polygonLeverage,
             baseUsdEarn,
             baseLeverage,
+            polygonLevMaticX,
         };
         const vault = productToVault[product];
         if (!vault)
@@ -49,8 +50,8 @@ function buyProduct(product, amount, slippageBps = 500) {
         if (product == "alpLarge") {
             return buyBtCEthShares(vault, amount, slippageBps, asset, router);
         }
-        else if (product == "ethWethEarn" || product == "ethLeverage" || product == "baseLeverage") {
-            return buySharesByEthThroughWeth(amount, vault);
+        else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX"].includes(product)) {
+            return buySharesByEthThroughWeth(amount, vault, asset);
         }
         return buyVault(vault, amount, asset);
     });
@@ -85,6 +86,7 @@ assetDecimals) {
 function buyVault(vault, rawAssets, asset) {
     return __awaiter(this, void 0, void 0, function* () {
         const { assets, basicInfo } = yield getBasicTxInfo(vault, rawAssets, yield asset.decimals());
+        console.log("buying", { asset, basicInfo });
         const receipt = cache_1.SIMULATE
             ? (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [assets, cache_1.userAddress], true))
             : (yield (0, AlpineDeFiSDK_1.blockchainCall)(vault, "deposit", [assets, cache_1.userAddress], false));
@@ -102,11 +104,11 @@ function sellVault(vault, rawAssets, asset) {
     });
 }
 exports.sellVault = sellVault;
-function buySharesByEthThroughWeth(amountWeth, vault) {
+function buySharesByEthThroughWeth(amountWeth, vault, asset) {
     return __awaiter(this, void 0, void 0, function* () {
         const ethDecimals = 18;
         const { assets: amount, basicInfo } = yield getBasicTxInfo(vault, amountWeth, ethDecimals);
-        const { weth, router } = (0, cache_1.getContracts)();
+        const { router } = (0, cache_1.getContracts)();
         const shareDecimals = yield vault.decimals();
         if (amount.isNegative() || amount.isZero()) {
             throw new Error("amount must be positive.");
@@ -117,10 +119,9 @@ function buySharesByEthThroughWeth(amountWeth, vault) {
         }
         const data = [];
         data.push(router.interface.encodeFunctionData("depositNative"));
-        data.push(router.interface.encodeFunctionData("approve", [weth.address, vault.address, constants_1.MAX_UINT]));
+        data.push(router.interface.encodeFunctionData("approve", [asset.address, vault.address, constants_1.MAX_UINT]));
         data.push(router.interface.encodeFunctionData("deposit", [vault.address, cache_1.userAddress, amount, 0]));
         const beforeBal = yield vault.balanceOf(cache_1.userAddress);
-        console.log({ amount });
         if (cache_1.SIMULATE) {
             const dryRunInfo = (yield (0, AlpineDeFiSDK_1.blockchainCall)(router, "multicall", [data], true, amount));
             return Object.assign(Object.assign({}, basicInfo), dryRunInfo);
@@ -233,7 +234,7 @@ function getTokenInfo(product) {
                 equity: numWeth,
             };
         }
-        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, } = (0, cache_1.getContracts)();
+        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, } = (0, cache_1.getContracts)();
         const productToContract = {
             alpSave,
             ethEarn,
@@ -246,6 +247,7 @@ function getTokenInfo(product) {
             ethWethEarn,
             baseLeverage,
             baseUsdEarn,
+            polygonLevMaticX,
         };
         const contract = productToContract[product];
         if (!contract)

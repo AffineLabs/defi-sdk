@@ -70,6 +70,7 @@ export interface VaultInterface extends utils.Interface {
         "strategies(address)": FunctionFragment;
         "supportsInterface(bytes4)": FunctionFragment;
         "symbol()": FunctionFragment;
+        "tearDown(bytes)": FunctionFragment;
         "totalAssets()": FunctionFragment;
         "totalBps()": FunctionFragment;
         "totalStrategyHoldings()": FunctionFragment;
@@ -86,7 +87,7 @@ export interface VaultInterface extends utils.Interface {
         "withdrawalFee()": FunctionFragment;
         "withdrawalQueue(uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "allowance" | "approve" | "asset" | "balanceOf" | "convertToAssets" | "convertToShares" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "depositIntoStrategy" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "rebalance" | "redeem" | "removeStrategy" | "renounceRole" | "revokeRole" | "setManagementFee" | "setWithdrawalFee" | "setWithdrawalQueue" | "strategies" | "supportsInterface" | "symbol" | "totalAssets" | "totalBps" | "totalStrategyHoldings" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "withdraw" | "withdrawFromStrategy" | "withdrawalFee" | "withdrawalQueue"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "addStrategy" | "allowance" | "approve" | "asset" | "balanceOf" | "convertToAssets" | "convertToShares" | "decimals" | "decreaseAllowance" | "deposit" | "depositIntoStrategies" | "depositIntoStrategy" | "detailedPrice" | "detailedTVL" | "detailedTotalSupply" | "getRoleAdmin" | "getWithdrawalQueue" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "rebalance" | "redeem" | "removeStrategy" | "renounceRole" | "revokeRole" | "setManagementFee" | "setWithdrawalFee" | "setWithdrawalQueue" | "strategies" | "supportsInterface" | "symbol" | "tearDown" | "totalAssets" | "totalBps" | "totalStrategyHoldings" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "updateStrategyAllocations" | "upgradeTo" | "upgradeToAndCall" | "vaultTVL" | "withdraw" | "withdrawFromStrategy" | "withdrawalFee" | "withdrawalQueue"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "GUARDIAN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
@@ -152,6 +153,7 @@ export interface VaultInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "strategies", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "supportsInterface", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "symbol", values?: undefined): string;
+    encodeFunctionData(functionFragment: "tearDown", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "totalAssets", values?: undefined): string;
     encodeFunctionData(functionFragment: "totalBps", values?: undefined): string;
     encodeFunctionData(functionFragment: "totalStrategyHoldings", values?: undefined): string;
@@ -231,6 +233,7 @@ export interface VaultInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "strategies", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "symbol", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "tearDown", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "totalAssets", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "totalBps", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "totalStrategyHoldings", data: BytesLike): Result;
@@ -637,6 +640,9 @@ export interface Vault extends BaseContract {
         }>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[boolean]>;
         symbol(overrides?: CallOverrides): Promise<[string]>;
+        tearDown(users: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         totalAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
         totalBps(overrides?: CallOverrides): Promise<[BigNumber]>;
         totalStrategyHoldings(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -773,6 +779,9 @@ export interface Vault extends BaseContract {
     }>;
     supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
     symbol(overrides?: CallOverrides): Promise<string>;
+    tearDown(users: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
     totalBps(overrides?: CallOverrides): Promise<BigNumber>;
     totalStrategyHoldings(overrides?: CallOverrides): Promise<BigNumber>;
@@ -869,6 +878,7 @@ export interface Vault extends BaseContract {
         }>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
         symbol(overrides?: CallOverrides): Promise<string>;
+        tearDown(users: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<void>;
         totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
         totalBps(overrides?: CallOverrides): Promise<BigNumber>;
         totalStrategyHoldings(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1032,6 +1042,9 @@ export interface Vault extends BaseContract {
         strategies(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
         symbol(overrides?: CallOverrides): Promise<BigNumber>;
+        tearDown(users: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         totalAssets(overrides?: CallOverrides): Promise<BigNumber>;
         totalBps(overrides?: CallOverrides): Promise<BigNumber>;
         totalStrategyHoldings(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1161,6 +1174,9 @@ export interface Vault extends BaseContract {
         strategies(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         symbol(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        tearDown(users: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         totalAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         totalBps(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         totalStrategyHoldings(overrides?: CallOverrides): Promise<PopulatedTransaction>;

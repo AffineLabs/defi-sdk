@@ -9,6 +9,7 @@ import {
   EmergencyWithdrawalQueueRequest,
   EmergencyWithdrawalQueueTransfer,
   SSVWithdrawalRequestInfo,
+  WithdrawSlippageByProduct,
   productAllocation,
 } from "../core/types";
 import { portfolioSell, portfolioPurchase } from "../core/portfolio";
@@ -18,7 +19,13 @@ import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
 import * as lockedWithdrawal from "../core/singleStrategy";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
-import { DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WALLETCONNECT_PROJECT_ID } from "../core/constants";
+import {
+  DEFAULT_WALLET,
+  getChainIdFromRaw,
+  NETWORK_PARAMS,
+  WALLETCONNECT_PROJECT_ID,
+  WITHDRAW_SLIPPAGE_BY_PRODUCT,
+} from "../core/constants";
 import {
   getEmergencyWithdrawalQueueTransfers,
   getUserEmergencyWithdrawalQueueRequests,
@@ -40,6 +47,7 @@ class Account {
   selectedChainId?: AllowedChainId;
   walletConnectProvider?: Provider;
   web3ModalInstance?: import("@web3modal/standalone").Web3Modal;
+  withdrawSlippageByProduct?: WithdrawSlippageByProduct;
 
   /**
    * Creates an alpine account object
@@ -82,6 +90,7 @@ class Account {
     this.userAddress = await this.signer.getAddress();
     this.walletType = walletType;
     this.selectedChainId = chainId;
+    this.withdrawSlippageByProduct = WITHDRAW_SLIPPAGE_BY_PRODUCT;
 
     if (getMessage && verify) {
       // case - user's wallet needs to be verified with nonce

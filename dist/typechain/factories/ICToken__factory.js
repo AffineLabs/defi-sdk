@@ -207,6 +207,13 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "mint",
+        outputs: [],
+        stateMutability: "payable",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "uint256",
