@@ -1,6 +1,6 @@
 {
   "name": "@alpine-ramp/alpine-defi-sdk",
-  "version": "1.6.2-beta",
+  "version": "1.7.0-beta",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/Multiplyr/defi-sdk.git",
@@ -23,8 +23,7 @@
     "@ethersproject/abstract-signer": "^5.5.0",
     "@magic-sdk/types": "^7.0.0",
     "@metamask/detect-provider": "^1.2.0",
-    "@walletconnect/universal-provider": "^2.11.0",
-    "@web3modal/standalone": "^2.4.3",
+    "@web3modal/ethers5": "^3.5.7",
     "axios": "^0.25.0",
     "ethers": "5.7.2",
     "magic-sdk": "^8.1.1"

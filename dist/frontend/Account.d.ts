@@ -1,9 +1,9 @@
 import { Magic } from "magic-sdk";
 import { ethers } from "ethers";
-import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, SSVWithdrawalRequestInfo, WithdrawSlippageByProduct, productAllocation } from "../core/types";
+import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, SSVWithdrawalRequestInfo, productAllocation } from "../core/types";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet, IConnectAccount } from "../types/account";
-import Provider from "@walletconnect/universal-provider";
+import { Web3Modal } from "@web3modal/ethers5/dist/types/src/client";
 declare class Account {
     magic: Magic;
     signer: ethers.Signer;
@@ -13,17 +13,23 @@ declare class Account {
     walletProvider?: ethers.providers.Web3Provider;
     gas: boolean;
     selectedChainId?: AllowedChainId;
-    walletConnectProvider?: Provider;
-    web3ModalInstance?: import("@web3modal/standalone").Web3Modal;
-    withdrawSlippageByProduct?: WithdrawSlippageByProduct;
+    web3ModalInstance?: Web3Modal;
     /**
-     * Creates an alpine account object
-     */
-    /**
-     * connect the user account to magic's sdk. In particular,
-     * login with with magic, get provider, signer and set up
+     * connect the user account to wallet provider and initialize
      * the smart contracts.
-     * @param email user's email address
+     * @param {IConnectAccount} options - the options to connect the account
+     *
+     * @returns {Promise<void>} a promise that resolves when the account is connected
+     *
+     * @example
+     * ```typescript
+     * const account = new Account();
+     * account.initWeb3Modal(); // initialize web3modal
+     * await account.connect({
+     *  walletType: "metamask",
+     *  chainId: 1,
+     * });
+     * ```
      */
     connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, }: IConnectAccount): Promise<void>;
     initContracts(chainId: AllowedChainId, address?: string): Promise<void>;
@@ -43,6 +49,7 @@ declare class Account {
      * @returns user's public address
      */
     getUserAddress(): Promise<string | undefined>;
+    getWithdrawSlippageByProduct(product: AlpineProduct): import("../core/types").WithdrawSlippage;
     setGasMode(useGas: boolean): Promise<void>;
     /**
      * It checks if the user has approved the outgoing transaction, amount is optional.
@@ -81,15 +88,26 @@ declare class Account {
     txHasEnqueueEvent(txHash: string): Promise<boolean>;
     getEmergencyWithdrawalQueueTransfers(product: AlpineProduct): Promise<EmergencyWithdrawalQueueTransfer[]>;
     isLoggedInToMagic(): Promise<boolean>;
-    getChainId(walletType: AllowedWallet): Promise<string | undefined>;
+    getChainId(walletType: AllowedWallet): Promise<string | number | undefined>;
     isConnectedToTheGivenChainId(walletType: AllowedWallet, chainId: AllowedChainId): Promise<boolean>;
-    setWalletConnectProvider(provider: Provider): void;
-    getWalletConnectProvider(): Provider | undefined;
     /**
      * This method will switch the wallet to the given chain id
      */
     switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void>;
-    initWalletConnectProvider(web3Modal: import("@web3modal/standalone").Web3Modal): Promise<void>;
+    /**
+     * Initiates the web3modal instance.
+     * @returns {Web3Modal} the web3modal instance
+     *
+     * @remarks
+     * This needs to be called before calling Account.connect() to initialize the web3modal instance
+     *
+     * @example
+     * ```typescript
+     * const account = new Account();
+     * account.initWeb3Modal();
+     * ```
+     */
+    initWeb3Modal(): Web3Modal | undefined;
     isStrategyLiquid(): Promise<boolean>;
     getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]>;
     redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<import("../core/types").FullTxReceipt>;
