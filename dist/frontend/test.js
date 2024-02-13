@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,9 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-const constants_1 = require("../core/constants");
-const Account_1 = require("./Account");
+import { ALLOWED_CHAIN_IDS } from "../core/constants";
+import { Account } from "./Account";
 const connectAndWrite = ({ walletType = "metamask", account, chainId, }) => __awaiter(void 0, void 0, void 0, function* () {
     const email = process.env.EMAIL || "";
     // connect
@@ -45,7 +43,7 @@ const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, f
     console.log("approved: ", product);
     yield alpAccount.buyProduct(product, amount);
 });
-const alpAccount = new Account_1.Account();
+const alpAccount = new Account();
 const walletType = "metamask";
 const chainId = 137;
 const _productToBuy = "polygonLevMaticX";
@@ -55,7 +53,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     //   const modal = await initiateWeb3Modal();
     //   if (modal) await alpAccount.initWalletConnectProvider(modal);
     // }
-    console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS: constants_1.ALLOWED_CHAIN_IDS }, constants_1.ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
+    console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS }, ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
     yield connectAndWrite({ walletType, account: alpAccount, chainId });
     // console.log("sale state", await readAcc.saleIsActive());
     // console.log("whitelist state", await readAcc.whitelistSaleIsActive());

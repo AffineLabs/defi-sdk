@@ -1,8 +1,11 @@
 {
   "name": "@alpine-ramp/alpine-defi-sdk",
-  "version": "1.7.0-beta",
+  "version": "1.7.1-beta",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "repository": "https://github.com/Multiplyr/defi-sdk.git",
   "author": "larryob <tosin@multiplyr.ai>",
   "license": "MIT",
@@ -23,7 +26,7 @@
     "@ethersproject/abstract-signer": "^5.5.0",
     "@magic-sdk/types": "^7.0.0",
     "@metamask/detect-provider": "^1.2.0",
-    "@web3modal/ethers5": "^3.5.7",
+    "@web3modal/ethers5": "^4.0.3",
     "axios": "^0.25.0",
     "ethers": "5.7.2",
     "magic-sdk": "^8.1.1"

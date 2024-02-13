@@ -1,27 +1,3 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31,24 +7,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Account = void 0;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const mexa_1 = require("@biconomy/mexa");
-const ethers_1 = require("ethers");
-const portfolio_1 = require("../core/portfolio");
-const core_1 = require("../core");
-const productActions = __importStar(require("../core/product"));
-const cache_1 = require("../core/cache");
-const lockedWithdrawal = __importStar(require("../core/singleStrategy"));
-const constants_1 = require("../core/constants");
-const ewqueue_1 = require("../core/ewqueue");
-const wallets_1 = require("./wallets");
-const ethers5_1 = require("@web3modal/ethers5");
+import { Biconomy } from "@biconomy/mexa";
+import { ethers } from "ethers";
+import { portfolioSell, portfolioPurchase } from "../core/portfolio";
+import { AlpineDeFiSDK, init } from "../core";
+import * as productActions from "../core/product";
+import { setSimulationMode } from "../core/cache";
+import * as lockedWithdrawal from "../core/singleStrategy";
+import { DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WALLETCONNECT_PROJECT_ID, WITHDRAW_SLIPPAGE_BY_PRODUCT, } from "../core/constants";
+import { getEmergencyWithdrawalQueueTransfers, getUserEmergencyWithdrawalQueueRequests, txHasEnqueueEvent, vaultWithdrawableAssetAmount, } from "../core/ewqueue";
+import { getWeb3Provider, initMagic } from "./wallets";
+import { createWeb3Modal, defaultConfig } from "@web3modal/ethers5";
 class Account {
     constructor() {
-        this.walletType = constants_1.DEFAULT_WALLET;
+        this.walletType = DEFAULT_WALLET;
         // if true, send regular transaction, if false, use biconomy
         this.gas = false;
     }
@@ -75,13 +49,13 @@ class Account {
             // get wallet provider based on wallet type
             let walletProvider;
             if (walletType === "magic" && email) {
-                const { magic, provider } = yield (0, wallets_1.initMagic)({ email, testMode: Boolean(shouldRunMagicTestMode), chainId });
+                const { magic, provider } = yield initMagic({ email, testMode: Boolean(shouldRunMagicTestMode), chainId });
                 if (magic)
                     this.magic = magic;
                 walletProvider = provider;
             }
             else {
-                walletProvider = yield (0, wallets_1.getWeb3Provider)(walletType, chainId, this.web3ModalInstance);
+                walletProvider = yield getWeb3Provider(walletType, chainId, this.web3ModalInstance);
             }
             if (!walletProvider)
                 return;
@@ -108,7 +82,7 @@ class Account {
                 }
             }
             console.time("init-contracts");
-            yield (0, core_1.init)(this.signer, this.biconomy, chainId);
+            yield init(this.signer, this.biconomy, chainId);
             console.timeEnd("init-contracts");
         });
     }
@@ -118,17 +92,17 @@ class Account {
             if (!address && !this.signer) {
                 throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
             }
-            yield (0, core_1.init)((_a = this.signer) !== null && _a !== void 0 ? _a : address, this.biconomy, chainId);
+            yield init((_a = this.signer) !== null && _a !== void 0 ? _a : address, this.biconomy, chainId);
         });
     }
     setSimulationMode(mode) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, cache_1.setSimulationMode)(mode);
+            return setSimulationMode(mode);
         });
     }
     initBiconomy(provider) {
         return __awaiter(this, void 0, void 0, function* () {
-            const biconomyRaw = new mexa_1.Biconomy(provider, {
+            const biconomyRaw = new Biconomy(provider, {
                 apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
                 debug: true,
                 strictMode: true,
@@ -137,7 +111,7 @@ class Account {
                 biconomyRaw
                     .onEvent(biconomyRaw.READY, () => {
                     // set the biconomy provider
-                    this.biconomy = new ethers_1.ethers.providers.Web3Provider(biconomyRaw);
+                    this.biconomy = new ethers.providers.Web3Provider(biconomyRaw);
                     resolve(null);
                 })
                     .onEvent(biconomyRaw.ERROR, (error, message) => {
@@ -176,7 +150,7 @@ class Account {
      * Check if a user is connected to the magic provider
      * @returns Whether the user is connected to the magic provider
      */
-    isConnected(walletType = constants_1.DEFAULT_WALLET, chainId) {
+    isConnected(walletType = DEFAULT_WALLET, chainId) {
         return Boolean(this.userAddress) && walletType === this.walletType && this.selectedChainId === chainId;
     }
     /**
@@ -189,7 +163,7 @@ class Account {
         });
     }
     getWithdrawSlippageByProduct(product) {
-        const slippages = Object.assign({}, constants_1.WITHDRAW_SLIPPAGE_BY_PRODUCT);
+        const slippages = Object.assign({}, WITHDRAW_SLIPPAGE_BY_PRODUCT);
         return slippages[product];
     }
     setGasMode(useGas) {
@@ -197,7 +171,7 @@ class Account {
             // this.biconomy is created upon connection and will always exist
             this.gas = useGas;
             const biconomyProvider = useGas ? undefined : this.biconomy;
-            return (0, core_1.init)(this.signer, biconomyProvider, this.selectedChainId);
+            return init(this.signer, biconomyProvider, this.selectedChainId);
         });
     }
     /**
@@ -207,7 +181,7 @@ class Account {
      */
     isApproved(product, amount) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.isApproved(product, amount);
+            return AlpineDeFiSDK.isApproved(product, amount);
         });
     }
     /**
@@ -217,13 +191,13 @@ class Account {
      * @param {String} amountUSDC transaction amount in usdc
      */
     approve(to, amountUSDC) {
-        return core_1.AlpineDeFiSDK.approve(to, amountUSDC);
+        return AlpineDeFiSDK.approve(to, amountUSDC);
     }
     portfolioSell(allocations, amount) {
-        return (0, portfolio_1.portfolioSell)(allocations, amount);
+        return portfolioSell(allocations, amount);
     }
     portfolioPurchase(alloctions, amount) {
-        return (0, portfolio_1.portfolioPurchase)(alloctions, amount);
+        return portfolioPurchase(alloctions, amount);
     }
     buyProduct(product, amount) {
         return productActions.buyProduct(product, amount);
@@ -239,7 +213,7 @@ class Account {
      */
     transfer(to, amountUSDC) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.transfer(to, amountUSDC);
+            return AlpineDeFiSDK.transfer(to, amountUSDC);
         });
     }
     /**
@@ -249,37 +223,37 @@ class Account {
      */
     mintUSDCTokens(to, amountUSDC) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mintUSDC(to, amountUSDC);
+            return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
         });
     }
     mintAffinePass() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mint();
+            return AlpineDeFiSDK.mint();
         });
     }
     mintWhitelistAffinePass(proof) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mintWhitelist(proof);
+            return AlpineDeFiSDK.mintWhitelist(proof);
         });
     }
     getUserEmergencyWithdrawalQueueRequests(product) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, ewqueue_1.getUserEmergencyWithdrawalQueueRequests)(product);
+            return getUserEmergencyWithdrawalQueueRequests(product);
         });
     }
     vaultWithdrawableAssetAmount(product) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, ewqueue_1.vaultWithdrawableAssetAmount)(product);
+            return vaultWithdrawableAssetAmount(product);
         });
     }
     txHasEnqueueEvent(txHash) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, ewqueue_1.txHasEnqueueEvent)(txHash);
+            return txHasEnqueueEvent(txHash);
         });
     }
     getEmergencyWithdrawalQueueTransfers(product) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, ewqueue_1.getEmergencyWithdrawalQueueTransfers)(product);
+            return getEmergencyWithdrawalQueueTransfers(product);
         });
     }
     isLoggedInToMagic() {
@@ -299,7 +273,7 @@ class Account {
                 return (_a = this.web3ModalInstance) === null || _a === void 0 ? void 0 : _a.getChainId();
             }
             else if (walletType !== "magic" && this.selectedChainId) {
-                const provider = yield (0, wallets_1.getWeb3Provider)(walletType, this.selectedChainId, this.web3ModalInstance);
+                const provider = yield getWeb3Provider(walletType, this.selectedChainId, this.web3ModalInstance);
                 return yield (provider === null || provider === void 0 ? void 0 : provider.send("eth_chainId", []));
             }
             else if (this.walletProvider) {
@@ -325,12 +299,12 @@ class Account {
             if (walletType === "walletConnect" && !this.web3ModalInstance) {
                 this.initWeb3Modal();
             }
-            const _provider = yield (0, wallets_1.getWeb3Provider)(walletType, chainId, this.web3ModalInstance);
+            const _provider = yield getWeb3Provider(walletType, chainId, this.web3ModalInstance);
             if (!_provider) {
                 throw new Error("Provider is not available");
             }
             try {
-                yield _provider.send("wallet_switchEthereumChain", [{ chainId: (0, constants_1.getChainIdFromRaw)(chainId) }]);
+                yield _provider.send("wallet_switchEthereumChain", [{ chainId: getChainIdFromRaw(chainId) }]);
             }
             catch (error) {
                 const err = error;
@@ -341,14 +315,14 @@ class Account {
                      * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
                      */
                     yield _provider.send("wallet_addEthereumChain", [
-                        Object.assign(Object.assign({}, constants_1.NETWORK_PARAMS[chainId]), { chainId: (0, constants_1.getChainIdFromRaw)(chainId) }),
+                        Object.assign(Object.assign({}, NETWORK_PARAMS[chainId]), { chainId: getChainIdFromRaw(chainId) }),
                     ]);
                 }
             }
             if (chainId !== this.selectedChainId && _provider) {
                 this.signer = _provider.getSigner();
                 this.selectedChainId = chainId;
-                return (0, core_1.init)(this.signer, this.biconomy, chainId);
+                return init(this.signer, this.biconomy, chainId);
             }
         });
     }
@@ -371,8 +345,8 @@ class Account {
             return this.web3ModalInstance;
         }
         // Initialize Web3Modal
-        const modal = (0, ethers5_1.createWeb3Modal)({
-            ethersConfig: (0, ethers5_1.defaultConfig)({
+        const modal = createWeb3Modal({
+            ethersConfig: defaultConfig({
                 metadata: {
                     description: "Connect to your favorite wallet",
                     name: "Affine DeFi",
@@ -380,17 +354,17 @@ class Account {
                     icons: ["https://affinedefi.com/favicon.ico"],
                 },
             }),
-            chains: Object.keys(constants_1.NETWORK_PARAMS).map(chainId => {
+            chains: Object.keys(NETWORK_PARAMS).map(chainId => {
                 var _a, _b;
                 return ({
                     chainId: Number(chainId),
-                    name: constants_1.NETWORK_PARAMS[Number(chainId)].chainName,
-                    currency: constants_1.NETWORK_PARAMS[Number(chainId)].nativeCurrency.symbol,
-                    rpcUrl: constants_1.NETWORK_PARAMS[Number(chainId)].rpcUrls[0],
-                    explorerUrl: (_b = (_a = constants_1.NETWORK_PARAMS[Number(chainId)].blockExplorerUrls) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : "",
+                    name: NETWORK_PARAMS[Number(chainId)].chainName,
+                    currency: NETWORK_PARAMS[Number(chainId)].nativeCurrency.symbol,
+                    rpcUrl: NETWORK_PARAMS[Number(chainId)].rpcUrls[0],
+                    explorerUrl: (_b = (_a = NETWORK_PARAMS[Number(chainId)].blockExplorerUrls) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : "",
                 });
             }),
-            projectId: constants_1.WALLETCONNECT_PROJECT_ID,
+            projectId: WALLETCONNECT_PROJECT_ID,
         });
         this.web3ModalInstance = modal;
         return modal;
@@ -427,37 +401,37 @@ class Account {
      */
     getGasPrice() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.getGasPrice();
+            return AlpineDeFiSDK.getGasPrice();
         });
     }
     getGasBalance() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.getGasBalance();
+            return AlpineDeFiSDK.getGasBalance();
         });
     }
     saleIsActive() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.saleIsActive();
+            return AlpineDeFiSDK.saleIsActive();
         });
     }
     whitelistSaleIsActive() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.whitelistSaleIsActive();
+            return AlpineDeFiSDK.whitelistSaleIsActive();
         });
     }
     isWhitelisted(address, proof) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.isWhitelisted(address, proof);
+            return AlpineDeFiSDK.isWhitelisted(address, proof);
         });
     }
     mint() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mint();
+            return AlpineDeFiSDK.mint();
         });
     }
     mintWhitelist(proof) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mintWhitelist(proof);
+            return AlpineDeFiSDK.mintWhitelist(proof);
         });
     }
     getTokenInfo(product) {
@@ -466,4 +440,4 @@ class Account {
         });
     }
 }
-exports.Account = Account;
+export { Account };
