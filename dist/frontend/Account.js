@@ -16,7 +16,7 @@ import { AlpineDeFiSDK, init } from "../core";
 import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
 import * as lockedWithdrawal from "../core/singleStrategy";
-import { DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WALLETCONNECT_PROJECT_ID, WITHDRAW_SLIPPAGE_BY_PRODUCT, } from "../core/constants";
+import { ALLOWED_CHAIN_IDS, DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WALLETCONNECT_PROJECT_ID, WITHDRAW_SLIPPAGE_BY_PRODUCT, } from "../core/constants";
 import { getEmergencyWithdrawalQueueTransfers, getUserEmergencyWithdrawalQueueRequests, txHasEnqueueEvent, vaultWithdrawableAssetAmount, } from "../core/ewqueue";
 import { getWeb3Provider, initMagic } from "./wallets";
 import { createWeb3Modal, defaultConfig } from "@web3modal/ethers5";
@@ -354,7 +354,7 @@ class Account {
                     icons: ["https://affinedefi.com/favicon.ico"],
                 },
             }),
-            chains: Object.keys(NETWORK_PARAMS).map(chainId => {
+            chains: Object.keys(NETWORK_PARAMS).filter(chain => ALLOWED_CHAIN_IDS.includes(Number(chain))).map(chainId => {
                 var _a, _b;
                 return ({
                     chainId: Number(chainId),

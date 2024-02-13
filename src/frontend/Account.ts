@@ -20,6 +20,7 @@ import { setSimulationMode } from "../core/cache";
 import * as lockedWithdrawal from "../core/singleStrategy";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
 import {
+  ALLOWED_CHAIN_IDS,
   DEFAULT_WALLET,
   getChainIdFromRaw,
   NETWORK_PARAMS,
@@ -370,7 +371,7 @@ class Account {
           icons: ["https://affinedefi.com/favicon.ico"],
         },
       }),
-      chains: Object.keys(NETWORK_PARAMS).map(chainId => ({
+      chains: Object.keys(NETWORK_PARAMS).filter(chain => ALLOWED_CHAIN_IDS.includes(Number(chain))).map(chainId => ({
         chainId: Number(chainId),
         name: NETWORK_PARAMS[Number(chainId)].chainName,
         currency: NETWORK_PARAMS[Number(chainId)].nativeCurrency.symbol,
