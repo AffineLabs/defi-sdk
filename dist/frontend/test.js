@@ -14,8 +14,9 @@ const connectAndWrite = ({ walletType = "metamask", account, chainId, }) => __aw
     // connect
     console.time("entire-connect");
     try {
+        account.initWeb3Modal();
         // switch to the chainId
-        yield account.switchWalletToAllowedNetwork(walletType, chainId);
+        // await account.switchWalletToAllowedNetwork(walletType, chainId);
         console.log("connecting to", walletType, "on chain", chainId, account);
         yield account.connect({ walletType, chainId, email });
         const _address = yield account.getUserAddress();
@@ -44,7 +45,7 @@ const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, f
     yield alpAccount.buyProduct(product, amount);
 });
 const alpAccount = new Account();
-const walletType = "metamask";
+const walletType = "walletConnect";
 const chainId = 137;
 const _productToBuy = "polygonLevMaticX";
 const amountToBuy = 0.01;
@@ -54,7 +55,9 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     //   if (modal) await alpAccount.initWalletConnectProvider(modal);
     // }
     console.log(`connecting to ${walletType} on chain ${chainId}`, { ALLOWED_CHAIN_IDS }, ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`));
-    yield connectAndWrite({ walletType, account: alpAccount, chainId });
+    // await connectAndWrite({ walletType, account: alpAccount, chainId });
+    alpAccount.initWeb3Modal();
+    yield alpAccount.connect({ walletType, chainId });
     // console.log("sale state", await readAcc.saleIsActive());
     // console.log("whitelist state", await readAcc.whitelistSaleIsActive());
     // await alpAccount.switchWalletToAllowedNetwork(walletType, chainId);
