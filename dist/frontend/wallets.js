@@ -46,11 +46,15 @@ export function getWalletconnectProvider(modal) {
         }
         const _isConnected = modal.getIsConnected();
         if (!_isConnected) {
+            console.log("Not connected, opening modal");
             // open the modal
             yield modal.open();
+            // wait for the user to connect
+            console.log("modal opened, waiting for user to connect");
         }
         // get the provider
         const wcProvider = modal.getWalletProvider();
+        console.log("wcProvider: ", wcProvider);
         if (!wcProvider) {
             return;
         }
