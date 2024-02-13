@@ -65,7 +65,7 @@ export async function getWalletconnectProvider(modal?: Web3Modal): Promise<ether
   }
 
   //  Create Web3 Provider
-  return new ethers.providers.Web3Provider(wcProvider, "any");
+  return new ethers.providers.Web3Provider(wcProvider);
 }
 
 // This is for getting the wallet provider (except the Magic one)

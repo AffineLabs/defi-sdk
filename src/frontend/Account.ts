@@ -85,7 +85,9 @@ class Account {
       walletProvider = await getWeb3Provider(walletType, chainId, this.web3ModalInstance);
     }
 
-    if (!walletProvider) return;
+    if (!walletProvider){
+      throw new Error("Wallet provider is not available");
+    }
 
     // One day biconomy will be activated again
     // await this.initBiconomy(walletProvider);
