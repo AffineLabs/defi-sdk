@@ -1,12 +1,11 @@
 {
   "name": "@alpine-ramp/alpine-defi-sdk",
-  "version": "1.7.11-beta",
+  "version": "1.7.12-beta",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
-  "type": "module",
   "repository": "https://github.com/Multiplyr/defi-sdk.git",
   "author": "larryob <tosin@multiplyr.ai>",
   "license": "MIT",
