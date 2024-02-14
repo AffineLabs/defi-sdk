@@ -1,27 +1,3 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -31,54 +7,60 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Account = void 0;
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const mexa_1 = require("@biconomy/mexa");
-const ethers_1 = require("ethers");
-const portfolio_1 = require("../core/portfolio");
-const core_1 = require("../core");
-const productActions = __importStar(require("../core/product"));
-const cache_1 = require("../core/cache");
-const lockedWithdrawal = __importStar(require("../core/singleStrategy"));
-const constants_1 = require("../core/constants");
-const ewqueue_1 = require("../core/ewqueue");
-const wallets_1 = require("./wallets");
-const universal_provider_1 = require("@walletconnect/universal-provider");
+import { Biconomy } from "@biconomy/mexa";
+import { ethers } from "ethers";
+import { portfolioSell, portfolioPurchase } from "../core/portfolio";
+import { AlpineDeFiSDK, init } from "../core";
+import * as productActions from "../core/product";
+import { setSimulationMode } from "../core/cache";
+import * as lockedWithdrawal from "../core/singleStrategy";
+import { DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WITHDRAW_SLIPPAGE_BY_PRODUCT, } from "../core/constants";
+import { getEmergencyWithdrawalQueueTransfers, getUserEmergencyWithdrawalQueueRequests, txHasEnqueueEvent, vaultWithdrawableAssetAmount, } from "../core/ewqueue";
+import { getWeb3Provider, initMagic } from "./wallets";
 class Account {
     constructor() {
-        this.walletType = constants_1.DEFAULT_WALLET;
+        this.walletType = DEFAULT_WALLET;
         // if true, send regular transaction, if false, use biconomy
         this.gas = false;
     }
     /**
-     * Creates an alpine account object
-     */
-    // constructor() {
-    // }
-    /**
-     * connect the user account to magic's sdk. In particular,
-     * login with with magic, get provider, signer and set up
+     * connect the user account to wallet provider and initialize
      * the smart contracts.
-     * @param email user's email address
+     * @param {IConnectAccount} options - the options to connect the account
+     *
+     * @returns {Promise<void>} a promise that resolves when the account is connected
+     *
+     * @example
+     * ```typescript
+     * const account = new Account();
+     * await account.connect({
+     *  walletType: "metamask",
+     *  chainId: 1,
+     * });
+     * ```
      */
-    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, }) {
+    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, provider }) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             // get wallet provider based on wallet type
             let walletProvider;
             if (walletType === "magic" && email) {
-                const { magic, provider } = yield (0, wallets_1.initMagic)({ email, testMode: Boolean(shouldRunMagicTestMode), chainId });
+                const { magic, provider } = yield initMagic({ email, testMode: Boolean(shouldRunMagicTestMode), chainId });
                 if (magic)
                     this.magic = magic;
                 walletProvider = provider;
             }
-            else {
-                walletProvider = yield (0, wallets_1.getWeb3Provider)(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
+            else if (walletType === "walletConnect" && provider) {
+                walletProvider = new ethers.providers.Web3Provider(provider);
             }
-            if (!walletProvider)
-                return;
+            else if (["metamask", "coinbase"].includes(walletType)) {
+                walletProvider = yield getWeb3Provider(walletType, chainId);
+            }
+            if (!walletProvider) {
+                throw new Error("Wallet provider is not available");
+            }
             // One day biconomy will be activated again
             // await this.initBiconomy(walletProvider);
             this.walletProvider = walletProvider;
@@ -86,7 +68,6 @@ class Account {
             this.userAddress = yield this.signer.getAddress();
             this.walletType = walletType;
             this.selectedChainId = chainId;
-            this.withdrawSlippageByProduct = constants_1.WITHDRAW_SLIPPAGE_BY_PRODUCT;
             if (getMessage && verify) {
                 // case - user's wallet needs to be verified with nonce
                 try {
@@ -103,7 +84,7 @@ class Account {
                 }
             }
             console.time("init-contracts");
-            yield (0, core_1.init)(this.signer, this.biconomy, chainId);
+            yield init(this.signer, this.biconomy, chainId);
             console.timeEnd("init-contracts");
         });
     }
@@ -113,17 +94,17 @@ class Account {
             if (!address && !this.signer) {
                 throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
             }
-            yield (0, core_1.init)((_a = this.signer) !== null && _a !== void 0 ? _a : address, this.biconomy, chainId);
+            yield init((_a = this.signer) !== null && _a !== void 0 ? _a : address, this.biconomy, chainId);
         });
     }
     setSimulationMode(mode) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, cache_1.setSimulationMode)(mode);
+            return setSimulationMode(mode);
         });
     }
     initBiconomy(provider) {
         return __awaiter(this, void 0, void 0, function* () {
-            const biconomyRaw = new mexa_1.Biconomy(provider, {
+            const biconomyRaw = new Biconomy(provider, {
                 apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
                 debug: true,
                 strictMode: true,
@@ -132,7 +113,7 @@ class Account {
                 biconomyRaw
                     .onEvent(biconomyRaw.READY, () => {
                     // set the biconomy provider
-                    this.biconomy = new ethers_1.ethers.providers.Web3Provider(biconomyRaw);
+                    this.biconomy = new ethers.providers.Web3Provider(biconomyRaw);
                     resolve(null);
                 })
                     .onEvent(biconomyRaw.ERROR, (error, message) => {
@@ -149,19 +130,6 @@ class Account {
         return __awaiter(this, void 0, void 0, function* () {
             if (walletType === "magic" && ((_a = this.magic) === null || _a === void 0 ? void 0 : _a.user))
                 yield this.magic.user.logout();
-            else if (walletType === "walletConnect" && this.walletConnectProvider) {
-                /**
-                 * we need to disconnect the wallet connect provider to close provider session
-                 * or this will cause the wallet connect provider to connect to the same session
-                 * when the user tries to connect again, For more info,
-                 * see: https://docs.walletconnect.com/2.0/specs/clients/sign/client-api
-                 */
-                yield this.walletConnectProvider.disconnect();
-                if (typeof window !== "undefined") {
-                    // clear local storage to remove the wallet connect session + pairings
-                    window.localStorage.clear();
-                }
-            }
             this.userAddress = undefined;
             this.walletType = undefined;
             this.selectedChainId = undefined;
@@ -171,7 +139,7 @@ class Account {
      * Check if a user is connected to the magic provider
      * @returns Whether the user is connected to the magic provider
      */
-    isConnected(walletType = constants_1.DEFAULT_WALLET, chainId) {
+    isConnected(walletType = DEFAULT_WALLET, chainId) {
         return Boolean(this.userAddress) && walletType === this.walletType && this.selectedChainId === chainId;
     }
     /**
@@ -183,12 +151,16 @@ class Account {
             return this.userAddress;
         });
     }
+    getWithdrawSlippageByProduct(product) {
+        const slippages = Object.assign({}, WITHDRAW_SLIPPAGE_BY_PRODUCT);
+        return slippages[product];
+    }
     setGasMode(useGas) {
         return __awaiter(this, void 0, void 0, function* () {
             // this.biconomy is created upon connection and will always exist
             this.gas = useGas;
             const biconomyProvider = useGas ? undefined : this.biconomy;
-            return (0, core_1.init)(this.signer, biconomyProvider, this.selectedChainId);
+            return init(this.signer, biconomyProvider, this.selectedChainId);
         });
     }
     /**
@@ -198,7 +170,7 @@ class Account {
      */
     isApproved(product, amount) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.isApproved(product, amount);
+            return AlpineDeFiSDK.isApproved(product, amount);
         });
     }
     /**
@@ -208,13 +180,13 @@ class Account {
      * @param {String} amountUSDC transaction amount in usdc
      */
     approve(to, amountUSDC) {
-        return core_1.AlpineDeFiSDK.approve(to, amountUSDC);
+        return AlpineDeFiSDK.approve(to, amountUSDC);
     }
     portfolioSell(allocations, amount) {
-        return (0, portfolio_1.portfolioSell)(allocations, amount);
+        return portfolioSell(allocations, amount);
     }
     portfolioPurchase(alloctions, amount) {
-        return (0, portfolio_1.portfolioPurchase)(alloctions, amount);
+        return portfolioPurchase(alloctions, amount);
     }
     buyProduct(product, amount) {
         return productActions.buyProduct(product, amount);
@@ -230,7 +202,7 @@ class Account {
      */
     transfer(to, amountUSDC) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.transfer(to, amountUSDC);
+            return AlpineDeFiSDK.transfer(to, amountUSDC);
         });
     }
     /**
@@ -240,37 +212,37 @@ class Account {
      */
     mintUSDCTokens(to, amountUSDC) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mintUSDC(to, amountUSDC);
+            return AlpineDeFiSDK.mintUSDC(to, amountUSDC);
         });
     }
     mintAffinePass() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mint();
+            return AlpineDeFiSDK.mint();
         });
     }
     mintWhitelistAffinePass(proof) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mintWhitelist(proof);
+            return AlpineDeFiSDK.mintWhitelist(proof);
         });
     }
     getUserEmergencyWithdrawalQueueRequests(product) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, ewqueue_1.getUserEmergencyWithdrawalQueueRequests)(product);
+            return getUserEmergencyWithdrawalQueueRequests(product);
         });
     }
     vaultWithdrawableAssetAmount(product) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, ewqueue_1.vaultWithdrawableAssetAmount)(product);
+            return vaultWithdrawableAssetAmount(product);
         });
     }
     txHasEnqueueEvent(txHash) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, ewqueue_1.txHasEnqueueEvent)(txHash);
+            return txHasEnqueueEvent(txHash);
         });
     }
     getEmergencyWithdrawalQueueTransfers(product) {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, ewqueue_1.getEmergencyWithdrawalQueueTransfers)(product);
+            return getEmergencyWithdrawalQueueTransfers(product);
         });
     }
     isLoggedInToMagic() {
@@ -285,8 +257,9 @@ class Account {
              * `provider?.send("eth_chainId", [])` doesn't work for magic, but it works for other wallets
              * also, this.walletProvider is undefined when the user is not connected
              */
-            if (walletType !== "magic" && this.selectedChainId) {
-                const provider = yield (0, wallets_1.getWeb3Provider)(walletType, this.selectedChainId, this.walletConnectProvider, this.web3ModalInstance);
+            if (!["magic", "walletConnect"].includes(walletType) && this.selectedChainId) {
+                // case - user is connected to the wallet except magic and walletConnect
+                const provider = yield getWeb3Provider(walletType, this.selectedChainId);
                 return yield (provider === null || provider === void 0 ? void 0 : provider.send("eth_chainId", []));
             }
             else if (this.walletProvider) {
@@ -301,124 +274,45 @@ class Account {
             return (yield this.getChainId(walletType)) === chainId.toString();
         });
     }
-    setWalletConnectProvider(provider) {
-        this.walletConnectProvider = provider;
-    }
-    getWalletConnectProvider() {
-        return this.walletConnectProvider;
-    }
-    // setWeb3ModalInstance(web3ModalInstance: import("@web3modal/standalone").Web3Modal) {
-    //   this.web3ModalInstance = web3ModalInstance;
-    // }
     /**
      * This method will switch the wallet to the given chain id
      */
-    switchWalletToAllowedNetwork(walletType, chainId) {
+    switchWalletToAllowedNetwork(walletType, chainId, provider) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             if (!window.ethereum && walletType === "metamask") {
                 throw new Error("Metamask is not installed!");
             }
-            else if (walletType === "walletConnect" && this.walletConnectProvider) {
-                // case - user is using walletConnect
-                // await this.walletConnectProvider.request({
-                //   method: "wallet_switchEthereumChain",
-                //   params: [{ chainId: _chain }],
-                // });
-                this.walletConnectProvider.setDefaultChain(`eip155:${chainId}`);
-                this.selectedChainId = chainId;
-                let _signer;
-                if (this.walletProvider) {
-                    _signer = this.walletProvider.getSigner();
-                }
-                if (!_signer) {
-                    // find signer from the provider
-                    this.walletProvider = new ethers_1.ethers.providers.Web3Provider(this.walletConnectProvider);
-                    _signer = this.walletProvider.getSigner();
-                }
-                this.signer = _signer;
-                return yield (0, core_1.init)(_signer, this.biconomy, chainId);
-            }
-            const _provider = yield (0, wallets_1.getWeb3Provider)(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
+            const _provider = provider ? new ethers.providers.Web3Provider(provider) : (_a = this.walletProvider) !== null && _a !== void 0 ? _a : yield getWeb3Provider(walletType, chainId);
             if (!_provider) {
                 throw new Error("Provider is not available");
             }
             try {
-                yield _provider.send("wallet_switchEthereumChain", [{ chainId: (0, constants_1.getChainIdFromRaw)(chainId) }]);
+                yield _provider.send("wallet_switchEthereumChain", [{ chainId: getChainIdFromRaw(chainId) }]);
             }
             catch (error) {
                 const err = error;
-                console.error("Error on switching ethereum chain", error);
-                console.log("Error", err.code, {
-                    chainId,
-                    chainIdRaw: (0, constants_1.getChainIdFromRaw)(chainId),
-                    NETWORK_PARAM: constants_1.NETWORK_PARAMS[chainId],
-                    IS_USING_FORKED_MAINNET: process.env.IS_USING_FORKED_MAINNET,
-                    FORKED_NODE_URL_FOR_MATIC: process.env.FORKED_NODE_URL_FOR_MATIC,
-                });
-                if (err.code === 4902) {
-                    /**
-                     * case - 4902 indicates that the chain has not been added to MetaMask.
-                     * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
-                     */
-                    yield _provider.send("wallet_addEthereumChain", [
-                        Object.assign(Object.assign({}, constants_1.NETWORK_PARAMS[chainId]), { chainId: (0, constants_1.getChainIdFromRaw)(chainId) }),
-                    ]);
+                console.warn("Error on switching ethereum chain", error);
+                try {
+                    if (err.code === 4902) {
+                        /**
+                         * case - 4902 indicates that the chain has not been added to MetaMask.
+                         * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
+                         */
+                        yield _provider.send("wallet_addEthereumChain", [
+                            Object.assign(Object.assign({}, NETWORK_PARAMS[chainId]), { chainId: getChainIdFromRaw(chainId) }),
+                        ]);
+                    }
                 }
-                else {
-                    throw new Error(err.message);
+                catch (error) {
+                    console.warn("Error on adding ethereum chain", error);
                 }
             }
             if (chainId !== this.selectedChainId && _provider) {
                 this.signer = _provider.getSigner();
                 this.selectedChainId = chainId;
-                return (0, core_1.init)(this.signer, this.biconomy, this.selectedChainId);
             }
-        });
-    }
-    initWalletConnectProvider(web3Modal) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            // "@web3modal/standalone" is an ESM module, so we can't import it at the top of the file
-            // also, there's issue with bundling it with Next.js, that's why we're initializing it on FE and importing it here
-            // for more, visit - https://nextjs.org/docs/advanced-features/compiler#module-transpilation
-            if (web3Modal) {
-                this.web3ModalInstance = web3Modal;
-            }
-            else if (!this.web3ModalInstance) {
-                throw new Error("Web3 modal instance is not initialized");
-            }
-            // Initialize Universal Provider
-            const universalProvider = yield universal_provider_1.UniversalProvider.init({
-                // logger: "debug",
-                projectId: constants_1.WALLETCONNECT_PROJECT_ID,
-                metadata: {
-                    name: "Affine DeFi",
-                    description: "Affine DeFi",
-                    url: "https://affinedefi.com",
-                    icons: [(_a = process.env.APP_LOGO_URL) !== null && _a !== void 0 ? _a : ""],
-                },
-            }).catch((err) => {
-                console.error("Error on initializing wallet connect provider", err);
-            });
-            // Open modal on `display_uri` event
-            universalProvider === null || universalProvider === void 0 ? void 0 : universalProvider.on("display_uri", (uri) => __awaiter(this, void 0, void 0, function* () {
-                var _b;
-                (_b = this.web3ModalInstance) === null || _b === void 0 ? void 0 : _b.openModal({ uri });
-            }));
-            universalProvider === null || universalProvider === void 0 ? void 0 : universalProvider.on("session_delete", () => {
-                console.log("session ended");
-            });
-            if (!universalProvider) {
-                console.log("No provider found!!!");
-                return;
-            }
-            this.setWalletConnectProvider(universalProvider);
-            if ((universalProvider === null || universalProvider === void 0 ? void 0 : universalProvider.session) && this.walletType === "walletConnect") {
-                this.walletConnectProvider = universalProvider;
-                this.walletProvider = new ethers_1.ethers.providers.Web3Provider(universalProvider);
-                this.signer = this.walletProvider.getSigner();
-                this.userAddress = yield this.signer.getAddress();
-            }
+            return init(this.signer, this.biconomy, chainId);
         });
     }
     /// Single strategy locked withdrawal request
@@ -453,37 +347,37 @@ class Account {
      */
     getGasPrice() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.getGasPrice();
+            return AlpineDeFiSDK.getGasPrice();
         });
     }
     getGasBalance() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.getGasBalance();
+            return AlpineDeFiSDK.getGasBalance();
         });
     }
     saleIsActive() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.saleIsActive();
+            return AlpineDeFiSDK.saleIsActive();
         });
     }
     whitelistSaleIsActive() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.whitelistSaleIsActive();
+            return AlpineDeFiSDK.whitelistSaleIsActive();
         });
     }
     isWhitelisted(address, proof) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.isWhitelisted(address, proof);
+            return AlpineDeFiSDK.isWhitelisted(address, proof);
         });
     }
     mint() {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mint();
+            return AlpineDeFiSDK.mint();
         });
     }
     mintWhitelist(proof) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.mintWhitelist(proof);
+            return AlpineDeFiSDK.mintWhitelist(proof);
         });
     }
     getTokenInfo(product) {
@@ -492,4 +386,4 @@ class Account {
         });
     }
 }
-exports.Account = Account;
+export { Account };

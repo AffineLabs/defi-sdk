@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,14 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendToForwarder = exports.getSignature = exports.sendBiconomy = void 0;
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-const ethers_1 = require("ethers");
-const cache_1 = require("./cache");
-const constants_1 = require("./constants");
+import { ethers } from "ethers";
+import { BICONOMY, getPolygonContracts, SIGNER } from "./cache";
+import { DEFAULT_RAW_CHAIN_ID } from "./constants";
 // See https://docs.biconomy.io/products/enable-gasless-transactions/custom-implementation/sdk
-function sendBiconomy(contract, signer, method, args) {
+export function sendBiconomy(contract, signer, method, args) {
     return __awaiter(this, void 0, void 0, function* () {
         // Initialize Constants
         const domainType = [
@@ -35,7 +32,7 @@ function sendBiconomy(contract, signer, method, args) {
             name: yield contract.name(),
             version: "1",
             verifyingContract: contract.address,
-            salt: ethers_1.ethers.utils.hexZeroPad(ethers_1.ethers.BigNumber.from(80001).toHexString(), 32),
+            salt: ethers.utils.hexZeroPad(ethers.BigNumber.from(80001).toHexString(), 32),
         };
         const userAddress = yield signer.getAddress();
         // TODO: this will not work with polygon mainnet usdc. FIX.
@@ -71,21 +68,20 @@ function sendBiconomy(contract, signer, method, args) {
             signatureType: "EIP712_SIGN",
         };
         console.log({ metaTxParams });
-        const biconomy = cache_1.BICONOMY;
+        const biconomy = BICONOMY;
         const tx = yield biconomy.send("eth_sendTransaction", [metaTxParams]);
         console.log(`Transaction hash ${tx}`);
         yield biconomy.waitForTransaction(tx);
     });
 }
-exports.sendBiconomy = sendBiconomy;
 function getSignatureParameters(signature) {
-    if (!ethers_1.ethers.utils.isHexString(signature)) {
+    if (!ethers.utils.isHexString(signature)) {
         throw new Error('Given value "'.concat(signature, '" is not a valid hex string.'));
     }
     const r = signature.slice(0, 66);
     const s = "0x".concat(signature.slice(66, 130));
     const vStr = "0x".concat(signature.slice(130, 132));
-    let v = ethers_1.ethers.BigNumber.from(vStr).toNumber();
+    let v = ethers.BigNumber.from(vStr).toNumber();
     if (![27, 28].includes(v))
         v += 27;
     return {
@@ -95,12 +91,12 @@ function getSignatureParameters(signature) {
     };
 }
 // See https://github.com/MetaMask/test-dapp/blob/f3ce3e6972e9fe2b239caf8069740c5e84a156b0/src/index.js#L1024
-function getSignature(contract, signer, method, args, nonce) {
+export function getSignature(contract, signer, method, args, nonce) {
     return __awaiter(this, void 0, void 0, function* () {
         const userAddress = yield signer.getAddress();
-        const { forwarder } = (0, cache_1.getPolygonContracts)();
+        const { forwarder } = getPolygonContracts();
         const domain = {
-            chainId: constants_1.DEFAULT_RAW_CHAIN_ID,
+            chainId: DEFAULT_RAW_CHAIN_ID,
             name: "MinimalForwarder",
             verifyingContract: forwarder.address,
             version: "0.0.1",
@@ -144,19 +140,18 @@ function getSignature(contract, signer, method, args, nonce) {
         return { signature, request: message };
     });
 }
-exports.getSignature = getSignature;
-function sendToForwarder(signatures, requests) {
+export function sendToForwarder(signatures, requests) {
     return __awaiter(this, void 0, void 0, function* () {
         // Call executeBatch
-        const { forwarder } = (0, cache_1.getPolygonContracts)();
+        const { forwarder } = getPolygonContracts();
         const encodedCall = forwarder.interface.encodeFunctionData("executeBatch", [
             requests.map(req => [req.from, req.to, req.value, req.gas, req.nonce, req.data]),
-            ethers_1.ethers.utils.hexConcat(signatures),
+            ethers.utils.hexConcat(signatures),
         ]);
         const metaTxParams = {
             data: encodedCall,
             to: forwarder.address,
-            from: yield cache_1.SIGNER.getAddress(),
+            from: yield SIGNER.getAddress(),
             signatureType: "EIP712_SIGN",
         };
         console.log({ metaTxParams });
@@ -166,11 +161,10 @@ function sendToForwarder(signatures, requests) {
         // Also See https://ethereumbuilders.gitbooks.io/guide/content/en/ethereum_json_rpc.html#eth_sendtransaction
         // Signature type is not an expected field in the object passed into the array
         // Biconomy reads this field and passes on your transaction
-        const biconomy = cache_1.BICONOMY;
+        const biconomy = BICONOMY;
         const tx = yield biconomy.send("eth_sendTransaction", [metaTxParams]);
         console.log(`Biconomy Transaction hash ${tx}`);
         yield biconomy.waitForTransaction(tx);
         console.log("Tx confirmed");
     });
 }
-exports.sendToForwarder = sendToForwarder;

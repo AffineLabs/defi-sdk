@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "target": "ES6",
-    "module": "CommonJS",
+    "module": "ESNext",
     "strict": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true,
+    "moduleResolution": "node",
     // "rootDir": "src",
-    "outDir": "dist",
+    "outDir": "./dist",
     "declaration": true,
     "typeRoots": ["./node_modules/@types"],
     "skipLibCheck": true
