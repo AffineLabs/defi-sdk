@@ -16,10 +16,9 @@ import { AlpineDeFiSDK, init } from "../core";
 import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
 import * as lockedWithdrawal from "../core/singleStrategy";
-import { ALLOWED_CHAIN_IDS, DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WALLETCONNECT_PROJECT_ID, WITHDRAW_SLIPPAGE_BY_PRODUCT, } from "../core/constants";
+import { DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WITHDRAW_SLIPPAGE_BY_PRODUCT, } from "../core/constants";
 import { getEmergencyWithdrawalQueueTransfers, getUserEmergencyWithdrawalQueueRequests, txHasEnqueueEvent, vaultWithdrawableAssetAmount, } from "../core/ewqueue";
 import { getWeb3Provider, initMagic } from "./wallets";
-import { createWeb3Modal, defaultConfig } from "@web3modal/ethers5";
 class Account {
     constructor() {
         this.walletType = DEFAULT_WALLET;
@@ -36,14 +35,13 @@ class Account {
      * @example
      * ```typescript
      * const account = new Account();
-     * account.initWeb3Modal(); // initialize web3modal
      * await account.connect({
      *  walletType: "metamask",
      *  chainId: 1,
      * });
      * ```
      */
-    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, }) {
+    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, provider }) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             // get wallet provider based on wallet type
@@ -54,8 +52,11 @@ class Account {
                     this.magic = magic;
                 walletProvider = provider;
             }
-            else {
-                walletProvider = yield getWeb3Provider(walletType, chainId, this.web3ModalInstance);
+            else if (walletType === "walletConnect" && provider) {
+                walletProvider = new ethers.providers.Web3Provider(provider);
+            }
+            else if (["metamask", "coinbase"].includes(walletType)) {
+                walletProvider = yield getWeb3Provider(walletType, chainId);
             }
             if (!walletProvider) {
                 throw new Error("Wallet provider is not available");
@@ -129,19 +130,6 @@ class Account {
         return __awaiter(this, void 0, void 0, function* () {
             if (walletType === "magic" && ((_a = this.magic) === null || _a === void 0 ? void 0 : _a.user))
                 yield this.magic.user.logout();
-            else if (walletType === "walletConnect" && this.web3ModalInstance) {
-                /**
-                 * we need to disconnect the wallet connect provider to close provider session
-                 * or this will cause the wallet connect provider to connect to the same session
-                 * when the user tries to connect again, For more info,
-                 * see: https://docs.walletconnect.com/2.0/specs/clients/sign/client-api
-                 */
-                yield this.web3ModalInstance.disconnect();
-                if (typeof window !== "undefined") {
-                    // clear local storage to remove the wallet connect session + pairings
-                    window.localStorage.clear();
-                }
-            }
             this.userAddress = undefined;
             this.walletType = undefined;
             this.selectedChainId = undefined;
@@ -264,17 +252,14 @@ class Account {
         });
     }
     getChainId(walletType) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             /**
              * `provider?.send("eth_chainId", [])` doesn't work for magic, but it works for other wallets
              * also, this.walletProvider is undefined when the user is not connected
              */
-            if (walletType === "walletConnect") {
-                return (_a = this.web3ModalInstance) === null || _a === void 0 ? void 0 : _a.getChainId();
-            }
-            else if (walletType !== "magic" && this.selectedChainId) {
-                const provider = yield getWeb3Provider(walletType, this.selectedChainId, this.web3ModalInstance);
+            if (!["magic", "walletConnect"].includes(walletType) && this.selectedChainId) {
+                // case - user is connected to the wallet except magic and walletConnect
+                const provider = yield getWeb3Provider(walletType, this.selectedChainId);
                 return yield (provider === null || provider === void 0 ? void 0 : provider.send("eth_chainId", []));
             }
             else if (this.walletProvider) {
@@ -297,10 +282,7 @@ class Account {
             if (!window.ethereum && walletType === "metamask") {
                 throw new Error("Metamask is not installed!");
             }
-            if (walletType === "walletConnect" && !this.web3ModalInstance) {
-                this.initWeb3Modal();
-            }
-            const _provider = yield getWeb3Provider(walletType, chainId, this.web3ModalInstance);
+            const _provider = yield getWeb3Provider(walletType, chainId);
             if (!_provider) {
                 throw new Error("Provider is not available");
             }
@@ -326,49 +308,6 @@ class Account {
                 return init(this.signer, this.biconomy, chainId);
             }
         });
-    }
-    /**
-     * Initiates the web3modal instance.
-     * @returns {Web3Modal} the web3modal instance
-     *
-     * @remarks
-     * This needs to be called before calling Account.connect() to initialize the web3modal instance
-     *
-     * @example
-     * ```typescript
-     * const account = new Account();
-     * account.initWeb3Modal();
-     * ```
-     */
-    initWeb3Modal() {
-        if (this.web3ModalInstance) {
-            // case - we already have an instance of Web3Modal
-            return this.web3ModalInstance;
-        }
-        // Initialize Web3Modal
-        const modal = createWeb3Modal({
-            ethersConfig: defaultConfig({
-                metadata: {
-                    description: "Connect to your favorite wallet",
-                    name: "Affine DeFi",
-                    url: "https://affinedefi.com",
-                    icons: ["https://affinedefi.com/favicon.ico"],
-                },
-            }),
-            chains: Object.keys(NETWORK_PARAMS).filter(chain => ALLOWED_CHAIN_IDS.includes(Number(chain))).map(chainId => {
-                var _a, _b;
-                return ({
-                    chainId: Number(chainId),
-                    name: NETWORK_PARAMS[Number(chainId)].chainName,
-                    currency: NETWORK_PARAMS[Number(chainId)].nativeCurrency.symbol,
-                    rpcUrl: NETWORK_PARAMS[Number(chainId)].rpcUrls[0],
-                    explorerUrl: (_b = (_a = NETWORK_PARAMS[Number(chainId)].blockExplorerUrls) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : "",
-                });
-            }),
-            projectId: WALLETCONNECT_PROJECT_ID,
-        });
-        this.web3ModalInstance = modal;
-        return modal;
     }
     /// Single strategy locked withdrawal request
     isStrategyLiquid() {

@@ -39,32 +39,9 @@ export function initMagic({ email, testMode, chainId, }) {
         return { magic: _magic, provider: _provider };
     });
 }
-export function getWalletconnectProvider(modal) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!modal) {
-            throw new Error("Web3Modal is not initialized, call Account.initWeb3Modal() first");
-        }
-        const _isConnected = modal.getIsConnected();
-        if (!_isConnected) {
-            console.log("Not connected, opening modal");
-            // open the modal
-            yield modal.open();
-            // wait for the user to connect
-            console.log("modal opened, waiting for user to connect");
-        }
-        // get the provider
-        const wcProvider = modal.getWalletProvider();
-        console.log("wcProvider: ", wcProvider);
-        if (!wcProvider) {
-            return;
-        }
-        //  Create Web3 Provider
-        return new ethers.providers.Web3Provider(wcProvider);
-    });
-}
-// This is for getting the wallet provider (except the Magic one)
+// This is for getting the wallet provider (except the Magic and WalletConnect providers)
 // For WalletConnect, we need to initialize the WalletConnect provider by invoking the Account.initWalletConnectProvider() function
-export function getWeb3Provider(walletType, chainId, web3modal) {
+export function getWeb3Provider(walletType, chainId) {
     return __awaiter(this, void 0, void 0, function* () {
         switch (walletType) {
             case "metamask": {
@@ -93,9 +70,6 @@ export function getWeb3Provider(walletType, chainId, web3modal) {
                 const _web3Provider = new ethers.providers.Web3Provider(_cbProvider, "any");
                 yield _web3Provider.send("eth_requestAccounts", []);
                 return _web3Provider;
-            }
-            case "walletConnect": {
-                return yield getWalletconnectProvider(web3modal);
             }
             default:
                 return;

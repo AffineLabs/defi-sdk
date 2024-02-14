@@ -3,7 +3,6 @@ import { ethers } from "ethers";
 import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, SSVWithdrawalRequestInfo, productAllocation } from "../core/types";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet, IConnectAccount } from "../types/account";
-import { Web3Modal } from "@web3modal/ethers5/dist/types/src/client";
 declare class Account {
     magic: Magic;
     signer: ethers.Signer;
@@ -13,7 +12,6 @@ declare class Account {
     walletProvider?: ethers.providers.Web3Provider;
     gas: boolean;
     selectedChainId?: AllowedChainId;
-    web3ModalInstance?: Web3Modal;
     /**
      * connect the user account to wallet provider and initialize
      * the smart contracts.
@@ -24,14 +22,13 @@ declare class Account {
      * @example
      * ```typescript
      * const account = new Account();
-     * account.initWeb3Modal(); // initialize web3modal
      * await account.connect({
      *  walletType: "metamask",
      *  chainId: 1,
      * });
      * ```
      */
-    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, }: IConnectAccount): Promise<void>;
+    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, provider }: IConnectAccount): Promise<void>;
     initContracts(chainId: AllowedChainId, address?: string): Promise<void>;
     setSimulationMode(mode: boolean): Promise<void>;
     private initBiconomy;
@@ -94,20 +91,6 @@ declare class Account {
      * This method will switch the wallet to the given chain id
      */
     switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void>;
-    /**
-     * Initiates the web3modal instance.
-     * @returns {Web3Modal} the web3modal instance
-     *
-     * @remarks
-     * This needs to be called before calling Account.connect() to initialize the web3modal instance
-     *
-     * @example
-     * ```typescript
-     * const account = new Account();
-     * account.initWeb3Modal();
-     * ```
-     */
-    initWeb3Modal(): Web3Modal | undefined;
     isStrategyLiquid(): Promise<boolean>;
     getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]>;
     redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<import("../core/types").FullTxReceipt>;

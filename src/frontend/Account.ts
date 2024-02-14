@@ -9,7 +9,6 @@ import {
   EmergencyWithdrawalQueueRequest,
   EmergencyWithdrawalQueueTransfer,
   SSVWithdrawalRequestInfo,
-  WithdrawSlippageByProduct,
   productAllocation,
 } from "../core/types";
 import { portfolioSell, portfolioPurchase } from "../core/portfolio";
@@ -20,11 +19,9 @@ import { setSimulationMode } from "../core/cache";
 import * as lockedWithdrawal from "../core/singleStrategy";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
 import {
-  ALLOWED_CHAIN_IDS,
   DEFAULT_WALLET,
   getChainIdFromRaw,
   NETWORK_PARAMS,
-  WALLETCONNECT_PROJECT_ID,
   WITHDRAW_SLIPPAGE_BY_PRODUCT,
 } from "../core/constants";
 import {
@@ -34,8 +31,6 @@ import {
   vaultWithdrawableAssetAmount,
 } from "../core/ewqueue";
 import { getWeb3Provider, initMagic } from "./wallets";
-import { Web3Modal } from "@web3modal/ethers5/dist/types/src/client";
-import { createWeb3Modal, defaultConfig } from "@web3modal/ethers5";
 
 class Account {
   magic!: Magic;
@@ -47,7 +42,6 @@ class Account {
   // if true, send regular transaction, if false, use biconomy
   gas = false;
   selectedChainId?: AllowedChainId;
-  web3ModalInstance?: Web3Modal;
 
   /**
    * connect the user account to wallet provider and initialize
@@ -59,7 +53,6 @@ class Account {
    * @example
    * ```typescript
    * const account = new Account();
-   * account.initWeb3Modal(); // initialize web3modal
    * await account.connect({
    *  walletType: "metamask",
    *  chainId: 1,
@@ -73,6 +66,7 @@ class Account {
     getMessage,
     verify,
     chainId,
+    provider
   }: IConnectAccount): Promise<void> {
     // get wallet provider based on wallet type
     let walletProvider: ethers.providers.Web3Provider | undefined;
@@ -81,8 +75,10 @@ class Account {
 
       if (magic) this.magic = magic;
       walletProvider = provider;
-    } else {
-      walletProvider = await getWeb3Provider(walletType, chainId, this.web3ModalInstance);
+    } else if(walletType === "walletConnect" && provider){
+      walletProvider = new ethers.providers.Web3Provider(provider);
+    } else if(["metamask", "coinbase"].includes(walletType)) {
+      walletProvider = await getWeb3Provider(walletType, chainId);
     }
 
     if (!walletProvider){
@@ -154,19 +150,6 @@ class Account {
    */
   async disconnect(walletType: AllowedWallet): Promise<void> {
     if (walletType === "magic" && this.magic?.user) await this.magic.user.logout();
-    else if (walletType === "walletConnect" && this.web3ModalInstance) {
-      /**
-       * we need to disconnect the wallet connect provider to close provider session
-       * or this will cause the wallet connect provider to connect to the same session
-       * when the user tries to connect again, For more info,
-       * see: https://docs.walletconnect.com/2.0/specs/clients/sign/client-api
-       */
-      await this.web3ModalInstance.disconnect();
-      if (typeof window !== "undefined") {
-        // clear local storage to remove the wallet connect session + pairings
-        window.localStorage.clear();
-      }
-    }
     this.userAddress = undefined;
     this.walletType = undefined;
     this.selectedChainId = undefined;
@@ -287,10 +270,9 @@ class Account {
      * `provider?.send("eth_chainId", [])` doesn't work for magic, but it works for other wallets
      * also, this.walletProvider is undefined when the user is not connected
      */
-    if (walletType === "walletConnect") {
-      return this.web3ModalInstance?.getChainId();
-    } else if (walletType !== "magic" && this.selectedChainId) {
-      const provider = await getWeb3Provider(walletType, this.selectedChainId, this.web3ModalInstance);
+    if (!["magic","walletConnect"].includes(walletType) && this.selectedChainId) {
+      // case - user is connected to the wallet except magic and walletConnect
+      const provider = await getWeb3Provider(walletType, this.selectedChainId);
 
       return await provider?.send("eth_chainId", []);
     } else if (this.walletProvider) {
@@ -311,11 +293,8 @@ class Account {
     if (!window.ethereum && walletType === "metamask") {
       throw new Error("Metamask is not installed!");
     }
-    if (walletType === "walletConnect" && !this.web3ModalInstance) {
-      this.initWeb3Modal();
-    }
 
-    const _provider = await getWeb3Provider(walletType, chainId, this.web3ModalInstance);
+    const _provider = await getWeb3Provider(walletType, chainId);
 
     if (!_provider) {
       throw new Error("Provider is not available");
@@ -342,50 +321,6 @@ class Account {
       this.selectedChainId = chainId;
       return init(this.signer, this.biconomy, chainId);
     }
-  }
-
-  /**
-   * Initiates the web3modal instance.
-   * @returns {Web3Modal} the web3modal instance
-   *
-   * @remarks
-   * This needs to be called before calling Account.connect() to initialize the web3modal instance
-   *
-   * @example
-   * ```typescript
-   * const account = new Account();
-   * account.initWeb3Modal();
-   * ```
-   */
-  initWeb3Modal(): Web3Modal | undefined {
-    if (this.web3ModalInstance) {
-      // case - we already have an instance of Web3Modal
-      return this.web3ModalInstance;
-    }
-
-    // Initialize Web3Modal
-    const modal = createWeb3Modal({
-      ethersConfig: defaultConfig({
-        metadata: {
-          description: "Connect to your favorite wallet",
-          name: "Affine DeFi",
-          url: "https://affinedefi.com",
-          icons: ["https://affinedefi.com/favicon.ico"],
-        },
-      }),
-      chains: Object.keys(NETWORK_PARAMS).filter(chain => ALLOWED_CHAIN_IDS.includes(Number(chain))).map(chainId => ({
-        chainId: Number(chainId),
-        name: NETWORK_PARAMS[Number(chainId)].chainName,
-        currency: NETWORK_PARAMS[Number(chainId)].nativeCurrency.symbol,
-        rpcUrl: NETWORK_PARAMS[Number(chainId)].rpcUrls[0],
-        explorerUrl: NETWORK_PARAMS[Number(chainId)].blockExplorerUrls?.[0] ?? "",
-      })),
-      projectId: WALLETCONNECT_PROJECT_ID,
-    });
-
-    this.web3ModalInstance = modal;
-
-    return modal;
   }
 
   /// Single strategy locked withdrawal request

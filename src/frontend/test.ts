@@ -10,7 +10,7 @@ const connectAndWrite = async ({
   account,
   chainId,
 }: {
-  walletType?: AllowedWallet;
+  walletType?: Exclude<AllowedWallet, "walletConnect">;
   account: Account;
   chainId: AllowedChainId;
 }) => {
@@ -18,7 +18,6 @@ const connectAndWrite = async ({
   // connect
   console.time("entire-connect");
   try {
-    account.initWeb3Modal();
     // switch to the chainId
     // await account.switchWalletToAllowedNetwork(walletType, chainId);
     console.log("connecting to", walletType, "on chain", chainId, account);
@@ -50,7 +49,7 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 };
 
 const alpAccount = new Account();
-const walletType: AllowedWallet = "walletConnect";
+const walletType: Exclude<AllowedWallet, "walletConnect"> = "metamask";
 const chainId = 137 as AllowedChainId;
 const _productToBuy: AlpineProduct = "polygonLevMaticX";
 const amountToBuy = 0.01;
@@ -68,7 +67,6 @@ const main = async () => {
   );
   // await connectAndWrite({ walletType, account: alpAccount, chainId });
 
-  alpAccount.initWeb3Modal();
   await alpAccount.connect({ walletType, chainId });
 
   // console.log("sale state", await readAcc.saleIsActive());
