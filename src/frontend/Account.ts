@@ -289,12 +289,12 @@ class Account {
   /**
    * This method will switch the wallet to the given chain id
    */
-  async switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void> {
+  async switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId, provider?: ethers.providers.ExternalProvider): Promise<void> {
     if (!window.ethereum && walletType === "metamask") {
       throw new Error("Metamask is not installed!");
     }
 
-    const _provider = await getWeb3Provider(walletType, chainId);
+    const _provider = provider ? new ethers.providers.Web3Provider(provider) : this.walletProvider ?? await getWeb3Provider(walletType, chainId);
 
     if (!_provider) {
       throw new Error("Provider is not available");
@@ -305,22 +305,27 @@ class Account {
       const err = error as MetamaskError;
       console.warn("Error on switching ethereum chain", error);
 
-      if (err.code === 4902) {
-        /**
-         * case - 4902 indicates that the chain has not been added to MetaMask.
-         * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
-         */
-        await _provider.send("wallet_addEthereumChain", [
-          { ...NETWORK_PARAMS[chainId], chainId: getChainIdFromRaw(chainId) },
-        ]);
+      try {
+        if (err.code === 4902) {
+          /**
+           * case - 4902 indicates that the chain has not been added to MetaMask.
+           * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
+           */
+          await _provider.send("wallet_addEthereumChain", [
+            { ...NETWORK_PARAMS[chainId], chainId: getChainIdFromRaw(chainId) },
+          ]);
+        }
+      } catch (error) {
+        console.warn("Error on adding ethereum chain", error);
       }
     }
 
     if (chainId !== this.selectedChainId && _provider) {
       this.signer = _provider.getSigner();
       this.selectedChainId = chainId;
-      return init(this.signer, this.biconomy, chainId);
     }
+
+    return init(this.signer, this.biconomy, chainId);
   }
 
   /// Single strategy locked withdrawal request
