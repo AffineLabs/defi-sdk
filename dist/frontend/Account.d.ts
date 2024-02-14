@@ -90,7 +90,7 @@ declare class Account {
     /**
      * This method will switch the wallet to the given chain id
      */
-    switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void>;
+    switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId, provider?: ethers.providers.ExternalProvider): Promise<void>;
     isStrategyLiquid(): Promise<boolean>;
     getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]>;
     redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<import("../core/types").FullTxReceipt>;

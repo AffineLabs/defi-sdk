@@ -277,12 +277,13 @@ class Account {
     /**
      * This method will switch the wallet to the given chain id
      */
-    switchWalletToAllowedNetwork(walletType, chainId) {
+    switchWalletToAllowedNetwork(walletType, chainId, provider) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             if (!window.ethereum && walletType === "metamask") {
                 throw new Error("Metamask is not installed!");
             }
-            const _provider = yield getWeb3Provider(walletType, chainId);
+            const _provider = provider ? new ethers.providers.Web3Provider(provider) : (_a = this.walletProvider) !== null && _a !== void 0 ? _a : yield getWeb3Provider(walletType, chainId);
             if (!_provider) {
                 throw new Error("Provider is not available");
             }
@@ -292,21 +293,26 @@ class Account {
             catch (error) {
                 const err = error;
                 console.warn("Error on switching ethereum chain", error);
-                if (err.code === 4902) {
-                    /**
-                     * case - 4902 indicates that the chain has not been added to MetaMask.
-                     * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
-                     */
-                    yield _provider.send("wallet_addEthereumChain", [
-                        Object.assign(Object.assign({}, NETWORK_PARAMS[chainId]), { chainId: getChainIdFromRaw(chainId) }),
-                    ]);
+                try {
+                    if (err.code === 4902) {
+                        /**
+                         * case - 4902 indicates that the chain has not been added to MetaMask.
+                         * @see https://docs.metamask.io/guide/rpc-api.html#usage-with-wallet-switchethereumchain
+                         */
+                        yield _provider.send("wallet_addEthereumChain", [
+                            Object.assign(Object.assign({}, NETWORK_PARAMS[chainId]), { chainId: getChainIdFromRaw(chainId) }),
+                        ]);
+                    }
+                }
+                catch (error) {
+                    console.warn("Error on adding ethereum chain", error);
                 }
             }
             if (chainId !== this.selectedChainId && _provider) {
                 this.signer = _provider.getSigner();
                 this.selectedChainId = chainId;
-                return init(this.signer, this.biconomy, chainId);
             }
+            return init(this.signer, this.biconomy, chainId);
         });
     }
     /// Single strategy locked withdrawal request
