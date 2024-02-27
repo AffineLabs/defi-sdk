@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBalance = exports.depositEth = exports.depositERC20 = void 0;
+exports.getBalance = exports.withdraw = exports.depositEth = exports.depositERC20 = void 0;
 const typechain_1 = require("../typechain");
 const AlpineDeFiSDK_1 = require("./AlpineDeFiSDK");
 const cache_1 = require("./cache");
@@ -49,6 +49,14 @@ function depositEth(to, amount) {
     });
 }
 exports.depositEth = depositEth;
+function withdraw(token, amount) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { affineReStaking, asset } = yield getReStakingContractAndAssets(token);
+        const decimalAmount = (0, AlpineDeFiSDK_1._addDecimals)(amount.toString(), yield asset.decimals());
+        return (0, AlpineDeFiSDK_1.blockchainCall)(affineReStaking, "withdraw", [token, decimalAmount]);
+    });
+}
+exports.withdraw = withdraw;
 function getBalance(token, address) {
     return __awaiter(this, void 0, void 0, function* () {
         const { affineReStaking, asset } = yield getReStakingContractAndAssets(token);

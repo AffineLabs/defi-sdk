@@ -1,6 +1,6 @@
 import { AffineReStaking, MockERC20, MockERC20__factory } from "../typechain";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
-import { SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE, getContracts } from "./cache";
+import { getContracts } from "./cache";
 import { EthContracts } from "./types";
 
 async function getReStakingContract(): Promise<AffineReStaking> {
@@ -33,6 +33,12 @@ export async function depositEth(to: string, amount: string) {
   const affineReStaking = await getReStakingContract();
   const decimalAmount = _addDecimals(amount.toString(), 18); // ether
   return blockchainCall(affineReStaking, "depositETHFor", [to], false, decimalAmount);
+}
+
+export async function withdraw(token: string, amount: string) {
+  const { affineReStaking, asset } = await getReStakingContractAndAssets(token);
+  const decimalAmount = _addDecimals(amount.toString(), await asset.decimals());
+  return blockchainCall(affineReStaking, "withdraw", [token, decimalAmount]);
 }
 
 export async function getBalance(token: string, address: string) {
