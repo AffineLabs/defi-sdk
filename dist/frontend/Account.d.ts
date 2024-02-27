@@ -26,9 +26,14 @@ declare class Account {
      * @param email user's email address
      */
     connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, }: IConnectAccount): Promise<void>;
+    /**
+     * This method initializes the contracts for the user, this should be called
+     * after the user is connected to the wallet, or the chainId is changed
+     * @param chainId AllowedChainId - chain id
+     * @param address string - user's address
+     */
     initContracts(chainId: AllowedChainId, address?: string): Promise<void>;
     setSimulationMode(mode: boolean): Promise<void>;
-    private initBiconomy;
     /**
      * Disconnect a user from the magic provider
      */
@@ -43,7 +48,6 @@ declare class Account {
      * @returns user's public address
      */
     getUserAddress(): Promise<string | undefined>;
-    setGasMode(useGas: boolean): Promise<void>;
     /**
      * It checks if the user has approved the outgoing transaction, amount is optional.
      * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
@@ -88,7 +92,7 @@ declare class Account {
     /**
      * This method will switch the wallet to the given chain id
      */
-    switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void>;
+    switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void | undefined>;
     initWalletConnectProvider(web3Modal: import("@web3modal/standalone").Web3Modal): Promise<void>;
     isStrategyLiquid(): Promise<boolean>;
     getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]>;

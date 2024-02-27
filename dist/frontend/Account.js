@@ -33,9 +33,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Account = void 0;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const mexa_1 = require("@biconomy/mexa");
 const ethers_1 = require("ethers");
 const portfolio_1 = require("../core/portfolio");
 const core_1 = require("../core");
@@ -102,11 +99,14 @@ class Account {
                     throw new Error((_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : "Verification failed!");
                 }
             }
-            console.time("init-contracts");
-            yield (0, core_1.init)(this.signer, this.biconomy, chainId);
-            console.timeEnd("init-contracts");
         });
     }
+    /**
+     * This method initializes the contracts for the user, this should be called
+     * after the user is connected to the wallet, or the chainId is changed
+     * @param chainId AllowedChainId - chain id
+     * @param address string - user's address
+     */
     initContracts(chainId, address) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
@@ -119,26 +119,6 @@ class Account {
     setSimulationMode(mode) {
         return __awaiter(this, void 0, void 0, function* () {
             return (0, cache_1.setSimulationMode)(mode);
-        });
-    }
-    initBiconomy(provider) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const biconomyRaw = new mexa_1.Biconomy(provider, {
-                apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
-                debug: true,
-                strictMode: true,
-            });
-            return new Promise((resolve, reject) => {
-                biconomyRaw
-                    .onEvent(biconomyRaw.READY, () => {
-                    // set the biconomy provider
-                    this.biconomy = new ethers_1.ethers.providers.Web3Provider(biconomyRaw);
-                    resolve(null);
-                })
-                    .onEvent(biconomyRaw.ERROR, (error, message) => {
-                    reject(message);
-                });
-            });
         });
     }
     /**
@@ -183,14 +163,12 @@ class Account {
             return this.userAddress;
         });
     }
-    setGasMode(useGas) {
-        return __awaiter(this, void 0, void 0, function* () {
-            // this.biconomy is created upon connection and will always exist
-            this.gas = useGas;
-            const biconomyProvider = useGas ? undefined : this.biconomy;
-            return (0, core_1.init)(this.signer, biconomyProvider, this.selectedChainId);
-        });
-    }
+    // async setGasMode(useGas: boolean) {
+    //   // this.biconomy is created upon connection and will always exist
+    //   this.gas = useGas;
+    //   const biconomyProvider = useGas ? undefined : this.biconomy;
+    //   return init(this.signer, biconomyProvider, this.selectedChainId);
+    // }
     /**
      * It checks if the user has approved the outgoing transaction, amount is optional.
      * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
@@ -336,7 +314,7 @@ class Account {
                     _signer = this.walletProvider.getSigner();
                 }
                 this.signer = _signer;
-                return yield (0, core_1.init)(_signer, this.biconomy, chainId);
+                return;
             }
             const _provider = yield (0, wallets_1.getWeb3Provider)(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
             if (!_provider) {
@@ -371,7 +349,8 @@ class Account {
             if (chainId !== this.selectedChainId && _provider) {
                 this.signer = _provider.getSigner();
                 this.selectedChainId = chainId;
-                return (0, core_1.init)(this.signer, this.biconomy, this.selectedChainId);
+                // return init(this.signer, this.selectedChainId);
+                return;
             }
         });
     }
