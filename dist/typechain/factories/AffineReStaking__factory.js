@@ -3,39 +3,137 @@
 /* tslint:disable */
 /* eslint-disable */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LidoLevEthStrategy__factory = void 0;
+exports.AffineReStaking__factory = void 0;
 const ethers_1 = require("ethers");
 const _abi = [
     {
+        inputs: [],
+        name: "AlreadyApprovedToken",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "CannotDepositForZeroAddress",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "DepositAmountCannotBeZero",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "InvalidWithdrawalAmount",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "NonZeroTokenBalance",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "NotApprovedToken",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "TokenNotAllowedForStaking",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "WithdrawAmountCannotBeZero",
+        type: "error",
+    },
+    {
+        anonymous: false,
         inputs: [
             {
-                internalType: "contract AffineVault",
-                name: "_vault",
+                indexed: false,
+                internalType: "address",
+                name: "previousAdmin",
                 type: "address",
             },
             {
-                internalType: "address[]",
-                name: "strategists",
-                type: "address[]",
+                indexed: false,
+                internalType: "address",
+                name: "newAdmin",
+                type: "address",
             },
         ],
-        stateMutability: "nonpayable",
-        type: "constructor",
+        name: "AdminChanged",
+        type: "event",
     },
     {
-        inputs: [],
-        name: "NotAStrategy",
-        type: "error",
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: "address",
+                name: "beacon",
+                type: "address",
+            },
+        ],
+        name: "BeaconUpgraded",
+        type: "event",
     },
     {
-        inputs: [],
-        name: "ReentrancyGuardReentrantCall",
-        type: "error",
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: "uint256",
+                name: "eventId",
+                type: "uint256",
+            },
+            {
+                indexed: true,
+                internalType: "address",
+                name: "depositor",
+                type: "address",
+            },
+            {
+                indexed: true,
+                internalType: "address",
+                name: "token",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "amount",
+                type: "uint256",
+            },
+        ],
+        name: "Deposit",
+        type: "event",
     },
     {
-        inputs: [],
-        name: "onlyBalancerVault",
-        type: "error",
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "uint8",
+                name: "version",
+                type: "uint8",
+            },
+        ],
+        name: "Initialized",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: false,
+                internalType: "address",
+                name: "account",
+                type: "address",
+            },
+        ],
+        name: "Paused",
+        type: "event",
     },
     {
         anonymous: false,
@@ -113,39 +211,70 @@ const _abi = [
         type: "event",
     },
     {
-        inputs: [],
-        name: "AAVE",
-        outputs: [
+        anonymous: false,
+        inputs: [
             {
-                internalType: "contract IPool",
-                name: "",
+                indexed: false,
+                internalType: "address",
+                name: "account",
                 type: "address",
             },
         ],
-        stateMutability: "view",
-        type: "function",
+        name: "Unpaused",
+        type: "event",
     },
     {
-        inputs: [],
-        name: "BALANCER",
-        outputs: [
+        anonymous: false,
+        inputs: [
             {
-                internalType: "contract IBalancerVault",
-                name: "",
+                indexed: true,
+                internalType: "address",
+                name: "implementation",
                 type: "address",
             },
         ],
-        stateMutability: "view",
-        type: "function",
+        name: "Upgraded",
+        type: "event",
+    },
+    {
+        anonymous: false,
+        inputs: [
+            {
+                indexed: true,
+                internalType: "uint256",
+                name: "eventId",
+                type: "uint256",
+            },
+            {
+                indexed: true,
+                internalType: "address",
+                name: "withdrawer",
+                type: "address",
+            },
+            {
+                indexed: true,
+                internalType: "address",
+                name: "token",
+                type: "address",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "amount",
+                type: "uint256",
+            },
+        ],
+        name: "Withdraw",
+        type: "event",
     },
     {
         inputs: [],
-        name: "CURVE",
+        name: "APPROVED_TOKEN",
         outputs: [
             {
-                internalType: "contract ICurvePool",
+                internalType: "bytes32",
                 name: "",
-                type: "address",
+                type: "bytes32",
             },
         ],
         stateMutability: "view",
@@ -166,33 +295,7 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "MAX_BPS",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "STETH",
-        outputs: [
-            {
-                internalType: "contract ERC20",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "STRATEGIST_ROLE",
+        name: "GUARDIAN_ROLE",
         outputs: [
             {
                 internalType: "bytes32",
@@ -208,7 +311,7 @@ const _abi = [
         name: "WETH",
         outputs: [
             {
-                internalType: "contract WETH",
+                internalType: "contract IWETH",
                 name: "",
                 type: "address",
             },
@@ -217,60 +320,32 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [],
-        name: "WSTETH",
-        outputs: [
+        inputs: [
             {
-                internalType: "contract IWSTETH",
+                internalType: "address",
+                name: "_token",
+                type: "address",
+            },
+        ],
+        name: "approveToken",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+            {
+                internalType: "address",
                 name: "",
                 type: "address",
             },
         ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "aToken",
-        outputs: [
-            {
-                internalType: "contract ERC20",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "asset",
-        outputs: [
-            {
-                internalType: "contract ERC20",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "balanceOfAsset",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "assets",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "borrowBps",
+        name: "balance",
         outputs: [
             {
                 internalType: "uint256",
@@ -284,51 +359,42 @@ const _abi = [
     {
         inputs: [
             {
+                internalType: "address",
+                name: "_for",
+                type: "address",
+            },
+        ],
+        name: "depositETHFor",
+        outputs: [],
+        stateMutability: "payable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "_token",
+                type: "address",
+            },
+            {
+                internalType: "address",
+                name: "_for",
+                type: "address",
+            },
+            {
                 internalType: "uint256",
-                name: "wethAmount",
+                name: "_amount",
                 type: "uint256",
             },
         ],
-        name: "createAaveDebt",
+        name: "depositFor",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
     },
     {
         inputs: [],
-        name: "debtToken",
-        outputs: [
-            {
-                internalType: "contract ERC20",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "uint256",
-                name: "amount",
-                type: "uint256",
-            },
-        ],
-        name: "divest",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "getLTVRatio",
+        name: "depositPaused",
         outputs: [
             {
                 internalType: "uint256",
@@ -353,6 +419,19 @@ const _abi = [
                 internalType: "bytes32",
                 name: "",
                 type: "bytes32",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "governance",
+        outputs: [
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
             },
         ],
         stateMutability: "view",
@@ -403,49 +482,59 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "uint256",
-                name: "amount",
-                type: "uint256",
+                internalType: "address",
+                name: "_governance",
+                type: "address",
+            },
+            {
+                internalType: "address",
+                name: "_weth",
+                type: "address",
             },
         ],
-        name: "invest",
+        name: "initialize",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
     },
     {
         inputs: [],
-        name: "rebalance",
+        name: "pause",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
     },
     {
-        inputs: [
-            {
-                internalType: "contract ERC20[]",
-                name: "",
-                type: "address[]",
-            },
-            {
-                internalType: "uint256[]",
-                name: "amounts",
-                type: "uint256[]",
-            },
-            {
-                internalType: "uint256[]",
-                name: "",
-                type: "uint256[]",
-            },
-            {
-                internalType: "bytes",
-                name: "userData",
-                type: "bytes",
-            },
-        ],
-        name: "receiveFlashLoan",
+        inputs: [],
+        name: "pauseDeposit",
         outputs: [],
         stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "paused",
+        outputs: [
+            {
+                internalType: "bool",
+                name: "",
+                type: "bool",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "proxiableUUID",
+        outputs: [
+            {
+                internalType: "bytes32",
+                name: "",
+                type: "bytes32",
+            },
+        ],
+        stateMutability: "view",
         type: "function",
     },
     {
@@ -462,6 +551,13 @@ const _abi = [
             },
         ],
         name: "renounceRole",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "resumeDeposit",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -487,40 +583,14 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "uint256",
-                name: "_borrowBps",
-                type: "uint256",
+                internalType: "address",
+                name: "_token",
+                type: "address",
             },
         ],
-        name: "setBorrowBps",
+        name: "revokeToken",
         outputs: [],
         stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "uint256",
-                name: "_slippageBps",
-                type: "uint256",
-            },
-        ],
-        name: "setSlippageBps",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "slippageBps",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
         type: "function",
     },
     {
@@ -543,36 +613,17 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [
-            {
-                internalType: "contract ERC20",
-                name: "token",
-                type: "address",
-            },
-        ],
-        name: "sweep",
+        inputs: [],
+        name: "unpause",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
     },
     {
-        inputs: [],
-        name: "totalLockedValue",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
         inputs: [
             {
-                internalType: "contract LidoLevV3",
-                name: "newStrategy",
+                internalType: "address",
+                name: "newImplementation",
                 type: "address",
             },
         ],
@@ -582,24 +633,43 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [],
-        name: "vault",
-        outputs: [
+        inputs: [
             {
-                internalType: "contract AffineVault",
-                name: "",
+                internalType: "address",
+                name: "newImplementation",
                 type: "address",
             },
+            {
+                internalType: "bytes",
+                name: "data",
+                type: "bytes",
+            },
         ],
-        stateMutability: "view",
+        name: "upgradeToAndCall",
+        outputs: [],
+        stateMutability: "payable",
         type: "function",
     },
     {
-        stateMutability: "payable",
-        type: "receive",
+        inputs: [
+            {
+                internalType: "address",
+                name: "_token",
+                type: "address",
+            },
+            {
+                internalType: "uint256",
+                name: "_amount",
+                type: "uint256",
+            },
+        ],
+        name: "withdraw",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
     },
 ];
-class LidoLevEthStrategy__factory {
+class AffineReStaking__factory {
     static createInterface() {
         return new ethers_1.utils.Interface(_abi);
     }
@@ -607,5 +677,5 @@ class LidoLevEthStrategy__factory {
         return new ethers_1.Contract(address, _abi, signerOrProvider);
     }
 }
-exports.LidoLevEthStrategy__factory = LidoLevEthStrategy__factory;
-LidoLevEthStrategy__factory.abi = _abi;
+exports.AffineReStaking__factory = AffineReStaking__factory;
+AffineReStaking__factory.abi = _abi;

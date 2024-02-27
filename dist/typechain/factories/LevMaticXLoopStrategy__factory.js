@@ -3,7 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.LidoLevEthStrategy__factory = void 0;
+exports.LevMaticXLoopStrategy__factory = void 0;
 const ethers_1 = require("ethers");
 const _abi = [
     {
@@ -140,10 +140,10 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "CURVE",
+        name: "BALANCER_QUERY",
         outputs: [
             {
-                internalType: "contract ICurvePool",
+                internalType: "contract IBalancerQueries",
                 name: "",
                 type: "address",
             },
@@ -166,6 +166,19 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "MATICX",
+        outputs: [
+            {
+                internalType: "contract ERC20",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "MAX_BPS",
         outputs: [
             {
@@ -179,10 +192,23 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "STETH",
+        name: "POOL_ID",
         outputs: [
             {
-                internalType: "contract ERC20",
+                internalType: "bytes32",
+                name: "",
+                type: "bytes32",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "STADER",
+        outputs: [
+            {
+                internalType: "contract IChildPool",
                 name: "",
                 type: "address",
             },
@@ -205,23 +231,10 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "WETH",
+        name: "WMATIC",
         outputs: [
             {
                 internalType: "contract WETH",
-                name: "",
-                type: "address",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "WSTETH",
-        outputs: [
-            {
-                internalType: "contract IWSTETH",
                 name: "",
                 type: "address",
             },
@@ -401,6 +414,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "iCycle",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "uint256",
@@ -409,13 +435,6 @@ const _abi = [
             },
         ],
         name: "invest",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [],
-        name: "rebalance",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -467,6 +486,19 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "resDebt",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "bytes32",
@@ -493,6 +525,19 @@ const _abi = [
             },
         ],
         name: "setBorrowBps",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "uint256",
+                name: "_iCycle",
+                type: "uint256",
+            },
+        ],
+        name: "setInvestmentCycle",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -571,7 +616,7 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "contract LidoLevV3",
+                internalType: "contract LevMaticXLoopStrategy",
                 name: "newStrategy",
                 type: "address",
             },
@@ -599,7 +644,7 @@ const _abi = [
         type: "receive",
     },
 ];
-class LidoLevEthStrategy__factory {
+class LevMaticXLoopStrategy__factory {
     static createInterface() {
         return new ethers_1.utils.Interface(_abi);
     }
@@ -607,5 +652,5 @@ class LidoLevEthStrategy__factory {
         return new ethers_1.Contract(address, _abi, signerOrProvider);
     }
 }
-exports.LidoLevEthStrategy__factory = LidoLevEthStrategy__factory;
-LidoLevEthStrategy__factory.abi = _abi;
+exports.LevMaticXLoopStrategy__factory = LevMaticXLoopStrategy__factory;
+LevMaticXLoopStrategy__factory.abi = _abi;

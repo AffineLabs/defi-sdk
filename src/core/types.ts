@@ -11,6 +11,7 @@ import {
   AffinePass,
   AffinePassBridge,
   VaultV2,
+  AffineReStaking,
 } from "../typechain";
 import { ethers } from "ethers";
 
@@ -93,6 +94,7 @@ export interface EthContracts extends BothContracts {
   degen: Vault;
   ethLeverage?: Vault;
   affinePassBridgeEthereum?: AffinePassBridge;
+  affineReStaking?: AffineReStaking;
 }
 
 export interface BaseContracts extends BothContracts {

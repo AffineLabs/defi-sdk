@@ -1,31 +1,109 @@
 import { Signer } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { LidoLevEthStrategy, LidoLevEthStrategyInterface } from "../LidoLevEthStrategy";
-export declare class LidoLevEthStrategy__factory {
+import type { AffineReStaking, AffineReStakingInterface } from "../AffineReStaking";
+export declare class AffineReStaking__factory {
     static readonly abi: readonly [{
+        readonly inputs: readonly [];
+        readonly name: "AlreadyApprovedToken";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "CannotDepositForZeroAddress";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "DepositAmountCannotBeZero";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "InvalidWithdrawalAmount";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "NonZeroTokenBalance";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "NotApprovedToken";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "TokenNotAllowedForStaking";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "WithdrawAmountCannotBeZero";
+        readonly type: "error";
+    }, {
+        readonly anonymous: false;
         readonly inputs: readonly [{
-            readonly internalType: "contract AffineVault";
-            readonly name: "_vault";
+            readonly indexed: false;
+            readonly internalType: "address";
+            readonly name: "previousAdmin";
             readonly type: "address";
         }, {
-            readonly internalType: "address[]";
-            readonly name: "strategists";
-            readonly type: "address[]";
+            readonly indexed: false;
+            readonly internalType: "address";
+            readonly name: "newAdmin";
+            readonly type: "address";
         }];
-        readonly stateMutability: "nonpayable";
-        readonly type: "constructor";
+        readonly name: "AdminChanged";
+        readonly type: "event";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "NotAStrategy";
-        readonly type: "error";
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: true;
+            readonly internalType: "address";
+            readonly name: "beacon";
+            readonly type: "address";
+        }];
+        readonly name: "BeaconUpgraded";
+        readonly type: "event";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "ReentrancyGuardReentrantCall";
-        readonly type: "error";
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: true;
+            readonly internalType: "uint256";
+            readonly name: "eventId";
+            readonly type: "uint256";
+        }, {
+            readonly indexed: true;
+            readonly internalType: "address";
+            readonly name: "depositor";
+            readonly type: "address";
+        }, {
+            readonly indexed: true;
+            readonly internalType: "address";
+            readonly name: "token";
+            readonly type: "address";
+        }, {
+            readonly indexed: false;
+            readonly internalType: "uint256";
+            readonly name: "amount";
+            readonly type: "uint256";
+        }];
+        readonly name: "Deposit";
+        readonly type: "event";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "onlyBalancerVault";
-        readonly type: "error";
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: false;
+            readonly internalType: "uint8";
+            readonly name: "version";
+            readonly type: "uint8";
+        }];
+        readonly name: "Initialized";
+        readonly type: "event";
+    }, {
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: false;
+            readonly internalType: "address";
+            readonly name: "account";
+            readonly type: "address";
+        }];
+        readonly name: "Paused";
+        readonly type: "event";
     }, {
         readonly anonymous: false;
         readonly inputs: readonly [{
@@ -87,32 +165,57 @@ export declare class LidoLevEthStrategy__factory {
         readonly name: "RoleRevoked";
         readonly type: "event";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "AAVE";
-        readonly outputs: readonly [{
-            readonly internalType: "contract IPool";
-            readonly name: "";
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: false;
+            readonly internalType: "address";
+            readonly name: "account";
             readonly type: "address";
         }];
-        readonly stateMutability: "view";
-        readonly type: "function";
+        readonly name: "Unpaused";
+        readonly type: "event";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "BALANCER";
-        readonly outputs: readonly [{
-            readonly internalType: "contract IBalancerVault";
-            readonly name: "";
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: true;
+            readonly internalType: "address";
+            readonly name: "implementation";
             readonly type: "address";
         }];
-        readonly stateMutability: "view";
-        readonly type: "function";
+        readonly name: "Upgraded";
+        readonly type: "event";
+    }, {
+        readonly anonymous: false;
+        readonly inputs: readonly [{
+            readonly indexed: true;
+            readonly internalType: "uint256";
+            readonly name: "eventId";
+            readonly type: "uint256";
+        }, {
+            readonly indexed: true;
+            readonly internalType: "address";
+            readonly name: "withdrawer";
+            readonly type: "address";
+        }, {
+            readonly indexed: true;
+            readonly internalType: "address";
+            readonly name: "token";
+            readonly type: "address";
+        }, {
+            readonly indexed: false;
+            readonly internalType: "uint256";
+            readonly name: "amount";
+            readonly type: "uint256";
+        }];
+        readonly name: "Withdraw";
+        readonly type: "event";
     }, {
         readonly inputs: readonly [];
-        readonly name: "CURVE";
+        readonly name: "APPROVED_TOKEN";
         readonly outputs: readonly [{
-            readonly internalType: "contract ICurvePool";
+            readonly internalType: "bytes32";
             readonly name: "";
-            readonly type: "address";
+            readonly type: "bytes32";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -128,27 +231,7 @@ export declare class LidoLevEthStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "MAX_BPS";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "STETH";
-        readonly outputs: readonly [{
-            readonly internalType: "contract ERC20";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "STRATEGIST_ROLE";
+        readonly name: "GUARDIAN_ROLE";
         readonly outputs: readonly [{
             readonly internalType: "bytes32";
             readonly name: "";
@@ -160,55 +243,33 @@ export declare class LidoLevEthStrategy__factory {
         readonly inputs: readonly [];
         readonly name: "WETH";
         readonly outputs: readonly [{
-            readonly internalType: "contract WETH";
+            readonly internalType: "contract IWETH";
             readonly name: "";
             readonly type: "address";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "WSTETH";
-        readonly outputs: readonly [{
-            readonly internalType: "contract IWSTETH";
+        readonly inputs: readonly [{
+            readonly internalType: "address";
+            readonly name: "_token";
+            readonly type: "address";
+        }];
+        readonly name: "approveToken";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "address";
+            readonly name: "";
+            readonly type: "address";
+        }, {
+            readonly internalType: "address";
             readonly name: "";
             readonly type: "address";
         }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "aToken";
-        readonly outputs: readonly [{
-            readonly internalType: "contract ERC20";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "asset";
-        readonly outputs: readonly [{
-            readonly internalType: "contract ERC20";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "balanceOfAsset";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "assets";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "borrowBps";
+        readonly name: "balance";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "";
@@ -218,41 +279,35 @@ export declare class LidoLevEthStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
+            readonly internalType: "address";
+            readonly name: "_for";
+            readonly type: "address";
+        }];
+        readonly name: "depositETHFor";
+        readonly outputs: readonly [];
+        readonly stateMutability: "payable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "address";
+            readonly name: "_token";
+            readonly type: "address";
+        }, {
+            readonly internalType: "address";
+            readonly name: "_for";
+            readonly type: "address";
+        }, {
             readonly internalType: "uint256";
-            readonly name: "wethAmount";
+            readonly name: "_amount";
             readonly type: "uint256";
         }];
-        readonly name: "createAaveDebt";
+        readonly name: "depositFor";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "debtToken";
-        readonly outputs: readonly [{
-            readonly internalType: "contract ERC20";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "amount";
-            readonly type: "uint256";
-        }];
-        readonly name: "divest";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "getLTVRatio";
+        readonly name: "depositPaused";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
             readonly name: "";
@@ -271,6 +326,16 @@ export declare class LidoLevEthStrategy__factory {
             readonly internalType: "bytes32";
             readonly name: "";
             readonly type: "bytes32";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "governance";
+        readonly outputs: readonly [{
+            readonly internalType: "address";
+            readonly name: "";
+            readonly type: "address";
         }];
         readonly stateMutability: "view";
         readonly type: "function";
@@ -308,41 +373,49 @@ export declare class LidoLevEthStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "amount";
-            readonly type: "uint256";
+            readonly internalType: "address";
+            readonly name: "_governance";
+            readonly type: "address";
+        }, {
+            readonly internalType: "address";
+            readonly name: "_weth";
+            readonly type: "address";
         }];
-        readonly name: "invest";
+        readonly name: "initialize";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "rebalance";
+        readonly name: "pause";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [{
-            readonly internalType: "contract ERC20[]";
-            readonly name: "";
-            readonly type: "address[]";
-        }, {
-            readonly internalType: "uint256[]";
-            readonly name: "amounts";
-            readonly type: "uint256[]";
-        }, {
-            readonly internalType: "uint256[]";
-            readonly name: "";
-            readonly type: "uint256[]";
-        }, {
-            readonly internalType: "bytes";
-            readonly name: "userData";
-            readonly type: "bytes";
-        }];
-        readonly name: "receiveFlashLoan";
+        readonly inputs: readonly [];
+        readonly name: "pauseDeposit";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "paused";
+        readonly outputs: readonly [{
+            readonly internalType: "bool";
+            readonly name: "";
+            readonly type: "bool";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "proxiableUUID";
+        readonly outputs: readonly [{
+            readonly internalType: "bytes32";
+            readonly name: "";
+            readonly type: "bytes32";
+        }];
+        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
@@ -355,6 +428,12 @@ export declare class LidoLevEthStrategy__factory {
             readonly type: "address";
         }];
         readonly name: "renounceRole";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "resumeDeposit";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
@@ -374,33 +453,13 @@ export declare class LidoLevEthStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "_borrowBps";
-            readonly type: "uint256";
+            readonly internalType: "address";
+            readonly name: "_token";
+            readonly type: "address";
         }];
-        readonly name: "setBorrowBps";
+        readonly name: "revokeToken";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "_slippageBps";
-            readonly type: "uint256";
-        }];
-        readonly name: "setSlippageBps";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "slippageBps";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
@@ -417,29 +476,15 @@ export declare class LidoLevEthStrategy__factory {
         readonly stateMutability: "view";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [{
-            readonly internalType: "contract ERC20";
-            readonly name: "token";
-            readonly type: "address";
-        }];
-        readonly name: "sweep";
+        readonly inputs: readonly [];
+        readonly name: "unpause";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "totalLockedValue";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
         readonly inputs: readonly [{
-            readonly internalType: "contract LidoLevV3";
-            readonly name: "newStrategy";
+            readonly internalType: "address";
+            readonly name: "newImplementation";
             readonly type: "address";
         }];
         readonly name: "upgradeTo";
@@ -447,19 +492,34 @@ export declare class LidoLevEthStrategy__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "vault";
-        readonly outputs: readonly [{
-            readonly internalType: "contract AffineVault";
-            readonly name: "";
+        readonly inputs: readonly [{
+            readonly internalType: "address";
+            readonly name: "newImplementation";
             readonly type: "address";
+        }, {
+            readonly internalType: "bytes";
+            readonly name: "data";
+            readonly type: "bytes";
         }];
-        readonly stateMutability: "view";
+        readonly name: "upgradeToAndCall";
+        readonly outputs: readonly [];
+        readonly stateMutability: "payable";
         readonly type: "function";
     }, {
-        readonly stateMutability: "payable";
-        readonly type: "receive";
+        readonly inputs: readonly [{
+            readonly internalType: "address";
+            readonly name: "_token";
+            readonly type: "address";
+        }, {
+            readonly internalType: "uint256";
+            readonly name: "_amount";
+            readonly type: "uint256";
+        }];
+        readonly name: "withdraw";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
     }];
-    static createInterface(): LidoLevEthStrategyInterface;
-    static connect(address: string, signerOrProvider: Signer | Provider): LidoLevEthStrategy;
+    static createInterface(): AffineReStakingInterface;
+    static connect(address: string, signerOrProvider: Signer | Provider): AffineReStaking;
 }

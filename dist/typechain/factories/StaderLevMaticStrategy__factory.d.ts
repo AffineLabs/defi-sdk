@@ -1,7 +1,7 @@
 import { Signer } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { LidoLevEthStrategy, LidoLevEthStrategyInterface } from "../LidoLevEthStrategy";
-export declare class LidoLevEthStrategy__factory {
+import type { StaderLevMaticStrategy, StaderLevMaticStrategyInterface } from "../StaderLevMaticStrategy";
+export declare class StaderLevMaticStrategy__factory {
     static readonly abi: readonly [{
         readonly inputs: readonly [{
             readonly internalType: "contract AffineVault";
@@ -21,6 +21,10 @@ export declare class LidoLevEthStrategy__factory {
     }, {
         readonly inputs: readonly [];
         readonly name: "ReentrancyGuardReentrantCall";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "onlyAAVEVault";
         readonly type: "error";
     }, {
         readonly inputs: readonly [];
@@ -98,6 +102,16 @@ export declare class LidoLevEthStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
+        readonly name: "ADDRESSES_PROVIDER";
+        readonly outputs: readonly [{
+            readonly internalType: "contract IPoolAddressesProvider";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "BALANCER";
         readonly outputs: readonly [{
             readonly internalType: "contract IBalancerVault";
@@ -108,9 +122,9 @@ export declare class LidoLevEthStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "CURVE";
+        readonly name: "BALANCER_QUERY";
         readonly outputs: readonly [{
-            readonly internalType: "contract ICurvePool";
+            readonly internalType: "contract IBalancerQueries";
             readonly name: "";
             readonly type: "address";
         }];
@@ -128,6 +142,16 @@ export declare class LidoLevEthStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
+        readonly name: "MATICX";
+        readonly outputs: readonly [{
+            readonly internalType: "contract ERC20";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "MAX_BPS";
         readonly outputs: readonly [{
             readonly internalType: "uint256";
@@ -138,9 +162,29 @@ export declare class LidoLevEthStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "STETH";
+        readonly name: "POOL";
         readonly outputs: readonly [{
-            readonly internalType: "contract ERC20";
+            readonly internalType: "contract IPool";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "pure";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "POOL_ID";
+        readonly outputs: readonly [{
+            readonly internalType: "bytes32";
+            readonly name: "";
+            readonly type: "bytes32";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "STADER";
+        readonly outputs: readonly [{
+            readonly internalType: "contract IChildPool";
             readonly name: "";
             readonly type: "address";
         }];
@@ -158,19 +202,9 @@ export declare class LidoLevEthStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
-        readonly name: "WETH";
+        readonly name: "WMATIC";
         readonly outputs: readonly [{
             readonly internalType: "contract WETH";
-            readonly name: "";
-            readonly type: "address";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [];
-        readonly name: "WSTETH";
-        readonly outputs: readonly [{
-            readonly internalType: "contract IWSTETH";
             readonly name: "";
             readonly type: "address";
         }];
@@ -247,6 +281,36 @@ export declare class LidoLevEthStrategy__factory {
             readonly internalType: "uint256";
             readonly name: "";
             readonly type: "uint256";
+        }];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [{
+            readonly internalType: "address[]";
+            readonly name: "";
+            readonly type: "address[]";
+        }, {
+            readonly internalType: "uint256[]";
+            readonly name: "amounts";
+            readonly type: "uint256[]";
+        }, {
+            readonly internalType: "uint256[]";
+            readonly name: "premiums";
+            readonly type: "uint256[]";
+        }, {
+            readonly internalType: "address";
+            readonly name: "initiator";
+            readonly type: "address";
+        }, {
+            readonly internalType: "bytes";
+            readonly name: "params";
+            readonly type: "bytes";
+        }];
+        readonly name: "executeOperation";
+        readonly outputs: readonly [{
+            readonly internalType: "bool";
+            readonly name: "";
+            readonly type: "bool";
         }];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
@@ -438,7 +502,7 @@ export declare class LidoLevEthStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
-            readonly internalType: "contract LidoLevV3";
+            readonly internalType: "contract StaderLevMaticStrategy";
             readonly name: "newStrategy";
             readonly type: "address";
         }];
@@ -460,6 +524,6 @@ export declare class LidoLevEthStrategy__factory {
         readonly stateMutability: "payable";
         readonly type: "receive";
     }];
-    static createInterface(): LidoLevEthStrategyInterface;
-    static connect(address: string, signerOrProvider: Signer | Provider): LidoLevEthStrategy;
+    static createInterface(): StaderLevMaticStrategyInterface;
+    static connect(address: string, signerOrProvider: Signer | Provider): StaderLevMaticStrategy;
 }
