@@ -49,14 +49,14 @@ declare class Account {
      * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
      * @returns {Promise<boolean>} boolean indicating whether the user has approved the outgoing transaction
      */
-    isApproved(product: AlpineProduct, amount?: number): Promise<boolean>;
+    isApproved(product: AlpineProduct, amount?: number, tokenAddress?: string): Promise<boolean>;
     /**
      * approve outgoing transaction with another wallet or smart contract for
      * the specified amount
      * @param {String} to the receipient address
-     * @param {String} amountUSDC transaction amount in usdc
+     * @param {String} amount transaction amount
      */
-    approve(to: AlpineProduct, amountUSDC?: string): Promise<import("../core/types").DryRunReceipt | import("../core/types").FullTxReceipt>;
+    approve(to: AlpineProduct, amount?: string, tokenAddress?: string): Promise<import("../core/types").DryRunReceipt | import("../core/types").FullTxReceipt>;
     portfolioSell(allocations: productAllocation, amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     portfolioPurchase(alloctions: productAllocation, amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     buyProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt>;
