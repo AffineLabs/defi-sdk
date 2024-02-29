@@ -48,6 +48,7 @@ export const alpineProducts = [
   "baseUsdEarn",
   "baseLeverage",
   "polygonLevMaticX",
+  "affineReStaking",
 ] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 

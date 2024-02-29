@@ -234,7 +234,7 @@ function getTokenInfo(product) {
                 equity: numWeth,
             };
         }
-        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, } = (0, cache_1.getContracts)();
+        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, affineReStaking, } = (0, cache_1.getContracts)();
         const productToContract = {
             alpSave,
             ethEarn,
@@ -248,6 +248,7 @@ function getTokenInfo(product) {
             baseLeverage,
             baseUsdEarn,
             polygonLevMaticX,
+            affineReStaking
         };
         const contract = productToContract[product];
         if (!contract)

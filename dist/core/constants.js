@@ -53,6 +53,7 @@ exports.WITHDRAW_SLIPPAGE_BY_PRODUCT = {
     baseLeverage: {},
     ssvEthUSDEarn: {},
     polygonLevMaticX: {},
+    affineReStaking: {},
 };
 exports.NETWORK_PARAMS = {
     1: {

@@ -290,6 +290,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     baseUsdEarn,
     baseLeverage,
     polygonLevMaticX,
+    affineReStaking,
   } = getContracts() as AlpineContracts;
 
   const productToContract: { [key in AlpineProduct]: Contract | undefined } = {
@@ -305,6 +306,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     baseLeverage,
     baseUsdEarn,
     polygonLevMaticX,
+    affineReStaking
   };
 
   const contract = productToContract[product];
