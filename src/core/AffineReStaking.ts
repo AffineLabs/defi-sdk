@@ -41,7 +41,7 @@ export async function withdraw(token: string, amount: string) {
   return blockchainCall(affineReStaking, "withdraw", [token, decimalAmount]);
 }
 
-export async function getBalance(token: string, address: string) {
+export async function getReStakedBalance(token: string, address: string) {
   const { affineReStaking, asset } = await getReStakingContractAndAssets(token);
   const value = await affineReStaking.balance(token, address);
   const amount = _removeDecimals(value, await asset.decimals());

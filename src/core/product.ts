@@ -252,9 +252,9 @@ async function _convertToShares(amountUSDC: ethers.BigNumber) {
   return shares.gt(userShares) ? userShares : shares;
 }
 
-export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<TokenInfo> {
+export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth", token?: string): Promise<TokenInfo> {
   const user = userAddress;
-
+  const { router } = getContracts() as AlpineContracts;
   if (product === "usdc") {
     const { usdc } = getContracts();
     const amount = await usdc.balanceOf(user);
@@ -274,6 +274,15 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
       amount: numWeth,
       price: "1",
       equity: numWeth,
+    };
+  } else if (token != undefined) {
+    const asset = MockERC20__factory.connect(token, router.provider);
+    const amount = await asset.balanceOf(user);
+    const assetAmount = _removeDecimals(amount, await asset.decimals());
+    return {
+      amount: assetAmount,
+      price: "1",
+      equity: assetAmount,
     };
   }
 
@@ -306,7 +315,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Pr
     baseLeverage,
     baseUsdEarn,
     polygonLevMaticX,
-    affineReStaking
+    affineReStaking,
   };
 
   const contract = productToContract[product];

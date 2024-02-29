@@ -15,6 +15,6 @@ export declare function sellVault(vault: ERC4626Upgradeable, rawAssets: number, 
 }>;
 export declare function buyBtCEthShares(alpLarge: ERC4626Upgradeable, amountUSDC: number, slippageBps: number, usdc: MockERC20, router: Router): Promise<DryRunReceipt | FullTxReceipt>;
 export declare function sellBtCEthShares(alpLarge: ERC4626Upgradeable, amountUSDC: number, asset: MockERC20): Promise<DryRunReceipt | FullTxReceipt>;
-export declare function getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<TokenInfo>;
+export declare function getTokenInfo(product: AlpineProduct | "usdc" | "weth", token?: string): Promise<TokenInfo>;
 export declare function tokensFromShares(product: AlpineProduct, shareAmount: ethers.BigNumber): Promise<BigNumber>;
 export declare function sharesFromTokens(product: AlpineProduct, tokenAmount: ethers.BigNumber): Promise<BigNumber>;
