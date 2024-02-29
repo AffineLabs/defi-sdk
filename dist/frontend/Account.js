@@ -486,9 +486,9 @@ class Account {
             return core_1.AlpineDeFiSDK.mintWhitelist(proof);
         });
     }
-    getTokenInfo(product) {
+    getTokenInfo(product, tokenAddress) {
         return __awaiter(this, void 0, void 0, function* () {
-            return productActions.getTokenInfo(product);
+            return productActions.getTokenInfo(product, tokenAddress);
         });
     }
 }

@@ -106,6 +106,6 @@ declare class Account {
     isWhitelisted(address: string, proof: string[]): Promise<boolean>;
     mint(): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     mintWhitelist(proof: string[]): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
-    getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<import("../core/types").TokenInfo>;
+    getTokenInfo(product: AlpineProduct | "usdc" | "weth", tokenAddress?: string): Promise<import("../core/types").TokenInfo>;
 }
 export { Account };
