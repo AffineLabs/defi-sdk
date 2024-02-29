@@ -188,7 +188,7 @@ function approve(product, amountAsset, token) {
         else if (matic && ["polygonLevMaticX"].includes(product)) {
             asset = matic;
         }
-        else if (token != undefined && ["AffineReStaking"].includes(product)) {
+        else if (token != undefined && ["affineReStaking"].includes(product)) {
             asset = typechain_1.MockERC20__factory.connect(token, router.provider);
         }
         const decimals = yield asset.decimals();
