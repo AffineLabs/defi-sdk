@@ -194,18 +194,18 @@ class Account {
    * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
    * @returns {Promise<boolean>} boolean indicating whether the user has approved the outgoing transaction
    */
-  async isApproved(product: AlpineProduct, amount?: number): Promise<boolean> {
-    return AlpineDeFiSDK.isApproved(product, amount);
+  async isApproved(product: AlpineProduct, amount?: number, tokenAddress?: string): Promise<boolean> {
+    return AlpineDeFiSDK.isApproved(product, amount, tokenAddress);
   }
 
   /**
    * approve outgoing transaction with another wallet or smart contract for
    * the specified amount
    * @param {String} to the receipient address
-   * @param {String} amountUSDC transaction amount in usdc
+   * @param {String} amount transaction amount
    */
-  approve(to: AlpineProduct, amountUSDC?: string) {
-    return AlpineDeFiSDK.approve(to, amountUSDC);
+  approve(to: AlpineProduct, amount?: string, tokenAddress?: string) {
+    return AlpineDeFiSDK.approve(to, amount, tokenAddress);
   }
 
   portfolioSell(allocations: productAllocation, amount: number) {
@@ -476,8 +476,8 @@ class Account {
     return AlpineDeFiSDK.mintWhitelist(proof);
   }
 
-  async getTokenInfo(product: AlpineProduct | "usdc" | "weth") {
-    return productActions.getTokenInfo(product);
+  async getTokenInfo(product: AlpineProduct | "usdc" | "weth",tokenAddress?: string) {
+    return productActions.getTokenInfo(product,tokenAddress);
   }
 }
 

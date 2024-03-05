@@ -23,10 +23,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.init = exports.types = exports.AlpineDeFiSDK = void 0;
+exports.init = exports.types = exports.AlpineRestaking = exports.AlpineDeFiSDK = void 0;
 const AlpineDeFiSDK = __importStar(require("./AlpineDeFiSDK"));
 exports.AlpineDeFiSDK = AlpineDeFiSDK;
 const types = __importStar(require("./types"));
 exports.types = types;
 const cache_1 = require("./cache");
 Object.defineProperty(exports, "init", { enumerable: true, get: function () { return cache_1.init; } });
+const AlpineRestaking = __importStar(require("./AffineReStaking"));
+exports.AlpineRestaking = AlpineRestaking;

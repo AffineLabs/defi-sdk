@@ -14,6 +14,8 @@ import {
   AffinePass__factory,
   AffinePassBridge__factory,
   VaultV2__factory,
+  AffineReStaking,
+  AffineReStaking__factory,
 } from "../typechain";
 import { AllowedChainId } from "../types/account";
 import {
@@ -106,6 +108,7 @@ export async function getAllContracts(
     BaseStEthLev: baseStEthLevData,
     BaseRouter: baseRouterData,
     PolygonLevMaticX: polygonLevMaticXData,
+    AffineReStaking: affineReStakingData,
   } = allData;
 
   const chainId = getChainId();
@@ -148,6 +151,10 @@ export async function getAllContracts(
     const withdrawalEscrow = WithdrawalEscrow__factory.connect(await ssvEthUSDEarn.debtEscrow(), provider);
     const degen = Vault__factory.connect(degenData.address, provider);
     const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
+
+    // reStaking
+    const affineReStaking =
+      chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
     return {
       ethEarn,
       ethWethEarn,
@@ -162,6 +169,7 @@ export async function getAllContracts(
         chainId === 1 && typeof affinePassBridgeEthereumData !== "undefined"
           ? AffinePassBridge__factory.connect(affinePassBridgeEthereumData.address, provider)
           : undefined,
+      affineReStaking,
     };
   } else if (chainId == 8453 || chainId == 84531) {
     const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;

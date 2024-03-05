@@ -29,6 +29,11 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "ReentrancyGuardReentrantCall",
+        type: "error",
+    },
+    {
+        inputs: [],
         name: "onlyBalancerVault",
         type: "error",
     },
