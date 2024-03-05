@@ -2,4 +2,5 @@ import * as AlpineDeFiSDK from "./AlpineDeFiSDK";
 import { AlpineContracts } from "./types";
 import * as types from "./types";
 import { init } from "./cache";
-export { AlpineDeFiSDK, AlpineContracts, types, init };
+import * as AlpineRestaking from "./AffineReStaking";
+export { AlpineDeFiSDK, AlpineRestaking, AlpineContracts, types, init };

@@ -14,6 +14,7 @@ const ethers_1 = require("ethers");
 const cache_1 = require("./cache");
 const biconomy_1 = require("./biconomy");
 const constants_1 = require("./constants");
+const typechain_1 = require("../typechain");
 /**
  * Get the current best estimate for gas price
  * @returns the best estimate for gas price in eth
@@ -124,13 +125,17 @@ exports.blockchainCall = blockchainCall;
  * DEFAULT amount is: MAX_APPROVAL_AMOUNT/2
  * @returns boolean
  */
-function isApproved(product, amount) {
+function isApproved(product, amount, token) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, } = (0, cache_1.getContracts)();
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, affineReStaking, } = (0, cache_1.getContracts)();
         if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX"].includes(product))
             return true;
-        const asset = product == "polygonLeverage" ? weth : usdc;
+        const asset = token != undefined
+            ? typechain_1.MockERC20__factory.connect(token, router.provider)
+            : product == "polygonLeverage"
+                ? weth
+                : usdc;
         const productToSpender = {
             alpSave,
             alpLarge: router,
@@ -141,6 +146,7 @@ function isApproved(product, amount) {
             polygonLeverage,
             baseUsdEarn,
             polygonLevMaticX,
+            affineReStaking,
             // No approvals needed for these
             ethWethEarn,
             ethLeverage,
@@ -170,7 +176,7 @@ exports.isApproved = isApproved;
  * @param to the receipient contract
  * @param amountUSDC (optional) transaction amount in usdc, if not specified then approve max amount
  */
-function approve(product, amountAsset) {
+function approve(product, amountAsset, token) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = (0, cache_1.getContracts)();
@@ -181,6 +187,9 @@ function approve(product, amountAsset) {
         }
         else if (matic && ["polygonLevMaticX"].includes(product)) {
             asset = matic;
+        }
+        else if (token != undefined && ["affineReStaking"].includes(product)) {
+            asset = typechain_1.MockERC20__factory.connect(token, router.provider);
         }
         const decimals = yield asset.decimals();
         const amount = amountAsset ? _addDecimals(amountAsset, decimals) : constants_1.MAX_APPROVAL_AMOUNT;

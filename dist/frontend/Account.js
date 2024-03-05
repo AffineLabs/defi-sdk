@@ -174,19 +174,19 @@ class Account {
      * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
      * @returns {Promise<boolean>} boolean indicating whether the user has approved the outgoing transaction
      */
-    isApproved(product, amount) {
+    isApproved(product, amount, tokenAddress) {
         return __awaiter(this, void 0, void 0, function* () {
-            return core_1.AlpineDeFiSDK.isApproved(product, amount);
+            return core_1.AlpineDeFiSDK.isApproved(product, amount, tokenAddress);
         });
     }
     /**
      * approve outgoing transaction with another wallet or smart contract for
      * the specified amount
      * @param {String} to the receipient address
-     * @param {String} amountUSDC transaction amount in usdc
+     * @param {String} amount transaction amount
      */
-    approve(to, amountUSDC) {
-        return core_1.AlpineDeFiSDK.approve(to, amountUSDC);
+    approve(to, amount, tokenAddress) {
+        return core_1.AlpineDeFiSDK.approve(to, amount, tokenAddress);
     }
     portfolioSell(allocations, amount) {
         return (0, portfolio_1.portfolioSell)(allocations, amount);
@@ -465,9 +465,9 @@ class Account {
             return core_1.AlpineDeFiSDK.mintWhitelist(proof);
         });
     }
-    getTokenInfo(product) {
+    getTokenInfo(product, tokenAddress) {
         return __awaiter(this, void 0, void 0, function* () {
-            return productActions.getTokenInfo(product);
+            return productActions.getTokenInfo(product, tokenAddress);
         });
     }
 }

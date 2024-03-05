@@ -20,6 +20,10 @@ export declare class LidoLevV3__factory {
         readonly type: "error";
     }, {
         readonly inputs: readonly [];
+        readonly name: "ReentrancyGuardReentrantCall";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "onlyBalancerVault";
         readonly type: "error";
     }, {

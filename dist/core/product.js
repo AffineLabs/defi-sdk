@@ -209,9 +209,10 @@ function _convertToShares(amountUSDC) {
         return shares.gt(userShares) ? userShares : shares;
     });
 }
-function getTokenInfo(product) {
+function getTokenInfo(product, token) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = cache_1.userAddress;
+        const { router } = (0, cache_1.getContracts)();
         if (product === "usdc") {
             const { usdc } = (0, cache_1.getContracts)();
             const amount = yield usdc.balanceOf(user);
@@ -234,7 +235,17 @@ function getTokenInfo(product) {
                 equity: numWeth,
             };
         }
-        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, } = (0, cache_1.getContracts)();
+        else if (token != undefined) {
+            const asset = typechain_1.MockERC20__factory.connect(token, router.provider);
+            const amount = yield asset.balanceOf(user);
+            const assetAmount = (0, AlpineDeFiSDK_1._removeDecimals)(amount, yield asset.decimals());
+            return {
+                amount: assetAmount,
+                price: "1",
+                equity: assetAmount,
+            };
+        }
+        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, affineReStaking, } = (0, cache_1.getContracts)();
         const productToContract = {
             alpSave,
             ethEarn,
@@ -248,6 +259,7 @@ function getTokenInfo(product) {
             baseLeverage,
             baseUsdEarn,
             polygonLevMaticX,
+            affineReStaking,
         };
         const contract = productToContract[product];
         if (!contract)

@@ -8,7 +8,7 @@ import { AlpineContracts } from "./types";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { GasInfo } from "..";
 import { MAX_APPROVAL_AMOUNT, CCIP_NETWORK_SELECTOR } from "./constants";
-import { StrategyVault, AffinePassBridge } from "../typechain";
+import { StrategyVault, AffinePassBridge, MockERC20__factory } from "../typechain";
 
 /**
  * Get the current best estimate for gas price
@@ -131,7 +131,7 @@ export async function blockchainCall(
  * DEFAULT amount is: MAX_APPROVAL_AMOUNT/2
  * @returns boolean
  */
-export async function isApproved(product: AlpineProduct, amount?: number): Promise<boolean> {
+export async function isApproved(product: AlpineProduct, amount?: number, token?: string): Promise<boolean> {
   const {
     usdc,
     alpSave,
@@ -147,11 +147,17 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     baseLeverage,
     ethLeverage,
     polygonLevMaticX,
+    affineReStaking,
   } = getContracts() as AlpineContracts;
 
   if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX"].includes(product)) return true;
 
-  const asset = product == "polygonLeverage" ? weth : usdc;
+  const asset =
+    token != undefined
+      ? MockERC20__factory.connect(token, router.provider)
+      : product == "polygonLeverage"
+      ? weth
+      : usdc;
 
   const productToSpender = {
     alpSave,
@@ -163,6 +169,7 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
     polygonLeverage,
     baseUsdEarn,
     polygonLevMaticX,
+    affineReStaking,
 
     // No approvals needed for these
     ethWethEarn,
@@ -194,7 +201,11 @@ export async function isApproved(product: AlpineProduct, amount?: number): Promi
  * @param to the receipient contract
  * @param amountUSDC (optional) transaction amount in usdc, if not specified then approve max amount
  */
-export async function approve(product: AlpineProduct, amountAsset?: string): Promise<DryRunReceipt | FullTxReceipt> {
+export async function approve(
+  product: AlpineProduct,
+  amountAsset?: string,
+  token?: string,
+): Promise<DryRunReceipt | FullTxReceipt> {
   const contracts = getContracts() as AlpineContracts;
   const { usdc, router, weth, matic } = contracts;
 
@@ -203,6 +214,8 @@ export async function approve(product: AlpineProduct, amountAsset?: string): Pro
     asset = weth;
   } else if (matic && ["polygonLevMaticX"].includes(product)) {
     asset = matic;
+  } else if (token != undefined && ["affineReStaking"].includes(product)) {
+    asset = MockERC20__factory.connect(token, router.provider);
   }
   const decimals = await asset.decimals();
 
