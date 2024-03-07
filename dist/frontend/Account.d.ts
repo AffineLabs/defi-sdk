@@ -25,14 +25,14 @@ declare class Account {
      * the smart contracts.
      * @param email user's email address
      */
-    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, }: IConnectAccount): Promise<void>;
+    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, }: IConnectAccount): Promise<ethers.providers.Web3Provider | undefined>;
     /**
      * This method initializes the contracts for the user, this should be called
      * after the user is connected to the wallet, or the chainId is changed
      * @param chainId AllowedChainId - chain id
      * @param address string - user's address
      */
-    initContracts(chainId: AllowedChainId, address?: string): Promise<void>;
+    initContracts(chainId: AllowedChainId, provider: ethers.providers.Web3Provider): Promise<void>;
     setSimulationMode(mode: boolean): Promise<void>;
     /**
      * Disconnect a user from the magic provider

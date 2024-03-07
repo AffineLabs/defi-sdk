@@ -99,6 +99,8 @@ class Account {
                     throw new Error((_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : "Verification failed!");
                 }
             }
+            // FE needs to initialize the contracts or chainId is changed
+            return walletProvider;
         });
     }
     /**
@@ -107,13 +109,10 @@ class Account {
      * @param chainId AllowedChainId - chain id
      * @param address string - user's address
      */
-    initContracts(chainId, address) {
-        var _a;
+    initContracts(chainId, provider) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!address && !this.signer) {
-                throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
-            }
-            yield (0, core_1.init)((_a = this.signer) !== null && _a !== void 0 ? _a : address, this.biconomy, chainId);
+            const signer = provider.getSigner();
+            yield (0, core_1.init)(signer, this.biconomy, chainId);
         });
     }
     setSimulationMode(mode) {
