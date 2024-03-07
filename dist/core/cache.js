@@ -167,7 +167,7 @@ function init(signerOrAddress, biconomy, chainId = constants_1.DEFAULT_RAW_CHAIN
             exports.userAddress = signerOrAddress;
         }
         CONTRACTS = yield getAllContracts(exports.PROVIDER);
-        exports.BICONOMY = biconomy;
+        // BICONOMY = biconomy;
     });
 }
 exports.init = init;
