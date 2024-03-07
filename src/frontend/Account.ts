@@ -68,7 +68,7 @@ biconomy!: ethers.providers.Web3Provider;
     getMessage,
     verify,
     chainId,
-  }: IConnectAccount): Promise<void> {
+  }: IConnectAccount): Promise<ethers.providers.Web3Provider | undefined> {
     // get wallet provider based on wallet type
     let walletProvider: ethers.providers.Web3Provider | undefined;
     if (walletType === "magic" && email) {
@@ -107,6 +107,7 @@ biconomy!: ethers.providers.Web3Provider;
     }
 
     // FE needs to initialize the contracts or chainId is changed
+    return walletProvider;
   }
 
   /**
@@ -115,12 +116,9 @@ biconomy!: ethers.providers.Web3Provider;
    * @param chainId AllowedChainId - chain id
    * @param address string - user's address
    */
-  async initContracts(chainId: AllowedChainId, address?: string) {
-    if (!address && !this.signer) {
-      throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
-    }
-
-    await init(this.signer ?? address, this.biconomy, chainId);
+  async initContracts(chainId: AllowedChainId, provider: ethers.providers.Web3Provider) {
+    const signer = provider.getSigner();
+    await init(signer, this.biconomy, chainId);
   }
 
   async setSimulationMode(mode: boolean) {
