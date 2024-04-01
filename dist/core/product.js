@@ -19,7 +19,7 @@ const cache_1 = require("./cache");
 const constants_1 = require("./constants");
 function _getVaultAndAsset(product) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX } = (0, cache_1.getPolygonContracts)();
+        const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX, polygon6xLevMaticX } = (0, cache_1.getPolygonContracts)();
         const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = (0, cache_1.getEthContracts)();
         const { baseUsdEarn, baseLeverage } = (0, cache_1.getBaseContracts)();
         const { router } = (0, cache_1.getContracts)();
@@ -36,6 +36,7 @@ function _getVaultAndAsset(product) {
             baseUsdEarn,
             baseLeverage,
             polygonLevMaticX,
+            polygon6xLevMaticX,
         };
         const vault = productToVault[product];
         if (!vault)
@@ -50,7 +51,7 @@ function buyProduct(product, amount, slippageBps = 500) {
         if (product == "alpLarge") {
             return buyBtCEthShares(vault, amount, slippageBps, asset, router);
         }
-        else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX"].includes(product)) {
+        else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX", "Polygon6xLevMaticX"].includes(product)) {
             return buySharesByEthThroughWeth(amount, vault, asset);
         }
         return buyVault(vault, amount, asset);
@@ -245,7 +246,7 @@ function getTokenInfo(product, token) {
                 equity: assetAmount,
             };
         }
-        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, affineReStaking, } = (0, cache_1.getContracts)();
+        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, } = (0, cache_1.getContracts)();
         const productToContract = {
             alpSave,
             ethEarn,
@@ -259,6 +260,7 @@ function getTokenInfo(product, token) {
             baseLeverage,
             baseUsdEarn,
             polygonLevMaticX,
+            polygon6xLevMaticX,
             affineReStaking,
         };
         const contract = productToContract[product];

@@ -109,6 +109,7 @@ export async function getAllContracts(
     BaseRouter: baseRouterData,
     PolygonLevMaticX: polygonLevMaticXData,
     AffineReStaking: affineReStakingData,
+    Polygon6xLevMaticX: Polygon6xLevMaticXData,
   } = allData;
 
   const chainId = getChainId();
@@ -118,6 +119,7 @@ export async function getAllContracts(
     const alpLarge = TwoAssetBasket__factory.connect(alpLargeData.address, provider);
     const polygonLevMaticX = Vault__factory.connect(polygonLevMaticXData.address, provider);
     const matic = new ethers.Contract(await polygonLevMaticX.asset(), erc20Abi, provider);
+    const polygon6xLevMaticX = Vault__factory.connect(Polygon6xLevMaticXData.address, provider);
 
     return {
       alpSave,
@@ -142,6 +144,7 @@ export async function getAllContracts(
           ? AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
           : undefined,
       polygonLevMaticX,
+      polygon6xLevMaticX,
       matic,
     };
   } else if (chainId === 1 || chainId === 5) {

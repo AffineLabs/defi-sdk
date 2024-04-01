@@ -23,7 +23,8 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   asset: MockERC20;
   router: Router;
 }> {
-  const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX } = getPolygonContracts();
+  const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX, polygon6xLevMaticX } =
+    getPolygonContracts();
   const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = getEthContracts();
   const { baseUsdEarn, baseLeverage } = getBaseContracts();
 
@@ -42,6 +43,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
     baseUsdEarn,
     baseLeverage,
     polygonLevMaticX,
+    polygon6xLevMaticX,
   };
 
   const vault = productToVault[product];
@@ -54,7 +56,9 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
 
   if (product == "alpLarge") {
     return buyBtCEthShares(vault, amount, slippageBps, asset, router);
-  } else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX"].includes(product)) {
+  } else if (
+    ["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX", "Polygon6xLevMaticX"].includes(product)
+  ) {
     return buySharesByEthThroughWeth(amount, vault, asset);
   }
 
@@ -299,6 +303,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth", tok
     baseUsdEarn,
     baseLeverage,
     polygonLevMaticX,
+    polygon6xLevMaticX,
     affineReStaking,
   } = getContracts() as AlpineContracts;
 
@@ -315,6 +320,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth", tok
     baseLeverage,
     baseUsdEarn,
     polygonLevMaticX,
+    polygon6xLevMaticX,
     affineReStaking,
   };
 

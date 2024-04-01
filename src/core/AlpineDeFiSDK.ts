@@ -147,10 +147,12 @@ export async function isApproved(product: AlpineProduct, amount?: number, token?
     baseLeverage,
     ethLeverage,
     polygonLevMaticX,
+    polygon6xLevMaticX,
     affineReStaking,
   } = getContracts() as AlpineContracts;
 
-  if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX"].includes(product)) return true;
+  if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX", "Polygon6xLevMaticX"].includes(product))
+    return true;
 
   const asset =
     token != undefined
@@ -169,6 +171,7 @@ export async function isApproved(product: AlpineProduct, amount?: number, token?
     polygonLeverage,
     baseUsdEarn,
     polygonLevMaticX,
+    polygon6xLevMaticX,
     affineReStaking,
 
     // No approvals needed for these
@@ -212,7 +215,7 @@ export async function approve(
   let asset = usdc;
   if (["ethWethEarn", "ethLeverage", "polygonLeverage"].includes(product)) {
     asset = weth;
-  } else if (matic && ["polygonLevMaticX"].includes(product)) {
+  } else if (matic && ["polygonLevMaticX", "Polygon6xLevMaticX"].includes(product)) {
     asset = matic;
   } else if (token != undefined && ["affineReStaking"].includes(product)) {
     asset = MockERC20__factory.connect(token, router.provider);

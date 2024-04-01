@@ -476,8 +476,8 @@ class Account {
     return AlpineDeFiSDK.mintWhitelist(proof);
   }
 
-  async getTokenInfo(product: AlpineProduct | "usdc" | "weth",tokenAddress?: string) {
-    return productActions.getTokenInfo(product,tokenAddress);
+  async getTokenInfo(product: AlpineProduct | "usdc" | "weth", tokenAddress?: string) {
+    return productActions.getTokenInfo(product, tokenAddress);
   }
 }
 
