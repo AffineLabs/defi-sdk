@@ -227,7 +227,7 @@ export async function init(
 
   CONTRACTS = await getAllContracts(PROVIDER);
 
-  BICONOMY = biconomy;
+  // BICONOMY = biconomy;
 }
 
 export function getChainId() {
