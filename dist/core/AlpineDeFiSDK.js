@@ -128,8 +128,8 @@ exports.blockchainCall = blockchainCall;
 function isApproved(product, amount, token) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, affineReStaking, } = (0, cache_1.getContracts)();
-        if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX"].includes(product))
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, } = (0, cache_1.getContracts)();
+        if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX", "Polygon6xLevMaticX"].includes(product))
             return true;
         const asset = token != undefined
             ? typechain_1.MockERC20__factory.connect(token, router.provider)
@@ -146,6 +146,7 @@ function isApproved(product, amount, token) {
             polygonLeverage,
             baseUsdEarn,
             polygonLevMaticX,
+            polygon6xLevMaticX,
             affineReStaking,
             // No approvals needed for these
             ethWethEarn,
@@ -185,7 +186,7 @@ function approve(product, amountAsset, token) {
         if (["ethWethEarn", "ethLeverage", "polygonLeverage"].includes(product)) {
             asset = weth;
         }
-        else if (matic && ["polygonLevMaticX"].includes(product)) {
+        else if (matic && ["polygonLevMaticX", "Polygon6xLevMaticX"].includes(product)) {
             asset = matic;
         }
         else if (token != undefined && ["affineReStaking"].includes(product)) {
