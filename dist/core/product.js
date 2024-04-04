@@ -51,7 +51,7 @@ function buyProduct(product, amount, slippageBps = 500) {
         if (product == "alpLarge") {
             return buyBtCEthShares(vault, amount, slippageBps, asset, router);
         }
-        else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX", "Polygon6xLevMaticX"].includes(product)) {
+        else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX", "polygon6xLevMaticX"].includes(product)) {
             return buySharesByEthThroughWeth(amount, vault, asset);
         }
         return buyVault(vault, amount, asset);
