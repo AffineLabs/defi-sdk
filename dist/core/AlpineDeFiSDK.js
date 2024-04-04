@@ -11,6 +11,7 @@ import { ethers } from "ethers";
 import { SIGNER, BICONOMY, PROVIDER, userAddress, SIMULATE, getContracts } from "./cache";
 import { getSignature, sendBiconomy, sendToForwarder } from "./biconomy";
 import { MAX_APPROVAL_AMOUNT, CCIP_NETWORK_SELECTOR } from "./constants";
+import { MockERC20__factory } from "../typechain";
 /**
  * Get the current best estimate for gas price
  * @returns the best estimate for gas price in eth
@@ -116,13 +117,17 @@ simulate = false, value) {
  * DEFAULT amount is: MAX_APPROVAL_AMOUNT/2
  * @returns boolean
  */
-export function isApproved(product, amount) {
+export function isApproved(product, amount, token) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, } = getContracts();
-        if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX"].includes(product))
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, } = getContracts();
+        if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX", "Polygon6xLevMaticX"].includes(product))
             return true;
-        const asset = product == "polygonLeverage" ? weth : usdc;
+        const asset = token != undefined
+            ? MockERC20__factory.connect(token, router.provider)
+            : product == "polygonLeverage"
+                ? weth
+                : usdc;
         const productToSpender = {
             alpSave,
             alpLarge: router,
@@ -133,6 +138,8 @@ export function isApproved(product, amount) {
             polygonLeverage,
             baseUsdEarn,
             polygonLevMaticX,
+            polygon6xLevMaticX,
+            affineReStaking,
             // No approvals needed for these
             ethWethEarn,
             ethLeverage,
@@ -161,7 +168,7 @@ export function isApproved(product, amount) {
  * @param to the receipient contract
  * @param amountUSDC (optional) transaction amount in usdc, if not specified then approve max amount
  */
-export function approve(product, amountAsset) {
+export function approve(product, amountAsset, token) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const contracts = getContracts();
@@ -170,8 +177,11 @@ export function approve(product, amountAsset) {
         if (["ethWethEarn", "ethLeverage", "polygonLeverage"].includes(product)) {
             asset = weth;
         }
-        else if (matic && ["polygonLevMaticX"].includes(product)) {
+        else if (matic && ["polygonLevMaticX", "Polygon6xLevMaticX"].includes(product)) {
             asset = matic;
+        }
+        else if (token != undefined && ["affineReStaking"].includes(product)) {
+            asset = MockERC20__factory.connect(token, router.provider);
         }
         const decimals = yield asset.decimals();
         const amount = amountAsset ? _addDecimals(amountAsset, decimals) : MAX_APPROVAL_AMOUNT;

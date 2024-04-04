@@ -35,14 +35,14 @@ simulate?: boolean, value?: ethers.BigNumberish): Promise<SmallTxReceipt | GasIn
  * DEFAULT amount is: MAX_APPROVAL_AMOUNT/2
  * @returns boolean
  */
-export declare function isApproved(product: AlpineProduct, amount?: number): Promise<boolean>;
+export declare function isApproved(product: AlpineProduct, amount?: number, token?: string): Promise<boolean>;
 /**
  * approve outgoing transaction with another wallet or smart contract for
  * the specified amount
  * @param to the receipient contract
  * @param amountUSDC (optional) transaction amount in usdc, if not specified then approve max amount
  */
-export declare function approve(product: AlpineProduct, amountAsset?: string): Promise<DryRunReceipt | FullTxReceipt>;
+export declare function approve(product: AlpineProduct, amountAsset?: string, token?: string): Promise<DryRunReceipt | FullTxReceipt>;
 /**
  * Transfer usdc from user's wallet to another wallet
  * @param to receipient address

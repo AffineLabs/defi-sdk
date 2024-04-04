@@ -35,7 +35,7 @@ import { getWeb3Provider, initMagic } from "./wallets";
 class Account {
   magic!: Magic;
   signer!: ethers.Signer;
-  biconomy!: ethers.providers.Web3Provider;
+biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
   walletType?: AllowedWallet = DEFAULT_WALLET;
   walletProvider?: ethers.providers.Web3Provider;
@@ -67,7 +67,7 @@ class Account {
     verify,
     chainId,
     provider
-  }: IConnectAccount): Promise<void> {
+  }: IConnectAccount): Promise<ethers.providers.Web3Provider | undefined> {
     // get wallet provider based on wallet type
     let walletProvider: ethers.providers.Web3Provider | undefined;
     if (walletType === "magic" && email) {
@@ -108,41 +108,23 @@ class Account {
       }
     }
 
-    console.time("init-contracts");
-    await init(this.signer, this.biconomy, chainId);
-    console.timeEnd("init-contracts");
+    // FE needs to initialize the contracts or chainId is changed
+    return walletProvider;
   }
 
-  async initContracts(chainId: AllowedChainId, address?: string) {
-    if (!address && !this.signer) {
-      throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
-    }
-
-    await init(this.signer ?? address, this.biconomy, chainId);
+  /**
+   * This method initializes the contracts for the user, this should be called
+   * after the user is connected to the wallet, or the chainId is changed
+   * @param chainId AllowedChainId - chain id
+   * @param address string - user's address
+   */
+  async initContracts(chainId: AllowedChainId, provider: ethers.providers.Web3Provider) {
+    const signer = provider.getSigner();
+    await init(signer, this.biconomy, chainId);
   }
 
   async setSimulationMode(mode: boolean) {
     return setSimulationMode(mode);
-  }
-
-  private async initBiconomy(provider: ethers.providers.Web3Provider) {
-    const biconomyRaw = new Biconomy(provider, {
-      apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
-      debug: true,
-      strictMode: true,
-    });
-
-    return new Promise((resolve, reject) => {
-      biconomyRaw
-        .onEvent(biconomyRaw.READY, () => {
-          // set the biconomy provider
-          this.biconomy = new ethers.providers.Web3Provider(biconomyRaw);
-          resolve(null);
-        })
-        .onEvent(biconomyRaw.ERROR, (error: Error, message: string) => {
-          reject(message);
-        });
-    });
   }
 
   /**
@@ -188,18 +170,18 @@ class Account {
    * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
    * @returns {Promise<boolean>} boolean indicating whether the user has approved the outgoing transaction
    */
-  async isApproved(product: AlpineProduct, amount?: number): Promise<boolean> {
-    return AlpineDeFiSDK.isApproved(product, amount);
+  async isApproved(product: AlpineProduct, amount?: number, tokenAddress?: string): Promise<boolean> {
+    return AlpineDeFiSDK.isApproved(product, amount, tokenAddress);
   }
 
   /**
    * approve outgoing transaction with another wallet or smart contract for
    * the specified amount
    * @param {String} to the receipient address
-   * @param {String} amountUSDC transaction amount in usdc
+   * @param {String} amount transaction amount
    */
-  approve(to: AlpineProduct, amountUSDC?: string) {
-    return AlpineDeFiSDK.approve(to, amountUSDC);
+  approve(to: AlpineProduct, amount?: string, tokenAddress?: string) {
+    return AlpineDeFiSDK.approve(to, amount, tokenAddress);
   }
 
   portfolioSell(allocations: productAllocation, amount: number) {
@@ -381,8 +363,8 @@ class Account {
     return AlpineDeFiSDK.mintWhitelist(proof);
   }
 
-  async getTokenInfo(product: AlpineProduct | "usdc" | "weth") {
-    return productActions.getTokenInfo(product);
+  async getTokenInfo(product: AlpineProduct | "usdc" | "weth", tokenAddress?: string) {
+    return productActions.getTokenInfo(product, tokenAddress);
   }
 }
 

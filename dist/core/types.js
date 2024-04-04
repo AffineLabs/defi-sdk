@@ -11,5 +11,7 @@ export const alpineProducts = [
     "baseUsdEarn",
     "baseLeverage",
     "polygonLevMaticX",
+    "polygon6xLevMaticX",
+    "affineReStaking",
 ];
 export const polygonProducts = ["alpSave", "alpLarge", "polygonDegen"];

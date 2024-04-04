@@ -28,10 +28,15 @@ declare class Account {
      * });
      * ```
      */
-    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, provider }: IConnectAccount): Promise<void>;
-    initContracts(chainId: AllowedChainId, address?: string): Promise<void>;
+    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, provider }: IConnectAccount): Promise<ethers.providers.Web3Provider | undefined>;
+    /**
+     * This method initializes the contracts for the user, this should be called
+     * after the user is connected to the wallet, or the chainId is changed
+     * @param chainId AllowedChainId - chain id
+     * @param address string - user's address
+     */
+    initContracts(chainId: AllowedChainId, provider: ethers.providers.Web3Provider): Promise<void>;
     setSimulationMode(mode: boolean): Promise<void>;
-    private initBiconomy;
     /**
      * Disconnect a user from the magic provider
      */
@@ -53,14 +58,14 @@ declare class Account {
      * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
      * @returns {Promise<boolean>} boolean indicating whether the user has approved the outgoing transaction
      */
-    isApproved(product: AlpineProduct, amount?: number): Promise<boolean>;
+    isApproved(product: AlpineProduct, amount?: number, tokenAddress?: string): Promise<boolean>;
     /**
      * approve outgoing transaction with another wallet or smart contract for
      * the specified amount
      * @param {String} to the receipient address
-     * @param {String} amountUSDC transaction amount in usdc
+     * @param {String} amount transaction amount
      */
-    approve(to: AlpineProduct, amountUSDC?: string): Promise<import("../core/types").DryRunReceipt | import("../core/types").FullTxReceipt>;
+    approve(to: AlpineProduct, amount?: string, tokenAddress?: string): Promise<import("../core/types").DryRunReceipt | import("../core/types").FullTxReceipt>;
     portfolioSell(allocations: productAllocation, amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     portfolioPurchase(alloctions: productAllocation, amount: number): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     buyProduct(product: AlpineProduct, amount: number): Promise<import("../core/types").DryRunReceipt>;
@@ -107,6 +112,6 @@ declare class Account {
     isWhitelisted(address: string, proof: string[]): Promise<boolean>;
     mint(): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
     mintWhitelist(proof: string[]): Promise<import("../core/types").GasInfo | import("../core/types").SmallTxReceipt>;
-    getTokenInfo(product: AlpineProduct | "usdc" | "weth"): Promise<import("../core/types").TokenInfo>;
+    getTokenInfo(product: AlpineProduct | "usdc" | "weth", tokenAddress?: string): Promise<import("../core/types").TokenInfo>;
 }
 export { Account };

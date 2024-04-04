@@ -7,9 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { Biconomy } from "@biconomy/mexa";
 import { ethers } from "ethers";
 import { portfolioSell, portfolioPurchase } from "../core/portfolio";
 import { AlpineDeFiSDK, init } from "../core";
@@ -83,43 +80,25 @@ class Account {
                     throw new Error((_a = err === null || err === void 0 ? void 0 : err.message) !== null && _a !== void 0 ? _a : "Verification failed!");
                 }
             }
-            console.time("init-contracts");
-            yield init(this.signer, this.biconomy, chainId);
-            console.timeEnd("init-contracts");
+            // FE needs to initialize the contracts or chainId is changed
+            return walletProvider;
         });
     }
-    initContracts(chainId, address) {
-        var _a;
+    /**
+     * This method initializes the contracts for the user, this should be called
+     * after the user is connected to the wallet, or the chainId is changed
+     * @param chainId AllowedChainId - chain id
+     * @param address string - user's address
+     */
+    initContracts(chainId, provider) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!address && !this.signer) {
-                throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
-            }
-            yield init((_a = this.signer) !== null && _a !== void 0 ? _a : address, this.biconomy, chainId);
+            const signer = provider.getSigner();
+            yield init(signer, this.biconomy, chainId);
         });
     }
     setSimulationMode(mode) {
         return __awaiter(this, void 0, void 0, function* () {
             return setSimulationMode(mode);
-        });
-    }
-    initBiconomy(provider) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const biconomyRaw = new Biconomy(provider, {
-                apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
-                debug: true,
-                strictMode: true,
-            });
-            return new Promise((resolve, reject) => {
-                biconomyRaw
-                    .onEvent(biconomyRaw.READY, () => {
-                    // set the biconomy provider
-                    this.biconomy = new ethers.providers.Web3Provider(biconomyRaw);
-                    resolve(null);
-                })
-                    .onEvent(biconomyRaw.ERROR, (error, message) => {
-                    reject(message);
-                });
-            });
         });
     }
     /**
@@ -168,19 +147,19 @@ class Account {
      * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
      * @returns {Promise<boolean>} boolean indicating whether the user has approved the outgoing transaction
      */
-    isApproved(product, amount) {
+    isApproved(product, amount, tokenAddress) {
         return __awaiter(this, void 0, void 0, function* () {
-            return AlpineDeFiSDK.isApproved(product, amount);
+            return AlpineDeFiSDK.isApproved(product, amount, tokenAddress);
         });
     }
     /**
      * approve outgoing transaction with another wallet or smart contract for
      * the specified amount
      * @param {String} to the receipient address
-     * @param {String} amountUSDC transaction amount in usdc
+     * @param {String} amount transaction amount
      */
-    approve(to, amountUSDC) {
-        return AlpineDeFiSDK.approve(to, amountUSDC);
+    approve(to, amount, tokenAddress) {
+        return AlpineDeFiSDK.approve(to, amount, tokenAddress);
     }
     portfolioSell(allocations, amount) {
         return portfolioSell(allocations, amount);
@@ -380,9 +359,9 @@ class Account {
             return AlpineDeFiSDK.mintWhitelist(proof);
         });
     }
-    getTokenInfo(product) {
+    getTokenInfo(product, tokenAddress) {
         return __awaiter(this, void 0, void 0, function* () {
-            return productActions.getTokenInfo(product);
+            return productActions.getTokenInfo(product, tokenAddress);
         });
     }
 }

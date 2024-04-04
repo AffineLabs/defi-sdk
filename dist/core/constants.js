@@ -49,6 +49,8 @@ export const WITHDRAW_SLIPPAGE_BY_PRODUCT = {
     baseLeverage: {},
     ssvEthUSDEarn: {},
     polygonLevMaticX: {},
+    polygon6xLevMaticX: {},
+    affineReStaking: {},
 };
 export const NETWORK_PARAMS = {
     1: {

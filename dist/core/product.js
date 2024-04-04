@@ -16,7 +16,7 @@ import { getBaseContracts, getContracts, getEthContracts, getPolygonContracts, P
 import { MAX_UINT } from "./constants";
 function _getVaultAndAsset(product) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX } = getPolygonContracts();
+        const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX, polygon6xLevMaticX } = getPolygonContracts();
         const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = getEthContracts();
         const { baseUsdEarn, baseLeverage } = getBaseContracts();
         const { router } = getContracts();
@@ -33,6 +33,7 @@ function _getVaultAndAsset(product) {
             baseUsdEarn,
             baseLeverage,
             polygonLevMaticX,
+            polygon6xLevMaticX,
         };
         const vault = productToVault[product];
         if (!vault)
@@ -47,7 +48,7 @@ export function buyProduct(product, amount, slippageBps = 500) {
         if (product == "alpLarge") {
             return buyBtCEthShares(vault, amount, slippageBps, asset, router);
         }
-        else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX"].includes(product)) {
+        else if (["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX", "Polygon6xLevMaticX"].includes(product)) {
             return buySharesByEthThroughWeth(amount, vault, asset);
         }
         return buyVault(vault, amount, asset);
@@ -200,9 +201,10 @@ function _convertToShares(amountUSDC) {
         return shares.gt(userShares) ? userShares : shares;
     });
 }
-export function getTokenInfo(product) {
+export function getTokenInfo(product, token) {
     return __awaiter(this, void 0, void 0, function* () {
         const user = userAddress;
+        const { router } = getContracts();
         if (product === "usdc") {
             const { usdc } = getContracts();
             const amount = yield usdc.balanceOf(user);
@@ -225,7 +227,17 @@ export function getTokenInfo(product) {
                 equity: numWeth,
             };
         }
-        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, } = getContracts();
+        else if (token != undefined) {
+            const asset = MockERC20__factory.connect(token, router.provider);
+            const amount = yield asset.balanceOf(user);
+            const assetAmount = _removeDecimals(amount, yield asset.decimals());
+            return {
+                amount: assetAmount,
+                price: "1",
+                equity: assetAmount,
+            };
+        }
+        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, } = getContracts();
         const productToContract = {
             alpSave,
             ethEarn,
@@ -239,6 +251,8 @@ export function getTokenInfo(product) {
             baseLeverage,
             baseUsdEarn,
             polygonLevMaticX,
+            polygon6xLevMaticX,
+            affineReStaking,
         };
         const contract = productToContract[product];
         if (!contract)
