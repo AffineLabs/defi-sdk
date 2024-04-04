@@ -38,7 +38,7 @@ import Provider, { UniversalProvider } from "@walletconnect/universal-provider";
 class Account {
   magic!: Magic;
   signer!: ethers.Signer;
-  biconomy!: ethers.providers.Web3Provider;
+biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
   walletType?: AllowedWallet = DEFAULT_WALLET;
   walletProvider?: ethers.providers.Web3Provider;
@@ -68,7 +68,7 @@ class Account {
     getMessage,
     verify,
     chainId,
-  }: IConnectAccount): Promise<void> {
+  }: IConnectAccount): Promise<ethers.providers.Web3Provider | undefined> {
     // get wallet provider based on wallet type
     let walletProvider: ethers.providers.Web3Provider | undefined;
     if (walletType === "magic" && email) {
@@ -106,41 +106,23 @@ class Account {
       }
     }
 
-    console.time("init-contracts");
-    await init(this.signer, this.biconomy, chainId);
-    console.timeEnd("init-contracts");
+    // FE needs to initialize the contracts or chainId is changed
+    return walletProvider;
   }
 
-  async initContracts(chainId: AllowedChainId, address?: string) {
-    if (!address && !this.signer) {
-      throw new Error("Address or signer is required to initialize contracts, try calling connect() first");
-    }
-
-    await init(this.signer ?? address, this.biconomy, chainId);
+  /**
+   * This method initializes the contracts for the user, this should be called
+   * after the user is connected to the wallet, or the chainId is changed
+   * @param chainId AllowedChainId - chain id
+   * @param address string - user's address
+   */
+  async initContracts(chainId: AllowedChainId, provider: ethers.providers.Web3Provider) {
+    const signer = provider.getSigner();
+    await init(signer, this.biconomy, chainId);
   }
 
   async setSimulationMode(mode: boolean) {
     return setSimulationMode(mode);
-  }
-
-  private async initBiconomy(provider: ethers.providers.Web3Provider) {
-    const biconomyRaw = new Biconomy(provider, {
-      apiKey: "M4hdEfQhs.60f473cf-c78f-4658-8a02-153241eff1b2",
-      debug: true,
-      strictMode: true,
-    });
-
-    return new Promise((resolve, reject) => {
-      biconomyRaw
-        .onEvent(biconomyRaw.READY, () => {
-          // set the biconomy provider
-          this.biconomy = new ethers.providers.Web3Provider(biconomyRaw);
-          resolve(null);
-        })
-        .onEvent(biconomyRaw.ERROR, (error: Error, message: string) => {
-          reject(message);
-        });
-    });
   }
 
   /**
@@ -182,12 +164,12 @@ class Account {
     return this.userAddress;
   }
 
-  async setGasMode(useGas: boolean) {
-    // this.biconomy is created upon connection and will always exist
-    this.gas = useGas;
-    const biconomyProvider = useGas ? undefined : this.biconomy;
-    return init(this.signer, biconomyProvider, this.selectedChainId);
-  }
+  // async setGasMode(useGas: boolean) {
+  //   // this.biconomy is created upon connection and will always exist
+  //   this.gas = useGas;
+  //   const biconomyProvider = useGas ? undefined : this.biconomy;
+  //   return init(this.signer, biconomyProvider, this.selectedChainId);
+  // }
 
   /**
    * It checks if the user has approved the outgoing transaction, amount is optional.
@@ -310,7 +292,7 @@ class Account {
   /**
    * This method will switch the wallet to the given chain id
    */
-  async switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void> {
+  async switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void | undefined> {
     if (!window.ethereum && walletType === "metamask") {
       throw new Error("Metamask is not installed!");
     } else if (walletType === "walletConnect" && this.walletConnectProvider) {
@@ -334,7 +316,7 @@ class Account {
       }
 
       this.signer = _signer;
-      return await init(_signer, this.biconomy, chainId);
+      return;
     }
 
     const _provider = await getWeb3Provider(walletType, chainId, this.walletConnectProvider, this.web3ModalInstance);
@@ -372,7 +354,8 @@ class Account {
     if (chainId !== this.selectedChainId && _provider) {
       this.signer = _provider.getSigner();
       this.selectedChainId = chainId;
-      return init(this.signer, this.biconomy, this.selectedChainId);
+      // return init(this.signer, this.selectedChainId);
+      return;
     }
   }
 
