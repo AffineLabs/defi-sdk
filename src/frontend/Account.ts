@@ -38,7 +38,7 @@ import Provider, { UniversalProvider } from "@walletconnect/universal-provider";
 class Account {
   magic!: Magic;
   signer!: ethers.Signer;
-biconomy!: ethers.providers.Web3Provider;
+  biconomy!: ethers.providers.Web3Provider;
   userAddress?: string;
   walletType?: AllowedWallet = DEFAULT_WALLET;
   walletProvider?: ethers.providers.Web3Provider;
