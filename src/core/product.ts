@@ -57,7 +57,7 @@ export async function buyProduct(product: AlpineProduct, amount: number, slippag
   if (product == "alpLarge") {
     return buyBtCEthShares(vault, amount, slippageBps, asset, router);
   } else if (
-    ["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX", "Polygon6xLevMaticX"].includes(product)
+    ["ethWethEarn", "ethLeverage", "baseLeverage", "polygonLevMaticX", "polygon6xLevMaticX"].includes(product)
   ) {
     return buySharesByEthThroughWeth(amount, vault, asset);
   }
