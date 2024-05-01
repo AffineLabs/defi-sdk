@@ -20,17 +20,77 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "ExceedsDelegatorWithdrawableAssets",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "ExceedsDepositLimit",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "ExceedsMaxDelegatorLimit",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "ExceedsMintLimit",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "ExceedsRedeemLimit",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "ExceedsWithdrawLimit",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "ExistingEscrowDebt",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "InactiveDelegator",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "InsufficientLiquidAssets",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "InvalidEscrowVault",
+        type: "error",
+    },
+    {
+        inputs: [],
         name: "InvalidWithdrawalAmount",
         type: "error",
     },
     {
         inputs: [],
-        name: "NonZeroTokenBalance",
+        name: "NonZeroEmptyDelegatorTVL",
         type: "error",
     },
     {
         inputs: [],
         name: "NotApprovedToken",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "ProfitUnlocking",
+        type: "error",
+    },
+    {
+        inputs: [],
+        name: "RequireHarvest",
         type: "error",
     },
     {

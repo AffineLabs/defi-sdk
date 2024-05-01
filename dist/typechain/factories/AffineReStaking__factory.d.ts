@@ -20,10 +20,6 @@ export declare class AffineReStaking__factory {
         readonly type: "error";
     }, {
         readonly inputs: readonly [];
-        readonly name: "NonZeroTokenBalance";
-        readonly type: "error";
-    }, {
-        readonly inputs: readonly [];
         readonly name: "NotApprovedToken";
         readonly type: "error";
     }, {

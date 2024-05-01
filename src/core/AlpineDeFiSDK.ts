@@ -149,6 +149,7 @@ export async function isApproved(product: AlpineProduct, amount?: number, token?
     polygonLevMaticX,
     polygon6xLevMaticX,
     affineReStaking,
+    ultraLRT
   } = getContracts() as AlpineContracts;
 
   if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX", "polygon6xLevMaticX"].includes(product))
@@ -178,6 +179,7 @@ export async function isApproved(product: AlpineProduct, amount?: number, token?
     ethWethEarn,
     ethLeverage,
     baseLeverage,
+    ultraLRT
   };
 
   if (!productToSpender[product]) {
@@ -218,6 +220,8 @@ export async function approve(
   } else if (matic && ["polygonLevMaticX", "polygon6xLevMaticX"].includes(product)) {
     asset = matic;
   } else if (token != undefined && ["affineReStaking"].includes(product)) {
+    asset = MockERC20__factory.connect(token, router.provider);
+  } else if (token != undefined && ["ultraLRT"].includes(product)) {
     asset = MockERC20__factory.connect(token, router.provider);
   }
   const decimals = await asset.decimals();

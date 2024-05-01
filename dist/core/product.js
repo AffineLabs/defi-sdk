@@ -17,7 +17,7 @@ import { MAX_UINT } from "./constants";
 function _getVaultAndAsset(product) {
     return __awaiter(this, void 0, void 0, function* () {
         const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX, polygon6xLevMaticX } = getPolygonContracts();
-        const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = getEthContracts();
+        const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage, ultraLRT } = getEthContracts();
         const { baseUsdEarn, baseLeverage } = getBaseContracts();
         const { router } = getContracts();
         const productToVault = {
@@ -34,6 +34,7 @@ function _getVaultAndAsset(product) {
             baseLeverage,
             polygonLevMaticX,
             polygon6xLevMaticX,
+            ultraLRT: ultraLRT,
         };
         const vault = productToVault[product];
         if (!vault)
@@ -227,6 +228,7 @@ export function getTokenInfo(product, token) {
                 equity: numWeth,
             };
         }
+        // for steth and ultraLRT just pass in contract address as `token`
         else if (token != undefined) {
             const asset = MockERC20__factory.connect(token, router.provider);
             const amount = yield asset.balanceOf(user);
@@ -237,7 +239,7 @@ export function getTokenInfo(product, token) {
                 equity: assetAmount,
             };
         }
-        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, } = getContracts();
+        const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, ultraLRT, } = getContracts();
         const productToContract = {
             alpSave,
             ethEarn,
@@ -253,6 +255,7 @@ export function getTokenInfo(product, token) {
             polygonLevMaticX,
             polygon6xLevMaticX,
             affineReStaking,
+            ultraLRT,
         };
         const contract = productToContract[product];
         if (!contract)

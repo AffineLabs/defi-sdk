@@ -1,0 +1,193 @@
+import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, PopulatedTransaction, Signer, utils } from "ethers";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "./common";
+export interface UltraLRTStorageInterface extends utils.Interface {
+    functions: {
+        "GUARDIAN_ROLE()": FunctionFragment;
+        "HARVESTER()": FunctionFragment;
+        "LOCK_INTERVAL()": FunctionFragment;
+        "MAX_BPS()": FunctionFragment;
+        "MAX_DELEGATOR()": FunctionFragment;
+        "STETH()": FunctionFragment;
+        "ST_ETH_TRANSFER_BUFFER()": FunctionFragment;
+        "beacon()": FunctionFragment;
+        "delegatorAssets()": FunctionFragment;
+        "delegatorCount()": FunctionFragment;
+        "delegatorMap(address)": FunctionFragment;
+        "delegatorQueue(uint256)": FunctionFragment;
+        "depositPaused()": FunctionFragment;
+        "escrow()": FunctionFragment;
+        "lastHarvest()": FunctionFragment;
+        "managementFee()": FunctionFragment;
+        "maxLockedProfit()": FunctionFragment;
+        "withdrawalFee()": FunctionFragment;
+    };
+    getFunction(nameOrSignatureOrTopic: "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "MAX_BPS" | "MAX_DELEGATOR" | "STETH" | "ST_ETH_TRANSFER_BUFFER" | "beacon" | "delegatorAssets" | "delegatorCount" | "delegatorMap" | "delegatorQueue" | "depositPaused" | "escrow" | "lastHarvest" | "managementFee" | "maxLockedProfit" | "withdrawalFee"): FunctionFragment;
+    encodeFunctionData(functionFragment: "GUARDIAN_ROLE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
+    encodeFunctionData(functionFragment: "LOCK_INTERVAL", values?: undefined): string;
+    encodeFunctionData(functionFragment: "MAX_BPS", values?: undefined): string;
+    encodeFunctionData(functionFragment: "MAX_DELEGATOR", values?: undefined): string;
+    encodeFunctionData(functionFragment: "STETH", values?: undefined): string;
+    encodeFunctionData(functionFragment: "ST_ETH_TRANSFER_BUFFER", values?: undefined): string;
+    encodeFunctionData(functionFragment: "beacon", values?: undefined): string;
+    encodeFunctionData(functionFragment: "delegatorAssets", values?: undefined): string;
+    encodeFunctionData(functionFragment: "delegatorCount", values?: undefined): string;
+    encodeFunctionData(functionFragment: "delegatorMap", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "delegatorQueue", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "depositPaused", values?: undefined): string;
+    encodeFunctionData(functionFragment: "escrow", values?: undefined): string;
+    encodeFunctionData(functionFragment: "lastHarvest", values?: undefined): string;
+    encodeFunctionData(functionFragment: "managementFee", values?: undefined): string;
+    encodeFunctionData(functionFragment: "maxLockedProfit", values?: undefined): string;
+    encodeFunctionData(functionFragment: "withdrawalFee", values?: undefined): string;
+    decodeFunctionResult(functionFragment: "GUARDIAN_ROLE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "HARVESTER", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "LOCK_INTERVAL", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "MAX_BPS", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "MAX_DELEGATOR", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "STETH", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "ST_ETH_TRANSFER_BUFFER", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "beacon", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "delegatorAssets", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "delegatorCount", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "delegatorMap", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "delegatorQueue", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "depositPaused", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "escrow", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "lastHarvest", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "managementFee", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "maxLockedProfit", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "withdrawalFee", data: BytesLike): Result;
+    events: {};
+}
+export interface UltraLRTStorage extends BaseContract {
+    connect(signerOrProvider: Signer | Provider | string): this;
+    attach(addressOrName: string): this;
+    deployed(): Promise<this>;
+    interface: UltraLRTStorageInterface;
+    queryFilter<TEvent extends TypedEvent>(event: TypedEventFilter<TEvent>, fromBlockOrBlockhash?: string | number | undefined, toBlock?: string | number | undefined): Promise<Array<TEvent>>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>;
+    listeners(eventName?: string): Array<Listener>;
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
+    removeAllListeners(eventName?: string): this;
+    off: OnEvent<this>;
+    on: OnEvent<this>;
+    once: OnEvent<this>;
+    removeListener: OnEvent<this>;
+    functions: {
+        GUARDIAN_ROLE(overrides?: CallOverrides): Promise<[string]>;
+        HARVESTER(overrides?: CallOverrides): Promise<[string]>;
+        LOCK_INTERVAL(overrides?: CallOverrides): Promise<[BigNumber]>;
+        MAX_BPS(overrides?: CallOverrides): Promise<[BigNumber]>;
+        MAX_DELEGATOR(overrides?: CallOverrides): Promise<[BigNumber]>;
+        STETH(overrides?: CallOverrides): Promise<[string]>;
+        ST_ETH_TRANSFER_BUFFER(overrides?: CallOverrides): Promise<[BigNumber]>;
+        beacon(overrides?: CallOverrides): Promise<[string]>;
+        delegatorAssets(overrides?: CallOverrides): Promise<[BigNumber]>;
+        delegatorCount(overrides?: CallOverrides): Promise<[BigNumber]>;
+        delegatorMap(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[
+            boolean,
+            BigNumber
+        ] & {
+            isActive: boolean;
+            balance: BigNumber;
+        }>;
+        delegatorQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[string]>;
+        depositPaused(overrides?: CallOverrides): Promise<[BigNumber]>;
+        escrow(overrides?: CallOverrides): Promise<[string]>;
+        lastHarvest(overrides?: CallOverrides): Promise<[BigNumber]>;
+        managementFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+        maxLockedProfit(overrides?: CallOverrides): Promise<[BigNumber]>;
+        withdrawalFee(overrides?: CallOverrides): Promise<[BigNumber]>;
+    };
+    GUARDIAN_ROLE(overrides?: CallOverrides): Promise<string>;
+    HARVESTER(overrides?: CallOverrides): Promise<string>;
+    LOCK_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
+    MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
+    MAX_DELEGATOR(overrides?: CallOverrides): Promise<BigNumber>;
+    STETH(overrides?: CallOverrides): Promise<string>;
+    ST_ETH_TRANSFER_BUFFER(overrides?: CallOverrides): Promise<BigNumber>;
+    beacon(overrides?: CallOverrides): Promise<string>;
+    delegatorAssets(overrides?: CallOverrides): Promise<BigNumber>;
+    delegatorCount(overrides?: CallOverrides): Promise<BigNumber>;
+    delegatorMap(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[boolean, BigNumber] & {
+        isActive: boolean;
+        balance: BigNumber;
+    }>;
+    delegatorQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
+    depositPaused(overrides?: CallOverrides): Promise<BigNumber>;
+    escrow(overrides?: CallOverrides): Promise<string>;
+    lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
+    managementFee(overrides?: CallOverrides): Promise<BigNumber>;
+    maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
+    withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
+    callStatic: {
+        GUARDIAN_ROLE(overrides?: CallOverrides): Promise<string>;
+        HARVESTER(overrides?: CallOverrides): Promise<string>;
+        LOCK_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
+        MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
+        MAX_DELEGATOR(overrides?: CallOverrides): Promise<BigNumber>;
+        STETH(overrides?: CallOverrides): Promise<string>;
+        ST_ETH_TRANSFER_BUFFER(overrides?: CallOverrides): Promise<BigNumber>;
+        beacon(overrides?: CallOverrides): Promise<string>;
+        delegatorAssets(overrides?: CallOverrides): Promise<BigNumber>;
+        delegatorCount(overrides?: CallOverrides): Promise<BigNumber>;
+        delegatorMap(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[
+            boolean,
+            BigNumber
+        ] & {
+            isActive: boolean;
+            balance: BigNumber;
+        }>;
+        delegatorQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
+        depositPaused(overrides?: CallOverrides): Promise<BigNumber>;
+        escrow(overrides?: CallOverrides): Promise<string>;
+        lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
+        managementFee(overrides?: CallOverrides): Promise<BigNumber>;
+        maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
+        withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
+    };
+    filters: {};
+    estimateGas: {
+        GUARDIAN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
+        HARVESTER(overrides?: CallOverrides): Promise<BigNumber>;
+        LOCK_INTERVAL(overrides?: CallOverrides): Promise<BigNumber>;
+        MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
+        MAX_DELEGATOR(overrides?: CallOverrides): Promise<BigNumber>;
+        STETH(overrides?: CallOverrides): Promise<BigNumber>;
+        ST_ETH_TRANSFER_BUFFER(overrides?: CallOverrides): Promise<BigNumber>;
+        beacon(overrides?: CallOverrides): Promise<BigNumber>;
+        delegatorAssets(overrides?: CallOverrides): Promise<BigNumber>;
+        delegatorCount(overrides?: CallOverrides): Promise<BigNumber>;
+        delegatorMap(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        delegatorQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        depositPaused(overrides?: CallOverrides): Promise<BigNumber>;
+        escrow(overrides?: CallOverrides): Promise<BigNumber>;
+        lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
+        managementFee(overrides?: CallOverrides): Promise<BigNumber>;
+        maxLockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
+        withdrawalFee(overrides?: CallOverrides): Promise<BigNumber>;
+    };
+    populateTransaction: {
+        GUARDIAN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        HARVESTER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        LOCK_INTERVAL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        MAX_BPS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        MAX_DELEGATOR(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        STETH(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        ST_ETH_TRANSFER_BUFFER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        beacon(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        delegatorAssets(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        delegatorCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        delegatorMap(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        delegatorQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        depositPaused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        escrow(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        lastHarvest(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        managementFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        maxLockedProfit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        withdrawalFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    };
+}

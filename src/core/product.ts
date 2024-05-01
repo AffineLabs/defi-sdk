@@ -25,7 +25,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
 }> {
   const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX, polygon6xLevMaticX } =
     getPolygonContracts();
-  const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage } = getEthContracts();
+  const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage, ultraLRT } = getEthContracts();
   const { baseUsdEarn, baseLeverage } = getBaseContracts();
 
   const { router } = getContracts();
@@ -44,6 +44,7 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
     baseLeverage,
     polygonLevMaticX,
     polygon6xLevMaticX,
+    ultraLRT: ultraLRT as unknown as ERC4626Upgradeable,
   };
 
   const vault = productToVault[product];
@@ -256,7 +257,7 @@ async function _convertToShares(amountUSDC: ethers.BigNumber) {
   return shares.gt(userShares) ? userShares : shares;
 }
 
-export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth", token?: string): Promise<TokenInfo> {
+export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth" , token?: string): Promise<TokenInfo> {
   const user = userAddress;
   const { router } = getContracts() as AlpineContracts;
   if (product === "usdc") {
@@ -279,7 +280,10 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth", tok
       price: "1",
       equity: numWeth,
     };
-  } else if (token != undefined) {
+  }
+  
+  // for steth and ultraLRT just pass in contract address as `token`
+  else if (token != undefined) {
     const asset = MockERC20__factory.connect(token, router.provider);
     const amount = await asset.balanceOf(user);
     const assetAmount = _removeDecimals(amount, await asset.decimals());
@@ -305,6 +309,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth", tok
     polygonLevMaticX,
     polygon6xLevMaticX,
     affineReStaking,
+    ultraLRT,
   } = getContracts() as AlpineContracts;
 
   const productToContract: { [key in AlpineProduct]: Contract | undefined } = {
@@ -322,6 +327,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth", tok
     polygonLevMaticX,
     polygon6xLevMaticX,
     affineReStaking,
+    ultraLRT,
   };
 
   const contract = productToContract[product];

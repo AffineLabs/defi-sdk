@@ -25,11 +25,6 @@ const _abi = [
     },
     {
         inputs: [],
-        name: "NonZeroTokenBalance",
-        type: "error",
-    },
-    {
-        inputs: [],
         name: "NotApprovedToken",
         type: "error",
     },
