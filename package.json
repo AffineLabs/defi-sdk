@@ -1,8 +1,11 @@
 {
   "name": "@alpine-ramp/alpine-defi-sdk",
-  "version": "1.6.48-beta",
+  "version": "1.7.20-beta",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "repository": "https://github.com/Multiplyr/defi-sdk.git",
   "author": "larryob <tosin@multiplyr.ai>",
   "license": "MIT",
@@ -23,8 +26,7 @@
     "@ethersproject/abstract-signer": "^5.5.0",
     "@magic-sdk/types": "^7.0.0",
     "@metamask/detect-provider": "^1.2.0",
-    "@walletconnect/universal-provider": "^2.11.0",
-    "@web3modal/standalone": "^2.4.3",
+    "@web3modal/ethers5": "^4.0.3",
     "axios": "^0.25.0",
     "ethers": "5.7.2",
     "magic-sdk": "^8.1.1"
@@ -49,9 +51,13 @@
     "parcel": "^2.2.1",
     "path-browserify": "^1.0.0",
     "prettier": "2.5.1",
+    "stream-browserify": "^3.0.0",
     "ts-node": "^10.8.1",
     "typechain": "^8.1.1",
     "typescript": "^4.7.2"
   },
-  "packageManager": "yarn@3.1.1"
+  "packageManager": "yarn@3.1.1",
+  "alias": {
+    "@web3modal/scaffold-utils/ethers": false
+  }
 }

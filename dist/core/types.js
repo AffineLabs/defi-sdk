@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.polygonProducts = exports.alpineProducts = void 0;
-exports.alpineProducts = [
+export const alpineProducts = [
     "alpSave",
     "alpLarge",
     "ethEarn",
@@ -17,4 +14,4 @@ exports.alpineProducts = [
     "polygon6xLevMaticX",
     "affineReStaking",
 ];
-exports.polygonProducts = ["alpSave", "alpLarge", "polygonDegen"];
+export const polygonProducts = ["alpSave", "alpLarge", "polygonDegen"];

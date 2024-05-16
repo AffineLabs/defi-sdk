@@ -1,9 +1,8 @@
 import { Magic } from "magic-sdk";
 import { ethers } from "ethers";
-import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, SSVWithdrawalRequestInfo, WithdrawSlippageByProduct, productAllocation } from "../core/types";
+import { EmergencyWithdrawalQueueRequest, EmergencyWithdrawalQueueTransfer, SSVWithdrawalRequestInfo, productAllocation } from "../core/types";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet, IConnectAccount } from "../types/account";
-import Provider from "@walletconnect/universal-provider";
 declare class Account {
     magic: Magic;
     signer: ethers.Signer;
@@ -13,19 +12,23 @@ declare class Account {
     walletProvider?: ethers.providers.Web3Provider;
     gas: boolean;
     selectedChainId?: AllowedChainId;
-    walletConnectProvider?: Provider;
-    web3ModalInstance?: import("@web3modal/standalone").Web3Modal;
-    withdrawSlippageByProduct?: WithdrawSlippageByProduct;
     /**
-     * Creates an alpine account object
-     */
-    /**
-     * connect the user account to magic's sdk. In particular,
-     * login with with magic, get provider, signer and set up
+     * connect the user account to wallet provider and initialize
      * the smart contracts.
-     * @param email user's email address
+     * @param {IConnectAccount} options - the options to connect the account
+     *
+     * @returns {Promise<void>} a promise that resolves when the account is connected
+     *
+     * @example
+     * ```typescript
+     * const account = new Account();
+     * await account.connect({
+     *  walletType: "metamask",
+     *  chainId: 1,
+     * });
+     * ```
      */
-    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, }: IConnectAccount): Promise<ethers.providers.Web3Provider | undefined>;
+    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, provider }: IConnectAccount): Promise<ethers.providers.Web3Provider | undefined>;
     /**
      * This method initializes the contracts for the user, this should be called
      * after the user is connected to the wallet, or the chainId is changed
@@ -48,6 +51,8 @@ declare class Account {
      * @returns user's public address
      */
     getUserAddress(): Promise<string | undefined>;
+    getWithdrawSlippageByProduct(product: AlpineProduct): import("../core/types").WithdrawSlippage;
+    setGasMode(useGas: boolean): Promise<void>;
     /**
      * It checks if the user has approved the outgoing transaction, amount is optional.
      * If the 'amount' is not present, it checks if the user has approved the max amount (BigNumber.maxUint256 / 2)
@@ -85,15 +90,12 @@ declare class Account {
     txHasEnqueueEvent(txHash: string): Promise<boolean>;
     getEmergencyWithdrawalQueueTransfers(product: AlpineProduct): Promise<EmergencyWithdrawalQueueTransfer[]>;
     isLoggedInToMagic(): Promise<boolean>;
-    getChainId(walletType: AllowedWallet): Promise<string | undefined>;
+    getChainId(walletType: AllowedWallet): Promise<string | number | undefined>;
     isConnectedToTheGivenChainId(walletType: AllowedWallet, chainId: AllowedChainId): Promise<boolean>;
-    setWalletConnectProvider(provider: Provider): void;
-    getWalletConnectProvider(): Provider | undefined;
     /**
      * This method will switch the wallet to the given chain id
      */
-    switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId): Promise<void | undefined>;
-    initWalletConnectProvider(web3Modal: import("@web3modal/standalone").Web3Modal): Promise<void>;
+    switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId, provider?: ethers.providers.ExternalProvider): Promise<void>;
     isStrategyLiquid(): Promise<boolean>;
     getWithdrawalRequest(): Promise<SSVWithdrawalRequestInfo[]>;
     redeemWithdrawalRequest(reqInfo: SSVWithdrawalRequestInfo): Promise<import("../core/types").FullTxReceipt>;

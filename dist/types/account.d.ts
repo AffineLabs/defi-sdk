@@ -1,14 +1,26 @@
+import { ethers } from "ethers";
 import { NETWORK_PARAMS } from "../core/constants";
 export type AllowedWallet = "magic" | "metamask" | "coinbase" | "walletConnect";
 export type AllowedChainId = keyof typeof NETWORK_PARAMS;
-export interface IConnectAccount {
-    email?: string;
-    walletType: AllowedWallet;
+export interface IConnectAccountWithWalletConnect {
+    walletType: "walletConnect";
     chainId: AllowedChainId;
     shouldRunMagicTestMode?: boolean;
     getMessage?: (address: string) => Promise<string>;
     verify?: (message: string, address: string) => Promise<boolean | undefined>;
+    email?: string;
+    provider: ethers.providers.ExternalProvider;
 }
+export interface IConnectAccountExceptWalletConnect {
+    email?: string;
+    walletType: Exclude<AllowedWallet, "walletConnect">;
+    chainId: AllowedChainId;
+    shouldRunMagicTestMode?: boolean;
+    getMessage?: (address: string) => Promise<string>;
+    verify?: (message: string, address: string) => Promise<boolean | undefined>;
+    provider?: ethers.providers.Web3Provider;
+}
+export type IConnectAccount = IConnectAccountWithWalletConnect | IConnectAccountExceptWalletConnect;
 export interface MetamaskError {
     code: number;
     message: string;

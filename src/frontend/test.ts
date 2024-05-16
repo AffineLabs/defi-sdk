@@ -10,7 +10,7 @@ const connectAndWrite = async ({
   account,
   chainId,
 }: {
-  walletType?: AllowedWallet;
+  walletType?: Exclude<AllowedWallet, "walletConnect">;
   account: Account;
   chainId: AllowedChainId;
 }) => {
@@ -19,7 +19,7 @@ const connectAndWrite = async ({
   console.time("entire-connect");
   try {
     // switch to the chainId
-    await account.switchWalletToAllowedNetwork(walletType, chainId);
+    // await account.switchWalletToAllowedNetwork(walletType, chainId);
     console.log("connecting to", walletType, "on chain", chainId, account);
     await account.connect({ walletType, chainId, email });
     const _address = await account.getUserAddress();
@@ -49,7 +49,7 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 };
 
 const alpAccount = new Account();
-const walletType: AllowedWallet = "metamask";
+const walletType: Exclude<AllowedWallet, "walletConnect"> = "metamask";
 const chainId = 137 as AllowedChainId;
 const _productToBuy: AlpineProduct = "polygonLevMaticX";
 const amountToBuy = 0.01;
@@ -65,7 +65,9 @@ const main = async () => {
     { ALLOWED_CHAIN_IDS },
     ALLOWED_CHAIN_IDS.map(c => `eip155:${c}`),
   );
-  await connectAndWrite({ walletType, account: alpAccount, chainId });
+  // await connectAndWrite({ walletType, account: alpAccount, chainId });
+
+  await alpAccount.connect({ walletType, chainId });
 
   // console.log("sale state", await readAcc.saleIsActive());
   // console.log("whitelist state", await readAcc.whitelistSaleIsActive());

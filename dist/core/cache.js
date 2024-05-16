@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,48 +7,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _a;
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.setSimulationMode = exports.setProvider = exports.getChainId = exports.init = exports.getBaseContracts = exports.getPolygonContracts = exports.getEthContracts = exports.getContracts = exports.getAllContracts = exports.getProviderByChainId = exports.RPC_URLS = exports.PROVIDER = exports.BICONOMY = exports.SIMULATE = exports.userAddress = exports.SIGNER = void 0;
-const ethers_1 = require("ethers");
-const axios_1 = __importDefault(require("axios"));
-const typechain_1 = require("../typechain");
-const constants_1 = require("./constants");
+import { ethers } from "ethers";
+import axios from "axios";
+import { Forwarder__factory, L2Vault__factory, TwoAssetBasket__factory, Router__factory, EmergencyWithdrawalQueue__factory, Vault__factory, WithdrawalEscrow__factory, StrategyVault__factory, AffineGenesis__factory, AffinePass__factory, AffinePassBridge__factory, VaultV2__factory, AffineReStaking__factory, } from "../typechain";
+import { DEFAULT_RAW_CHAIN_ID, FORKED_NODE_URL_FOR_BASE, FORKED_NODE_URL_FOR_ETH, FORKED_NODE_URL_FOR_MATIC, IS_USING_FORKED_MAINNET, } from "./constants";
 let CONTRACTS;
 let CHAIN_ID;
-exports.SIMULATE = false;
+export let SIGNER;
+export let userAddress;
+export let SIMULATE = false;
+export let BICONOMY;
 const CONTRACT_VERSION = (_a = process.env.CONTRACT_VERSION) !== null && _a !== void 0 ? _a : "test";
-exports.RPC_URLS = {
-    1: constants_1.IS_USING_FORKED_MAINNET && constants_1.FORKED_NODE_URL_FOR_ETH
-        ? constants_1.FORKED_NODE_URL_FOR_ETH
+export let PROVIDER;
+export const RPC_URLS = {
+    1: IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_ETH
+        ? FORKED_NODE_URL_FOR_ETH
         : `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
     5: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
-    137: constants_1.IS_USING_FORKED_MAINNET && constants_1.FORKED_NODE_URL_FOR_MATIC
-        ? constants_1.FORKED_NODE_URL_FOR_MATIC
+    137: IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_MATIC
+        ? FORKED_NODE_URL_FOR_MATIC
         : `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
     80001: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
-    8453: constants_1.IS_USING_FORKED_MAINNET && constants_1.FORKED_NODE_URL_FOR_BASE
-        ? constants_1.FORKED_NODE_URL_FOR_BASE
+    8453: IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_BASE
+        ? FORKED_NODE_URL_FOR_BASE
         : `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_MAINNET_KEY}`,
     84531: `https://base-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_BASE_TESTNET_KEY}`,
 };
-function getProviderByChainId(chainId) {
-    exports.PROVIDER = new ethers_1.ethers.providers.StaticJsonRpcProvider(exports.RPC_URLS[chainId]);
-    return exports.PROVIDER;
+export function getProviderByChainId(chainId) {
+    PROVIDER = new ethers.providers.StaticJsonRpcProvider(RPC_URLS[chainId]);
+    return PROVIDER;
 }
-exports.getProviderByChainId = getProviderByChainId;
 /**
  * @param provider The current provider
  * @param version The addressbook version
  * @returns A map of contract names to ethers.Contract objects
  */
-function getAllContracts(provider) {
+export function getAllContracts(provider) {
     return __awaiter(this, void 0, void 0, function* () {
         const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${CONTRACT_VERSION}`;
-        const allData = (yield axios_1.default.get(`${s3Root}/addressbook.json`)).data;
+        const allData = (yield axios.get(`${s3Root}/addressbook.json`)).data;
         // Using this abi so that we mint usdc (the tests run on testnet)
         const erc20Abi = [
             // Read-Only Functions
@@ -67,29 +64,29 @@ function getAllContracts(provider) {
         const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, PolygonLevMaticX: polygonLevMaticXData, AffineReStaking: affineReStakingData, Polygon6xLevMaticX: Polygon6xLevMaticXData, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
-            const alpSave = typechain_1.L2Vault__factory.connect(alpSaveData.address, provider);
-            const alpLarge = typechain_1.TwoAssetBasket__factory.connect(alpLargeData.address, provider);
-            const polygonLevMaticX = typechain_1.Vault__factory.connect(polygonLevMaticXData.address, provider);
-            const matic = new ethers_1.ethers.Contract(yield polygonLevMaticX.asset(), erc20Abi, provider);
-            const polygon6xLevMaticX = typechain_1.Vault__factory.connect(Polygon6xLevMaticXData.address, provider);
+            const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
+            const alpLarge = TwoAssetBasket__factory.connect(alpLargeData.address, provider);
+            const polygonLevMaticX = Vault__factory.connect(polygonLevMaticXData.address, provider);
+            const matic = new ethers.Contract(yield polygonLevMaticX.asset(), erc20Abi, provider);
+            const polygon6xLevMaticX = Vault__factory.connect(Polygon6xLevMaticXData.address, provider);
             return {
                 alpSave,
                 alpLarge,
-                forwarder: typechain_1.Forwarder__factory.connect(forwarder.address, provider),
-                usdc: new ethers_1.ethers.Contract(yield alpSave.asset(), erc20Abi, provider),
-                weth: new ethers_1.ethers.Contract(yield alpLarge.weth(), erc20Abi, provider),
-                router: typechain_1.Router__factory.connect(router.address, provider),
-                ewQueue: typechain_1.EmergencyWithdrawalQueue__factory.connect(yield alpSave.emergencyWithdrawalQueue(), provider),
-                polygonDegen: typechain_1.StrategyVault__factory.connect(polygonDegenData.address, provider),
-                polygonLeverage: chainId === 137 ? typechain_1.Vault__factory.connect(polygonLeverageData.address, provider) : undefined,
+                forwarder: Forwarder__factory.connect(forwarder.address, provider),
+                usdc: new ethers.Contract(yield alpSave.asset(), erc20Abi, provider),
+                weth: new ethers.Contract(yield alpLarge.weth(), erc20Abi, provider),
+                router: Router__factory.connect(router.address, provider),
+                ewQueue: EmergencyWithdrawalQueue__factory.connect(yield alpSave.emergencyWithdrawalQueue(), provider),
+                polygonDegen: StrategyVault__factory.connect(polygonDegenData.address, provider),
+                polygonLeverage: chainId === 137 ? Vault__factory.connect(polygonLeverageData.address, provider) : undefined,
                 affineGenesis: chainId === 137 && typeof affineGenesisData !== "undefined"
-                    ? typechain_1.AffineGenesis__factory.connect(affineGenesisData.address, provider)
+                    ? AffineGenesis__factory.connect(affineGenesisData.address, provider)
                     : undefined,
                 affinePass: chainId === 137 && typeof affinePassData !== "undefined"
-                    ? typechain_1.AffinePass__factory.connect(affinePassData.address, provider)
+                    ? AffinePass__factory.connect(affinePassData.address, provider)
                     : undefined,
                 affinePassBridgePolygon: chainId === 137 && typeof affinePassBridgePolygonData !== "undefined"
-                    ? typechain_1.AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
+                    ? AffinePassBridge__factory.connect(affinePassBridgePolygonData.address, provider)
                     : undefined,
                 polygonLevMaticX,
                 polygon6xLevMaticX,
@@ -97,14 +94,14 @@ function getAllContracts(provider) {
             };
         }
         else if (chainId === 1 || chainId === 5) {
-            const ethEarn = typechain_1.Vault__factory.connect(ethEarnData.address, provider);
-            const ethWethEarn = typechain_1.Vault__factory.connect(ethWethEarnData.address, provider);
-            const ssvEthUSDEarn = typechain_1.StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
-            const withdrawalEscrow = typechain_1.WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
-            const degen = typechain_1.Vault__factory.connect(degenData.address, provider);
-            const ethLeverage = chainId === 1 ? typechain_1.Vault__factory.connect(ethLeverageData.address, provider) : undefined;
+            const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
+            const ethWethEarn = Vault__factory.connect(ethWethEarnData.address, provider);
+            const ssvEthUSDEarn = StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
+            const withdrawalEscrow = WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
+            const degen = Vault__factory.connect(degenData.address, provider);
+            const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
             // reStaking
-            const affineReStaking = chainId == 1 ? typechain_1.AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
+            const affineReStaking = chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
             return {
                 ethEarn,
                 ethWethEarn,
@@ -112,24 +109,24 @@ function getAllContracts(provider) {
                 withdrawalEscrow,
                 degen,
                 ethLeverage,
-                usdc: new ethers_1.ethers.Contract(yield ethEarn.asset(), erc20Abi, provider),
-                weth: new ethers_1.ethers.Contract(yield ethWethEarn.asset(), erc20Abi, provider),
-                router: typechain_1.Router__factory.connect(ethRouter.address, provider),
+                usdc: new ethers.Contract(yield ethEarn.asset(), erc20Abi, provider),
+                weth: new ethers.Contract(yield ethWethEarn.asset(), erc20Abi, provider),
+                router: Router__factory.connect(ethRouter.address, provider),
                 affinePassBridgeEthereum: chainId === 1 && typeof affinePassBridgeEthereumData !== "undefined"
-                    ? typechain_1.AffinePassBridge__factory.connect(affinePassBridgeEthereumData.address, provider)
+                    ? AffinePassBridge__factory.connect(affinePassBridgeEthereumData.address, provider)
                     : undefined,
                 affineReStaking,
             };
         }
         else if (chainId == 8453 || chainId == 84531) {
-            const baseUsdEarn = chainId == 8453 ? typechain_1.VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
-            const baseLeverage = typechain_1.VaultV2__factory.connect(baseStEthLevData.address, provider);
+            const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
+            const baseLeverage = VaultV2__factory.connect(baseStEthLevData.address, provider);
             return {
                 baseUsdEarn,
                 baseLeverage,
-                usdc: new ethers_1.ethers.Contract(baseUsdEarn ? yield baseUsdEarn.asset() : "0x2e668Bb88287675e34c8dF82686dfd0b7F0c0383", erc20Abi, provider),
-                weth: new ethers_1.ethers.Contract("0x4200000000000000000000000000000000000006", erc20Abi, provider),
-                router: typechain_1.Router__factory.connect(baseRouterData.address, provider),
+                usdc: new ethers.Contract(baseUsdEarn ? yield baseUsdEarn.asset() : "0x2e668Bb88287675e34c8dF82686dfd0b7F0c0383", erc20Abi, provider),
+                weth: new ethers.Contract("0x4200000000000000000000000000000000000006", erc20Abi, provider),
+                router: Router__factory.connect(baseRouterData.address, provider),
             };
         }
         else {
@@ -137,53 +134,44 @@ function getAllContracts(provider) {
         }
     });
 }
-exports.getAllContracts = getAllContracts;
-function getContracts() {
+export function getContracts() {
     console.log("getContracts: ", CONTRACTS);
     return CONTRACTS;
 }
-exports.getContracts = getContracts;
-function getEthContracts() {
+export function getEthContracts() {
     return CONTRACTS;
 }
-exports.getEthContracts = getEthContracts;
-function getPolygonContracts() {
+export function getPolygonContracts() {
     return CONTRACTS;
 }
-exports.getPolygonContracts = getPolygonContracts;
-function getBaseContracts() {
+export function getBaseContracts() {
     return CONTRACTS;
 }
-exports.getBaseContracts = getBaseContracts;
-function init(signerOrAddress, biconomy, chainId = constants_1.DEFAULT_RAW_CHAIN_ID) {
+export function init(signerOrAddress, biconomy, chainId = DEFAULT_RAW_CHAIN_ID) {
     return __awaiter(this, void 0, void 0, function* () {
         CHAIN_ID = chainId;
         // Use the user's wallet's provider if possible
-        if (ethers_1.ethers.Signer.isSigner(signerOrAddress)) {
-            exports.SIGNER = signerOrAddress;
-            exports.PROVIDER = exports.SIGNER.provider;
-            exports.userAddress = yield exports.SIGNER.getAddress();
+        if (ethers.Signer.isSigner(signerOrAddress)) {
+            SIGNER = signerOrAddress;
+            PROVIDER = SIGNER.provider;
+            userAddress = yield SIGNER.getAddress();
         }
         else {
-            exports.PROVIDER = getProviderByChainId(chainId);
-            exports.userAddress = signerOrAddress;
+            PROVIDER = getProviderByChainId(chainId);
+            userAddress = signerOrAddress;
         }
-        CONTRACTS = yield getAllContracts(exports.PROVIDER);
+        CONTRACTS = yield getAllContracts(PROVIDER);
         // BICONOMY = biconomy;
     });
 }
-exports.init = init;
-function getChainId() {
+export function getChainId() {
     return CHAIN_ID;
 }
-exports.getChainId = getChainId;
-function setProvider(provider) {
-    exports.PROVIDER = provider;
+export function setProvider(provider) {
+    PROVIDER = provider;
 }
-exports.setProvider = setProvider;
-function setSimulationMode(mode) {
+export function setSimulationMode(mode) {
     return __awaiter(this, void 0, void 0, function* () {
-        exports.SIMULATE = mode;
+        SIMULATE = mode;
     });
 }
-exports.setSimulationMode = setSimulationMode;
