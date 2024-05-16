@@ -120,11 +120,7 @@ simulate = false, value) {
 export function isApproved(product, amount, token) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-<<<<<<< HEAD
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, } = getContracts();
-=======
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, ultraLRT } = (0, cache_1.getContracts)();
->>>>>>> 69b759d (build sdk)
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, ultraLRT } = getContracts();
         if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX", "polygon6xLevMaticX"].includes(product))
             return true;
         const asset = token != undefined
@@ -189,7 +185,7 @@ export function approve(product, amountAsset, token) {
             asset = MockERC20__factory.connect(token, router.provider);
         }
         else if (token != undefined && ["ultraLRT"].includes(product)) {
-            asset = typechain_1.MockERC20__factory.connect(token, router.provider);
+            asset = MockERC20__factory.connect(token, router.provider);
         }
         const decimals = yield asset.decimals();
         const amount = amountAsset ? _addDecimals(amountAsset, decimals) : MAX_APPROVAL_AMOUNT;

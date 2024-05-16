@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var _a;
 import { ethers } from "ethers";
 import axios from "axios";
-import { Forwarder__factory, L2Vault__factory, TwoAssetBasket__factory, Router__factory, EmergencyWithdrawalQueue__factory, Vault__factory, WithdrawalEscrow__factory, StrategyVault__factory, AffineGenesis__factory, AffinePass__factory, AffinePassBridge__factory, VaultV2__factory, AffineReStaking__factory, } from "../typechain";
+import { Forwarder__factory, L2Vault__factory, TwoAssetBasket__factory, Router__factory, EmergencyWithdrawalQueue__factory, Vault__factory, WithdrawalEscrow__factory, StrategyVault__factory, AffineGenesis__factory, AffinePass__factory, AffinePassBridge__factory, VaultV2__factory, AffineReStaking__factory, UltraLRT__factory, WithdrawalEscrowV2__factory, } from "../typechain";
 import { DEFAULT_RAW_CHAIN_ID, FORKED_NODE_URL_FOR_BASE, FORKED_NODE_URL_FOR_ETH, FORKED_NODE_URL_FOR_MATIC, IS_USING_FORKED_MAINNET, } from "./constants";
 let CONTRACTS;
 let CHAIN_ID;
@@ -111,29 +111,18 @@ export function getAllContracts(provider) {
             };
         }
         else if (chainId === 1 || chainId === 5) {
-<<<<<<< HEAD
             const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
             const ethWethEarn = Vault__factory.connect(ethWethEarnData.address, provider);
             const ssvEthUSDEarn = StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
             const withdrawalEscrow = WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
             const degen = Vault__factory.connect(degenData.address, provider);
             const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
-            // reStaking
-            const affineReStaking = chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
-=======
-            const ethEarn = typechain_1.Vault__factory.connect(ethEarnData.address, provider);
-            const ethWethEarn = typechain_1.Vault__factory.connect(ethWethEarnData.address, provider);
-            const ssvEthUSDEarn = typechain_1.StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
-            const withdrawalEscrow = typechain_1.WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
-            const degen = typechain_1.Vault__factory.connect(degenData.address, provider);
-            const ethLeverage = chainId === 1 ? typechain_1.Vault__factory.connect(ethLeverageData.address, provider) : undefined;
             const eigenStETHStrategy = "0x93c4b944D05dfe6df7645A86cd2206016c51564D";
             const eigenDelegatorAddress = "0x39053D51B77DC0d36036Fc1fCc8Cb819df8Ef37A";
             // reStaking
-            const affineReStaking = chainId == 1 ? typechain_1.AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
-            const ultraLRT = chainId == 1 ? typechain_1.UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
-            const withdrawalEscrowV2 = chainId == 1 ? typechain_1.WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider) : undefined;
->>>>>>> 69b759d (build sdk)
+            const affineReStaking = chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
+            const ultraLRT = chainId == 1 ? UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
+            const withdrawalEscrowV2 = chainId == 1 ? WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider) : undefined;
             return {
                 ethEarn,
                 ethWethEarn,
@@ -150,8 +139,8 @@ export function getAllContracts(provider) {
                 affineReStaking,
                 ultraLRT,
                 withdrawalEscrowV2,
-                eigenStETH: new ethers_1.ethers.Contract(eigenStETHStrategy, eigenStEthAbi, provider),
-                eigenDelegator: new ethers_1.ethers.Contract(eigenDelegatorAddress, eigenDelegatorAbi, provider),
+                eigenStETH: new ethers.Contract(eigenStETHStrategy, eigenStEthAbi, provider),
+                eigenDelegator: new ethers.Contract(eigenDelegatorAddress, eigenDelegatorAbi, provider),
             };
         }
         else if (chainId == 8453 || chainId == 84531) {

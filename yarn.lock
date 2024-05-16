@@ -4180,18 +4180,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"contracts@https://github.com/AffineLabs/contracts.git#5d51ad056ddf50b7daddc0e560354d6359320378":
-=======
-"console-control-strings@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "console-control-strings@npm:1.1.0"
-  checksum: 8755d76787f94e6cf79ce4666f0c5519906d7f5b02d4b884cf41e11dcd759ed69c57da0670afd9236d229a46e0f9cf519db0cd829c6dca820bb5a5c3def584ed
-  languageName: node
-  linkType: hard
-
 "contracts@https://github.com/AffineLabs/contracts.git#23dfbe428d7f66f3f4af0e0b0a1cd35324886fcc":
->>>>>>> 69b759d (build sdk)
   version: 0.0.1
   resolution: "contracts@https://github.com/AffineLabs/contracts.git#commit=23dfbe428d7f66f3f4af0e0b0a1cd35324886fcc"
   checksum: 27d73a704c091e81798d419ae2da7e9e28108fc6bdf7082b37d6dafe16e4ed9ac1f237c090030a58779329c791b208b929b94cf9809729b60e36b9f06e161ec5
