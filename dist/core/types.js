@@ -13,5 +13,6 @@ export const alpineProducts = [
     "polygonLevMaticX",
     "polygon6xLevMaticX",
     "affineReStaking",
+    "ultraLRT",
 ];
 export const polygonProducts = ["alpSave", "alpLarge", "polygonDegen"];

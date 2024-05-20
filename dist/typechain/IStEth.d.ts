@@ -1,16 +1,90 @@
-import type { BaseContract, BigNumber, BytesLike, CallOverrides, ContractTransaction, PayableOverrides, PopulatedTransaction, Signer, utils } from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, ContractTransaction, Overrides, PayableOverrides, PopulatedTransaction, Signer, utils } from "ethers";
+import type { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import type { Listener, Provider } from "@ethersproject/providers";
 import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "./common";
 export interface IStEthInterface extends utils.Interface {
     functions: {
+        "allowance(address,address)": FunctionFragment;
+        "approve(address,uint256)": FunctionFragment;
+        "balanceOf(address)": FunctionFragment;
+        "getPooledEthByShares(uint256)": FunctionFragment;
+        "getSharesByPooledEth(uint256)": FunctionFragment;
+        "getTotalPooledEther()": FunctionFragment;
+        "getTotalShares()": FunctionFragment;
+        "sharesOf(address)": FunctionFragment;
         "submit(address)": FunctionFragment;
+        "totalSupply()": FunctionFragment;
+        "transfer(address,uint256)": FunctionFragment;
+        "transferFrom(address,address,uint256)": FunctionFragment;
+        "transferShares(address,uint256)": FunctionFragment;
+        "transferSharesFrom(address,address,uint256)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "submit"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "allowance" | "approve" | "balanceOf" | "getPooledEthByShares" | "getSharesByPooledEth" | "getTotalPooledEther" | "getTotalShares" | "sharesOf" | "submit" | "totalSupply" | "transfer" | "transferFrom" | "transferShares" | "transferSharesFrom"): FunctionFragment;
+    encodeFunctionData(functionFragment: "allowance", values: [PromiseOrValue<string>, PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "approve", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "balanceOf", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "getPooledEthByShares", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "getSharesByPooledEth", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "getTotalPooledEther", values?: undefined): string;
+    encodeFunctionData(functionFragment: "getTotalShares", values?: undefined): string;
+    encodeFunctionData(functionFragment: "sharesOf", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "submit", values: [PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "totalSupply", values?: undefined): string;
+    encodeFunctionData(functionFragment: "transfer", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "transferFrom", values: [
+        PromiseOrValue<string>,
+        PromiseOrValue<string>,
+        PromiseOrValue<BigNumberish>
+    ]): string;
+    encodeFunctionData(functionFragment: "transferShares", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "transferSharesFrom", values: [
+        PromiseOrValue<string>,
+        PromiseOrValue<string>,
+        PromiseOrValue<BigNumberish>
+    ]): string;
+    decodeFunctionResult(functionFragment: "allowance", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "approve", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getPooledEthByShares", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getSharesByPooledEth", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getTotalPooledEther", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "getTotalShares", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "sharesOf", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "submit", data: BytesLike): Result;
-    events: {};
+    decodeFunctionResult(functionFragment: "totalSupply", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "transfer", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "transferFrom", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "transferShares", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "transferSharesFrom", data: BytesLike): Result;
+    events: {
+        "Approval(address,address,uint256)": EventFragment;
+        "Transfer(address,address,uint256)": EventFragment;
+    };
+    getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
+    getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
+export interface ApprovalEventObject {
+    owner: string;
+    spender: string;
+    value: BigNumber;
+}
+export type ApprovalEvent = TypedEvent<[
+    string,
+    string,
+    BigNumber
+], ApprovalEventObject>;
+export type ApprovalEventFilter = TypedEventFilter<ApprovalEvent>;
+export interface TransferEventObject {
+    from: string;
+    to: string;
+    value: BigNumber;
+}
+export type TransferEvent = TypedEvent<[
+    string,
+    string,
+    BigNumber
+], TransferEventObject>;
+export type TransferEventFilter = TypedEventFilter<TransferEvent>;
 export interface IStEth extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;
@@ -26,24 +100,134 @@ export interface IStEth extends BaseContract {
     once: OnEvent<this>;
     removeListener: OnEvent<this>;
     functions: {
+        allowance(owner: PromiseOrValue<string>, spender: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
+        approve(spender: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
+        getPooledEthByShares(_sharesAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
+        getSharesByPooledEth(_ethAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[BigNumber]>;
+        getTotalPooledEther(overrides?: CallOverrides): Promise<[BigNumber]>;
+        getTotalShares(overrides?: CallOverrides): Promise<[BigNumber]>;
+        sharesOf(_account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
         submit(_referral: PromiseOrValue<string>, overrides?: PayableOverrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        totalSupply(overrides?: CallOverrides): Promise<[BigNumber]>;
+        transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        transferFrom(from: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        transferShares(_recipient: PromiseOrValue<string>, _sharesAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        transferSharesFrom(_sender: PromiseOrValue<string>, _recipient: PromiseOrValue<string>, _sharesAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
     };
+    allowance(owner: PromiseOrValue<string>, spender: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+    approve(spender: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+    getPooledEthByShares(_sharesAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    getSharesByPooledEth(_ethAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+    getTotalPooledEther(overrides?: CallOverrides): Promise<BigNumber>;
+    getTotalShares(overrides?: CallOverrides): Promise<BigNumber>;
+    sharesOf(_account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     submit(_referral: PromiseOrValue<string>, overrides?: PayableOverrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+    transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    transferFrom(from: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    transferShares(_recipient: PromiseOrValue<string>, _sharesAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    transferSharesFrom(_sender: PromiseOrValue<string>, _recipient: PromiseOrValue<string>, _sharesAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     callStatic: {
+        allowance(owner: PromiseOrValue<string>, spender: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        approve(spender: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
+        balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        getPooledEthByShares(_sharesAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        getSharesByPooledEth(_ethAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        getTotalPooledEther(overrides?: CallOverrides): Promise<BigNumber>;
+        getTotalShares(overrides?: CallOverrides): Promise<BigNumber>;
+        sharesOf(_account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         submit(_referral: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+        transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
+        transferFrom(from: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
+        transferShares(_recipient: PromiseOrValue<string>, _sharesAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        transferSharesFrom(_sender: PromiseOrValue<string>, _recipient: PromiseOrValue<string>, _sharesAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
     };
-    filters: {};
+    filters: {
+        "Approval(address,address,uint256)"(owner?: PromiseOrValue<string> | null, spender?: PromiseOrValue<string> | null, value?: null): ApprovalEventFilter;
+        Approval(owner?: PromiseOrValue<string> | null, spender?: PromiseOrValue<string> | null, value?: null): ApprovalEventFilter;
+        "Transfer(address,address,uint256)"(from?: PromiseOrValue<string> | null, to?: PromiseOrValue<string> | null, value?: null): TransferEventFilter;
+        Transfer(from?: PromiseOrValue<string> | null, to?: PromiseOrValue<string> | null, value?: null): TransferEventFilter;
+    };
     estimateGas: {
+        allowance(owner: PromiseOrValue<string>, spender: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        approve(spender: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        getPooledEthByShares(_sharesAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        getSharesByPooledEth(_ethAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        getTotalPooledEther(overrides?: CallOverrides): Promise<BigNumber>;
+        getTotalShares(overrides?: CallOverrides): Promise<BigNumber>;
+        sharesOf(_account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         submit(_referral: PromiseOrValue<string>, overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        totalSupply(overrides?: CallOverrides): Promise<BigNumber>;
+        transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        transferFrom(from: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        transferShares(_recipient: PromiseOrValue<string>, _sharesAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        transferSharesFrom(_sender: PromiseOrValue<string>, _recipient: PromiseOrValue<string>, _sharesAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
     };
     populateTransaction: {
+        allowance(owner: PromiseOrValue<string>, spender: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        approve(spender: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        balanceOf(account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getPooledEthByShares(_sharesAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getSharesByPooledEth(_ethAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getTotalPooledEther(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        getTotalShares(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        sharesOf(_account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         submit(_referral: PromiseOrValue<string>, overrides?: PayableOverrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        totalSupply(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        transfer(to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        transferFrom(from: PromiseOrValue<string>, to: PromiseOrValue<string>, amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        transferShares(_recipient: PromiseOrValue<string>, _sharesAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        transferSharesFrom(_sender: PromiseOrValue<string>, _recipient: PromiseOrValue<string>, _sharesAmount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
     };

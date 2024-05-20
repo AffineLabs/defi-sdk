@@ -13,7 +13,7 @@ import { AlpineDeFiSDK, init } from "../core";
 import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
 import * as lockedWithdrawal from "../core/singleStrategy";
-import { DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WITHDRAW_SLIPPAGE_BY_PRODUCT, } from "../core/constants";
+import { DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WITHDRAW_SLIPPAGE_BY_PRODUCT } from "../core/constants";
 import { getEmergencyWithdrawalQueueTransfers, getUserEmergencyWithdrawalQueueRequests, txHasEnqueueEvent, vaultWithdrawableAssetAmount, } from "../core/ewqueue";
 import { getWeb3Provider, initMagic } from "./wallets";
 class Account {
@@ -38,7 +38,7 @@ class Account {
      * });
      * ```
      */
-    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, provider }) {
+    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, provider, }) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             // get wallet provider based on wallet type
@@ -262,7 +262,9 @@ class Account {
             if (!window.ethereum && walletType === "metamask") {
                 throw new Error("Metamask is not installed!");
             }
-            const _provider = provider ? new ethers.providers.Web3Provider(provider) : (_a = this.walletProvider) !== null && _a !== void 0 ? _a : yield getWeb3Provider(walletType, chainId);
+            const _provider = provider
+                ? new ethers.providers.Web3Provider(provider)
+                : (_a = this.walletProvider) !== null && _a !== void 0 ? _a : (yield getWeb3Provider(walletType, chainId));
             if (!_provider) {
                 throw new Error("Provider is not available");
             }

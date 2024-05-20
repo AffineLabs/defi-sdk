@@ -31,6 +31,11 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "onlyAAVEVault",
+        type: "error",
+    },
+    {
+        inputs: [],
         name: "onlyBalancerVault",
         type: "error",
     },
@@ -124,6 +129,19 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "ADDRESSES_PROVIDER",
+        outputs: [
+            {
+                internalType: "contract IPoolAddressesProvider",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
         name: "BALANCER",
         outputs: [
             {
@@ -185,6 +203,19 @@ const _abi = [
             },
         ],
         stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "POOL",
+        outputs: [
+            {
+                internalType: "contract IPool",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "pure",
         type: "function",
     },
     {
@@ -337,6 +368,45 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [
+            {
+                internalType: "address[]",
+                name: "",
+                type: "address[]",
+            },
+            {
+                internalType: "uint256[]",
+                name: "amounts",
+                type: "uint256[]",
+            },
+            {
+                internalType: "uint256[]",
+                name: "premiums",
+                type: "uint256[]",
+            },
+            {
+                internalType: "address",
+                name: "initiator",
+                type: "address",
+            },
+            {
+                internalType: "bytes",
+                name: "params",
+                type: "bytes",
+            },
+        ],
+        name: "executeOperation",
+        outputs: [
+            {
+                internalType: "bool",
+                name: "",
+                type: "bool",
+            },
+        ],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
         inputs: [],
         name: "getLTVRatio",
         outputs: [
@@ -437,6 +507,26 @@ const _abi = [
         type: "function",
     },
     {
+        inputs: [],
+        name: "levBps",
+        outputs: [
+            {
+                internalType: "uint256",
+                name: "",
+                type: "uint256",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
+        inputs: [],
+        name: "rebalance",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
         inputs: [
             {
                 internalType: "contract ERC20[]",
@@ -483,19 +573,6 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [],
-        name: "resDebt",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "view",
-        type: "function",
-    },
-    {
         inputs: [
             {
                 internalType: "bytes32",
@@ -522,19 +599,6 @@ const _abi = [
             },
         ],
         name: "setBorrowBps",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "uint256",
-                name: "_iCycle",
-                type: "uint256",
-            },
-        ],
-        name: "setInvestmentCycle",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -613,7 +677,7 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "contract LevMaticXLoopStrategy",
+                internalType: "contract StaderLevMaticStrategy",
                 name: "newStrategy",
                 type: "address",
             },

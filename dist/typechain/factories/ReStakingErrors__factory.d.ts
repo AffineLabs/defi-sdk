@@ -16,15 +16,67 @@ export declare class ReStakingErrors__factory {
         readonly type: "error";
     }, {
         readonly inputs: readonly [];
+        readonly name: "DepositPaused";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "ExceedsDelegatorWithdrawableAssets";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "ExceedsDepositLimit";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "ExceedsMaxDelegatorLimit";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "ExceedsMintLimit";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "ExceedsRedeemLimit";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "ExceedsWithdrawLimit";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "ExistingEscrowDebt";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "InactiveDelegator";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "InsufficientLiquidAssets";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "InvalidEscrowVault";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "InvalidWithdrawalAmount";
         readonly type: "error";
     }, {
         readonly inputs: readonly [];
-        readonly name: "NonZeroTokenBalance";
+        readonly name: "NonZeroEmptyDelegatorTVL";
         readonly type: "error";
     }, {
         readonly inputs: readonly [];
         readonly name: "NotApprovedToken";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "ProfitUnlocking";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "RequireHarvest";
         readonly type: "error";
     }, {
         readonly inputs: readonly [];

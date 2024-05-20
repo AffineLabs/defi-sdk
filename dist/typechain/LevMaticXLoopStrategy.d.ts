@@ -5,11 +5,13 @@ import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrVal
 export interface LevMaticXLoopStrategyInterface extends utils.Interface {
     functions: {
         "AAVE()": FunctionFragment;
+        "ADDRESSES_PROVIDER()": FunctionFragment;
         "BALANCER()": FunctionFragment;
         "BALANCER_QUERY()": FunctionFragment;
         "DEFAULT_ADMIN_ROLE()": FunctionFragment;
         "MATICX()": FunctionFragment;
         "MAX_BPS()": FunctionFragment;
+        "POOL()": FunctionFragment;
         "POOL_ID()": FunctionFragment;
         "STADER()": FunctionFragment;
         "STRATEGIST_ROLE()": FunctionFragment;
@@ -21,18 +23,19 @@ export interface LevMaticXLoopStrategyInterface extends utils.Interface {
         "createAaveDebt(uint256)": FunctionFragment;
         "debtToken()": FunctionFragment;
         "divest(uint256)": FunctionFragment;
+        "executeOperation(address[],uint256[],uint256[],address,bytes)": FunctionFragment;
         "getLTVRatio()": FunctionFragment;
         "getRoleAdmin(bytes32)": FunctionFragment;
         "grantRole(bytes32,address)": FunctionFragment;
         "hasRole(bytes32,address)": FunctionFragment;
         "iCycle()": FunctionFragment;
         "invest(uint256)": FunctionFragment;
+        "levBps()": FunctionFragment;
+        "rebalance()": FunctionFragment;
         "receiveFlashLoan(address[],uint256[],uint256[],bytes)": FunctionFragment;
         "renounceRole(bytes32,address)": FunctionFragment;
-        "resDebt()": FunctionFragment;
         "revokeRole(bytes32,address)": FunctionFragment;
         "setBorrowBps(uint256)": FunctionFragment;
-        "setInvestmentCycle(uint256)": FunctionFragment;
         "setSlippageBps(uint256)": FunctionFragment;
         "slippageBps()": FunctionFragment;
         "supportsInterface(bytes4)": FunctionFragment;
@@ -41,13 +44,15 @@ export interface LevMaticXLoopStrategyInterface extends utils.Interface {
         "upgradeTo(address)": FunctionFragment;
         "vault()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "AAVE" | "BALANCER" | "BALANCER_QUERY" | "DEFAULT_ADMIN_ROLE" | "MATICX" | "MAX_BPS" | "POOL_ID" | "STADER" | "STRATEGIST_ROLE" | "WMATIC" | "aToken" | "asset" | "balanceOfAsset" | "borrowBps" | "createAaveDebt" | "debtToken" | "divest" | "getLTVRatio" | "getRoleAdmin" | "grantRole" | "hasRole" | "iCycle" | "invest" | "receiveFlashLoan" | "renounceRole" | "resDebt" | "revokeRole" | "setBorrowBps" | "setInvestmentCycle" | "setSlippageBps" | "slippageBps" | "supportsInterface" | "sweep" | "totalLockedValue" | "upgradeTo" | "vault"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "AAVE" | "ADDRESSES_PROVIDER" | "BALANCER" | "BALANCER_QUERY" | "DEFAULT_ADMIN_ROLE" | "MATICX" | "MAX_BPS" | "POOL" | "POOL_ID" | "STADER" | "STRATEGIST_ROLE" | "WMATIC" | "aToken" | "asset" | "balanceOfAsset" | "borrowBps" | "createAaveDebt" | "debtToken" | "divest" | "executeOperation" | "getLTVRatio" | "getRoleAdmin" | "grantRole" | "hasRole" | "iCycle" | "invest" | "levBps" | "rebalance" | "receiveFlashLoan" | "renounceRole" | "revokeRole" | "setBorrowBps" | "setSlippageBps" | "slippageBps" | "supportsInterface" | "sweep" | "totalLockedValue" | "upgradeTo" | "vault"): FunctionFragment;
     encodeFunctionData(functionFragment: "AAVE", values?: undefined): string;
+    encodeFunctionData(functionFragment: "ADDRESSES_PROVIDER", values?: undefined): string;
     encodeFunctionData(functionFragment: "BALANCER", values?: undefined): string;
     encodeFunctionData(functionFragment: "BALANCER_QUERY", values?: undefined): string;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "MATICX", values?: undefined): string;
     encodeFunctionData(functionFragment: "MAX_BPS", values?: undefined): string;
+    encodeFunctionData(functionFragment: "POOL", values?: undefined): string;
     encodeFunctionData(functionFragment: "POOL_ID", values?: undefined): string;
     encodeFunctionData(functionFragment: "STADER", values?: undefined): string;
     encodeFunctionData(functionFragment: "STRATEGIST_ROLE", values?: undefined): string;
@@ -59,12 +64,21 @@ export interface LevMaticXLoopStrategyInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "createAaveDebt", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "debtToken", values?: undefined): string;
     encodeFunctionData(functionFragment: "divest", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "executeOperation", values: [
+        PromiseOrValue<string>[],
+        PromiseOrValue<BigNumberish>[],
+        PromiseOrValue<BigNumberish>[],
+        PromiseOrValue<string>,
+        PromiseOrValue<BytesLike>
+    ]): string;
     encodeFunctionData(functionFragment: "getLTVRatio", values?: undefined): string;
     encodeFunctionData(functionFragment: "getRoleAdmin", values: [PromiseOrValue<BytesLike>]): string;
     encodeFunctionData(functionFragment: "grantRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "hasRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "iCycle", values?: undefined): string;
     encodeFunctionData(functionFragment: "invest", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "levBps", values?: undefined): string;
+    encodeFunctionData(functionFragment: "rebalance", values?: undefined): string;
     encodeFunctionData(functionFragment: "receiveFlashLoan", values: [
         PromiseOrValue<string>[],
         PromiseOrValue<BigNumberish>[],
@@ -72,10 +86,8 @@ export interface LevMaticXLoopStrategyInterface extends utils.Interface {
         PromiseOrValue<BytesLike>
     ]): string;
     encodeFunctionData(functionFragment: "renounceRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "resDebt", values?: undefined): string;
     encodeFunctionData(functionFragment: "revokeRole", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "setBorrowBps", values: [PromiseOrValue<BigNumberish>]): string;
-    encodeFunctionData(functionFragment: "setInvestmentCycle", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "setSlippageBps", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "slippageBps", values?: undefined): string;
     encodeFunctionData(functionFragment: "supportsInterface", values: [PromiseOrValue<BytesLike>]): string;
@@ -84,11 +96,13 @@ export interface LevMaticXLoopStrategyInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "upgradeTo", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "vault", values?: undefined): string;
     decodeFunctionResult(functionFragment: "AAVE", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "ADDRESSES_PROVIDER", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "BALANCER", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "BALANCER_QUERY", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "DEFAULT_ADMIN_ROLE", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "MATICX", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "MAX_BPS", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "POOL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "POOL_ID", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "STADER", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "STRATEGIST_ROLE", data: BytesLike): Result;
@@ -100,18 +114,19 @@ export interface LevMaticXLoopStrategyInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "createAaveDebt", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "debtToken", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "divest", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "executeOperation", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getLTVRatio", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "getRoleAdmin", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "iCycle", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "invest", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "levBps", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "rebalance", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "receiveFlashLoan", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "renounceRole", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "resDebt", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setBorrowBps", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "setInvestmentCycle", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setSlippageBps", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "slippageBps", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
@@ -177,11 +192,13 @@ export interface LevMaticXLoopStrategy extends BaseContract {
     removeListener: OnEvent<this>;
     functions: {
         AAVE(overrides?: CallOverrides): Promise<[string]>;
+        ADDRESSES_PROVIDER(overrides?: CallOverrides): Promise<[string]>;
         BALANCER(overrides?: CallOverrides): Promise<[string]>;
         BALANCER_QUERY(overrides?: CallOverrides): Promise<[string]>;
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<[string]>;
         MATICX(overrides?: CallOverrides): Promise<[string]>;
         MAX_BPS(overrides?: CallOverrides): Promise<[BigNumber]>;
+        POOL(overrides?: CallOverrides): Promise<[string]>;
         POOL_ID(overrides?: CallOverrides): Promise<[string]>;
         STADER(overrides?: CallOverrides): Promise<[string]>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<[string]>;
@@ -199,6 +216,9 @@ export interface LevMaticXLoopStrategy extends BaseContract {
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        executeOperation(arg0: PromiseOrValue<string>[], amounts: PromiseOrValue<BigNumberish>[], premiums: PromiseOrValue<BigNumberish>[], initiator: PromiseOrValue<string>, params: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         getLTVRatio(overrides?: CallOverrides): Promise<[BigNumber]>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string]>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
@@ -209,20 +229,20 @@ export interface LevMaticXLoopStrategy extends BaseContract {
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
+        levBps(overrides?: CallOverrides): Promise<[BigNumber]>;
+        rebalance(overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
         receiveFlashLoan(arg0: PromiseOrValue<string>[], amounts: PromiseOrValue<BigNumberish>[], arg2: PromiseOrValue<BigNumberish>[], userData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        resDebt(overrides?: CallOverrides): Promise<[BigNumber]>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         setBorrowBps(_borrowBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
-        setInvestmentCycle(_iCycle: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         setSlippageBps(_slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -240,11 +260,13 @@ export interface LevMaticXLoopStrategy extends BaseContract {
         vault(overrides?: CallOverrides): Promise<[string]>;
     };
     AAVE(overrides?: CallOverrides): Promise<string>;
+    ADDRESSES_PROVIDER(overrides?: CallOverrides): Promise<string>;
     BALANCER(overrides?: CallOverrides): Promise<string>;
     BALANCER_QUERY(overrides?: CallOverrides): Promise<string>;
     DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
     MATICX(overrides?: CallOverrides): Promise<string>;
     MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
+    POOL(overrides?: CallOverrides): Promise<string>;
     POOL_ID(overrides?: CallOverrides): Promise<string>;
     STADER(overrides?: CallOverrides): Promise<string>;
     STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -260,6 +282,9 @@ export interface LevMaticXLoopStrategy extends BaseContract {
     divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    executeOperation(arg0: PromiseOrValue<string>[], amounts: PromiseOrValue<BigNumberish>[], premiums: PromiseOrValue<BigNumberish>[], initiator: PromiseOrValue<string>, params: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     getLTVRatio(overrides?: CallOverrides): Promise<BigNumber>;
     getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
     grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
@@ -270,20 +295,20 @@ export interface LevMaticXLoopStrategy extends BaseContract {
     invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
+    levBps(overrides?: CallOverrides): Promise<BigNumber>;
+    rebalance(overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
     receiveFlashLoan(arg0: PromiseOrValue<string>[], amounts: PromiseOrValue<BigNumberish>[], arg2: PromiseOrValue<BigNumberish>[], userData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    resDebt(overrides?: CallOverrides): Promise<BigNumber>;
     revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     setBorrowBps(_borrowBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
-    setInvestmentCycle(_iCycle: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     setSlippageBps(_slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -301,11 +326,13 @@ export interface LevMaticXLoopStrategy extends BaseContract {
     vault(overrides?: CallOverrides): Promise<string>;
     callStatic: {
         AAVE(overrides?: CallOverrides): Promise<string>;
+        ADDRESSES_PROVIDER(overrides?: CallOverrides): Promise<string>;
         BALANCER(overrides?: CallOverrides): Promise<string>;
         BALANCER_QUERY(overrides?: CallOverrides): Promise<string>;
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<string>;
         MATICX(overrides?: CallOverrides): Promise<string>;
         MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
+        POOL(overrides?: CallOverrides): Promise<string>;
         POOL_ID(overrides?: CallOverrides): Promise<string>;
         STADER(overrides?: CallOverrides): Promise<string>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<string>;
@@ -317,18 +344,19 @@ export interface LevMaticXLoopStrategy extends BaseContract {
         createAaveDebt(wethAmount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         debtToken(overrides?: CallOverrides): Promise<string>;
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        executeOperation(arg0: PromiseOrValue<string>[], amounts: PromiseOrValue<BigNumberish>[], premiums: PromiseOrValue<BigNumberish>[], initiator: PromiseOrValue<string>, params: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
         getLTVRatio(overrides?: CallOverrides): Promise<BigNumber>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<string>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
         iCycle(overrides?: CallOverrides): Promise<BigNumber>;
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
+        levBps(overrides?: CallOverrides): Promise<BigNumber>;
+        rebalance(overrides?: CallOverrides): Promise<void>;
         receiveFlashLoan(arg0: PromiseOrValue<string>[], amounts: PromiseOrValue<BigNumberish>[], arg2: PromiseOrValue<BigNumberish>[], userData: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<void>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
-        resDebt(overrides?: CallOverrides): Promise<BigNumber>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         setBorrowBps(_borrowBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
-        setInvestmentCycle(_iCycle: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         setSlippageBps(_slippageBps: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         slippageBps(overrides?: CallOverrides): Promise<BigNumber>;
         supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
@@ -347,11 +375,13 @@ export interface LevMaticXLoopStrategy extends BaseContract {
     };
     estimateGas: {
         AAVE(overrides?: CallOverrides): Promise<BigNumber>;
+        ADDRESSES_PROVIDER(overrides?: CallOverrides): Promise<BigNumber>;
         BALANCER(overrides?: CallOverrides): Promise<BigNumber>;
         BALANCER_QUERY(overrides?: CallOverrides): Promise<BigNumber>;
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
         MATICX(overrides?: CallOverrides): Promise<BigNumber>;
         MAX_BPS(overrides?: CallOverrides): Promise<BigNumber>;
+        POOL(overrides?: CallOverrides): Promise<BigNumber>;
         POOL_ID(overrides?: CallOverrides): Promise<BigNumber>;
         STADER(overrides?: CallOverrides): Promise<BigNumber>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -367,6 +397,9 @@ export interface LevMaticXLoopStrategy extends BaseContract {
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        executeOperation(arg0: PromiseOrValue<string>[], amounts: PromiseOrValue<BigNumberish>[], premiums: PromiseOrValue<BigNumberish>[], initiator: PromiseOrValue<string>, params: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         getLTVRatio(overrides?: CallOverrides): Promise<BigNumber>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
@@ -377,20 +410,20 @@ export interface LevMaticXLoopStrategy extends BaseContract {
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
+        levBps(overrides?: CallOverrides): Promise<BigNumber>;
+        rebalance(overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
         receiveFlashLoan(arg0: PromiseOrValue<string>[], amounts: PromiseOrValue<BigNumberish>[], arg2: PromiseOrValue<BigNumberish>[], userData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        resDebt(overrides?: CallOverrides): Promise<BigNumber>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         setBorrowBps(_borrowBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
-        setInvestmentCycle(_iCycle: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         setSlippageBps(_slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
@@ -409,11 +442,13 @@ export interface LevMaticXLoopStrategy extends BaseContract {
     };
     populateTransaction: {
         AAVE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        ADDRESSES_PROVIDER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         BALANCER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         BALANCER_QUERY(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         MATICX(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         MAX_BPS(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        POOL(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         POOL_ID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         STADER(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         STRATEGIST_ROLE(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -429,6 +464,9 @@ export interface LevMaticXLoopStrategy extends BaseContract {
         divest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
+        executeOperation(arg0: PromiseOrValue<string>[], amounts: PromiseOrValue<BigNumberish>[], premiums: PromiseOrValue<BigNumberish>[], initiator: PromiseOrValue<string>, params: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         getLTVRatio(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         getRoleAdmin(role: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         grantRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
@@ -439,20 +477,20 @@ export interface LevMaticXLoopStrategy extends BaseContract {
         invest(amount: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
+        levBps(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        rebalance(overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
         receiveFlashLoan(arg0: PromiseOrValue<string>[], amounts: PromiseOrValue<BigNumberish>[], arg2: PromiseOrValue<BigNumberish>[], userData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         renounceRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        resDebt(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         revokeRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         setBorrowBps(_borrowBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        setInvestmentCycle(_iCycle: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         setSlippageBps(_slippageBps: PromiseOrValue<BigNumberish>, overrides?: Overrides & {

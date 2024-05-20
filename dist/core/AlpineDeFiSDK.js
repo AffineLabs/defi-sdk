@@ -120,7 +120,7 @@ simulate = false, value) {
 export function isApproved(product, amount, token) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, } = getContracts();
+        const { usdc, alpSave, router, ethEarn, ssvEthUSDEarn, degen, polygonDegen, weth, polygonLeverage, baseUsdEarn, ethWethEarn, baseLeverage, ethLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, ultraLRT, } = getContracts();
         if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX", "polygon6xLevMaticX"].includes(product))
             return true;
         const asset = token != undefined
@@ -144,6 +144,7 @@ export function isApproved(product, amount, token) {
             ethWethEarn,
             ethLeverage,
             baseLeverage,
+            ultraLRT,
         };
         if (!productToSpender[product]) {
             throw new Error("Product not found");
@@ -181,6 +182,9 @@ export function approve(product, amountAsset, token) {
             asset = matic;
         }
         else if (token != undefined && ["affineReStaking"].includes(product)) {
+            asset = MockERC20__factory.connect(token, router.provider);
+        }
+        else if (token != undefined && ["ultraLRT"].includes(product)) {
             asset = MockERC20__factory.connect(token, router.provider);
         }
         const decimals = yield asset.decimals();

@@ -28,7 +28,7 @@ declare class Account {
      * });
      * ```
      */
-    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, provider }: IConnectAccount): Promise<ethers.providers.Web3Provider | undefined>;
+    connect({ walletType, email, shouldRunMagicTestMode, getMessage, verify, chainId, provider, }: IConnectAccount): Promise<ethers.providers.Web3Provider | undefined>;
     /**
      * This method initializes the contracts for the user, this should be called
      * after the user is connected to the wallet, or the chainId is changed

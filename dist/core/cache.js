@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var _a;
 import { ethers } from "ethers";
 import axios from "axios";
-import { Forwarder__factory, L2Vault__factory, TwoAssetBasket__factory, Router__factory, EmergencyWithdrawalQueue__factory, Vault__factory, WithdrawalEscrow__factory, StrategyVault__factory, AffineGenesis__factory, AffinePass__factory, AffinePassBridge__factory, VaultV2__factory, AffineReStaking__factory, } from "../typechain";
+import { Forwarder__factory, L2Vault__factory, TwoAssetBasket__factory, Router__factory, EmergencyWithdrawalQueue__factory, Vault__factory, WithdrawalEscrow__factory, StrategyVault__factory, AffineGenesis__factory, AffinePass__factory, AffinePassBridge__factory, VaultV2__factory, AffineReStaking__factory, UltraLRT__factory, WithdrawalEscrowV2__factory, } from "../typechain";
 import { DEFAULT_RAW_CHAIN_ID, FORKED_NODE_URL_FOR_BASE, FORKED_NODE_URL_FOR_ETH, FORKED_NODE_URL_FOR_MATIC, IS_USING_FORKED_MAINNET, } from "./constants";
 let CONTRACTS;
 let CHAIN_ID;
@@ -61,7 +61,22 @@ export function getAllContracts(provider) {
             // Events
             "event Transfer(address indexed from, address indexed to, uint amount)",
         ];
-        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, PolygonLevMaticX: polygonLevMaticXData, AffineReStaking: affineReStakingData, Polygon6xLevMaticX: Polygon6xLevMaticXData, } = allData;
+        //   interface IDelegationManager {
+        //     function delegateTo(address, ApproverSignatureAndExpiryParams calldata, bytes32) external;
+        //     function queueWithdrawals(QueuedWithdrawalParams[] calldata) external;
+        //     function completeQueuedWithdrawals(
+        //         WithdrawalInfo[] calldata,
+        //         address[][] calldata,
+        //         uint256[] calldata,
+        //         bool[] calldata
+        //     ) external;
+        // }
+        const eigenDelegatorAbi = [
+            "function queueWithdrawals((address[],uint256[],address)[])",
+            "function completeQueuedWithdrawals((address,address,address,uint256,uint32,address[],uint256[])[],address[][],uint256[],bool[])",
+        ];
+        const eigenStEthAbi = ["function userUnderlyingView(address) view returns (uint256)"];
+        const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, PolygonLevMaticX: polygonLevMaticXData, AffineReStaking: affineReStakingData, Polygon6xLevMaticX: Polygon6xLevMaticXData, UltraLRT: UltraLRTData, WithdrawalEscrowV2: withdrawalEscrowV2Data, } = allData;
         const chainId = getChainId();
         if (chainId === 80001 || chainId === 137) {
             const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
@@ -100,8 +115,12 @@ export function getAllContracts(provider) {
             const withdrawalEscrow = WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
             const degen = Vault__factory.connect(degenData.address, provider);
             const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
+            const eigenStETHStrategy = "0x93c4b944D05dfe6df7645A86cd2206016c51564D";
+            const eigenDelegatorAddress = "0x39053D51B77DC0d36036Fc1fCc8Cb819df8Ef37A";
             // reStaking
             const affineReStaking = chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
+            const ultraLRT = chainId == 1 ? UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
+            const withdrawalEscrowV2 = chainId == 1 ? WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider) : undefined;
             return {
                 ethEarn,
                 ethWethEarn,
@@ -116,6 +135,10 @@ export function getAllContracts(provider) {
                     ? AffinePassBridge__factory.connect(affinePassBridgeEthereumData.address, provider)
                     : undefined,
                 affineReStaking,
+                ultraLRT,
+                withdrawalEscrowV2,
+                eigenStETH: new ethers.Contract(eigenStETHStrategy, eigenStEthAbi, provider),
+                eigenDelegator: new ethers.Contract(eigenDelegatorAddress, eigenDelegatorAbi, provider),
             };
         }
         else if (chainId == 8453 || chainId == 84531) {

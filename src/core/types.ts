@@ -12,6 +12,8 @@ import {
   AffinePassBridge,
   VaultV2,
   AffineReStaking,
+  UltraLRT,
+  WithdrawalEscrowV2,
 } from "../typechain";
 import { ethers } from "ethers";
 
@@ -50,6 +52,7 @@ export const alpineProducts = [
   "polygonLevMaticX",
   "polygon6xLevMaticX",
   "affineReStaking",
+  "ultraLRT",
 ] as const;
 export type AlpineProduct = typeof alpineProducts[number];
 
@@ -98,6 +101,10 @@ export interface EthContracts extends BothContracts {
   ethLeverage?: Vault;
   affinePassBridgeEthereum?: AffinePassBridge;
   affineReStaking?: AffineReStaking;
+  ultraLRT?: UltraLRT;
+  withdrawalEscrowV2?: WithdrawalEscrowV2;
+  eigenStETH?: ethers.Contract;
+  eigenDelegator?: ethers.Contract;
 }
 
 export interface BaseContracts extends BothContracts {

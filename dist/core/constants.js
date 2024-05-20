@@ -51,6 +51,7 @@ export const WITHDRAW_SLIPPAGE_BY_PRODUCT = {
     polygonLevMaticX: {},
     polygon6xLevMaticX: {},
     affineReStaking: {},
+    ultraLRT: {},
 };
 export const NETWORK_PARAMS = {
     1: {

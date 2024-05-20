@@ -1,4 +1,4 @@
-import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue, Vault, StrategyVault, WithdrawalEscrow, AffineGenesis, AffinePass, AffinePassBridge, VaultV2, AffineReStaking } from "../typechain";
+import { Forwarder, L2Vault, Router, TwoAssetBasket, EmergencyWithdrawalQueue, Vault, StrategyVault, WithdrawalEscrow, AffineGenesis, AffinePass, AffinePassBridge, VaultV2, AffineReStaking, UltraLRT, WithdrawalEscrowV2 } from "../typechain";
 import { ethers } from "ethers";
 export interface GasInfo {
     txnCost: string;
@@ -18,7 +18,7 @@ export interface SmallTxReceipt extends GasInfo {
     blockNumber: string;
     txnHash: string;
 }
-export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen", "polygonDegen", "ethLeverage", "polygonLeverage", "baseUsdEarn", "baseLeverage", "polygonLevMaticX", "polygon6xLevMaticX", "affineReStaking"];
+export declare const alpineProducts: readonly ["alpSave", "alpLarge", "ethEarn", "ethWethEarn", "ssvEthUSDEarn", "degen", "polygonDegen", "ethLeverage", "polygonLeverage", "baseUsdEarn", "baseLeverage", "polygonLevMaticX", "polygon6xLevMaticX", "affineReStaking", "ultraLRT"];
 export type AlpineProduct = typeof alpineProducts[number];
 export declare const polygonProducts: readonly ["alpSave", "alpLarge", "polygonDegen"];
 export type PolygonProduct = typeof polygonProducts[number];
@@ -59,6 +59,10 @@ export interface EthContracts extends BothContracts {
     ethLeverage?: Vault;
     affinePassBridgeEthereum?: AffinePassBridge;
     affineReStaking?: AffineReStaking;
+    ultraLRT?: UltraLRT;
+    withdrawalEscrowV2?: WithdrawalEscrowV2;
+    eigenStETH?: ethers.Contract;
+    eigenDelegator?: ethers.Contract;
 }
 export interface BaseContracts extends BothContracts {
     baseUsdEarn?: VaultV2;

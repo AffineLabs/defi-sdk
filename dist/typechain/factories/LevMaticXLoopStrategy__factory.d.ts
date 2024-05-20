@@ -24,6 +24,10 @@ export declare class LevMaticXLoopStrategy__factory {
         readonly type: "error";
     }, {
         readonly inputs: readonly [];
+        readonly name: "onlyAAVEVault";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "onlyBalancerVault";
         readonly type: "error";
     }, {
@@ -98,6 +102,16 @@ export declare class LevMaticXLoopStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
+        readonly name: "ADDRESSES_PROVIDER";
+        readonly outputs: readonly [{
+            readonly internalType: "contract IPoolAddressesProvider";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "BALANCER";
         readonly outputs: readonly [{
             readonly internalType: "contract IBalancerVault";
@@ -145,6 +159,16 @@ export declare class LevMaticXLoopStrategy__factory {
             readonly type: "uint256";
         }];
         readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "POOL";
+        readonly outputs: readonly [{
+            readonly internalType: "contract IPool";
+            readonly name: "";
+            readonly type: "address";
+        }];
+        readonly stateMutability: "pure";
         readonly type: "function";
     }, {
         readonly inputs: readonly [];
@@ -261,6 +285,36 @@ export declare class LevMaticXLoopStrategy__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [{
+            readonly internalType: "address[]";
+            readonly name: "";
+            readonly type: "address[]";
+        }, {
+            readonly internalType: "uint256[]";
+            readonly name: "amounts";
+            readonly type: "uint256[]";
+        }, {
+            readonly internalType: "uint256[]";
+            readonly name: "premiums";
+            readonly type: "uint256[]";
+        }, {
+            readonly internalType: "address";
+            readonly name: "initiator";
+            readonly type: "address";
+        }, {
+            readonly internalType: "bytes";
+            readonly name: "params";
+            readonly type: "bytes";
+        }];
+        readonly name: "executeOperation";
+        readonly outputs: readonly [{
+            readonly internalType: "bool";
+            readonly name: "";
+            readonly type: "bool";
+        }];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [];
         readonly name: "getLTVRatio";
         readonly outputs: readonly [{
@@ -337,6 +391,22 @@ export declare class LevMaticXLoopStrategy__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
+        readonly inputs: readonly [];
+        readonly name: "levBps";
+        readonly outputs: readonly [{
+            readonly internalType: "uint256";
+            readonly name: "";
+            readonly type: "uint256";
+        }];
+        readonly stateMutability: "view";
+        readonly type: "function";
+    }, {
+        readonly inputs: readonly [];
+        readonly name: "rebalance";
+        readonly outputs: readonly [];
+        readonly stateMutability: "nonpayable";
+        readonly type: "function";
+    }, {
         readonly inputs: readonly [{
             readonly internalType: "contract ERC20[]";
             readonly name: "";
@@ -373,16 +443,6 @@ export declare class LevMaticXLoopStrategy__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [];
-        readonly name: "resDebt";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
         readonly inputs: readonly [{
             readonly internalType: "bytes32";
             readonly name: "role";
@@ -403,16 +463,6 @@ export declare class LevMaticXLoopStrategy__factory {
             readonly type: "uint256";
         }];
         readonly name: "setBorrowBps";
-        readonly outputs: readonly [];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "_iCycle";
-            readonly type: "uint256";
-        }];
-        readonly name: "setInvestmentCycle";
         readonly outputs: readonly [];
         readonly stateMutability: "nonpayable";
         readonly type: "function";
@@ -472,7 +522,7 @@ export declare class LevMaticXLoopStrategy__factory {
         readonly type: "function";
     }, {
         readonly inputs: readonly [{
-            readonly internalType: "contract LevMaticXLoopStrategy";
+            readonly internalType: "contract StaderLevMaticStrategy";
             readonly name: "newStrategy";
             readonly type: "address";
         }];
