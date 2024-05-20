@@ -76,7 +76,7 @@ export declare class UltraLRTStorage__factory {
         readonly inputs: readonly [];
         readonly name: "beacon";
         readonly outputs: readonly [{
-            readonly internalType: "contract DelegatorBeacon";
+            readonly internalType: "address";
             readonly name: "";
             readonly type: "address";
         }];

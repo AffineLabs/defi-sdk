@@ -31,8 +31,6 @@ export interface UltraLRTInterface extends utils.Interface {
         "delegatorQueue(uint256)": FunctionFragment;
         "delegatorWithdrawRequest(address,uint256)": FunctionFragment;
         "deposit(uint256,address)": FunctionFragment;
-        "deposit(uint256,address,uint256)": FunctionFragment;
-        "depositETH(address,uint256)": FunctionFragment;
         "depositPaused()": FunctionFragment;
         "dropDelegator(address)": FunctionFragment;
         "endEpoch()": FunctionFragment;
@@ -54,7 +52,6 @@ export interface UltraLRTInterface extends utils.Interface {
         "maxMint(address)": FunctionFragment;
         "maxRedeem(address)": FunctionFragment;
         "maxWithdraw(address)": FunctionFragment;
-        "mint(uint256,address,uint256)": FunctionFragment;
         "mint(uint256,address)": FunctionFragment;
         "name()": FunctionFragment;
         "pause()": FunctionFragment;
@@ -86,7 +83,7 @@ export interface UltraLRTInterface extends utils.Interface {
         "withdraw(uint256,address,address)": FunctionFragment;
         "withdrawalFee()": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "MAX_BPS" | "MAX_DELEGATOR" | "STETH" | "ST_ETH_TRANSFER_BUFFER" | "allowance" | "approve" | "asset" | "balanceOf" | "beacon" | "canWithdraw" | "collectDelegatorDebt" | "convertToAssets" | "convertToShares" | "createDelegator" | "decimals" | "decreaseAllowance" | "delegateToDelegator" | "delegatorAssets" | "delegatorCount" | "delegatorMap" | "delegatorQueue" | "delegatorWithdrawRequest" | "deposit(uint256,address)" | "deposit(uint256,address,uint256)" | "depositETH" | "depositPaused" | "dropDelegator" | "endEpoch" | "escrow" | "getRoleAdmin" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "liquidationRequest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint(uint256,address,uint256)" | "mint(uint256,address)" | "name" | "pause" | "pauseDeposit" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "redeem" | "renounceRole" | "resolveDebt" | "revokeRole" | "setManagementFee" | "setWithdrawalEscrow" | "setWithdrawalFee" | "supportsInterface" | "symbol" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "unpauseDeposit" | "upgradeTo" | "upgradeToAndCall" | "vaultAssets" | "withdraw" | "withdrawalFee"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "DEFAULT_ADMIN_ROLE" | "GUARDIAN_ROLE" | "HARVESTER" | "LOCK_INTERVAL" | "MAX_BPS" | "MAX_DELEGATOR" | "STETH" | "ST_ETH_TRANSFER_BUFFER" | "allowance" | "approve" | "asset" | "balanceOf" | "beacon" | "canWithdraw" | "collectDelegatorDebt" | "convertToAssets" | "convertToShares" | "createDelegator" | "decimals" | "decreaseAllowance" | "delegateToDelegator" | "delegatorAssets" | "delegatorCount" | "delegatorMap" | "delegatorQueue" | "delegatorWithdrawRequest" | "deposit" | "depositPaused" | "dropDelegator" | "endEpoch" | "escrow" | "getRoleAdmin" | "governance" | "grantRole" | "harvest" | "hasRole" | "increaseAllowance" | "initialSharesPerAsset" | "initialize" | "lastHarvest" | "liquidationRequest" | "lockedProfit" | "managementFee" | "maxDeposit" | "maxLockedProfit" | "maxMint" | "maxRedeem" | "maxWithdraw" | "mint" | "name" | "pause" | "pauseDeposit" | "paused" | "previewDeposit" | "previewMint" | "previewRedeem" | "previewWithdraw" | "proxiableUUID" | "redeem" | "renounceRole" | "resolveDebt" | "revokeRole" | "setManagementFee" | "setWithdrawalEscrow" | "setWithdrawalFee" | "supportsInterface" | "symbol" | "totalAssets" | "totalSupply" | "transfer" | "transferFrom" | "unpause" | "unpauseDeposit" | "upgradeTo" | "upgradeToAndCall" | "vaultAssets" | "withdraw" | "withdrawalFee"): FunctionFragment;
     encodeFunctionData(functionFragment: "DEFAULT_ADMIN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "GUARDIAN_ROLE", values?: undefined): string;
     encodeFunctionData(functionFragment: "HARVESTER", values?: undefined): string;
@@ -113,13 +110,7 @@ export interface UltraLRTInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "delegatorMap", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "delegatorQueue", values: [PromiseOrValue<BigNumberish>]): string;
     encodeFunctionData(functionFragment: "delegatorWithdrawRequest", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
-    encodeFunctionData(functionFragment: "deposit(uint256,address)", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "deposit(uint256,address,uint256)", values: [
-        PromiseOrValue<BigNumberish>,
-        PromiseOrValue<string>,
-        PromiseOrValue<BigNumberish>
-    ]): string;
-    encodeFunctionData(functionFragment: "depositETH", values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "deposit", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "depositPaused", values?: undefined): string;
     encodeFunctionData(functionFragment: "dropDelegator", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "endEpoch", values?: undefined): string;
@@ -147,12 +138,7 @@ export interface UltraLRTInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "maxMint", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "maxRedeem", values: [PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "maxWithdraw", values: [PromiseOrValue<string>]): string;
-    encodeFunctionData(functionFragment: "mint(uint256,address,uint256)", values: [
-        PromiseOrValue<BigNumberish>,
-        PromiseOrValue<string>,
-        PromiseOrValue<BigNumberish>
-    ]): string;
-    encodeFunctionData(functionFragment: "mint(uint256,address)", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
+    encodeFunctionData(functionFragment: "mint", values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]): string;
     encodeFunctionData(functionFragment: "name", values?: undefined): string;
     encodeFunctionData(functionFragment: "pause", values?: undefined): string;
     encodeFunctionData(functionFragment: "pauseDeposit", values?: undefined): string;
@@ -220,9 +206,7 @@ export interface UltraLRTInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "delegatorMap", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "delegatorQueue", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "delegatorWithdrawRequest", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "deposit(uint256,address)", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "deposit(uint256,address,uint256)", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "depositETH", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "depositPaused", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "dropDelegator", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "endEpoch", data: BytesLike): Result;
@@ -244,8 +228,7 @@ export interface UltraLRTInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "maxMint", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "maxRedeem", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "maxWithdraw", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "mint(uint256,address,uint256)", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "mint(uint256,address)", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "pauseDeposit", data: BytesLike): Result;
@@ -281,9 +264,7 @@ export interface UltraLRTInterface extends utils.Interface {
         "BeaconUpgraded(address)": EventFragment;
         "Deposit(address,address,uint256,uint256)": EventFragment;
         "Initialized(uint8)": EventFragment;
-        "ManagementFeeSet(uint256,uint256)": EventFragment;
         "Paused(address)": EventFragment;
-        "Referral(address,uint256)": EventFragment;
         "RoleAdminChanged(bytes32,bytes32,bytes32)": EventFragment;
         "RoleGranted(bytes32,address,address)": EventFragment;
         "RoleRevoked(bytes32,address,address)": EventFragment;
@@ -291,16 +272,13 @@ export interface UltraLRTInterface extends utils.Interface {
         "Unpaused(address)": EventFragment;
         "Upgraded(address)": EventFragment;
         "Withdraw(address,address,address,uint256,uint256)": EventFragment;
-        "WithdrawalFeeSet(uint256,uint256)": EventFragment;
     };
     getEvent(nameOrSignatureOrTopic: "AdminChanged"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "BeaconUpgraded"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Deposit"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "ManagementFeeSet"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Paused"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "Referral"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "RoleAdminChanged"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "RoleGranted"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "RoleRevoked"): EventFragment;
@@ -308,7 +286,6 @@ export interface UltraLRTInterface extends utils.Interface {
     getEvent(nameOrSignatureOrTopic: "Unpaused"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
     getEvent(nameOrSignatureOrTopic: "Withdraw"): EventFragment;
-    getEvent(nameOrSignatureOrTopic: "WithdrawalFeeSet"): EventFragment;
 }
 export interface AdminChangedEventObject {
     previousAdmin: string;
@@ -355,29 +332,11 @@ export interface InitializedEventObject {
 }
 export type InitializedEvent = TypedEvent<[number], InitializedEventObject>;
 export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
-export interface ManagementFeeSetEventObject {
-    oldFee: BigNumber;
-    newFee: BigNumber;
-}
-export type ManagementFeeSetEvent = TypedEvent<[
-    BigNumber,
-    BigNumber
-], ManagementFeeSetEventObject>;
-export type ManagementFeeSetEventFilter = TypedEventFilter<ManagementFeeSetEvent>;
 export interface PausedEventObject {
     account: string;
 }
 export type PausedEvent = TypedEvent<[string], PausedEventObject>;
 export type PausedEventFilter = TypedEventFilter<PausedEvent>;
-export interface ReferralEventObject {
-    depositor: string;
-    referralId: BigNumber;
-}
-export type ReferralEvent = TypedEvent<[
-    string,
-    BigNumber
-], ReferralEventObject>;
-export type ReferralEventFilter = TypedEventFilter<ReferralEvent>;
 export interface RoleAdminChangedEventObject {
     role: string;
     previousAdminRole: string;
@@ -447,15 +406,6 @@ export type WithdrawEvent = TypedEvent<[
     BigNumber
 ], WithdrawEventObject>;
 export type WithdrawEventFilter = TypedEventFilter<WithdrawEvent>;
-export interface WithdrawalFeeSetEventObject {
-    oldFee: BigNumber;
-    newFee: BigNumber;
-}
-export type WithdrawalFeeSetEvent = TypedEvent<[
-    BigNumber,
-    BigNumber
-], WithdrawalFeeSetEventObject>;
-export type WithdrawalFeeSetEventFilter = TypedEventFilter<WithdrawalFeeSetEvent>;
 export interface UltraLRT extends BaseContract {
     connect(signerOrProvider: Signer | Provider | string): this;
     attach(addressOrName: string): this;
@@ -519,13 +469,7 @@ export interface UltraLRT extends BaseContract {
         delegatorWithdrawRequest(delegator: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
-        "deposit(uint256,address)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
-        "deposit(uint256,address,uint256)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
-        depositETH(receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+        deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         depositPaused(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -549,7 +493,7 @@ export interface UltraLRT extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         initialSharesPerAsset(overrides?: CallOverrides): Promise<[BigNumber]>;
-        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _delegatorImpl: PromiseOrValue<string>, _name: PromiseOrValue<string>, _symbol: PromiseOrValue<string>, overrides?: Overrides & {
+        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _delegatorBeacon: PromiseOrValue<string>, _name: PromiseOrValue<string>, _symbol: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         lastHarvest(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -563,10 +507,7 @@ export interface UltraLRT extends BaseContract {
         maxMint(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<[BigNumber]>;
-        "mint(uint256,address,uint256)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<ContractTransaction>;
-        "mint(uint256,address)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
+        mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<ContractTransaction>;
         name(overrides?: CallOverrides): Promise<[string]>;
@@ -672,13 +613,7 @@ export interface UltraLRT extends BaseContract {
     delegatorWithdrawRequest(delegator: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
-    "deposit(uint256,address)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
-    "deposit(uint256,address,uint256)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
-    depositETH(receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+    deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     depositPaused(overrides?: CallOverrides): Promise<BigNumber>;
@@ -702,7 +637,7 @@ export interface UltraLRT extends BaseContract {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     initialSharesPerAsset(overrides?: CallOverrides): Promise<BigNumber>;
-    initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _delegatorImpl: PromiseOrValue<string>, _name: PromiseOrValue<string>, _symbol: PromiseOrValue<string>, overrides?: Overrides & {
+    initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _delegatorBeacon: PromiseOrValue<string>, _name: PromiseOrValue<string>, _symbol: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
@@ -716,10 +651,7 @@ export interface UltraLRT extends BaseContract {
     maxMint(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
     maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-    "mint(uint256,address,uint256)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-        from?: PromiseOrValue<string>;
-    }): Promise<ContractTransaction>;
-    "mint(uint256,address)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
+    mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
         from?: PromiseOrValue<string>;
     }): Promise<ContractTransaction>;
     name(overrides?: CallOverrides): Promise<string>;
@@ -816,9 +748,7 @@ export interface UltraLRT extends BaseContract {
         }>;
         delegatorQueue(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
         delegatorWithdrawRequest(delegator: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
-        "deposit(uint256,address)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-        "deposit(uint256,address,uint256)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
-        depositETH(receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         depositPaused(overrides?: CallOverrides): Promise<BigNumber>;
         dropDelegator(_delegator: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         endEpoch(overrides?: CallOverrides): Promise<void>;
@@ -830,7 +760,7 @@ export interface UltraLRT extends BaseContract {
         hasRole(role: PromiseOrValue<BytesLike>, account: PromiseOrValue<string>, overrides?: CallOverrides): Promise<boolean>;
         increaseAllowance(spender: PromiseOrValue<string>, addedValue: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<boolean>;
         initialSharesPerAsset(overrides?: CallOverrides): Promise<BigNumber>;
-        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _delegatorImpl: PromiseOrValue<string>, _name: PromiseOrValue<string>, _symbol: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
+        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _delegatorBeacon: PromiseOrValue<string>, _name: PromiseOrValue<string>, _symbol: PromiseOrValue<string>, overrides?: CallOverrides): Promise<void>;
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
         liquidationRequest(assets: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<void>;
         lockedProfit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -840,8 +770,7 @@ export interface UltraLRT extends BaseContract {
         maxMint(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-        "mint(uint256,address,uint256)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
-        "mint(uint256,address)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
+        mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         name(overrides?: CallOverrides): Promise<string>;
         pause(overrides?: CallOverrides): Promise<void>;
         pauseDeposit(overrides?: CallOverrides): Promise<void>;
@@ -883,12 +812,8 @@ export interface UltraLRT extends BaseContract {
         Deposit(caller?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): DepositEventFilter;
         "Initialized(uint8)"(version?: null): InitializedEventFilter;
         Initialized(version?: null): InitializedEventFilter;
-        "ManagementFeeSet(uint256,uint256)"(oldFee?: null, newFee?: null): ManagementFeeSetEventFilter;
-        ManagementFeeSet(oldFee?: null, newFee?: null): ManagementFeeSetEventFilter;
         "Paused(address)"(account?: null): PausedEventFilter;
         Paused(account?: null): PausedEventFilter;
-        "Referral(address,uint256)"(depositor?: PromiseOrValue<string> | null, referralId?: null): ReferralEventFilter;
-        Referral(depositor?: PromiseOrValue<string> | null, referralId?: null): ReferralEventFilter;
         "RoleAdminChanged(bytes32,bytes32,bytes32)"(role?: PromiseOrValue<BytesLike> | null, previousAdminRole?: PromiseOrValue<BytesLike> | null, newAdminRole?: PromiseOrValue<BytesLike> | null): RoleAdminChangedEventFilter;
         RoleAdminChanged(role?: PromiseOrValue<BytesLike> | null, previousAdminRole?: PromiseOrValue<BytesLike> | null, newAdminRole?: PromiseOrValue<BytesLike> | null): RoleAdminChangedEventFilter;
         "RoleGranted(bytes32,address,address)"(role?: PromiseOrValue<BytesLike> | null, account?: PromiseOrValue<string> | null, sender?: PromiseOrValue<string> | null): RoleGrantedEventFilter;
@@ -903,8 +828,6 @@ export interface UltraLRT extends BaseContract {
         Upgraded(implementation?: PromiseOrValue<string> | null): UpgradedEventFilter;
         "Withdraw(address,address,address,uint256,uint256)"(caller?: PromiseOrValue<string> | null, receiver?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): WithdrawEventFilter;
         Withdraw(caller?: PromiseOrValue<string> | null, receiver?: PromiseOrValue<string> | null, owner?: PromiseOrValue<string> | null, assets?: null, shares?: null): WithdrawEventFilter;
-        "WithdrawalFeeSet(uint256,uint256)"(oldFee?: null, newFee?: null): WithdrawalFeeSetEventFilter;
-        WithdrawalFeeSet(oldFee?: null, newFee?: null): WithdrawalFeeSetEventFilter;
     };
     estimateGas: {
         DEFAULT_ADMIN_ROLE(overrides?: CallOverrides): Promise<BigNumber>;
@@ -945,13 +868,7 @@ export interface UltraLRT extends BaseContract {
         delegatorWithdrawRequest(delegator: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
-        "deposit(uint256,address)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
-        "deposit(uint256,address,uint256)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
-        depositETH(receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+        deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         depositPaused(overrides?: CallOverrides): Promise<BigNumber>;
@@ -975,7 +892,7 @@ export interface UltraLRT extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         initialSharesPerAsset(overrides?: CallOverrides): Promise<BigNumber>;
-        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _delegatorImpl: PromiseOrValue<string>, _name: PromiseOrValue<string>, _symbol: PromiseOrValue<string>, overrides?: Overrides & {
+        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _delegatorBeacon: PromiseOrValue<string>, _name: PromiseOrValue<string>, _symbol: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         lastHarvest(overrides?: CallOverrides): Promise<BigNumber>;
@@ -989,10 +906,7 @@ export interface UltraLRT extends BaseContract {
         maxMint(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<BigNumber>;
-        "mint(uint256,address,uint256)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<BigNumber>;
-        "mint(uint256,address)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
+        mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<BigNumber>;
         name(overrides?: CallOverrides): Promise<BigNumber>;
@@ -1096,13 +1010,7 @@ export interface UltraLRT extends BaseContract {
         delegatorWithdrawRequest(delegator: PromiseOrValue<string>, assets: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
-        "deposit(uint256,address)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        "deposit(uint256,address,uint256)"(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        depositETH(receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: PayableOverrides & {
+        deposit(assets: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         depositPaused(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1126,7 +1034,7 @@ export interface UltraLRT extends BaseContract {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         initialSharesPerAsset(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _delegatorImpl: PromiseOrValue<string>, _name: PromiseOrValue<string>, _symbol: PromiseOrValue<string>, overrides?: Overrides & {
+        initialize(_governance: PromiseOrValue<string>, _asset: PromiseOrValue<string>, _delegatorBeacon: PromiseOrValue<string>, _name: PromiseOrValue<string>, _symbol: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         lastHarvest(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -1140,10 +1048,7 @@ export interface UltraLRT extends BaseContract {
         maxMint(arg0: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         maxRedeem(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         maxWithdraw(owner: PromiseOrValue<string>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        "mint(uint256,address,uint256)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, _referrerId: PromiseOrValue<BigNumberish>, overrides?: Overrides & {
-            from?: PromiseOrValue<string>;
-        }): Promise<PopulatedTransaction>;
-        "mint(uint256,address)"(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
+        mint(shares: PromiseOrValue<BigNumberish>, receiver: PromiseOrValue<string>, overrides?: Overrides & {
             from?: PromiseOrValue<string>;
         }): Promise<PopulatedTransaction>;
         name(overrides?: CallOverrides): Promise<PopulatedTransaction>;

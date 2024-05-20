@@ -20,6 +20,11 @@ const _abi = [
     },
     {
         inputs: [],
+        name: "DepositPaused",
+        type: "error",
+    },
+    {
+        inputs: [],
         name: "ExceedsDelegatorWithdrawableAssets",
         type: "error",
     },

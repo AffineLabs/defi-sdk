@@ -5,4 +5,4 @@ import { init } from "./cache";
 import * as AlpineRestaking from "./AffineReStaking";
 import * as UltraLRT from "./UltraLRT";
 
-export { AlpineDeFiSDK, AlpineRestaking, AlpineContracts, types, init, UltraLRT};
+export { AlpineDeFiSDK, AlpineRestaking, AlpineContracts, types, init, UltraLRT };

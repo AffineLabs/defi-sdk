@@ -13,7 +13,7 @@ import {
   VaultV2,
   AffineReStaking,
   UltraLRT,
-  WithdrawalEscrowV2
+  WithdrawalEscrowV2,
 } from "../typechain";
 import { ethers } from "ethers";
 

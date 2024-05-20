@@ -18,12 +18,7 @@ import * as productActions from "../core/product";
 import { setSimulationMode } from "../core/cache";
 import * as lockedWithdrawal from "../core/singleStrategy";
 import { AllowedChainId, AllowedWallet, IConnectAccount, MetamaskError } from "../types/account";
-import {
-  DEFAULT_WALLET,
-  getChainIdFromRaw,
-  NETWORK_PARAMS,
-  WITHDRAW_SLIPPAGE_BY_PRODUCT,
-} from "../core/constants";
+import { DEFAULT_WALLET, getChainIdFromRaw, NETWORK_PARAMS, WITHDRAW_SLIPPAGE_BY_PRODUCT } from "../core/constants";
 import {
   getEmergencyWithdrawalQueueTransfers,
   getUserEmergencyWithdrawalQueueRequests,
@@ -47,9 +42,9 @@ class Account {
    * connect the user account to wallet provider and initialize
    * the smart contracts.
    * @param {IConnectAccount} options - the options to connect the account
-   * 
+   *
    * @returns {Promise<void>} a promise that resolves when the account is connected
-   * 
+   *
    * @example
    * ```typescript
    * const account = new Account();
@@ -66,7 +61,7 @@ class Account {
     getMessage,
     verify,
     chainId,
-    provider
+    provider,
   }: IConnectAccount): Promise<ethers.providers.Web3Provider | undefined> {
     // get wallet provider based on wallet type
     let walletProvider: ethers.providers.Web3Provider | undefined;
@@ -75,13 +70,13 @@ class Account {
 
       if (magic) this.magic = magic;
       walletProvider = provider;
-    } else if(walletType === "walletConnect" && provider){
+    } else if (walletType === "walletConnect" && provider) {
       walletProvider = new ethers.providers.Web3Provider(provider);
-    } else if(["metamask", "coinbase"].includes(walletType)) {
+    } else if (["metamask", "coinbase"].includes(walletType)) {
       walletProvider = await getWeb3Provider(walletType, chainId);
     }
 
-    if (!walletProvider){
+    if (!walletProvider) {
       throw new Error("Wallet provider is not available");
     }
 
@@ -154,7 +149,7 @@ class Account {
   }
 
   getWithdrawSlippageByProduct(product: AlpineProduct) {
-    const slippages = {...WITHDRAW_SLIPPAGE_BY_PRODUCT};
+    const slippages = { ...WITHDRAW_SLIPPAGE_BY_PRODUCT };
     return slippages[product];
   }
 
@@ -252,7 +247,7 @@ class Account {
      * `provider?.send("eth_chainId", [])` doesn't work for magic, but it works for other wallets
      * also, this.walletProvider is undefined when the user is not connected
      */
-    if (!["magic","walletConnect"].includes(walletType) && this.selectedChainId) {
+    if (!["magic", "walletConnect"].includes(walletType) && this.selectedChainId) {
       // case - user is connected to the wallet except magic and walletConnect
       const provider = await getWeb3Provider(walletType, this.selectedChainId);
 
@@ -271,12 +266,18 @@ class Account {
   /**
    * This method will switch the wallet to the given chain id
    */
-  async switchWalletToAllowedNetwork(walletType: AllowedWallet, chainId: AllowedChainId, provider?: ethers.providers.ExternalProvider): Promise<void> {
+  async switchWalletToAllowedNetwork(
+    walletType: AllowedWallet,
+    chainId: AllowedChainId,
+    provider?: ethers.providers.ExternalProvider,
+  ): Promise<void> {
     if (!window.ethereum && walletType === "metamask") {
       throw new Error("Metamask is not installed!");
     }
 
-    const _provider = provider ? new ethers.providers.Web3Provider(provider) : this.walletProvider ?? await getWeb3Provider(walletType, chainId);
+    const _provider = provider
+      ? new ethers.providers.Web3Provider(provider)
+      : this.walletProvider ?? (await getWeb3Provider(walletType, chainId));
 
     if (!_provider) {
       throw new Error("Provider is not available");

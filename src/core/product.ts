@@ -257,7 +257,7 @@ async function _convertToShares(amountUSDC: ethers.BigNumber) {
   return shares.gt(userShares) ? userShares : shares;
 }
 
-export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth" , token?: string): Promise<TokenInfo> {
+export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth", token?: string): Promise<TokenInfo> {
   const user = userAddress;
   const { router } = getContracts() as AlpineContracts;
   if (product === "usdc") {
@@ -281,7 +281,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth" , to
       equity: numWeth,
     };
   }
-  
+
   // for steth and ultraLRT just pass in contract address as `token`
   else if (token != undefined) {
     const asset = MockERC20__factory.connect(token, router.provider);

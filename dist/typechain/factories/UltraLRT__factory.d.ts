@@ -4,7 +4,7 @@ import type { UltraLRT, UltraLRTInterface } from "../UltraLRT";
 export declare class UltraLRT__factory {
     static readonly abi: readonly [{
         readonly inputs: readonly [];
-        readonly name: "DepositAmountCannotBeZero";
+        readonly name: "DepositPaused";
         readonly type: "error";
     }, {
         readonly inputs: readonly [];
@@ -142,41 +142,11 @@ export declare class UltraLRT__factory {
         readonly anonymous: false;
         readonly inputs: readonly [{
             readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "oldFee";
-            readonly type: "uint256";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "newFee";
-            readonly type: "uint256";
-        }];
-        readonly name: "ManagementFeeSet";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: false;
             readonly internalType: "address";
             readonly name: "account";
             readonly type: "address";
         }];
         readonly name: "Paused";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: true;
-            readonly internalType: "address";
-            readonly name: "depositor";
-            readonly type: "address";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "referralId";
-            readonly type: "uint256";
-        }];
-        readonly name: "Referral";
         readonly type: "event";
     }, {
         readonly anonymous: false;
@@ -307,21 +277,6 @@ export declare class UltraLRT__factory {
             readonly type: "uint256";
         }];
         readonly name: "Withdraw";
-        readonly type: "event";
-    }, {
-        readonly anonymous: false;
-        readonly inputs: readonly [{
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "oldFee";
-            readonly type: "uint256";
-        }, {
-            readonly indexed: false;
-            readonly internalType: "uint256";
-            readonly name: "newFee";
-            readonly type: "uint256";
-        }];
-        readonly name: "WithdrawalFeeSet";
         readonly type: "event";
     }, {
         readonly inputs: readonly [];
@@ -467,7 +422,7 @@ export declare class UltraLRT__factory {
         readonly inputs: readonly [];
         readonly name: "beacon";
         readonly outputs: readonly [{
-            readonly internalType: "contract DelegatorBeacon";
+            readonly internalType: "address";
             readonly name: "";
             readonly type: "address";
         }];
@@ -658,46 +613,6 @@ export declare class UltraLRT__factory {
         readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
-        readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "assets";
-            readonly type: "uint256";
-        }, {
-            readonly internalType: "address";
-            readonly name: "receiver";
-            readonly type: "address";
-        }, {
-            readonly internalType: "uint256";
-            readonly name: "_referrerId";
-            readonly type: "uint256";
-        }];
-        readonly name: "deposit";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "shares";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "nonpayable";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "address";
-            readonly name: "receiver";
-            readonly type: "address";
-        }, {
-            readonly internalType: "uint256";
-            readonly name: "_referrerId";
-            readonly type: "uint256";
-        }];
-        readonly name: "depositETH";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "payable";
-        readonly type: "function";
-    }, {
         readonly inputs: readonly [];
         readonly name: "depositPaused";
         readonly outputs: readonly [{
@@ -834,7 +749,7 @@ export declare class UltraLRT__factory {
             readonly type: "address";
         }, {
             readonly internalType: "address";
-            readonly name: "_delegatorImpl";
+            readonly name: "_delegatorBeacon";
             readonly type: "address";
         }, {
             readonly internalType: "string";
@@ -954,28 +869,6 @@ export declare class UltraLRT__factory {
             readonly type: "uint256";
         }];
         readonly stateMutability: "view";
-        readonly type: "function";
-    }, {
-        readonly inputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "shares";
-            readonly type: "uint256";
-        }, {
-            readonly internalType: "address";
-            readonly name: "receiver";
-            readonly type: "address";
-        }, {
-            readonly internalType: "uint256";
-            readonly name: "_referrerId";
-            readonly type: "uint256";
-        }];
-        readonly name: "mint";
-        readonly outputs: readonly [{
-            readonly internalType: "uint256";
-            readonly name: "assets";
-            readonly type: "uint256";
-        }];
-        readonly stateMutability: "nonpayable";
         readonly type: "function";
     }, {
         readonly inputs: readonly [{

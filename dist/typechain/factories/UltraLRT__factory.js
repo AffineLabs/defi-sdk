@@ -5,7 +5,7 @@ import { Contract, utils } from "ethers";
 const _abi = [
     {
         inputs: [],
-        name: "DepositAmountCannotBeZero",
+        name: "DepositPaused",
         type: "error",
     },
     {
@@ -179,50 +179,12 @@ const _abi = [
         inputs: [
             {
                 indexed: false,
-                internalType: "uint256",
-                name: "oldFee",
-                type: "uint256",
-            },
-            {
-                indexed: false,
-                internalType: "uint256",
-                name: "newFee",
-                type: "uint256",
-            },
-        ],
-        name: "ManagementFeeSet",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: false,
                 internalType: "address",
                 name: "account",
                 type: "address",
             },
         ],
         name: "Paused",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: true,
-                internalType: "address",
-                name: "depositor",
-                type: "address",
-            },
-            {
-                indexed: false,
-                internalType: "uint256",
-                name: "referralId",
-                type: "uint256",
-            },
-        ],
-        name: "Referral",
         type: "event",
     },
     {
@@ -386,25 +348,6 @@ const _abi = [
             },
         ],
         name: "Withdraw",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: false,
-                internalType: "uint256",
-                name: "oldFee",
-                type: "uint256",
-            },
-            {
-                indexed: false,
-                internalType: "uint256",
-                name: "newFee",
-                type: "uint256",
-            },
-        ],
-        name: "WithdrawalFeeSet",
         type: "event",
     },
     {
@@ -596,7 +539,7 @@ const _abi = [
         name: "beacon",
         outputs: [
             {
-                internalType: "contract DelegatorBeacon",
+                internalType: "address",
                 name: "",
                 type: "address",
             },
@@ -848,59 +791,6 @@ const _abi = [
         type: "function",
     },
     {
-        inputs: [
-            {
-                internalType: "uint256",
-                name: "assets",
-                type: "uint256",
-            },
-            {
-                internalType: "address",
-                name: "receiver",
-                type: "address",
-            },
-            {
-                internalType: "uint256",
-                name: "_referrerId",
-                type: "uint256",
-            },
-        ],
-        name: "deposit",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "shares",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "address",
-                name: "receiver",
-                type: "address",
-            },
-            {
-                internalType: "uint256",
-                name: "_referrerId",
-                type: "uint256",
-            },
-        ],
-        name: "depositETH",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "payable",
-        type: "function",
-    },
-    {
         inputs: [],
         name: "depositPaused",
         outputs: [
@@ -1078,7 +968,7 @@ const _abi = [
             },
             {
                 internalType: "address",
-                name: "_delegatorImpl",
+                name: "_delegatorBeacon",
                 type: "address",
             },
             {
@@ -1236,35 +1126,6 @@ const _abi = [
             },
         ],
         stateMutability: "view",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "uint256",
-                name: "shares",
-                type: "uint256",
-            },
-            {
-                internalType: "address",
-                name: "receiver",
-                type: "address",
-            },
-            {
-                internalType: "uint256",
-                name: "_referrerId",
-                type: "uint256",
-            },
-        ],
-        name: "mint",
-        outputs: [
-            {
-                internalType: "uint256",
-                name: "assets",
-                type: "uint256",
-            },
-        ],
-        stateMutability: "nonpayable",
         type: "function",
     },
     {

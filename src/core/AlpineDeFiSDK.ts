@@ -149,7 +149,7 @@ export async function isApproved(product: AlpineProduct, amount?: number, token?
     polygonLevMaticX,
     polygon6xLevMaticX,
     affineReStaking,
-    ultraLRT
+    ultraLRT,
   } = getContracts() as AlpineContracts;
 
   if (["ethWethEarn", "baseLeverage", "ethLeverage", "polygonLevMaticX", "polygon6xLevMaticX"].includes(product))
@@ -179,7 +179,7 @@ export async function isApproved(product: AlpineProduct, amount?: number, token?
     ethWethEarn,
     ethLeverage,
     baseLeverage,
-    ultraLRT
+    ultraLRT,
   };
 
   if (!productToSpender[product]) {

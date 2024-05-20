@@ -47,7 +47,7 @@ interface WithdrawalInfo {
   shares: ethers.BigNumber[];
 }
 
-const eigenStETHStrategy = "0x93c4b944D05dfe6df7645A86cd2206016c51564D"
+const eigenStETHStrategy = "0x93c4b944D05dfe6df7645A86cd2206016c51564D";
 
 const stETHAddress = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
 
@@ -90,15 +90,15 @@ export async function withdrawableAssets(address: string) {
   const lastEpoch = await withdrawalEscrowV2.resolvingEpoch();
   let totalAmount = 0;
   const epochData = [];
-  for(let i = 0; i <= lastEpoch.toNumber(); i++) {
+  for (let i = 0; i <= lastEpoch.toNumber(); i++) {
     const value = parseFloat(_removeDecimals(await withdrawalEscrowV2.withdrawableAssets(address, i), 18));
 
     if (value > 0) {
-      epochData.push({epoch: i, value: value});
+      epochData.push({ epoch: i, value: value });
       totalAmount += value;
     }
   }
-  return {totalAmount, epochData};
+  return { totalAmount, epochData };
 }
 
 export async function migratableAssets(address: string) {
@@ -109,18 +109,24 @@ export async function migratableAssets(address: string) {
 
 export async function queueMigrationWithdrawal(address: string, shares: string) {
   const eigenDelegator = await getEigenDelegatorContract();
- 
+
   const queuedWithdrawalParams: QueuedWithdrawalParams[] = [
     {
       strategies: [eigenStETHStrategy],
       shares: [ethers.BigNumber.from(shares)],
-      recipient: address
-    }
+      recipient: address,
+    },
   ];
   return blockchainCall(eigenDelegator, "queueWithdrawals", [queuedWithdrawalParams]);
 }
 
-export async function completeMigrationWithdrawal(address: string, delegator: string, nonce: string, blockNumber: string, shares: string) {
+export async function completeMigrationWithdrawal(
+  address: string,
+  delegator: string,
+  nonce: string,
+  blockNumber: string,
+  shares: string,
+) {
   const eigenDelegator = await getEigenDelegatorContract();
 
   const withdrawalInfos: WithdrawalInfo[] = [
@@ -131,20 +137,19 @@ export async function completeMigrationWithdrawal(address: string, delegator: st
       nonce: ethers.BigNumber.from(nonce),
       startBlock: parseInt(blockNumber),
       strategies: [eigenStETHStrategy],
-      shares: [ethers.BigNumber.from(shares)]
-    }
+      shares: [ethers.BigNumber.from(shares)],
+    },
   ];
 
-    // Define the additional parameters
-    const assetsArray: string[][] = [
-      [stETHAddress]
-    ];
-    const uint256Array: ethers.BigNumber[] = [
-      ethers.BigNumber.from("0"),
-    ];
-    const boolArray: boolean[] = [true];
+  // Define the additional parameters
+  const assetsArray: string[][] = [[stETHAddress]];
+  const uint256Array: ethers.BigNumber[] = [ethers.BigNumber.from("0")];
+  const boolArray: boolean[] = [true];
 
-    return blockchainCall(eigenDelegator, "completeQueuedWithdrawals", [withdrawalInfos, assetsArray, uint256Array, boolArray]);
-  }
-
-
+  return blockchainCall(eigenDelegator, "completeQueuedWithdrawals", [
+    withdrawalInfos,
+    assetsArray,
+    uint256Array,
+    boolArray,
+  ]);
+}

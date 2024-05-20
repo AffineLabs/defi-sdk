@@ -50,10 +50,9 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 
 const alpAccount = new Account();
 const walletType: Exclude<AllowedWallet, "walletConnect"> = "metamask";
-const chainId = 137 as AllowedChainId;
-const _productToBuy: AlpineProduct = "polygonLevMaticX";
-const amountToBuy = 0.01;
-
+const chainId = 1 as AllowedChainId;
+const _productToBuy: AlpineProduct = "ultraLRT";
+const amountToBuy = 10;
 const main = async () => {
   // if (walletType === "walletConnect") {
   //   const modal = await initiateWeb3Modal();
@@ -67,7 +66,19 @@ const main = async () => {
   );
   // await connectAndWrite({ walletType, account: alpAccount, chainId });
 
-  await alpAccount.connect({ walletType, chainId });
+  const pro = await alpAccount.connect({ walletType, chainId });
+  console.log("connected ");
+  await alpAccount.initContracts(chainId, pro!);
+  // const resp = await alpAccount.approve(
+  //   "ultraLRT",
+  //   amountToBuy.toString(),
+  //   "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
+  // );
+  // console.log("==> approval ", resp);
+
+  // const resp2 = await alpAccount.buyProduct(_productToBuy, amountToBuy);
+
+  // console.log(" ==> buying ", resp2);
 
   // console.log("sale state", await readAcc.saleIsActive());
   // console.log("whitelist state", await readAcc.whitelistSaleIsActive());
@@ -95,8 +106,8 @@ const main = async () => {
   // console.log({ allAssets });
 
   // await buy(alpAccount, _productToBuy);
-  // const sell = await alpAccount.sellProduct("ssvEthUSDEarn", 1);
-  // console.log("sell res: ", sell);
+  const sell = await alpAccount.sellProduct(_productToBuy, 10);
+  console.log("sell res: ", sell);
 
   console.log("exiting");
 };
@@ -122,11 +133,11 @@ const handleButtonClick = () => {
       await alpAccount.setSimulationMode(false);
       await buy(alpAccount, _productToBuy, amountToBuy);
 
-      console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
+      // console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
 
-      await alpAccount.sellProduct(_productToBuy, amountToBuy);
+      // await alpAccount.sellProduct(_productToBuy, amountToBuy);
 
-      console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
+      // console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
     },
     false,
   );

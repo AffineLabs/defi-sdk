@@ -110,8 +110,8 @@ export function queueMigrationWithdrawal(address, shares) {
             {
                 strategies: [eigenStETHStrategy],
                 shares: [ethers.BigNumber.from(shares)],
-                recipient: address
-            }
+                recipient: address,
+            },
         ];
         return blockchainCall(eigenDelegator, "queueWithdrawals", [queuedWithdrawalParams]);
     });
@@ -127,17 +127,18 @@ export function completeMigrationWithdrawal(address, delegator, nonce, blockNumb
                 nonce: ethers.BigNumber.from(nonce),
                 startBlock: parseInt(blockNumber),
                 strategies: [eigenStETHStrategy],
-                shares: [ethers.BigNumber.from(shares)]
-            }
+                shares: [ethers.BigNumber.from(shares)],
+            },
         ];
         // Define the additional parameters
-        const assetsArray = [
-            [stETHAddress]
-        ];
-        const uint256Array = [
-            ethers.BigNumber.from("0"),
-        ];
+        const assetsArray = [[stETHAddress]];
+        const uint256Array = [ethers.BigNumber.from("0")];
         const boolArray = [true];
-        return blockchainCall(eigenDelegator, "completeQueuedWithdrawals", [withdrawalInfos, assetsArray, uint256Array, boolArray]);
+        return blockchainCall(eigenDelegator, "completeQueuedWithdrawals", [
+            withdrawalInfos,
+            assetsArray,
+            uint256Array,
+            boolArray,
+        ]);
     });
 }

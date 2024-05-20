@@ -92,26 +92,23 @@ export async function getAllContracts(
     "event Transfer(address indexed from, address indexed to, uint amount)",
   ];
 
-//   interface IDelegationManager {
-//     function delegateTo(address, ApproverSignatureAndExpiryParams calldata, bytes32) external;
-//     function queueWithdrawals(QueuedWithdrawalParams[] calldata) external;
-//     function completeQueuedWithdrawals(
-//         WithdrawalInfo[] calldata,
-//         address[][] calldata,
-//         uint256[] calldata,
-//         bool[] calldata
-//     ) external;
-// }
+  //   interface IDelegationManager {
+  //     function delegateTo(address, ApproverSignatureAndExpiryParams calldata, bytes32) external;
+  //     function queueWithdrawals(QueuedWithdrawalParams[] calldata) external;
+  //     function completeQueuedWithdrawals(
+  //         WithdrawalInfo[] calldata,
+  //         address[][] calldata,
+  //         uint256[] calldata,
+  //         bool[] calldata
+  //     ) external;
+  // }
 
   const eigenDelegatorAbi = [
     "function queueWithdrawals((address[],uint256[],address)[])",
     "function completeQueuedWithdrawals((address,address,address,uint256,uint32,address[],uint256[])[],address[][],uint256[],bool[])",
   ];
 
-
-  const eigenStEthAbi = [
-    "function userUnderlyingView(address) view returns (uint256)",
-  ]
+  const eigenStEthAbi = ["function userUnderlyingView(address) view returns (uint256)"];
 
   const {
     PolygonAlpSave: alpSaveData,
@@ -183,16 +180,17 @@ export async function getAllContracts(
     const degen = Vault__factory.connect(degenData.address, provider);
     const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
 
-    const eigenStETHStrategy = "0x93c4b944D05dfe6df7645A86cd2206016c51564D"
-    const eigenDelegatorAddress = "0x39053D51B77DC0d36036Fc1fCc8Cb819df8Ef37A"
+    const eigenStETHStrategy = "0x93c4b944D05dfe6df7645A86cd2206016c51564D";
+    const eigenDelegatorAddress = "0x39053D51B77DC0d36036Fc1fCc8Cb819df8Ef37A";
 
     // reStaking
     const affineReStaking =
       chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
 
-    const ultraLRT =  chainId == 1 ? UltraLRT__factory.connect(UltraLRTData.address, provider): undefined;
+    const ultraLRT = chainId == 1 ? UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
 
-    const withdrawalEscrowV2 = chainId == 1 ? WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider): undefined;
+    const withdrawalEscrowV2 =
+      chainId == 1 ? WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider) : undefined;
 
     return {
       ethEarn,

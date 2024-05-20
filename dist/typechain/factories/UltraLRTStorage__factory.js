@@ -99,7 +99,7 @@ const _abi = [
         name: "beacon",
         outputs: [
             {
-                internalType: "contract DelegatorBeacon",
+                internalType: "address",
                 name: "",
                 type: "address",
             },

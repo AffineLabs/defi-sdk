@@ -16,6 +16,10 @@ export declare class ReStakingErrors__factory {
         readonly type: "error";
     }, {
         readonly inputs: readonly [];
+        readonly name: "DepositPaused";
+        readonly type: "error";
+    }, {
+        readonly inputs: readonly [];
         readonly name: "ExceedsDelegatorWithdrawableAssets";
         readonly type: "error";
     }, {
