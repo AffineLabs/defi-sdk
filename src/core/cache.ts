@@ -47,6 +47,7 @@ export const RPC_URLS: { [index: AllowedChainId]: string } = {
       ? FORKED_NODE_URL_FOR_ETH
       : `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
   5: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+  17000: `https://ethereum-holesky-rpc.publicnode.com`,
   137:
     IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_MATIC
       ? FORKED_NODE_URL_FOR_MATIC
@@ -172,7 +173,7 @@ export async function getAllContracts(
       polygon6xLevMaticX,
       matic,
     };
-  } else if (chainId === 1 || chainId === 5) {
+  } else if (chainId === 1 || chainId === 5 || chainId === 17000) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
     const ethWethEarn = Vault__factory.connect(ethWethEarnData.address, provider);
     const ssvEthUSDEarn = StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
@@ -187,10 +188,10 @@ export async function getAllContracts(
     const affineReStaking =
       chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
 
-    const ultraLRT = chainId == 1 ? UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
+    const ultraLRT = chainId == 1 ? UltraLRT__factory.connect(UltraLRTData.address, provider) : chainId == 17000 ? UltraLRT__factory.connect("0x3A6B57ea121fbAB06f5A7Bf0626702EcB0Db7f11", provider) : undefined;
 
     const withdrawalEscrowV2 =
-      chainId == 1 ? WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider) : undefined;
+      chainId == 1 ? WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider) : chainId == 17000 ? WithdrawalEscrowV2__factory.connect("0x5315839366615a087c993f87913D94932dCa0Df1", provider) : undefined;
 
     return {
       ethEarn,
