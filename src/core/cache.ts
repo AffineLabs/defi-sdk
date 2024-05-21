@@ -72,7 +72,7 @@ export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.
  */
 export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider,
-): Promise<PolygonContracts | EthContracts | BaseContracts| HoleskyContracts> {
+): Promise<PolygonContracts | EthContracts | BaseContracts | HoleskyContracts> {
   const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${CONTRACT_VERSION}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
@@ -176,7 +176,7 @@ export async function getAllContracts(
   } else if (chainId === 1 || chainId === 5) {
     const ethEarn = Vault__factory.connect(ethEarnData.address, provider);
     const ethWethEarn = Vault__factory.connect(ethWethEarnData.address, provider);
-    const ssvEthUSDEarn =StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
+    const ssvEthUSDEarn = StrategyVault__factory.connect(ssvEthSushiUSDEarn.address, provider);
     const withdrawalEscrow = WithdrawalEscrow__factory.connect(await ssvEthUSDEarn.debtEscrow(), provider);
     const degen = Vault__factory.connect(degenData.address, provider);
     const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
@@ -188,10 +188,10 @@ export async function getAllContracts(
     const affineReStaking =
       chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
 
-    const ultraLRT = (chainId == 1 ) ? UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
+    const ultraLRT = chainId == 1 ? UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
 
     const withdrawalEscrowV2 =
-    (chainId == 1) ? WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider) : undefined;
+      chainId == 1 ? WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider) : undefined;
 
     return {
       ethEarn,
@@ -213,26 +213,22 @@ export async function getAllContracts(
       eigenStETH: new ethers.Contract(eigenStETHStrategy, eigenStEthAbi, provider),
       eigenDelegator: new ethers.Contract(eigenDelegatorAddress, eigenDelegatorAbi, provider),
     };
-  } 
-  else if (chainId == 17000) {
+  } else if (chainId == 17000) {
     const ultraLRT = UltraLRT__factory.connect("0x3A6B57ea121fbAB06f5A7Bf0626702EcB0Db7f11", provider);
 
-    const withdrawalEscrowV2 =
-       WithdrawalEscrowV2__factory.connect("0x5315839366615a087c993f87913D94932dCa0Df1", provider);
-
+    const withdrawalEscrowV2 = WithdrawalEscrowV2__factory.connect(
+      "0x5315839366615a087c993f87913D94932dCa0Df1",
+      provider,
+    );
 
     return {
-      usdc: new ethers.Contract( "0x74A4A85C611679B73F402B36c0F84A7D2CcdFDa3", erc20Abi, provider),
+      usdc: new ethers.Contract("0x74A4A85C611679B73F402B36c0F84A7D2CcdFDa3", erc20Abi, provider),
       weth: new ethers.Contract("0x6B5817E7091BC0C747741E96820b0199388245EA", erc20Abi, provider),
       router: Router__factory.connect(ethRouter.address, provider),
       ultraLRT,
       withdrawalEscrowV2,
     };
-    }
-
-  
-  
-  else if (chainId == 8453 || chainId == 84531) {
+  } else if (chainId == 8453 || chainId == 84531) {
     const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
     const baseLeverage = VaultV2__factory.connect(baseStEthLevData.address, provider);
 

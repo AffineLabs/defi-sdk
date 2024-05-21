@@ -1,6 +1,7 @@
 // import { Web3Modal } from "@web3modal/standalone";
 import { AlpineDeFiSDK } from "../core";
 import { ALLOWED_CHAIN_IDS } from "../core/constants";
+import { sellProduct } from "../core/product";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet } from "../types/account";
 import { Account } from "./Account";
@@ -96,7 +97,7 @@ const main = async () => {
 
   // const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
 
-  // console.log("tvlCap: ", tvlCap);
+  // console.log("tvl cap: ", tvlCap);
 
   // const res = await alpAccount.isStrategyLiquid();
   // console.log({ res });
@@ -106,7 +107,7 @@ const main = async () => {
   // console.log({ allAssets });
 
   // await buy(alpAccount, _productToBuy);
-  const sell = await alpAccount.sellProduct(_productToBuy, 10);
+  const sell = await alpAccount.sellProduct(_productToBuy, 1);
   console.log("sell res: ", sell);
 
   console.log("exiting");
@@ -131,13 +132,13 @@ const handleButtonClick = () => {
 
       await alpAccount.switchWalletToAllowedNetwork(walletType, chainId);
       await alpAccount.setSimulationMode(false);
-      await buy(alpAccount, _productToBuy, amountToBuy);
+      // await buy(alpAccount, _productToBuy, amountToBuy);
 
       // console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
 
-      // await alpAccount.sellProduct(_productToBuy, amountToBuy);
+      await sellProduct(_productToBuy, 1);
 
-      // console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
+      console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
     },
     false,
   );
