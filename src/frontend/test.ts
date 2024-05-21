@@ -36,12 +36,12 @@ const connectAndWrite = async ({
 
 const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) => {
   // check if user is approved max amount
-  const isApproved = await alpAccount.isApproved(product, amount);
+  const isApproved = await alpAccount.isApproved(product, amount, "0x3F1c547b21f65e10480dE3ad8E19fAAC46C95034");
   console.log("isApproved: ", isApproved);
 
   // approve max amount if not approved
   if (!isApproved) {
-    const res = await alpAccount.approve(product);
+    const res = await alpAccount.approve(product, amount.toString(), "0x3F1c547b21f65e10480dE3ad8E19fAAC46C95034");
     console.log("approve res: ", res);
   }
   console.log("approved: ", product);
@@ -50,7 +50,7 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 
 const alpAccount = new Account();
 const walletType: Exclude<AllowedWallet, "walletConnect"> = "metamask";
-const chainId = 1 as AllowedChainId;
+const chainId = 17000 as AllowedChainId;
 const _productToBuy: AlpineProduct = "ultraLRT";
 const amountToBuy = 10;
 const main = async () => {

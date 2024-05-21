@@ -49,7 +49,9 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
 
   const vault = productToVault[product];
   if (!vault) throw new Error("Invalid product");
+  console.log("init")
   const asset = MockERC20__factory.connect(await vault.asset(), vault.provider);
+  console.log("done")
   return { vault, asset, router };
 }
 export async function buyProduct(product: AlpineProduct, amount: number, slippageBps = 500) {
