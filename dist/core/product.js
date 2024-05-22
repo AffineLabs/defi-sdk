@@ -241,7 +241,7 @@ export function getTokenInfo(product, token) {
                 equity: assetAmount,
             };
         }
-        else if (token == "ultraLRT") {
+        else if (product === "ultraLRT") {
             const { vault, asset } = yield _getVaultAndAsset(product);
             const assets = yield vault.convertToAssets(yield vault.balanceOf(user));
             const vaultDecimals = yield vault.decimals();

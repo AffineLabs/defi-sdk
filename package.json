@@ -1,6 +1,6 @@
 {
   "name": "@alpine-ramp/alpine-defi-sdk",
-  "version": "1.7.25-beta",
+  "version": "1.7.26-beta",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
