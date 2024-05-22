@@ -6,7 +6,7 @@ export declare function withdrawableAssets(address: string): Promise<{
     totalAmount: number;
     epochData: {
         epoch: number;
-        value: string;
+        assets: string;
         shares: string;
         canWithdraw: boolean;
     }[];

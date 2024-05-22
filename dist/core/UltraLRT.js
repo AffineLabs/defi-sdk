@@ -97,7 +97,7 @@ export function withdrawableAssets(address) {
             const assets = yield withdrawalEscrowV2.withdrawableAssets(address, i);
             epochData.push({
                 epoch: i,
-                value: _removeDecimals(assets, assetDecimals),
+                assets: _removeDecimals(assets, assetDecimals),
                 shares: _removeDecimals(shares, vaultDecimals),
                 canWithdraw: i < resolvingEpoch && shares.gt(0),
             });

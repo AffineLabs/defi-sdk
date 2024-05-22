@@ -105,7 +105,7 @@ export async function withdrawableAssets(address: string) {
 
     epochData.push({
       epoch: i,
-      value: _removeDecimals(assets, assetDecimals),
+      assets: _removeDecimals(assets, assetDecimals),
       shares: _removeDecimals(shares, vaultDecimals),
       canWithdraw: i < resolvingEpoch && shares.gt(0),
     });
