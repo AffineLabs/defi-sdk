@@ -294,7 +294,7 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth", tok
       price: "1",
       equity: assetAmount,
     };
-  } else if (token == "ultraLRT") {
+  } else if (product === "ultraLRT") {
     const { vault, asset } = await _getVaultAndAsset(product);
     const assets = await vault.convertToAssets(await vault.balanceOf(user));
     const vaultDecimals = await vault.decimals();
