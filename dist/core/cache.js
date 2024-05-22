@@ -120,8 +120,8 @@ export function getAllContracts(provider) {
             const eigenDelegatorAddress = "0x39053D51B77DC0d36036Fc1fCc8Cb819df8Ef37A";
             // reStaking
             const affineReStaking = chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
-            const ultraLRT = (chainId == 1) ? UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
-            const withdrawalEscrowV2 = (chainId == 1) ? WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider) : undefined;
+            const ultraLRT = chainId == 1 ? UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
+            const withdrawalEscrowV2 = chainId == 1 ? WithdrawalEscrowV2__factory.connect(withdrawalEscrowV2Data.address, provider) : undefined;
             return {
                 ethEarn,
                 ethWethEarn,

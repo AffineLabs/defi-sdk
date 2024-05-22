@@ -241,6 +241,17 @@ export function getTokenInfo(product, token) {
                 equity: assetAmount,
             };
         }
+        else if (token == "ultraLRT") {
+            const { vault, asset } = yield _getVaultAndAsset(product);
+            const assets = yield vault.convertToAssets(yield vault.balanceOf(user));
+            const vaultDecimals = yield vault.decimals();
+            const price = yield vault.convertToAssets(ethers.BigNumber.from(10).pow(vaultDecimals));
+            return {
+                amount: _removeDecimals(assets, yield asset.decimals()),
+                price: _removeDecimals(price, vaultDecimals),
+                equity: "0",
+            };
+        }
         const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, ultraLRT, } = getContracts();
         const productToContract = {
             alpSave,

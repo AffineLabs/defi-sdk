@@ -53,7 +53,7 @@ const alpAccount = new Account();
 const walletType: Exclude<AllowedWallet, "walletConnect"> = "metamask";
 const chainId = 17000 as AllowedChainId;
 const _productToBuy: AlpineProduct = "ultraLRT";
-const amountToBuy = 10;
+const amountToBuy = 1;
 const main = async () => {
   // if (walletType === "walletConnect") {
   //   const modal = await initiateWeb3Modal();
@@ -107,8 +107,8 @@ const main = async () => {
   // console.log({ allAssets });
 
   // await buy(alpAccount, _productToBuy);
-  const sell = await alpAccount.sellProduct(_productToBuy, 1);
-  console.log("sell res: ", sell);
+  // const sell = await alpAccount.sellProduct(_productToBuy, 1);
+  // console.log("sell res: ", sell);
 
   console.log("exiting");
 };
@@ -132,13 +132,13 @@ const handleButtonClick = () => {
 
       await alpAccount.switchWalletToAllowedNetwork(walletType, chainId);
       await alpAccount.setSimulationMode(false);
-      // await buy(alpAccount, _productToBuy, amountToBuy);
+      await buy(alpAccount, _productToBuy, amountToBuy);
 
-      // console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
+      console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
 
-      await sellProduct(_productToBuy, 1);
+      // await sellProduct(_productToBuy, 1);
 
-      console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
+      // console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
     },
     false,
   );

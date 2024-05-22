@@ -47,7 +47,7 @@ const alpAccount = new Account();
 const walletType = "metamask";
 const chainId = 17000;
 const _productToBuy = "ultraLRT";
-const amountToBuy = 10;
+const amountToBuy = 1;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // if (walletType === "walletConnect") {
     //   const modal = await initiateWeb3Modal();
@@ -77,7 +77,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // console.log("sold: ", _productToBuy, "of amount: ", 1);
     // console.log("basket bal after sell ", await readAcc.getTokenInfo(_productToBuy));
     // const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
-    // console.log("tvlCap: ", tvlCap);
+    // console.log("tvl cap: ", tvlCap);
     // const res = await alpAccount.isStrategyLiquid();
     // console.log({ res });
     // const requests = await alpAccount.getWithdrawalRequest();
@@ -85,8 +85,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // const allAssets = await alpAccount.getTotalWithdrawableAssets();
     // console.log({ allAssets });
     // await buy(alpAccount, _productToBuy);
-    const sell = yield alpAccount.sellProduct(_productToBuy, 10);
-    console.log("sell res: ", sell);
+    // const sell = await alpAccount.sellProduct(_productToBuy, 1);
+    // console.log("sell res: ", sell);
     console.log("exiting");
 });
 const handleButtonClick = () => {
@@ -105,8 +105,8 @@ const handleButtonClick = () => {
             yield alpAccount.switchWalletToAllowedNetwork(walletType, chainId);
             yield alpAccount.setSimulationMode(false);
             yield buy(alpAccount, _productToBuy, amountToBuy);
-            // console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
-            // await alpAccount.sellProduct(_productToBuy, amountToBuy);
+            console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
+            // await sellProduct(_productToBuy, 1);
             // console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
         });
     }, false);
