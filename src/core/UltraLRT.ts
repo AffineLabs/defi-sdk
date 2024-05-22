@@ -1,6 +1,7 @@
 import { UltraLRT, WithdrawalEscrowV2, MockERC20, MockERC20__factory } from "../typechain";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
 import { getContracts } from "./cache";
+import { _getVaultAndAsset } from "./product";
 import { EthContracts } from "./types";
 import { ethers } from "ethers";
 
@@ -61,9 +62,10 @@ async function getEigenDelegatorContract(): Promise<ethers.Contract> {
 }
 
 // Vault
-export async function canWithdraw(amount: string) {
-  const ultraEth = await getUltraEthContract();
-  const value = await ultraEth.canWithdraw(amount);
+export async function canWithdraw(amount: number) {
+  const { vault, asset } = await _getVaultAndAsset("ultraLRT");
+  const lrtVault: UltraLRT = vault as UltraLRT;
+  const value = await lrtVault.canWithdraw(_addDecimals(amount.toString(), await asset.decimals()));
   return value;
 }
 
@@ -87,16 +89,27 @@ export async function canWithdrawEscrow(epoch: string) {
 
 export async function withdrawableAssets(address: string) {
   const withdrawalEscrowV2 = await getEscrowContract();
-  const lastEpoch = await withdrawalEscrowV2.resolvingEpoch();
+  const { vault, asset } = await _getVaultAndAsset("ultraLRT");
+
+  const vaultDecimals = await vault.decimals();
+  const assetDecimals = await asset.decimals();
+
+  const resolvingEpoch = (await withdrawalEscrowV2.resolvingEpoch()).toNumber();
+  const currentEpoch = (await withdrawalEscrowV2.currentEpoch()).toNumber();
+
   let totalAmount = 0;
   const epochData = [];
-  for (let i = 0; i <= lastEpoch.toNumber(); i++) {
-    const value = parseFloat(_removeDecimals(await withdrawalEscrowV2.withdrawableAssets(address, i), 18));
+  for (let i = 0; i <= currentEpoch; i++) {
+    const shares = await withdrawalEscrowV2.userDebtShare(ethers.BigNumber.from(i), address);
+    const assets = await withdrawalEscrowV2.withdrawableAssets(address, i);
 
-    if (value > 0) {
-      epochData.push({ epoch: i, value: value });
-      totalAmount += value;
-    }
+    epochData.push({
+      epoch: i,
+      value: _removeDecimals(assets, assetDecimals),
+      shares: _removeDecimals(shares, vaultDecimals),
+      canWithdraw: i < resolvingEpoch && shares.gt(0),
+    });
+    totalAmount += parseFloat(_removeDecimals(assets, assetDecimals));
   }
   return { totalAmount, epochData };
 }

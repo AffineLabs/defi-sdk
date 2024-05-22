@@ -7,8 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
+import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
 import { getContracts } from "./cache";
+import { _getVaultAndAsset } from "./product";
 import { ethers } from "ethers";
 function getUltraEthContract() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -55,8 +56,9 @@ function getEigenDelegatorContract() {
 // Vault
 export function canWithdraw(amount) {
     return __awaiter(this, void 0, void 0, function* () {
-        const ultraEth = yield getUltraEthContract();
-        const value = yield ultraEth.canWithdraw(amount);
+        const { vault, asset } = yield _getVaultAndAsset("ultraLRT");
+        const lrtVault = vault;
+        const value = yield lrtVault.canWithdraw(_addDecimals(amount.toString(), yield asset.decimals()));
         return value;
     });
 }
@@ -83,15 +85,23 @@ export function canWithdrawEscrow(epoch) {
 export function withdrawableAssets(address) {
     return __awaiter(this, void 0, void 0, function* () {
         const withdrawalEscrowV2 = yield getEscrowContract();
-        const lastEpoch = yield withdrawalEscrowV2.resolvingEpoch();
+        const { vault, asset } = yield _getVaultAndAsset("ultraLRT");
+        const vaultDecimals = yield vault.decimals();
+        const assetDecimals = yield asset.decimals();
+        const resolvingEpoch = (yield withdrawalEscrowV2.resolvingEpoch()).toNumber();
+        const currentEpoch = (yield withdrawalEscrowV2.currentEpoch()).toNumber();
         let totalAmount = 0;
         const epochData = [];
-        for (let i = 0; i <= lastEpoch.toNumber(); i++) {
-            const value = parseFloat(_removeDecimals(yield withdrawalEscrowV2.withdrawableAssets(address, i), 18));
-            if (value > 0) {
-                epochData.push({ epoch: i, value: value });
-                totalAmount += value;
-            }
+        for (let i = 0; i <= currentEpoch; i++) {
+            const shares = yield withdrawalEscrowV2.userDebtShare(ethers.BigNumber.from(i), address);
+            const assets = yield withdrawalEscrowV2.withdrawableAssets(address, i);
+            epochData.push({
+                epoch: i,
+                value: _removeDecimals(assets, assetDecimals),
+                shares: _removeDecimals(shares, vaultDecimals),
+                canWithdraw: i < resolvingEpoch && shares.gt(0),
+            });
+            totalAmount += parseFloat(_removeDecimals(assets, assetDecimals));
         }
         return { totalAmount, epochData };
     });

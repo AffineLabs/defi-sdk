@@ -1,4 +1,4 @@
-export declare function canWithdraw(amount: string): Promise<boolean>;
+export declare function canWithdraw(amount: number): Promise<boolean>;
 export declare function withdraw(amount: string, address: string): Promise<import("./types").GasInfo | import("./types").SmallTxReceipt>;
 export declare function redeem(address: string, epoch: string): Promise<import("./types").GasInfo | import("./types").SmallTxReceipt>;
 export declare function canWithdrawEscrow(epoch: string): Promise<boolean>;
@@ -6,7 +6,9 @@ export declare function withdrawableAssets(address: string): Promise<{
     totalAmount: number;
     epochData: {
         epoch: number;
-        value: number;
+        value: string;
+        shares: string;
+        canWithdraw: boolean;
     }[];
 }>;
 export declare function migratableAssets(address: string): Promise<number>;

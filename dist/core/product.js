@@ -14,7 +14,7 @@ import { MockERC20__factory } from "../typechain";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
 import { getBaseContracts, getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIMULATE, userAddress, } from "./cache";
 import { MAX_UINT } from "./constants";
-function _getVaultAndAsset(product) {
+export function _getVaultAndAsset(product) {
     return __awaiter(this, void 0, void 0, function* () {
         const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX, polygon6xLevMaticX } = getPolygonContracts();
         const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage, ultraLRT } = getEthContracts();

@@ -18,7 +18,7 @@ import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, BasicReceiptInfo, DryRunReceipt, FullTxReceipt, TokenInfo, AlpineContracts } from "./types";
 
-async function _getVaultAndAsset(product: AlpineProduct): Promise<{
+export async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   vault: ERC4626Upgradeable;
   asset: MockERC20;
   router: Router;
