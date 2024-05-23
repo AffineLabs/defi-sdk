@@ -143,8 +143,8 @@ export function getAllContracts(provider) {
             };
         }
         else if (chainId == 17000) {
-            const ultraLRT = UltraLRT__factory.connect("0x3A6B57ea121fbAB06f5A7Bf0626702EcB0Db7f11", provider);
-            const withdrawalEscrowV2 = WithdrawalEscrowV2__factory.connect("0x5315839366615a087c993f87913D94932dCa0Df1", provider);
+            const ultraLRT = UltraLRT__factory.connect("0x3b07A1A5de80f9b22DE0EC6C44C6E59DDc1C5f41", provider);
+            const withdrawalEscrowV2 = WithdrawalEscrowV2__factory.connect("0x84eF1F1A7f14A237c4b1DA8d13548123879FC3A9", provider);
             return {
                 usdc: new ethers.Contract("0x74A4A85C611679B73F402B36c0F84A7D2CcdFDa3", erc20Abi, provider),
                 weth: new ethers.Contract("0x6B5817E7091BC0C747741E96820b0199388245EA", erc20Abi, provider),
