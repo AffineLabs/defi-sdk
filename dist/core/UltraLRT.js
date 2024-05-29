@@ -41,7 +41,7 @@ function getEigenStETHContract() {
         return eigenStETH;
     });
 }
-const eigenStETHStrategy = "0x93c4b944D05dfe6df7645A86cd2206016c51564D";
+const eigenStETHStrategy = "0x7D704507b76571a51d9caE8AdDAbBFd0ba0e63d3";
 const stETHAddress = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
 function getEigenDelegatorContract() {
     return __awaiter(this, void 0, void 0, function* () {
