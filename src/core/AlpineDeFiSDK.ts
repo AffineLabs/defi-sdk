@@ -69,7 +69,7 @@ export async function blockchainCall(
   method: string,
   args: Array<any>, // eslint-disable-line @typescript-eslint/no-explicit-any
   simulate = false,
-  value?: ethers.BigNumberish,
+  value: ethers.BigNumberish = 0,
 ): Promise<SmallTxReceipt | GasInfo> {
   const signer = SIGNER;
   const biconomy = BICONOMY;

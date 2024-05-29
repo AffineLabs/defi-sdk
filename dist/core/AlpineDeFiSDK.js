@@ -66,7 +66,7 @@ export function _removeDecimals(amount, decimals) {
  * @returns a transaction receipt from the blockchain
  */
 export function blockchainCall(contract, method, args, // eslint-disable-line @typescript-eslint/no-explicit-any
-simulate = false, value) {
+simulate = false, value = 0) {
     return __awaiter(this, void 0, void 0, function* () {
         const signer = SIGNER;
         const biconomy = BICONOMY;
