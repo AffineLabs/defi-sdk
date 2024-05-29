@@ -79,6 +79,8 @@ export function getAllContracts(provider) {
         const eigenStEthAbi = ["function userUnderlyingView(address) view returns (uint256)"];
         const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, PolygonLevMaticX: polygonLevMaticXData, AffineReStaking: affineReStakingData, Polygon6xLevMaticX: Polygon6xLevMaticXData, UltraLRT: UltraLRTData, WithdrawalEscrowV2: withdrawalEscrowV2Data, } = allData;
         const chainId = getChainId();
+        const eigenStETHStrategy = "0x7D704507b76571a51d9caE8AdDAbBFd0ba0e63d3";
+        const eigenDelegatorAddress = "0xA44151489861Fe9e3055d95adC98FbD462B948e7";
         if (chainId === 80001 || chainId === 137) {
             const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
             const alpLarge = TwoAssetBasket__factory.connect(alpLargeData.address, provider);
@@ -116,8 +118,6 @@ export function getAllContracts(provider) {
             const withdrawalEscrow = WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
             const degen = Vault__factory.connect(degenData.address, provider);
             const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
-            const eigenStETHStrategy = "0x7D704507b76571a51d9caE8AdDAbBFd0ba0e63d3";
-            const eigenDelegatorAddress = "0xA44151489861Fe9e3055d95adC98FbD462B948e7";
             // reStaking
             const affineReStaking = chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
             const ultraLRT = chainId == 1 ? UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
@@ -151,6 +151,8 @@ export function getAllContracts(provider) {
                 router: Router__factory.connect(ethRouter.address, provider),
                 ultraLRT,
                 withdrawalEscrowV2,
+                eigenStETH: new ethers.Contract(eigenStETHStrategy, eigenStEthAbi, provider),
+                eigenDelegator: new ethers.Contract(eigenDelegatorAddress, eigenDelegatorAbi, provider),
             };
         }
         else if (chainId == 8453 || chainId == 84531) {

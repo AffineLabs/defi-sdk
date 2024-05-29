@@ -140,6 +140,9 @@ export async function getAllContracts(
 
   const chainId = getChainId();
 
+  const eigenStETHStrategy = "0x7D704507b76571a51d9caE8AdDAbBFd0ba0e63d3";
+  const eigenDelegatorAddress = "0xA44151489861Fe9e3055d95adC98FbD462B948e7";
+
   if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
     const alpLarge = TwoAssetBasket__factory.connect(alpLargeData.address, provider);
@@ -181,8 +184,7 @@ export async function getAllContracts(
     const degen = Vault__factory.connect(degenData.address, provider);
     const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
 
-    const eigenStETHStrategy = "0x7D704507b76571a51d9caE8AdDAbBFd0ba0e63d3";
-    const eigenDelegatorAddress = "0xA44151489861Fe9e3055d95adC98FbD462B948e7";
+
 
     // reStaking
     const affineReStaking =
@@ -227,6 +229,8 @@ export async function getAllContracts(
       router: Router__factory.connect(ethRouter.address, provider),
       ultraLRT,
       withdrawalEscrowV2,
+      eigenStETH: new ethers.Contract(eigenStETHStrategy, eigenStEthAbi, provider),
+      eigenDelegator: new ethers.Contract(eigenDelegatorAddress, eigenDelegatorAbi, provider),
     };
   } else if (chainId == 8453 || chainId == 84531) {
     const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
