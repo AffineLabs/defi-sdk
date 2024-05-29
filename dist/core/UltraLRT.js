@@ -115,10 +115,12 @@ export function migratableAssets(address) {
 }
 export function queueMigrationWithdrawal(address, assets) {
     return __awaiter(this, void 0, void 0, function* () {
+        console.log("queueMigrationWithdrawal");
         const eigenDelegator = yield getEigenDelegatorContract();
         const eigenStETH = yield getEigenStETHContract();
         const assetUnits = ethers.utils.parseUnits(assets, 18);
         const shares = yield eigenStETH.underlyingToShares(assetUnits);
+        console.log("shares", shares.toString());
         const queuedWithdrawalParams = [
             {
                 strategies: [eigenStETHStrategy],
@@ -126,6 +128,7 @@ export function queueMigrationWithdrawal(address, assets) {
                 recipient: address,
             },
         ];
+        console.log("queuedWithdrawalParams", queuedWithdrawalParams);
         return blockchainCall(eigenDelegator, "queueWithdrawals", [queuedWithdrawalParams]);
     });
 }

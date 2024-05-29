@@ -86,6 +86,7 @@ simulate = false, value = 0) {
         // regular (non-meta) tx
         let overrides = { value };
         args.push(overrides);
+        console.log("Blockchain call: ", { method }, args);
         const gasLimit = (yield contract.estimateGas[method].apply(null, args)).mul(12).div(10);
         overrides = { value, gasLimit };
         args[args.length - 1] = overrides;
