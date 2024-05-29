@@ -12,5 +12,5 @@ export declare function withdrawableAssets(address: string): Promise<{
     }[];
 }>;
 export declare function migratableAssets(address: string): Promise<number>;
-export declare function queueMigrationWithdrawal(address: string, shares: string): Promise<import("./types").GasInfo | import("./types").SmallTxReceipt>;
+export declare function queueMigrationWithdrawal(address: string, assets: string): Promise<import("./types").GasInfo | import("./types").SmallTxReceipt>;
 export declare function completeMigrationWithdrawal(address: string, delegator: string, nonce: string, blockNumber: string, shares: string): Promise<import("./types").GasInfo | import("./types").SmallTxReceipt>;

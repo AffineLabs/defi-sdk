@@ -113,9 +113,12 @@ export function migratableAssets(address) {
         return parseFloat(_removeDecimals(value, 18));
     });
 }
-export function queueMigrationWithdrawal(address, shares) {
+export function queueMigrationWithdrawal(address, assets) {
     return __awaiter(this, void 0, void 0, function* () {
         const eigenDelegator = yield getEigenDelegatorContract();
+        const eigenStETH = yield getEigenStETHContract();
+        const assetUnits = ethers.utils.parseUnits(assets, 18);
+        const shares = yield eigenStETH.underlyingToShares(assetUnits);
         const queuedWithdrawalParams = [
             {
                 strategies: [eigenStETHStrategy],

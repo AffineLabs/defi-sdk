@@ -109,7 +109,10 @@ export async function getAllContracts(
     "function completeQueuedWithdrawals((address,address,address,uint256,uint32,address[],uint256[])[],address[][],uint256[],bool[])",
   ];
 
-  const eigenStEthAbi = ["function userUnderlyingView(address) view returns (uint256)"];
+  const eigenStEthAbi = [
+    "function userUnderlyingView(address) view returns (uint256)",
+    "function underlyingToShares(uint256) view returns (uint256)",
+  ];
 
   const {
     PolygonAlpSave: alpSaveData,

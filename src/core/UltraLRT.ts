@@ -120,8 +120,11 @@ export async function migratableAssets(address: string) {
   return parseFloat(_removeDecimals(value, 18));
 }
 
-export async function queueMigrationWithdrawal(address: string, shares: string) {
+export async function queueMigrationWithdrawal(address: string, assets: string) {
   const eigenDelegator = await getEigenDelegatorContract();
+  const eigenStETH = await getEigenStETHContract();
+  const assetUnits = ethers.utils.parseUnits(assets, 18);
+  const shares = await eigenStETH.underlyingToShares(assetUnits);
 
   const queuedWithdrawalParams: QueuedWithdrawalParams[] = [
     {

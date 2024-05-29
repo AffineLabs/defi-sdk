@@ -76,7 +76,10 @@ export function getAllContracts(provider) {
             "function queueWithdrawals((address[],uint256[],address)[])",
             "function completeQueuedWithdrawals((address,address,address,uint256,uint32,address[],uint256[])[],address[][],uint256[],bool[])",
         ];
-        const eigenStEthAbi = ["function userUnderlyingView(address) view returns (uint256)"];
+        const eigenStEthAbi = [
+            "function userUnderlyingView(address) view returns (uint256)",
+            "function underlyingToShares(uint256) view returns (uint256)",
+        ];
         const { PolygonAlpSave: alpSaveData, PolygonBtcEthVault: alpLargeData, Forwarder: forwarder, ERC4626Router: router, EthUsdcEarn: ethEarnData, EthWethEarn: ethWethEarnData, EthRouter: ethRouter, EthSushiLpUsdcWeth: ssvEthSushiUSDEarn, Degen: degenData, PolygonDegen: polygonDegenData, EthStEthLev: ethLeverageData, PolygonStEthLev: polygonLeverageData, AffineGenesis: affineGenesisData, AffinePass: affinePassData, AffinePassBridgePolygon: affinePassBridgePolygonData, AffinePassBridgeEthereum: affinePassBridgeEthereumData, BaseUsdEarn: baseUsdEarnData, BaseStEthLev: baseStEthLevData, BaseRouter: baseRouterData, PolygonLevMaticX: polygonLevMaticXData, AffineReStaking: affineReStakingData, Polygon6xLevMaticX: Polygon6xLevMaticXData, UltraLRT: UltraLRTData, WithdrawalEscrowV2: withdrawalEscrowV2Data, } = allData;
         const chainId = getChainId();
         const eigenStETHStrategy = "0x7D704507b76571a51d9caE8AdDAbBFd0ba0e63d3";
