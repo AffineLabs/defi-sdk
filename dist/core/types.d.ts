@@ -70,6 +70,8 @@ export interface HoleskyContracts {
     router: Router;
     ultraLRT?: UltraLRT;
     withdrawalEscrowV2?: WithdrawalEscrowV2;
+    eigenStETH?: ethers.Contract;
+    eigenDelegator?: ethers.Contract;
 }
 export interface BaseContracts extends BothContracts {
     baseUsdEarn?: VaultV2;
