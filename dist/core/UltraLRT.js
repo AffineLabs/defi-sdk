@@ -128,7 +128,7 @@ export function queueMigrationWithdrawal(address, assets) {
                 recipient: address,
             },
         ];
-        const queuedWithdrawalParams2 = [[[eigenStETHStrategy], [ethers.BigNumber.from(shares)], address]];
+        const queuedWithdrawalParams2 = [[[[eigenStETHStrategy], [ethers.BigNumber.from(shares)], address]]];
         console.log("queuedWithdrawalParams2", queuedWithdrawalParams2);
         return blockchainCall(eigenDelegator, "queueWithdrawals", queuedWithdrawalParams2);
     });
