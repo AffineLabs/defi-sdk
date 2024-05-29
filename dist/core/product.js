@@ -14,7 +14,7 @@ import { MockERC20__factory } from "../typechain";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
 import { getBaseContracts, getContracts, getEthContracts, getPolygonContracts, PROVIDER, SIMULATE, userAddress, } from "./cache";
 import { MAX_UINT } from "./constants";
-function _getVaultAndAsset(product) {
+export function _getVaultAndAsset(product) {
     return __awaiter(this, void 0, void 0, function* () {
         const { alpSave, alpLarge, polygonDegen, polygonLeverage, polygonLevMaticX, polygon6xLevMaticX } = getPolygonContracts();
         const { ethEarn, ethWethEarn, ssvEthUSDEarn, degen, ethLeverage, ultraLRT } = getEthContracts();
@@ -39,7 +39,9 @@ function _getVaultAndAsset(product) {
         const vault = productToVault[product];
         if (!vault)
             throw new Error("Invalid product");
+        console.log("init");
         const asset = MockERC20__factory.connect(yield vault.asset(), vault.provider);
+        console.log("done");
         return { vault, asset, router };
     });
 }
@@ -237,6 +239,17 @@ export function getTokenInfo(product, token) {
                 amount: assetAmount,
                 price: "1",
                 equity: assetAmount,
+            };
+        }
+        else if (product === "ultraLRT") {
+            const { vault, asset } = yield _getVaultAndAsset(product);
+            const assets = yield vault.convertToAssets(yield vault.balanceOf(user));
+            const vaultDecimals = yield vault.decimals();
+            const price = yield vault.convertToAssets(ethers.BigNumber.from(10).pow(vaultDecimals));
+            return {
+                amount: _removeDecimals(assets, yield asset.decimals()),
+                price: _removeDecimals(price, vaultDecimals),
+                equity: "0",
             };
         }
         const { alpSave, alpLarge, ethEarn, ethWethEarn, ssvEthUSDEarn, degen, polygonDegen, ethLeverage, polygonLeverage, baseUsdEarn, baseLeverage, polygonLevMaticX, polygon6xLevMaticX, affineReStaking, ultraLRT, } = getContracts();

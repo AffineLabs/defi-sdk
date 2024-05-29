@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import axios from "axios";
-import { BaseContracts, EthContracts, PolygonContracts } from "./types";
+import { BaseContracts, EthContracts, HoleskyContracts, PolygonContracts } from "./types";
 import {
   Forwarder__factory,
   L2Vault__factory,
@@ -30,7 +30,7 @@ import {
   IS_USING_FORKED_MAINNET,
 } from "./constants";
 
-let CONTRACTS: PolygonContracts | EthContracts | BaseContracts;
+let CONTRACTS: PolygonContracts | EthContracts | BaseContracts | HoleskyContracts;
 let CHAIN_ID: AllowedChainId;
 export let SIGNER: ethers.Signer;
 export let userAddress: string;
@@ -47,6 +47,7 @@ export const RPC_URLS: { [index: AllowedChainId]: string } = {
       ? FORKED_NODE_URL_FOR_ETH
       : `https://eth-mainnet.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
   5: `https://eth-goerli.alchemyapi.io/v2/${process.env.ALCHEMY_API_KEY}`,
+  17000: `https://ethereum-holesky-rpc.publicnode.com`,
   137:
     IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_MATIC
       ? FORKED_NODE_URL_FOR_MATIC
@@ -71,7 +72,7 @@ export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.
  */
 export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider,
-): Promise<PolygonContracts | EthContracts | BaseContracts> {
+): Promise<PolygonContracts | EthContracts | BaseContracts | HoleskyContracts> {
   const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${CONTRACT_VERSION}`;
   const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
 
@@ -108,7 +109,10 @@ export async function getAllContracts(
     "function completeQueuedWithdrawals((address,address,address,uint256,uint32,address[],uint256[])[],address[][],uint256[],bool[])",
   ];
 
-  const eigenStEthAbi = ["function userUnderlyingView(address) view returns (uint256)"];
+  const eigenStEthAbi = [
+    "function userUnderlyingView(address) view returns (uint256)",
+    "function underlyingToShares(uint256) view returns (uint256)",
+  ];
 
   const {
     PolygonAlpSave: alpSaveData,
@@ -138,6 +142,9 @@ export async function getAllContracts(
   } = allData;
 
   const chainId = getChainId();
+
+  const eigenStETHStrategy = "0x7D704507b76571a51d9caE8AdDAbBFd0ba0e63d3";
+  const eigenDelegatorAddress = "0xA44151489861Fe9e3055d95adC98FbD462B948e7";
 
   if (chainId === 80001 || chainId === 137) {
     const alpSave = L2Vault__factory.connect(alpSaveData.address, provider);
@@ -180,8 +187,7 @@ export async function getAllContracts(
     const degen = Vault__factory.connect(degenData.address, provider);
     const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
 
-    const eigenStETHStrategy = "0x93c4b944D05dfe6df7645A86cd2206016c51564D";
-    const eigenDelegatorAddress = "0x39053D51B77DC0d36036Fc1fCc8Cb819df8Ef37A";
+
 
     // reStaking
     const affineReStaking =
@@ -212,6 +218,23 @@ export async function getAllContracts(
       eigenStETH: new ethers.Contract(eigenStETHStrategy, eigenStEthAbi, provider),
       eigenDelegator: new ethers.Contract(eigenDelegatorAddress, eigenDelegatorAbi, provider),
     };
+  } else if (chainId == 17000) {
+    const ultraLRT = UltraLRT__factory.connect("0x3b07A1A5de80f9b22DE0EC6C44C6E59DDc1C5f41", provider);
+
+    const withdrawalEscrowV2 = WithdrawalEscrowV2__factory.connect(
+      "0x84eF1F1A7f14A237c4b1DA8d13548123879FC3A9",
+      provider,
+    );
+
+    return {
+      usdc: new ethers.Contract("0x74A4A85C611679B73F402B36c0F84A7D2CcdFDa3", erc20Abi, provider),
+      weth: new ethers.Contract("0x6B5817E7091BC0C747741E96820b0199388245EA", erc20Abi, provider),
+      router: Router__factory.connect(ethRouter.address, provider),
+      ultraLRT,
+      withdrawalEscrowV2,
+      eigenStETH: new ethers.Contract(eigenStETHStrategy, eigenStEthAbi, provider),
+      eigenDelegator: new ethers.Contract(eigenDelegatorAddress, eigenDelegatorAbi, provider),
+    };
   } else if (chainId == 8453 || chainId == 84531) {
     const baseUsdEarn = chainId == 8453 ? VaultV2__factory.connect(baseUsdEarnData.address, provider) : undefined;
     const baseLeverage = VaultV2__factory.connect(baseStEthLevData.address, provider);
@@ -232,7 +255,7 @@ export async function getAllContracts(
   }
 }
 
-export function getContracts(): PolygonContracts | EthContracts | BaseContracts {
+export function getContracts(): PolygonContracts | EthContracts | BaseContracts | HoleskyContracts {
   console.log("getContracts: ", CONTRACTS);
   return CONTRACTS;
 }
@@ -244,6 +267,9 @@ export function getPolygonContracts(): PolygonContracts {
 }
 export function getBaseContracts(): BaseContracts {
   return CONTRACTS as BaseContracts;
+}
+export function getHoleskyContract(): HoleskyContracts {
+  return CONTRACTS as HoleskyContracts;
 }
 
 export async function init(

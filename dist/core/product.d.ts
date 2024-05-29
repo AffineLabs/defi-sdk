@@ -2,6 +2,11 @@ import { BigNumber, ethers } from "ethers";
 import { GasInfo, SmallTxReceipt } from "..";
 import { ERC4626Upgradeable, MockERC20, Router } from "../typechain";
 import { AlpineProduct, DryRunReceipt, FullTxReceipt, TokenInfo } from "./types";
+export declare function _getVaultAndAsset(product: AlpineProduct): Promise<{
+    vault: ERC4626Upgradeable;
+    asset: MockERC20;
+    router: Router;
+}>;
 export declare function buyProduct(product: AlpineProduct, amount: number, slippageBps?: number): Promise<DryRunReceipt>;
 export declare function sellProduct(product: AlpineProduct, amount: number): Promise<DryRunReceipt>;
 export declare function buyVault(vault: ERC4626Upgradeable, rawAssets: number, asset: MockERC20): Promise<DryRunReceipt & (SmallTxReceipt | GasInfo)>;

@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { BaseContracts, EthContracts, PolygonContracts } from "./types";
+import { BaseContracts, EthContracts, HoleskyContracts, PolygonContracts } from "./types";
 import { AllowedChainId } from "../types/account";
 export declare let SIGNER: ethers.Signer;
 export declare let userAddress: string;
@@ -15,11 +15,12 @@ export declare function getProviderByChainId(chainId: AllowedChainId): ethers.pr
  * @param version The addressbook version
  * @returns A map of contract names to ethers.Contract objects
  */
-export declare function getAllContracts(provider: ethers.providers.JsonRpcProvider): Promise<PolygonContracts | EthContracts | BaseContracts>;
-export declare function getContracts(): PolygonContracts | EthContracts | BaseContracts;
+export declare function getAllContracts(provider: ethers.providers.JsonRpcProvider): Promise<PolygonContracts | EthContracts | BaseContracts | HoleskyContracts>;
+export declare function getContracts(): PolygonContracts | EthContracts | BaseContracts | HoleskyContracts;
 export declare function getEthContracts(): EthContracts;
 export declare function getPolygonContracts(): PolygonContracts;
 export declare function getBaseContracts(): BaseContracts;
+export declare function getHoleskyContract(): HoleskyContracts;
 export declare function init(signerOrAddress: ethers.Signer | string, biconomy: ethers.providers.Web3Provider | undefined, chainId?: AllowedChainId): Promise<void>;
 export declare function getChainId(): number;
 export declare function setProvider(provider: ethers.providers.JsonRpcProvider): void;

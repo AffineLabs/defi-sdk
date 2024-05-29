@@ -94,6 +94,7 @@ export async function blockchainCall(
 
   let overrides: PayableOverrides = { value };
   args.push(overrides);
+  console.log("Blockchain call: ", { method }, args);
   const gasLimit = (await contract.estimateGas[method].apply(null, args)).mul(12).div(10);
   overrides = { value, gasLimit };
   args[args.length - 1] = overrides;

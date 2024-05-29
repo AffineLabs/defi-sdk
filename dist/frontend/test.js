@@ -33,11 +33,11 @@ const connectAndWrite = ({ walletType = "metamask", account, chainId, }) => __aw
 });
 const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, function* () {
     // check if user is approved max amount
-    const isApproved = yield alpAccount.isApproved(product, amount);
+    const isApproved = yield alpAccount.isApproved(product, amount, "0x3F1c547b21f65e10480dE3ad8E19fAAC46C95034");
     console.log("isApproved: ", isApproved);
     // approve max amount if not approved
     if (!isApproved) {
-        const res = yield alpAccount.approve(product);
+        const res = yield alpAccount.approve(product, amount.toString(), "0x3F1c547b21f65e10480dE3ad8E19fAAC46C95034");
         console.log("approve res: ", res);
     }
     console.log("approved: ", product);
@@ -45,9 +45,9 @@ const buy = (alpAccount, product, amount) => __awaiter(void 0, void 0, void 0, f
 });
 const alpAccount = new Account();
 const walletType = "metamask";
-const chainId = 1;
+const chainId = 17000;
 const _productToBuy = "ultraLRT";
-const amountToBuy = 10;
+const amountToBuy = 1;
 const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // if (walletType === "walletConnect") {
     //   const modal = await initiateWeb3Modal();
@@ -77,7 +77,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // console.log("sold: ", _productToBuy, "of amount: ", 1);
     // console.log("basket bal after sell ", await readAcc.getTokenInfo(_productToBuy));
     // const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
-    // console.log("tvlCap: ", tvlCap);
+    // console.log("tvl cap: ", tvlCap);
     // const res = await alpAccount.isStrategyLiquid();
     // console.log({ res });
     // const requests = await alpAccount.getWithdrawalRequest();
@@ -85,8 +85,8 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
     // const allAssets = await alpAccount.getTotalWithdrawableAssets();
     // console.log({ allAssets });
     // await buy(alpAccount, _productToBuy);
-    const sell = yield alpAccount.sellProduct(_productToBuy, 10);
-    console.log("sell res: ", sell);
+    // const sell = await alpAccount.sellProduct(_productToBuy, 1);
+    // console.log("sell res: ", sell);
     console.log("exiting");
 });
 const handleButtonClick = () => {
@@ -105,8 +105,8 @@ const handleButtonClick = () => {
             yield alpAccount.switchWalletToAllowedNetwork(walletType, chainId);
             yield alpAccount.setSimulationMode(false);
             yield buy(alpAccount, _productToBuy, amountToBuy);
-            // console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
-            // await alpAccount.sellProduct(_productToBuy, amountToBuy);
+            console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
+            // await sellProduct(_productToBuy, 1);
             // console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
         });
     }, false);

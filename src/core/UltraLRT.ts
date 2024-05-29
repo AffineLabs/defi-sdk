@@ -1,6 +1,7 @@
 import { UltraLRT, WithdrawalEscrowV2, MockERC20, MockERC20__factory } from "../typechain";
 import { _addDecimals, _removeDecimals, blockchainCall } from "./AlpineDeFiSDK";
 import { getContracts } from "./cache";
+import { _getVaultAndAsset } from "./product";
 import { EthContracts } from "./types";
 import { ethers } from "ethers";
 
@@ -47,7 +48,7 @@ interface WithdrawalInfo {
   shares: ethers.BigNumber[];
 }
 
-const eigenStETHStrategy = "0x93c4b944D05dfe6df7645A86cd2206016c51564D";
+const eigenStETHStrategy = "0x7D704507b76571a51d9caE8AdDAbBFd0ba0e63d3";
 
 const stETHAddress = "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84";
 
@@ -61,9 +62,10 @@ async function getEigenDelegatorContract(): Promise<ethers.Contract> {
 }
 
 // Vault
-export async function canWithdraw(amount: string) {
-  const ultraEth = await getUltraEthContract();
-  const value = await ultraEth.canWithdraw(amount);
+export async function canWithdraw(amount: number) {
+  const { vault, asset } = await _getVaultAndAsset("ultraLRT");
+  const lrtVault: UltraLRT = vault as UltraLRT;
+  const value = await lrtVault.canWithdraw(_addDecimals(amount.toString(), await asset.decimals()));
   return value;
 }
 
@@ -87,16 +89,27 @@ export async function canWithdrawEscrow(epoch: string) {
 
 export async function withdrawableAssets(address: string) {
   const withdrawalEscrowV2 = await getEscrowContract();
-  const lastEpoch = await withdrawalEscrowV2.resolvingEpoch();
+  const { vault, asset } = await _getVaultAndAsset("ultraLRT");
+
+  const vaultDecimals = await vault.decimals();
+  const assetDecimals = await asset.decimals();
+
+  const resolvingEpoch = (await withdrawalEscrowV2.resolvingEpoch()).toNumber();
+  const currentEpoch = (await withdrawalEscrowV2.currentEpoch()).toNumber();
+
   let totalAmount = 0;
   const epochData = [];
-  for (let i = 0; i <= lastEpoch.toNumber(); i++) {
-    const value = parseFloat(_removeDecimals(await withdrawalEscrowV2.withdrawableAssets(address, i), 18));
+  for (let i = 0; i <= currentEpoch; i++) {
+    const shares = await withdrawalEscrowV2.userDebtShare(ethers.BigNumber.from(i), address);
+    const assets = await withdrawalEscrowV2.withdrawableAssets(address, i);
 
-    if (value > 0) {
-      epochData.push({ epoch: i, value: value });
-      totalAmount += value;
-    }
+    epochData.push({
+      epoch: i,
+      assets: _removeDecimals(assets, assetDecimals),
+      shares: _removeDecimals(shares, vaultDecimals),
+      canWithdraw: i < resolvingEpoch && shares.gt(0),
+    });
+    totalAmount += parseFloat(_removeDecimals(assets, assetDecimals));
   }
   return { totalAmount, epochData };
 }
@@ -107,9 +120,13 @@ export async function migratableAssets(address: string) {
   return parseFloat(_removeDecimals(value, 18));
 }
 
-export async function queueMigrationWithdrawal(address: string, shares: string) {
+export async function queueMigrationWithdrawal(address: string, assets: string) {
+  console.log("queueMigrationWithdrawal")
   const eigenDelegator = await getEigenDelegatorContract();
-
+  const eigenStETH = await getEigenStETHContract();
+  const assetUnits = ethers.utils.parseUnits(assets, 18);
+  const shares = await eigenStETH.underlyingToShares(assetUnits);
+  console.log("shares", shares.toString());
   const queuedWithdrawalParams: QueuedWithdrawalParams[] = [
     {
       strategies: [eigenStETHStrategy],
@@ -117,7 +134,9 @@ export async function queueMigrationWithdrawal(address: string, shares: string) 
       recipient: address,
     },
   ];
-  return blockchainCall(eigenDelegator, "queueWithdrawals", [queuedWithdrawalParams]);
+  const queuedWithdrawalParams2 = [[[[eigenStETHStrategy], [ethers.BigNumber.from(shares)], address]]]
+  console.log("queuedWithdrawalParams2", queuedWithdrawalParams2);
+  return blockchainCall(eigenDelegator, "queueWithdrawals", queuedWithdrawalParams2);
 }
 
 export async function completeMigrationWithdrawal(

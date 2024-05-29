@@ -8,7 +8,7 @@ export function getChainIdFromRaw(chainId = DEFAULT_RAW_CHAIN_ID) {
     return `0x${Number(chainId).toString(16)}`;
 }
 export const NETWORK_TYPE = process.env.NEXT_PUBLIC_NETWORK_TYPE === "mainnet" ? "mainnet" : "testnet";
-export const ALLOWED_CHAIN_IDS = NETWORK_TYPE === "mainnet" ? [1, 137] : [5, 80001];
+export const ALLOWED_CHAIN_IDS = NETWORK_TYPE === "mainnet" ? [1, 137] : [5, 80001, 17000];
 export const MAX_UINT = ethers.BigNumber.from(2).pow(256).sub(1);
 export const MAX_APPROVAL_AMOUNT = ethers.constants.MaxUint256;
 export const WALLETCONNECT_PROJECT_ID = process.env.WALLETCONNECT_PROJECT_ID || "demo-project-id";
@@ -73,6 +73,16 @@ export const NETWORK_PARAMS = {
         },
         rpcUrls: ["https://rpc.ankr.com/eth_goerli"],
         blockExplorerUrls: ["https://goerli.etherscan.io"],
+    },
+    17000: {
+        chainName: "Holesky Testnet",
+        nativeCurrency: {
+            name: "Ether",
+            symbol: "ETH",
+            decimals: 18,
+        },
+        rpcUrls: ["https://ethereum-holesky-rpc.publicnode.com"],
+        blockExplorerUrls: ["https://holesky.etherscan.io"],
     },
     137: {
         chainName: `Polygon Mainnet${IS_USING_FORKED_MAINNET ? " (Forked)" : ""}`,

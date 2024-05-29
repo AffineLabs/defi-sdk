@@ -64,6 +64,15 @@ export interface EthContracts extends BothContracts {
     eigenStETH?: ethers.Contract;
     eigenDelegator?: ethers.Contract;
 }
+export interface HoleskyContracts {
+    usdc: ethers.Contract;
+    weth: ethers.Contract;
+    router: Router;
+    ultraLRT?: UltraLRT;
+    withdrawalEscrowV2?: WithdrawalEscrowV2;
+    eigenStETH?: ethers.Contract;
+    eigenDelegator?: ethers.Contract;
+}
 export interface BaseContracts extends BothContracts {
     baseUsdEarn?: VaultV2;
     baseLeverage: VaultV2;

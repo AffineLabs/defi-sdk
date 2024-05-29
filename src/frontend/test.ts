@@ -1,6 +1,7 @@
 // import { Web3Modal } from "@web3modal/standalone";
 import { AlpineDeFiSDK } from "../core";
 import { ALLOWED_CHAIN_IDS } from "../core/constants";
+import { sellProduct } from "../core/product";
 import { AlpineProduct } from "../core/types";
 import { AllowedChainId, AllowedWallet } from "../types/account";
 import { Account } from "./Account";
@@ -36,12 +37,12 @@ const connectAndWrite = async ({
 
 const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) => {
   // check if user is approved max amount
-  const isApproved = await alpAccount.isApproved(product, amount);
+  const isApproved = await alpAccount.isApproved(product, amount, "0x3F1c547b21f65e10480dE3ad8E19fAAC46C95034");
   console.log("isApproved: ", isApproved);
 
   // approve max amount if not approved
   if (!isApproved) {
-    const res = await alpAccount.approve(product);
+    const res = await alpAccount.approve(product, amount.toString(), "0x3F1c547b21f65e10480dE3ad8E19fAAC46C95034");
     console.log("approve res: ", res);
   }
   console.log("approved: ", product);
@@ -50,9 +51,9 @@ const buy = async (alpAccount: Account, product: AlpineProduct, amount: number) 
 
 const alpAccount = new Account();
 const walletType: Exclude<AllowedWallet, "walletConnect"> = "metamask";
-const chainId = 1 as AllowedChainId;
+const chainId = 17000 as AllowedChainId;
 const _productToBuy: AlpineProduct = "ultraLRT";
-const amountToBuy = 10;
+const amountToBuy = 1;
 const main = async () => {
   // if (walletType === "walletConnect") {
   //   const modal = await initiateWeb3Modal();
@@ -96,7 +97,7 @@ const main = async () => {
 
   // const tvlCap = await AlpineDeFiSDK.getTVLCap(_productToBuy);
 
-  // console.log("tvlCap: ", tvlCap);
+  // console.log("tvl cap: ", tvlCap);
 
   // const res = await alpAccount.isStrategyLiquid();
   // console.log({ res });
@@ -106,8 +107,8 @@ const main = async () => {
   // console.log({ allAssets });
 
   // await buy(alpAccount, _productToBuy);
-  const sell = await alpAccount.sellProduct(_productToBuy, 10);
-  console.log("sell res: ", sell);
+  // const sell = await alpAccount.sellProduct(_productToBuy, 1);
+  // console.log("sell res: ", sell);
 
   console.log("exiting");
 };
@@ -133,9 +134,9 @@ const handleButtonClick = () => {
       await alpAccount.setSimulationMode(false);
       await buy(alpAccount, _productToBuy, amountToBuy);
 
-      // console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
+      console.log("bought: ", _productToBuy, "of amount: ", amountToBuy);
 
-      // await alpAccount.sellProduct(_productToBuy, amountToBuy);
+      // await sellProduct(_productToBuy, 1);
 
       // console.log("sold: ", _productToBuy, "of amount: ", amountToBuy);
     },

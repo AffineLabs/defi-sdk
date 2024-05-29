@@ -18,7 +18,7 @@ import { MAX_UINT } from "./constants";
 
 import { AlpineProduct, BasicReceiptInfo, DryRunReceipt, FullTxReceipt, TokenInfo, AlpineContracts } from "./types";
 
-async function _getVaultAndAsset(product: AlpineProduct): Promise<{
+export async function _getVaultAndAsset(product: AlpineProduct): Promise<{
   vault: ERC4626Upgradeable;
   asset: MockERC20;
   router: Router;
@@ -49,7 +49,9 @@ async function _getVaultAndAsset(product: AlpineProduct): Promise<{
 
   const vault = productToVault[product];
   if (!vault) throw new Error("Invalid product");
+  console.log("init");
   const asset = MockERC20__factory.connect(await vault.asset(), vault.provider);
+  console.log("done");
   return { vault, asset, router };
 }
 export async function buyProduct(product: AlpineProduct, amount: number, slippageBps = 500) {
@@ -291,6 +293,17 @@ export async function getTokenInfo(product: AlpineProduct | "usdc" | "weth", tok
       amount: assetAmount,
       price: "1",
       equity: assetAmount,
+    };
+  } else if (product === "ultraLRT") {
+    const { vault, asset } = await _getVaultAndAsset(product);
+    const assets = await vault.convertToAssets(await vault.balanceOf(user));
+    const vaultDecimals = await vault.decimals();
+    const price = await vault.convertToAssets(ethers.BigNumber.from(10).pow(vaultDecimals));
+
+    return {
+      amount: _removeDecimals(assets, await asset.decimals()),
+      price: _removeDecimals(price, vaultDecimals),
+      equity: "0",
     };
   }
 
