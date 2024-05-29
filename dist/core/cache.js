@@ -116,8 +116,8 @@ export function getAllContracts(provider) {
             const withdrawalEscrow = WithdrawalEscrow__factory.connect(yield ssvEthUSDEarn.debtEscrow(), provider);
             const degen = Vault__factory.connect(degenData.address, provider);
             const ethLeverage = chainId === 1 ? Vault__factory.connect(ethLeverageData.address, provider) : undefined;
-            const eigenStETHStrategy = "0x93c4b944D05dfe6df7645A86cd2206016c51564D";
-            const eigenDelegatorAddress = "0x39053D51B77DC0d36036Fc1fCc8Cb819df8Ef37A";
+            const eigenStETHStrategy = "0x7D704507b76571a51d9caE8AdDAbBFd0ba0e63d3";
+            const eigenDelegatorAddress = "0xA44151489861Fe9e3055d95adC98FbD462B948e7";
             // reStaking
             const affineReStaking = chainId == 1 ? AffineReStaking__factory.connect(affineReStakingData.address, provider) : undefined;
             const ultraLRT = chainId == 1 ? UltraLRT__factory.connect(UltraLRTData.address, provider) : undefined;
