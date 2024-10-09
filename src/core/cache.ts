@@ -35,6 +35,8 @@ export let BICONOMY: ethers.providers.Web3Provider | undefined;
 
 const CONTRACT_VERSION = process.env.CONTRACT_VERSION ?? "test";
 
+const ADDRESS_BOOK_URL = process.env.NEXT_PUBLIC_CDN_URL ?? "https://localhost:9999";
+
 export let PROVIDER: ethers.providers.StaticJsonRpcProvider;
 
 export const RPC_URLS: { [index: AllowedChainId]: string } = {
@@ -68,8 +70,7 @@ export function getProviderByChainId(chainId: AllowedChainId): ethers.providers.
 export async function getAllContracts(
   provider: ethers.providers.JsonRpcProvider,
 ): Promise<PolygonContracts | EthContracts | BaseContracts> {
-  const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${CONTRACT_VERSION}`;
-  const allData = (await axios.get(`${s3Root}/addressbook.json`)).data;
+  const allData = (await axios.get(`${ADDRESS_BOOK_URL}/addressbook.json`)).data;
 
   // Using this abi so that we mint usdc (the tests run on testnet)
   const erc20Abi = [

@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var _a;
+var _a, _b;
 import { ethers } from "ethers";
 import axios from "axios";
 import { Forwarder__factory, L2Vault__factory, TwoAssetBasket__factory, Router__factory, EmergencyWithdrawalQueue__factory, Vault__factory, WithdrawalEscrow__factory, StrategyVault__factory, AffineGenesis__factory, AffinePass__factory, AffinePassBridge__factory, VaultV2__factory, AffineReStaking__factory, } from "../typechain";
@@ -19,6 +19,7 @@ export let userAddress;
 export let SIMULATE = false;
 export let BICONOMY;
 const CONTRACT_VERSION = (_a = process.env.CONTRACT_VERSION) !== null && _a !== void 0 ? _a : "test";
+const ADDRESS_BOOK_URL = (_b = process.env.NEXT_PUBLIC_CDN_URL) !== null && _b !== void 0 ? _b : "https://localhost:9999";
 export let PROVIDER;
 export const RPC_URLS = {
     1: IS_USING_FORKED_MAINNET && FORKED_NODE_URL_FOR_ETH
@@ -45,8 +46,7 @@ export function getProviderByChainId(chainId) {
  */
 export function getAllContracts(provider) {
     return __awaiter(this, void 0, void 0, function* () {
-        const s3Root = `https://raw.githubusercontent.com/AffineLabs/addressbook/main/${CONTRACT_VERSION}`;
-        const allData = (yield axios.get(`${s3Root}/addressbook.json`)).data;
+        const allData = (yield axios.get(`${ADDRESS_BOOK_URL}/addressbook.json`)).data;
         // Using this abi so that we mint usdc (the tests run on testnet)
         const erc20Abi = [
             // Read-Only Functions
